@@ -14,7 +14,7 @@ AndroidAOP 是专属于 Android 端 Aop 框架，**没有使用 AspectJ**，也�
 
 2、本库支持让你自己做切面，语法简单易上手
 
-3、本库支持 Java 和 Kotlin 代码
+3、同时本库支持 Java 和 Kotlin 代码
 
 **4、本库没有使用 AspectJ，织入代码量极少，侵入性极低**
 
@@ -150,7 +150,7 @@ public @interface CustomIntercept {
 
 @Target 只可以传 ElementType.METHOD传其他无作用
 
-CustomInterceptCut 的代码(可以用kotlin) 如下：
+CustomInterceptCut 的代码如下：
 
 ```kotlin
 class CustomInterceptCut : BasePointCut<CustomIntercept> {
@@ -166,17 +166,15 @@ class CustomInterceptCut : BasePointCut<CustomIntercept> {
 
 - **@AndroidAopMatchClassMethod** 是做匹配类和类方法的切面的
 
-```java
+```kotlin
 @AndroidAopMatchClassMethod(targetClassName = "com.flyjingfish.test_lib.BaseActivity", methodName = {"onCreate","onResume"})
-public class MatchActivityOnCreate implements MatchClassMethod {
-    @Nullable
-    @Override
-    public Object invoke(@NonNull ProceedJoinPoint joinPoint, @NonNull String methodName) {
-        Log.e("MatchActivityOnCreate","invoke="+methodName);
-        try {
-            return joinPoint.proceed();
-        } catch (Throwable e) {
-            return null;
+class MatchActivityOnCreate : MatchClassMethod {
+    override fun invoke(joinPoint: ProceedJoinPoint, @NonNull methodName:String):Any? {
+        Log.e("MatchActivityOnCreate","invoke=$methodName");
+        return try {
+            joinPoint.proceed();
+        } catch (e:Throwable) {
+            null;
         }
     }
 }
