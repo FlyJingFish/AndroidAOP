@@ -1,0 +1,82 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'android.aop'
+}
+def buildTime() {
+    return new Date().format("yyyy_MM_dd_HH_mm_ss", TimeZone.getDefault())
+}
+android {
+    namespace 'com.flyjingfish.androidaop'
+    compileSdk 34
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            output.outputFileName = "LightAop-${variant.flavorName}-${variant.buildType.name}-${rootProject.version}-${buildTime()}.apk"
+        }
+    }
+
+    defaultConfig {
+        applicationId "com.flyjingfish.androidaop"
+        minSdk rootProject.ext.minSdkVersion
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
+    signingConfigs {
+        release {
+            storeFile file(rootProject.file("keystore"))
+            storePassword '123456'
+            keyAlias 'lightAop'
+            keyPassword '123456'
+        }
+    }
+
+    buildTypes {
+        debug {
+            ext.enableCrashlytics = false
+            signingConfig signingConfigs.release
+            shrinkResources false
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+        }
+        release {
+            signingConfig signingConfigs.release
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+        }
+    }
+
+}
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.10.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation 'com.github.tbruyelle:rxpermissions:0.12'
+    implementation 'io.reactivex.rxjava3:rxjava:3.0.4'
+    implementation project(path: ":test-lib")
+}

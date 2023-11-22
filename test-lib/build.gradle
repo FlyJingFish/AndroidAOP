@@ -1,0 +1,44 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+//    id 'light.aop'
+}
+
+android {
+    namespace 'com.flyjingfish.test_lib'
+    compileSdk 33
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 33
+
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.10.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    api project(path: ':android-aop-annotation')
+    annotationProcessor project(path: ':android-aop-processor')
+
+    //本地
+    api project(path: ':android-aop-core')
+    //线上
+//    api 'io.github.FlyJingFish.LightAop:light-aop-annotation:1.0.1'
+//    annotationProcessor 'io.github.FlyJingFish.LightAop:light-aop-processor:1.0.1'
+//    api 'io.github.FlyJingFish.LightAop:light-aop-core:1.0.1'
+
+}

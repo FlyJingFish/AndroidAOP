@@ -1,0 +1,70 @@
+// Configures common publishing settings.
+
+apply plugin: "maven-publish"
+apply plugin: "signing"
+group = rootProject.group
+version = rootProject.version
+task androidJavadocs(type: Javadoc) {
+    // 设置源码所在的位置
+    source = android.sourceSets.main.java.srcDirs
+}
+
+// 将文档打包成jar,生成javadoc.jar
+task androidJavadocsJar(type: Jar) {
+    // 指定文档名称
+    archiveClassifier.set('javadoc')
+    from androidJavadocs.destinationDir
+}
+
+// 将源码打包 ，生成sources.jar
+task androidSourcesJar(type: Jar) {
+    archiveClassifier.set('sources')
+    from android.sourceSets.main.java.srcDirs
+}
+
+artifacts {
+    archives androidSourcesJar //将源码打包进aar,这样使用方可以看到方法注释.
+    archives androidJavadocsJar //将注释打包进aar
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                artifactId = PROJ_NAME
+                afterEvaluate {
+                    from components.release
+                }
+                artifact androidSourcesJar
+                pom {
+                    packaging = "aar"
+                    name = PROJ_BASENAME
+                    description = PROJ_DESCRIPTION
+                    url = PROJ_WEBSITEURL
+                    licenses {
+                        license {
+                            name =  'The Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = DEVELOPER_ID
+                            name = DEVELOPER_NAME
+                            email = DEVELOPER_EMAIL
+                        }
+                    }
+
+                    scm {
+                        connection = PROJ_VCSURL
+                        developerConnection = PROJ_VCSURL
+                        url = PROJ_WEBSITEURL
+                    }
+                }
+            }
+        }
+    }
+    signing {
+        sign publishing.publications.mavenJava
+    }
+}

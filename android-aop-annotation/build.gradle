@@ -1,0 +1,12 @@
+plugins {
+    id 'java-library'
+    id 'org.jetbrains.kotlin.jvm'
+}
+javadoc {
+    title = "LightAop Annotation ${version} API"
+    options.bottom = 'LightAop'
+}
+apply from: "$rootDir/gradle/java_base.gradle"
+apply from: "$rootDir/gradle/java_publish.gradle"
+apply from: "$rootDir/gradle/java_base_lib.gradle"
+

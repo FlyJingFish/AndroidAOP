@@ -1,0 +1,102 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    dependencies {
+        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.0.1'
+    }
+}
+plugins {
+    id 'com.android.application' version '8.0.0' apply false
+    id 'com.android.library' version '8.0.0' apply false
+    id 'org.jetbrains.kotlin.android' version '1.8.0' apply false
+    id 'org.jetbrains.kotlin.jvm' version '1.8.0' apply false
+    id 'io.github.gradle-nexus.publish-plugin' version "2.0.0-rc-1"
+}
+
+ext {
+    sdkVersion = 31
+    minSdkVersion = 21
+}
+
+def synchronized getVersionProperty(propName, defValue) {
+    def file = file("version.properties")
+    def ret = defValue
+    if (file.exists() && file.canRead()) {
+        FileInputStream input = new FileInputStream(file)
+        Properties props = new Properties()
+        props.load(input)
+        ret = props.get(propName);
+        input.close()
+    }
+    return ret
+}
+
+
+def getAppVersionName() {
+    String versionName = getVersionProperty("PROJ_VERSION", "1.0.0")
+    return versionName
+}
+
+
+def getAppVersionCode() {
+    String versionName = getAppVersionName()
+    def versions = versionName.split("\\.")
+    def updateVersionString = ""
+    for (int i = 0; i < versions.size(); i++) {
+        def subString = versions[i]
+        if (i == 0) {
+            updateVersionString += subString
+            continue
+        } else if (i >= 3) {
+            break
+        }
+        def subNumber = Integer.parseInt(subString)
+        updateVersionString += String.format("%01d", subNumber)
+    }
+    return Integer.parseInt(updateVersionString)
+}
+
+task bumpVersion() {
+    doLast {
+        def versionName = getAppVersionCode() + 1
+        def str = versionName.toString()
+        def length = str.length()
+        def newVersionName = ""
+        for (int i = 0; i < length; i++) {
+            newVersionName += str.charAt(i)
+            if (i < 2) {
+                newVersionName += "."
+            }
+        }
+
+        def versionPropsFile = file('version.properties')
+        def versionProps = new Properties()
+        versionProps.load(new FileInputStream(versionPropsFile))
+        def oldVersionName = versionProps['PROJ_VERSION']
+        versionProps['PROJ_VERSION'] = newVersionName
+        versionProps.store(versionPropsFile.newWriter(), null)
+
+        File configFile = new File("README.md")
+        String exportText = configFile.text
+        String text = exportText.replaceAll("io.github.FlyJingFish.AndroidAop:android-aop-plugin:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-plugin:"+newVersionName)
+        text = text.replaceAll("io.github.FlyJingFish.AndroidAop:android-aop-core:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-core:"+newVersionName)
+        text = text.replaceAll("io.github.FlyJingFish.AndroidAop:android-aop-annotation:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-annotation:"+newVersionName)
+        text = text.replaceAll("io.github.FlyJingFish.AndroidAop:android-aop-processor:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-processor:"+newVersionName)
+
+        configFile.write(text)
+        println("升级版本号完成，versionName = "+newVersionName)
+    }
+}
+def appVersionName = getAppVersionName()
+group = PROJ_GROUP
+version = appVersionName
+apply plugin: "io.github.gradle-nexus.publish-plugin"
+nexusPublishing {
+    repositories {
+        Nexus {
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+            username = ossrhUsername // defaults to project.properties["myNexusUsername"]
+            password = ossrhPassword // defaults to project.properties["myNexusPassword"]
+        }
+    }
+}

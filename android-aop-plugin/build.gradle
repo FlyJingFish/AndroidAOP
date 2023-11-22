@@ -1,0 +1,21 @@
+plugins {
+    id 'groovy'
+    id 'maven-publish'
+    id 'org.jetbrains.kotlin.jvm'
+}
+javadoc {
+    title = "LightAop Plugin ${version} API"
+    options.bottom = 'LightAop'
+}
+apply from: "$rootDir/gradle/java_base.gradle"
+apply from: "$rootDir/gradle/java_publish.gradle"
+
+dependencies {
+    implementation gradleApi()
+    implementation localGroovy()
+    implementation 'com.android.tools.build:gradle:8.0.0'
+    implementation 'org.ow2.asm:asm:9.2'
+    implementation 'org.ow2.asm:asm-commons:9.2'
+    implementation 'org.javassist:javassist:3.29.2-GA'
+    implementation 'com.google.code.gson:gson:2.8.9'
+}

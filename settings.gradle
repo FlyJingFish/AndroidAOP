@@ -1,0 +1,26 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+//        maven { url "https://s01.oss.sonatype.org/content/repositories/iogithubflyjingfish-1282" }
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        mavenLocal()
+        google()
+        mavenCentral()
+//        maven { url "https://s01.oss.sonatype.org/content/repositories/iogithubflyjingfish-1282" }
+        maven { url 'https://jitpack.io' }
+    }
+}
+rootProject.name = "AndroidAOP"
+include ':app'
+include ':android-aop-annotation'
+include ':android-aop-processor'
+include ':android-aop-plugin'
+include ':android-aop-core'
+include ':test-lib'

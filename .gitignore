@@ -1,0 +1,14 @@
+# Project exclude paths
+/.gradle/
+/android-aop-annotation/build/
+/android-aop-annotation/build/classes/java/main/
+/android-aop-core/build/
+/android-aop-core/build/intermediates/javac/debug/classes/
+/android-aop-plugin/build/
+/android-aop-plugin/build/classes/java/main/
+/android-aop-processor/build/
+/android-aop-processor/build/classes/java/main/
+/app/build/
+/app/build/intermediates/javac/debug/classes/
+/test-lib/build/
+/test-lib/build/intermediates/javac/debug/classes/

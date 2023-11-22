@@ -1,0 +1,15 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+//    id 'light.aop'
+}
+apply from: "$rootDir/gradle/android_base.gradle"
+apply from: "$rootDir/gradle/android_publish.gradle"
+android {
+    namespace 'com.flyjingfish.android_aop_core'
+}
+
+dependencies {
+    implementation project(path: ':android-aop-annotation')
+    annotationProcessor project(path: ':android-aop-processor')
+}
