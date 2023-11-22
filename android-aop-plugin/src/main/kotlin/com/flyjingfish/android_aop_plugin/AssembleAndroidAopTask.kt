@@ -1,11 +1,11 @@
 package com.flyjingfish.android_aop_plugin
 
+import com.flyjingfish.android_aop_plugin.scanner_visitor.AnnotationMethodScanner
+import com.flyjingfish.android_aop_plugin.scanner_visitor.AnnotationScanner
 import com.flyjingfish.android_aop_plugin.utils.Utils.MethodAnnoUtils
 import com.flyjingfish.android_aop_plugin.beans.ClassMethodRecord
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.WovenInfo
-import com.flyjingfish.android_aop_plugin.scanner_visitor.AnnotationMethodScanner
-import com.flyjingfish.android_aop_plugin.scanner_visitor.AnnotationScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.RegisterMapWovenInfoCode
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import com.flyjingfish.android_aop_plugin.utils.AndroidConfig
@@ -149,7 +149,10 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     if (file.name.endsWith(END_NAME)) {
                         FileInputStream(file).use { inputs ->
                             val classReader = ClassReader(inputs.readAllBytes())
-                            classReader.accept(AnnotationScanner(logger), ClassReader.EXPAND_FRAMES)
+                            classReader.accept(
+                                AnnotationScanner(
+                                    logger
+                                ), ClassReader.EXPAND_FRAMES)
                         }
                     }
 
@@ -173,7 +176,10 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     if (entryName.endsWith(END_NAME)) {
                         jarFile.getInputStream(jarEntry).use { inputs ->
                             val classReader = ClassReader(inputs.readAllBytes())
-                            classReader.accept(AnnotationScanner(logger), ClassReader.EXPAND_FRAMES)
+                            classReader.accept(
+                                AnnotationScanner(
+                                    logger
+                                ), ClassReader.EXPAND_FRAMES)
                         }
                     }
                 } catch (e: Exception) {
@@ -199,9 +205,10 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             if (bytes.isNotEmpty()){
                                 try {
                                     val classReader = ClassReader(bytes)
-                                    classReader.accept(AnnotationMethodScanner(logger
-                                        , bytes) {
-                                        val record = ClassMethodRecord(file.absolutePath,it)
+                                    classReader.accept(AnnotationMethodScanner(
+                                        logger, bytes
+                                    ) {
+                                        val record = ClassMethodRecord(file.absolutePath, it)
                                         WovenInfoUtils.addClassMethodRecords(record)
                                         logger.error("Scanned method:[${file.absolutePath}][${it}]")
                                     }, ClassReader.EXPAND_FRAMES)
@@ -231,9 +238,10 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             if (bytes.isNotEmpty()){
                                 try {
                                     val classReader = ClassReader(bytes)
-                                    classReader.accept(AnnotationMethodScanner(logger
-                                        ,bytes) {
-                                        val record = ClassMethodRecord(entryName,it)
+                                    classReader.accept(AnnotationMethodScanner(
+                                        logger, bytes
+                                    ) {
+                                        val record = ClassMethodRecord(entryName, it)
                                         WovenInfoUtils.addClassMethodRecords(record)
                                         logger.error("Scanned method:[${entryName}][${it}]")
                                     }, ClassReader.EXPAND_FRAMES)

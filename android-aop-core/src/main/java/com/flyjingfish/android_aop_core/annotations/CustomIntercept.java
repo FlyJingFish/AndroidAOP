@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * 自定义拦截，此注解可以加到方法和构造器上
  */
 @AndroidAopPointCut(CustomInterceptCut.class)
-@Target({ElementType.METHOD,ElementType.CONSTRUCTOR})
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CustomIntercept {
     String[] value() default {};

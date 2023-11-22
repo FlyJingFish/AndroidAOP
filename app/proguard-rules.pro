@@ -22,16 +22,16 @@
 
 # LightAop必备混淆规则 -----start-----
 
--keep @com.flyjingfish.light_aop_annotation.* class * {*;}
+
 -keep @com.flyjingfish.android_aop_core.annotations.* class * {*;}
--keep @org.aspectj.lang.annotation.* class * {*;}
+-keep @com.flyjingfish.android_aop_annotation.anno.* class * {*;}
 -keep class * {
     @com.flyjingfish.android_aop_core.annotations.* <fields>;
-    @org.aspectj.lang.annotation.* <fields>;
+    @com.flyjingfish.android_aop_annotation.anno.* <fields>;
 }
 -keepclassmembers class * {
     @com.flyjingfish.android_aop_core.annotations.* <methods>;
-    @org.aspectj.lang.annotation.* <methods>;
+    @com.flyjingfish.android_aop_annotation.anno.* <methods>;
 }
 
 -keepnames class * implements com.flyjingfish.android_aop_annotation.BasePointCut
@@ -49,6 +49,8 @@
 -keepclassmembers class * implements com.flyjingfish.android_aop_annotation.MatchClassMethod{
     <methods>;
 }
+
+# AndroidAop必备混淆规则 -----end-----
 # LightAop必备混淆规则 -----end-----
 
 
