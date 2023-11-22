@@ -134,7 +134,7 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
 
 - **@AndroidAopPointCut** 是只能在方法上做切面的，上述中注解都是通过这个做的
 
-下面以 @CustomIntercept 为例介绍下该如何使用
+下面以 @CustomIntercept 为例介绍下该如何使用（⚠️注意：自定义的注解，请使用Java代码来写，目前版本还未适配Kotlin，其他代码都可以用Kotlin）
 
 ```java
 @AndroidAopPointCut(CustomInterceptCut.class)
