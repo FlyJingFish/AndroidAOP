@@ -11,6 +11,7 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -76,6 +77,19 @@ public class AndroidAopProcessor extends AbstractProcessor {
                 Name name1 = element.getSimpleName();
                 AndroidAopPointCut cut = element.getAnnotation(AndroidAopPointCut.class);
                 Target target = element.getAnnotation(Target.class);
+                if (target == null){
+                    throw new IllegalArgumentException("注意：" + "请给 "+name1+" 设置 @Target 为ElementType.METHOD ");
+                }
+                ElementType[] elementTypes = target.value();
+                if (elementTypes.length > 1){
+                    throw new IllegalArgumentException("注意：" + name1 + "只可以设置 @Target 为 ElementType.METHOD 这一种");
+                }else if (elementTypes.length == 1){
+                    if (elementTypes[0] != ElementType.METHOD){
+                        throw new IllegalArgumentException("注意：" + "请给 "+name1+" 设置 @Target 为ElementType.METHOD ");
+                    }
+                }else {
+                    throw new IllegalArgumentException("注意：" + "请给 "+name1+" 设置 @Target 为ElementType.METHOD ");
+                }
                 String className;
                 try{
                     className = cut.value().getName();
@@ -115,7 +129,6 @@ public class AndroidAopProcessor extends AbstractProcessor {
                 Name name1 = element.getSimpleName();
 //                System.out.println("======"+element);
                 AndroidAopMatchClassMethod cut = element.getAnnotation(AndroidAopMatchClassMethod.class);
-                Target target = element.getAnnotation(Target.class);
                 String className = cut.targetClassName();
                 String[] methodNames = cut.methodName();
                 StringBuilder stringBuilder = new StringBuilder();

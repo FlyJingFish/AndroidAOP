@@ -6,7 +6,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/FlyJingFish/AndroidAop.svg)](https://github.com/FlyJingFish/AndroidAop/issues)
 [![GitHub license](https://img.shields.io/github/license/FlyJingFish/AndroidAop.svg)](https://github.com/FlyJingFish/AndroidAop/blob/master/LICENSE)
 
-AndroidAOP 是专属于 Android 端 Aop 框架，没有使用 AspectJ，也可以定制出属于你的 Aop 代码，心动不如行动，赶紧用起来吧
+AndroidAOP 是专属于 Android 端 Aop 框架，**没有使用 AspectJ**，也可以定制出属于你的 Aop 代码，心动不如行动，赶紧用起来吧
 
 ## 特色功能
 
@@ -15,6 +15,8 @@ AndroidAOP 是专属于 Android 端 Aop 框架，没有使用 AspectJ，也可�
 2、本库支持让你自己做切面，语法简单易上手
 
 3、本库支持 Java 和 Kotlin 代码
+
+**4、本库没有使用 AspectJ，织入代码量极少，侵入性极低**
 
 ## 使用步骤
 
@@ -62,7 +64,7 @@ dependencies {
 | @OnLifecycle     |  value = Lifecycle.Event   | 监听生命周期的操作，加入此注解可使你的方法内的代码在对应生命周期内才去执行 |
 | @TryCatch        |    value = 你自定义加的一个flag    |     加入此注解可为您的方法包裹一层 try catch 代码      |
 | @Permission      |      value = 权限的字符串数组      |     申请权限的操作，加入此注解可使您的代码在获取权限后才执行      |
-| @CustomIntercept | value = 你自定义加的一个字符串数组的flag |         自定义拦截，此注解可以加到方法和构造器上          |
+| @CustomIntercept | value = 你自定义加的一个字符串数组的flag |           自定义拦截，此注解可以加到方法上            |
 
 
 ### 下面着重介绍下 @TryCatch @Permission @CustomIntercept
@@ -128,7 +130,7 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
 
 ## 本库中提供了 @AndroidAopPointCut 和 @AndroidAopMatchClassMethod 两种切面供你使用
 
-- **@AndroidAopPointCut** 是在方法上和构造器上做切面的，上述中注解都是通过这个做的
+- **@AndroidAopPointCut** 是只能在方法上做切面的，上述中注解都是通过这个做的
 
 下面以 @CustomIntercept 为例介绍下该如何使用
 
