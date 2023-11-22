@@ -193,7 +193,7 @@ public class MatchActivityOnCreate implements MatchClassMethod {
 下边是涉及到本库的一些必须混淆规则
 
 ```
-# LightAop必备混淆规则 -----start-----
+# AndroidAop必备混淆规则 -----start-----
 
 
 -keep @com.flyjingfish.android_aop_core.annotations.* class * {*;}
