@@ -1,12 +1,12 @@
 # AndroidAOP
 
-AndroidAOP 是专属于 Android 端 Aop 框架，没有使用 AspectJ，也可以定制出属于你的 Aop 代码，心动不如行动，赶紧用起来吧
-
 [![Maven central](https://img.shields.io/maven-central/v/io.github.FlyJingFish.AndroidAop/light-aop-core)](https://central.sonatype.com/search?q=io.github.FlyJingFish.AndroidAop)
 [![GitHub stars](https://img.shields.io/github/stars/FlyJingFish/AndroidAop.svg)](https://github.com/FlyJingFish/AndroidAop/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/FlyJingFish/AndroidAop.svg)](https://github.com/FlyJingFish/AndroidAop/network/members)
 [![GitHub issues](https://img.shields.io/github/issues/FlyJingFish/AndroidAop.svg)](https://github.com/FlyJingFish/AndroidAop/issues)
 [![GitHub license](https://img.shields.io/github/license/FlyJingFish/AndroidAop.svg)](https://github.com/FlyJingFish/AndroidAop/blob/master/LICENSE)
+
+AndroidAOP 是专属于 Android 端 Aop 框架，没有使用 AspectJ，也可以定制出属于你的 Aop 代码，心动不如行动，赶紧用起来吧
 
 ## 特色功能
 

@@ -43,7 +43,7 @@ android {
         release {
             storeFile file(rootProject.file("keystore"))
             storePassword '123456'
-            keyAlias 'lightAop'
+            keyAlias 'android_aop'
             keyPassword '123456'
         }
     }
