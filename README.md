@@ -65,8 +65,11 @@ dependencies {
 | @Permission      |      value = 权限的字符串数组      |     申请权限的操作，加入此注解可使您的代码在获取权限后才执行      |
 | @CustomIntercept | value = 你自定义加的一个字符串数组的flag |           自定义拦截，此注解可以加到方法上            |
 
+### 这块强调一下 @OnLifecycle
 
-### 下面着重介绍下 @TryCatch @Permission @CustomIntercept
+@OnLifecycle 必须加到的方法必须属于继承自 FragmentActivity 或 Fragment的方法才有用
+
+### 下面再着重介绍下 @TryCatch @Permission @CustomIntercept
 
 - @TryCatch 使用此注解你可以设置
 ```java

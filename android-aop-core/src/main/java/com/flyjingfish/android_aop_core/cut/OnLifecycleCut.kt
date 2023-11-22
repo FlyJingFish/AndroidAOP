@@ -1,6 +1,7 @@
 package com.flyjingfish.android_aop_core.cut
 
 import android.os.Looper
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -23,16 +24,33 @@ class OnLifecycleCut : BasePointCut<OnLifecycle> {
     }
 
     private fun invokeLifecycle(joinPoint: ProceedJoinPoint, annotation: OnLifecycle){
-        val target = joinPoint.target
-        if(target is FragmentActivity){
-            target.lifecycle.addObserver(object : LifecycleEventObserver{
-                override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                    if (event == annotation.value){
-                        source.lifecycle.removeObserver(this)
-                        joinPoint.proceed()
+        when (val target = joinPoint.target) {
+            is FragmentActivity -> {
+                target.lifecycle.addObserver(object : LifecycleEventObserver{
+                    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+                        if (event == annotation.value){
+                            source.lifecycle.removeObserver(this)
+                            joinPoint.proceed()
+                        }
                     }
-                }
-            })
+                })
+            }
+
+            is Fragment -> {
+                target.viewLifecycleOwner.lifecycle.addObserver(object : LifecycleEventObserver{
+                    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+                        if (event == annotation.value){
+                            source.lifecycle.removeObserver(this)
+                            joinPoint.proceed()
+                        }
+                    }
+                })
+            }
+
+            else -> {
+                joinPoint.proceed()
+            }
         }
+
     }
 }
