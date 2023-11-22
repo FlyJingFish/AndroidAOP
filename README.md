@@ -244,4 +244,20 @@ public class MatchActivityOnCreate implements MatchClassMethod {
 # 你自定义的混淆规则 -----end-----
 ```
 
+### 赞赏
+
+都看到这里了，如果您喜欢 AndroidAOP，或感觉 AndroidAOP 帮助到了您，可以点右上角“Star”支持一下，您的支持就是我的动力，谢谢～ 😃
+
+如果感觉 AndroidAOP 为您节约了大量开发时间、为您的项目增光添彩，您也可以扫描下面的二维码，请作者喝杯咖啡 ☕
+
+<div>
+<img src="/screenshot/IMG_4075.PNG" width="280" height="350">
+<img src="/screenshot/IMG_4076.JPG" width="280" height="350">
+</div>
+
+### 联系方式
+
+* 有问题可以加群大家一起交流 [QQ：641697838](https://qm.qq.com/cgi-bin/qm/qr?k=w2qDbv_5bpLl0lO0qjXxijl3JHCQgtXx&jump_from=webapi&authKey=Q6/YB+7q9BvOGbYv1qXZGAZLigsfwaBxDC8kz03/5Pwy7018XunUcHoC11kVLqCb)
+
+<img src="/screenshot/qq.png" width="220"/>
 
