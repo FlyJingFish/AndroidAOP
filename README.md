@@ -6,8 +6,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/FlyJingFish/AndroidAop.svg)](https://github.com/FlyJingFish/AndroidAop/issues)
 [![GitHub license](https://img.shields.io/github/license/FlyJingFish/AndroidAop.svg)](https://github.com/FlyJingFish/AndroidAop/blob/master/LICENSE)
 
-AndroidAOP 是专属于 Android 端 Aop 框架，**没有使用 AspectJ**，也可以定制出属于你的 Aop 代码，心动不如行动，赶紧用起来吧
-
+### AndroidAOP 是专属于 Android 端 Aop 框架，**没有使用 AspectJ**，也可以定制出属于你的 Aop 代码，心动不如行动，赶紧用起来吧
 ## 特色功能
 
 1、本库内置了开发中常用的一些切面注解供你使用
@@ -167,14 +166,19 @@ class CustomInterceptCut : BasePointCut<CustomIntercept> {
 - **@AndroidAopMatchClassMethod** 是做匹配类和类方法的切面的
 
 ```kotlin
-@AndroidAopMatchClassMethod(targetClassName = "com.flyjingfish.test_lib.BaseActivity", methodName = {"onCreate","onResume"})
+@AndroidAopMatchClassMethod(
+    targetClassName = "com.flyjingfish.test_lib.BaseActivity",
+    methodName = ["onCreate", "onResume", "onTest"]
+)
 class MatchActivityOnCreate : MatchClassMethod {
-    override fun invoke(joinPoint: ProceedJoinPoint, @NonNull methodName:String):Any? {
-        Log.e("MatchActivityOnCreate","invoke=$methodName");
+    override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
+        Log.e("MatchActivityMethod", "=====invoke=====$methodName")
         return try {
-            joinPoint.proceed();
-        } catch (e:Throwable) {
-            null;
+            joinPoint.proceed()
+        } catch (e: InvocationTargetException) {
+            throw RuntimeException(e)
+        } catch (e: IllegalAccessException) {
+            throw RuntimeException(e)
         }
     }
 }
@@ -240,6 +244,17 @@ class MatchActivityOnCreate : MatchClassMethod {
     @com.flyjingfish.test_lib.annotation.* <methods>;
 }
 # 你自定义的混淆规则 -----end-----
+```
+
+如果你用到了 **@AndroidAopMatchClassMethod** 做切面，那你需要为切面内的方法做混淆处理
+下面是上文提到的 **MatchActivityOnCreate** 类的匹配规则，对应的逻辑是 匹配的 为继承自 com.flyjingfish.test_lib.BaseActivity 的类的 onCreate ，onResume，onTest三个方法加入切面
+
+```
+-keepnames class * extends com.flyjingfish.test_lib.BaseActivity{
+    void onCreate(...);
+    void onResume(...);
+    void onTest(...);
+}
 ```
 
 ### 赞赏

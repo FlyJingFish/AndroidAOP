@@ -11,7 +11,7 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod;
 
 import java.lang.reflect.InvocationTargetException;
 
-@AndroidAopMatchClassMethod(targetClassName = "com.flyjingfish.test_lib.BaseActivity",methodName = {"onCreate","onResume"})
+@AndroidAopMatchClassMethod(targetClassName = "com.flyjingfish.test_lib.BaseActivity",methodName = {"onCreate","onResume","onTest"})
 public class MatchActivityMethod implements MatchClassMethod {
     @Nullable
     @Override

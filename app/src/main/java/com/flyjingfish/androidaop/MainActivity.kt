@@ -32,6 +32,7 @@ class MainActivity: BaseActivity() {
         }
 
         findViewById<Button>(R.id.haha2).setOnClickListener {
+            onTest()
             round?.getRunnable()
 
             val number = onDoubleClick()
@@ -85,6 +86,10 @@ class MainActivity: BaseActivity() {
         var number = 1;
         number = o!!.number
         return number
+    }
+
+    override fun onTest(){
+
     }
 
 }
