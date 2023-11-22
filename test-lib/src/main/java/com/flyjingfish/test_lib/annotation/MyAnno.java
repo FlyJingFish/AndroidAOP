@@ -11,7 +11,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @AndroidAopPointCut(MyAnnoCut.class)
-@Target({ElementType.TYPE,ElementType.METHOD,ElementType.CONSTRUCTOR})
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Keep
 public @interface MyAnno {

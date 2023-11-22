@@ -8,7 +8,7 @@ public class ProceedJoinPoint {
     public Object target;
     private Method targetMethod;
     private Method originalMethod;
-    private AopMethod targetLightMethod;
+    private AopMethod targetAopMethod;
     public Object proceed() throws InvocationTargetException, IllegalAccessException {
         return proceed(args);
     }
@@ -17,17 +17,17 @@ public class ProceedJoinPoint {
     }
 
     public AopMethod getTargetMethod() {
-        return targetLightMethod;
+        return targetAopMethod;
     }
 
-    public void setTargetMethod(Method targetMethod) {
+    void setTargetMethod(Method targetMethod) {
         this.targetMethod = targetMethod;
     }
 
-    public void setOriginalMethod(Method originalMethod) {
+    void setOriginalMethod(Method originalMethod) {
         this.originalMethod = originalMethod;
-        targetLightMethod = new AopMethod();
-        targetLightMethod.setOriginalMethod(originalMethod);
+        targetAopMethod = new AopMethod();
+        targetAopMethod.setOriginalMethod(originalMethod);
     }
 
     public Object getTarget() {

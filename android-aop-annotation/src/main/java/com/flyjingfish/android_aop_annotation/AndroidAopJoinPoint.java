@@ -6,7 +6,6 @@ import java.lang.reflect.Method;
 
 public class AndroidAopJoinPoint {
     public Object joinPointExecute(){
-        System.out.println("------joinPointExecute-----");
         ProceedJoinPoint proceedJoinPoint = new ProceedJoinPoint();
         proceedJoinPoint.target = target;
         proceedJoinPoint.args = mArgs;
@@ -67,11 +66,10 @@ public class AndroidAopJoinPoint {
                 classes = new Class[args.length];
                 int index = 0;
                 for (String className : mArgClassNames) {
-                    //TODO TXY:: 这块空指针了
                     try {
                         Class c = Class.forName(className);
                         classes[index] = c;
-                    } catch (ClassNotFoundException e) {
+                    } catch (ClassNotFoundException ignored) {
                     }
 
                     index++;

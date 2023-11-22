@@ -60,7 +60,6 @@ public class AndroidAopProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
-        System.out.println("======AndroidAopProcessor======"+set.size());
         if (isEmpty(set)){
             return false;
         }

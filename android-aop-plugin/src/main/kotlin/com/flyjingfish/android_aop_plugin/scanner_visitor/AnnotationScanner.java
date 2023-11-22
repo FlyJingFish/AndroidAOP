@@ -23,7 +23,6 @@ public class AnnotationScanner extends ClassVisitor {
 
     @Override
     public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
-        logger.error("annotation ClassVisitor type: " + descriptor);
         if (descriptor.contains(CLASS_POINT)){
             isLightAopClass = true;
         }
@@ -42,7 +41,6 @@ public class AnnotationScanner extends ClassVisitor {
         @Override
         public void visit(String name, Object value) {
             if (isLightAopClass){
-                logger.error("annotation: " + name + " = " + value);
                 if (name.equals("value")) {
                     anno = value.toString();
                 }
@@ -84,7 +82,6 @@ public class AnnotationScanner extends ClassVisitor {
         @Override
         public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
             if (isLightAopClass){
-                logger.error("annotation MethodVisitor type: " + descriptor);
                 if (descriptor.contains(METHOD_POINT)||descriptor.contains(MATCH_POINT)){
                     return new MethodAnnoVisitor();
                 }else {
@@ -100,7 +97,6 @@ public class AnnotationScanner extends ClassVisitor {
     public MethodVisitor visitMethod(int access, String name, String descriptor,
                                      String signature, String[] exceptions) {
         if (isLightAopClass){
-            logger.error("method: name = " + name+",desc="+descriptor+",signature="+signature);
             return new MyMethodVisitor();
         }else {
             return super.visitMethod(access, name, descriptor, signature, exceptions);

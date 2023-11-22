@@ -123,7 +123,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 //            WovenInfoUtils.classPaths = wovenInfo.classPaths
 //        }
 
-        logger.error("buildConfigCacheFile = ${buildConfigCacheFile.absolutePath}")
+//        logger.error("buildConfigCacheFile = ${buildConfigCacheFile.absolutePath}")
 
         jarOutput = JarOutputStream(BufferedOutputStream(FileOutputStream(output.get().asFile)))
         val scanTimeCost = measureTimeMillis {
@@ -193,7 +193,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
         saveBuildConfig()
         ClassPoolUtils.initClassPool()
-        logger.error("第二遍找到要注入代码的类---------")
+//        logger.error("第二遍找到要注入代码的类---------")
         //第二遍找配置有注解的类和方法
         allDirectories.get().forEach { directory ->
             directory.asFile.walk().forEach { file ->
@@ -210,7 +210,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     ) {
                                         val record = ClassMethodRecord(file.absolutePath, it)
                                         WovenInfoUtils.addClassMethodRecords(record)
-                                        logger.error("Scanned method:[${file.absolutePath}][${it}]")
+//                                        logger.error("Scanned method:[${file.absolutePath}][${it}]")
                                     }, ClassReader.EXPAND_FRAMES)
                                 } catch (e: Exception) {
                                 }
@@ -243,7 +243,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     ) {
                                         val record = ClassMethodRecord(entryName, it)
                                         WovenInfoUtils.addClassMethodRecords(record)
-                                        logger.error("Scanned method:[${entryName}][${it}]")
+//                                        logger.error("Scanned method:[${entryName}][${it}]")
                                     }, ClassReader.EXPAND_FRAMES)
                                 } catch (e: Exception) {
                                 }
@@ -258,7 +258,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             }
             jarFile.close()
         }
-        logger.error("第三遍---------")
+//        logger.error("第三遍---------")
         allDirectories.get().forEach { directory ->
 //            logger.error("Scan to directory1 [${directory.asFile.absolutePath}]")
             directory.asFile.walk().forEach { file ->
@@ -269,7 +269,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
                     val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(file.absolutePath)
                     if (methodsRecord != null){
-                        logger.error("Scan to methodsRecord [${methodsRecord}]")
+//                        logger.error("Scan to methodsRecord [${methodsRecord}]")
                         FileInputStream(file).use { inputs ->
                             val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),methodsRecord)
                             jarOutput!!.putNextEntry(JarEntry(relativePath.replace(File.separatorChar, '/')))

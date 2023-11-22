@@ -136,7 +136,6 @@ public class AnnotationMethodScanner extends ClassVisitor {
     public MethodVisitor visitMethod(int access, String name, String descriptor,
                                      String signature, String[] exceptions) {
         if (isDescendantClass){
-            logger.error("AnnotationMethodScanner method: name = " + name);
             for (String methodName : aopMatchCut.getMethodNames()) {
                 if (methodName.equals(name)){
                     boolean isBack = true;
@@ -166,7 +165,6 @@ public class AnnotationMethodScanner extends ClassVisitor {
     public void visitEnd() {
         super.visitEnd();
         if (isDescendantClass){
-            logger.error("AnnotationMethodScanner visitEnd");
             for (MethodRecord cacheMethodRecord : cacheMethodRecords) {
                 if (onCallBackMethod != null){
                     onCallBackMethod.onBackName(cacheMethodRecord);
