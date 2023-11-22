@@ -17,7 +17,7 @@ class TryCatchCut : BasePointCut<TryCatch> {
             if (TextUtils.isEmpty(flag)) {
                 flag = Utils.getMethodName(joinPoint)
             }
-            result =  AndroidAop.getOnThrowableListener()?.handleThrowable(flag, e)
+            result =  AndroidAop.getOnThrowableListener()?.handleThrowable(flag, e,tryCatch)
         }
         return result
     }

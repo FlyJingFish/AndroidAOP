@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint;
 import com.flyjingfish.android_aop_core.annotations.CustomIntercept;
 import com.flyjingfish.android_aop_core.annotations.Permission;
+import com.flyjingfish.android_aop_core.annotations.TryCatch;
 import com.flyjingfish.android_aop_core.listeners.OnCustomInterceptListener;
 import com.flyjingfish.android_aop_core.listeners.OnPermissionsInterceptListener;
 import com.flyjingfish.android_aop_core.listeners.OnRequestPermissionListener;
@@ -51,7 +52,7 @@ public class MyApp extends Application {
         AndroidAop.INSTANCE.setOnThrowableListener(new OnThrowableListener() {
             @Nullable
             @Override
-            public Object handleThrowable(@NonNull String flag, @Nullable Throwable throwable) {
+            public Object handleThrowable(@NonNull String flag, @Nullable Throwable throwable,TryCatch tryCatch) {
                 // TODO: 2023/11/11 发生异常可根据你当时传入的flag作出相应处理，如果需要改写返回值，则在 return 处返回即可
                 Log.e("ThrowableListener","handleThrowable");
                 return 3;
