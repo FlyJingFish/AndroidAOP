@@ -12,6 +12,8 @@ import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -76,6 +78,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
                 Name name1 = element.getSimpleName();
                 AndroidAopPointCut cut = element.getAnnotation(AndroidAopPointCut.class);
                 Target target = element.getAnnotation(Target.class);
+                Retention retention = element.getAnnotation(Retention.class);
                 if (target == null){
                     throw new IllegalArgumentException("注意：" + "请给 "+name1+" 设置 @Target 为ElementType.METHOD ");
                 }
@@ -84,11 +87,21 @@ public class AndroidAopProcessor extends AbstractProcessor {
                     throw new IllegalArgumentException("注意：" + name1 + "只可以设置 @Target 为 ElementType.METHOD 这一种");
                 }else if (elementTypes.length == 1){
                     if (elementTypes[0] != ElementType.METHOD){
-                        throw new IllegalArgumentException("注意：" + "请给 "+name1+" 设置 @Target 为ElementType.METHOD ");
+                        throw new IllegalArgumentException("注意：" + "请给 "+name1+" 设置 @Target 为 ElementType.METHOD ");
                     }
                 }else {
-                    throw new IllegalArgumentException("注意：" + "请给 "+name1+" 设置 @Target 为ElementType.METHOD ");
+                    throw new IllegalArgumentException("注意：" + "请给 "+name1+" 设置 @Target 为 ElementType.METHOD ");
                 }
+                if (retention == null){
+                    throw new IllegalArgumentException("注意：" + "请给 "+name1+" 设置 @Retention 为 RetentionPolicy.RUNTIME ");
+                }
+                RetentionPolicy retentionPolicy = retention.value();
+                if (retentionPolicy == null){
+                    throw new IllegalArgumentException("注意：" + "请给 "+name1+" 设置 @Retention 为 RetentionPolicy.RUNTIME ");
+                }else if (retentionPolicy != RetentionPolicy.RUNTIME){
+                    throw new IllegalArgumentException("注意：" + "必须给 "+name1+" 设置 @Retention 为 RetentionPolicy.RUNTIME ");
+                }
+
                 String className;
                 try{
                     className = cut.value().getName();
