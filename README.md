@@ -24,7 +24,7 @@
 ```gradle
 buildscript {
     dependencies {
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.0.1'
+        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.0.2'
     }
 }
 ```
@@ -45,10 +45,10 @@ plugins {
 ```gradle
 dependencies {
     //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.0.1'
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.0.1'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.0.2'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.0.2'
     //非必须项 👇，如果你想自定义切面需要用到 ⚠️如果是kotlin项目 也要用 annotationProcessor
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.0.1'
+    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.0.2'
 }
 ```
 
@@ -67,7 +67,7 @@ dependencies {
 
 ### 这块强调一下 @OnLifecycle
 
-@OnLifecycle 必须加到的方法必须属于继承自 FragmentActivity 或 Fragment的方法才有用
+**@OnLifecycle 加到的位置必须是属于直接或间接继承自 FragmentActivity 或 Fragment的方法才有用（即这个方法是属于 FragmentActivity 或 Fragment的类）**
 
 ### 下面再着重介绍下 @TryCatch @Permission @CustomIntercept
 
@@ -76,7 +76,7 @@ dependencies {
 AndroidAop.INSTANCE.setOnThrowableListener(new OnThrowableListener() {
     @Nullable
     @Override
-    public Object handleThrowable(@NonNull String flag, @Nullable Throwable throwable) {
+    public Object handleThrowable(@NonNull String flag, @Nullable Throwable throwable,TryCatch tryCatch) {
         // TODO: 2023/11/11 发生异常可根据你当时传入的flag作出相应处理，如果需要改写返回值，则在 return 处返回即可
         return 3;
     }
