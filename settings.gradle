@@ -4,7 +4,7 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
-//        maven { url "https://s01.oss.sonatype.org/content/repositories/iogithubflyjingfish-1282" }
+//        maven { url "https://s01.oss.sonatype.org/content/repositories/iogithubflyjingfish-1286" }
     }
 }
 dependencyResolutionManagement {
@@ -13,7 +13,7 @@ dependencyResolutionManagement {
         mavenLocal()
         google()
         mavenCentral()
-//        maven { url "https://s01.oss.sonatype.org/content/repositories/iogithubflyjingfish-1282" }
+//        maven { url "https://s01.oss.sonatype.org/content/repositories/iogithubflyjingfish-1286" }
         maven { url 'https://jitpack.io' }
     }
 }

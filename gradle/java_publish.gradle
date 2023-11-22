@@ -19,10 +19,10 @@ sourceSets {
 
 
 
-//task javadocJar(type: Jar, dependsOn: javadoc) {
-//    archiveClassifier.set("javadoc")
-//    from 'build/docs/javadoc'
-//}
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveClassifier.set("javadoc")
+    from 'build/docs/javadoc'
+}
 
 task sourcesJar(type: Jar) {
     archiveClassifier.set("sources")
@@ -34,7 +34,7 @@ afterEvaluate {
             mavenJava(MavenPublication) {
                 artifactId = PROJ_NAME
                 from(components.java)
-//                artifact javadocJar
+                artifact javadocJar
                 artifact sourcesJar
                 pom {
                     packaging = "jar"
