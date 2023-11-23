@@ -340,10 +340,9 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
 
                 } catch (e: Exception) {
-                    throw RuntimeException(e)
-//                    if (!(e is ZipException && e.message?.startsWith("duplicate entry:") == true)) {
-//                        logger.warn("Merge jar error entry:[${jarEntry.name}], error message:$e")
-//                    }
+                    if (!(e is ZipException && e.message?.startsWith("duplicate entry:") == true)) {
+                        logger.error("Merge jar error entry:[${jarEntry.name}], error message:$e")
+                    }
                 }
             }
             jarFile.close()
