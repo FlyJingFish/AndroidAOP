@@ -15,7 +15,7 @@ public class AnnotationScanner extends ClassVisitor {
     static final String CLASS_POINT = "Lcom/flyjingfish/android_aop_annotation/anno/AndroidAopClass";
     static final String METHOD_POINT = "Lcom/flyjingfish/android_aop_annotation/anno/AndroidAopMethod";
     static final String MATCH_POINT = "Lcom/flyjingfish/android_aop_annotation/anno/AndroidAopMatch";
-    boolean isLightAopClass;
+    boolean isAndroidAopClass;
     public AnnotationScanner(Logger logger) {
         super(Opcodes.ASM8);
         this.logger = logger;
@@ -24,7 +24,7 @@ public class AnnotationScanner extends ClassVisitor {
     @Override
     public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
         if (descriptor.contains(CLASS_POINT)){
-            isLightAopClass = true;
+            isAndroidAopClass = true;
         }
         return super.visitAnnotation(descriptor, visible);
     }
@@ -40,7 +40,7 @@ public class AnnotationScanner extends ClassVisitor {
         }
         @Override
         public void visit(String name, Object value) {
-            if (isLightAopClass){
+            if (isAndroidAopClass){
                 if (name.equals("value")) {
                     anno = value.toString();
                 }
@@ -81,7 +81,7 @@ public class AnnotationScanner extends ClassVisitor {
         }
         @Override
         public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
-            if (isLightAopClass){
+            if (isAndroidAopClass){
                 if (descriptor.contains(METHOD_POINT)||descriptor.contains(MATCH_POINT)){
                     return new MethodAnnoVisitor();
                 }else {
@@ -96,7 +96,7 @@ public class AnnotationScanner extends ClassVisitor {
     @Override
     public MethodVisitor visitMethod(int access, String name, String descriptor,
                                      String signature, String[] exceptions) {
-        if (isLightAopClass){
+        if (isAndroidAopClass){
             return new MyMethodVisitor();
         }else {
             return super.visitMethod(access, name, descriptor, signature, exceptions);

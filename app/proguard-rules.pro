@@ -20,7 +20,7 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-# LightAop必备混淆规则 -----start-----
+# AndroidAop必备混淆规则 -----start-----
 
 
 -keep @com.flyjingfish.android_aop_core.annotations.* class * {*;}
@@ -51,7 +51,7 @@
 }
 
 # AndroidAop必备混淆规则 -----end-----
-# LightAop必备混淆规则 -----end-----
+# AndroidAop必备混淆规则 -----end-----
 
 
 # 你自定义的混淆规则 -----start-----

@@ -12,7 +12,7 @@ class AndroidAopPlugin : Plugin<Project> {
         val isApp = project.plugins.hasPlugin(AppPlugin::class.java)
         val logger = project.logger;
         if (!isApp) {
-            logger.error("Plugin ['light.aop'] can only be used under the application, not under the module library invalid!")
+            logger.error("Plugin ['android.aop'] can only be used under the application, not under the module library invalid!")
             return
         }
         val androidComponents = project.extensions.getByType(AndroidComponentsExtension::class.java)

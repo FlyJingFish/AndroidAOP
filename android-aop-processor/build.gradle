@@ -2,8 +2,8 @@ plugins {
     id 'java-library'
 }
 javadoc {
-    title = "LightAop Processor ${version} API"
-    options.bottom = 'LightAop'
+    title = "AndroidAop Processor ${version} API"
+    options.bottom = 'AndroidAop'
 }
 apply from: "$rootDir/gradle/java_base.gradle"
 apply from: "$rootDir/gradle/java_publish.gradle"

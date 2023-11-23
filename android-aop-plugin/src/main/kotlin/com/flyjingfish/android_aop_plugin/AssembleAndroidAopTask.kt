@@ -111,7 +111,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     @TaskAction
     fun taskAction() {
         temporaryDir = File(project.buildDir.absolutePath+"/tmp")
-        buildConfigCacheFile = File(temporaryDir, "buildLightAopConfigCache.json")
+        buildConfigCacheFile = File(temporaryDir, "buildAndroidAopConfigCache.json")
 //        val wovenInfo = loadBuildConfig(buildConfigCacheFile)
 //        if(wovenInfo.aopMatchCuts != null){
 //            WovenInfoUtils.aopMatchCuts = wovenInfo.aopMatchCuts

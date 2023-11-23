@@ -11,7 +11,7 @@ android {
     compileSdk 34
     applicationVariants.all { variant ->
         variant.outputs.each { output ->
-            output.outputFileName = "LightAop-${variant.flavorName}-${variant.buildType.name}-${rootProject.version}-${buildTime()}.apk"
+            output.outputFileName = "AndroidAop-${variant.flavorName}-${variant.buildType.name}-${rootProject.version}-${buildTime()}.apk"
         }
     }
 

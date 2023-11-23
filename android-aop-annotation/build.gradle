@@ -3,8 +3,8 @@ plugins {
     id 'org.jetbrains.kotlin.jvm'
 }
 javadoc {
-    title = "LightAop Annotation ${version} API"
-    options.bottom = 'LightAop'
+    title = "AndroidAop Annotation ${version} API"
+    options.bottom = 'AndroidAop'
 }
 apply from: "$rootDir/gradle/java_base.gradle"
 apply from: "$rootDir/gradle/java_publish.gradle"
