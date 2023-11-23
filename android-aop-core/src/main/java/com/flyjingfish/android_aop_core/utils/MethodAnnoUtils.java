@@ -2,7 +2,7 @@ package com.flyjingfish.android_aop_core.utils;
 
 import com.flyjingfish.android_aop_annotation.JoinAnnoCutUtils;
 
-public class MethodAnnoUtils {
+public final class MethodAnnoUtils {
     public static void registerMap(){
 //        register("");
     }

@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class JoinAnnoCutUtils {
+public final class JoinAnnoCutUtils {
     private static final List<String> list = new ArrayList<>();
     private static final Map<String,String> mAnnoCutMap = new HashMap<>();
     public static void register(String mapValue){

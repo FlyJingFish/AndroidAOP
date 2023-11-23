@@ -3,7 +3,7 @@ package com.flyjingfish.android_aop_annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class ProceedJoinPoint {
+public final class ProceedJoinPoint {
     public Object[] args;
     public Object target;
     private Method targetMethod;

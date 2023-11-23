@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 import com.flyjingfish.android_aop_core.utils.MethodAnnoUtils;
 
 
-public class AndroidAopInitProvider extends ContentProvider {
+public final class AndroidAopInitProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         MethodAnnoUtils.registerMap();

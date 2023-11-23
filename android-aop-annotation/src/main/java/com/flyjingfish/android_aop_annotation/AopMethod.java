@@ -2,7 +2,7 @@ package com.flyjingfish.android_aop_annotation;
 
 import java.lang.reflect.Method;
 
-public class AopMethod {
+public final class AopMethod {
     private Method originalMethod;
     public String name;
     void setOriginalMethod(Method originalMethod) {

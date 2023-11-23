@@ -4,7 +4,7 @@ package com.flyjingfish.android_aop_annotation;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-public class AndroidAopJoinPoint {
+public final class AndroidAopJoinPoint {
     public Object joinPointExecute(){
         ProceedJoinPoint proceedJoinPoint = new ProceedJoinPoint();
         proceedJoinPoint.target = target;
