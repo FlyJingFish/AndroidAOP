@@ -69,7 +69,7 @@ dependencies {
 | @OnLifecycle     |  value = Lifecycle.Event   | 监听生命周期的操作，加入此注解可使你的方法内的代码在对应生命周期内才去执行 |
 | @TryCatch        |    value = 你自定义加的一个flag    |     加入此注解可为您的方法包裹一层 try catch 代码      |
 | @Permission      |      value = 权限的字符串数组      |     申请权限的操作，加入此注解可使您的代码在获取权限后才执行      |
-| @CustomIntercept | value = 你自定义加的一个字符串数组的flag |           自定义拦截，此注解可以加到方法上            |
+| @CustomIntercept | value = 你自定义加的一个字符串数组的flag |           自定义拦截，配合 AndroidAop.setOnCustomInterceptListener 使用，属于万金油           |
 
 ### 这块强调一下 @OnLifecycle
 
