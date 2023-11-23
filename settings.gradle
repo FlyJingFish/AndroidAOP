@@ -1,19 +1,27 @@
 pluginManagement {
     repositories {
-        mavenLocal()
+        if (LocalTest){
+            mavenLocal()
+            System.out.println("pluginManagement=local")
+        }else {
+            System.out.println("pluginManagement=online")
+            maven { url "https://s01.oss.sonatype.org/content/repositories/iogithubflyjingfish-"+SonatypeTestCode }
+        }
         google()
         mavenCentral()
         gradlePluginPortal()
-//        maven { url "https://s01.oss.sonatype.org/content/repositories/iogithubflyjingfish-1291" }
     }
 }
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        mavenLocal()
+        if (LocalTest){
+            mavenLocal()
+        }else {
+            maven { url "https://s01.oss.sonatype.org/content/repositories/iogithubflyjingfish-"+SonatypeTestCode }
+        }
         google()
         mavenCentral()
-//        maven { url "https://s01.oss.sonatype.org/content/repositories/iogithubflyjingfish-1291" }
         maven { url 'https://jitpack.io' }
     }
 }

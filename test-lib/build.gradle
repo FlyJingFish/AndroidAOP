@@ -30,14 +30,22 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    //本地
-    api project(path: ':android-aop-annotation')
-    annotationProcessor project(path: ':android-aop-processor')
-    api project(path: ':android-aop-core')
 
-    //线上
-//    api 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.0.3'
-//    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.0.3'
-//    api 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.0.3'
+    if (LocalTest){
+        //本地
+        System.out.println("test_lib=local")
+        api project(path: ':android-aop-annotation')
+        annotationProcessor project(path: ':android-aop-processor')
+        api project(path: ':android-aop-core')
+    }else {
+        //线上
+        System.out.println("test_lib=online")
+        api 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:'+TestVersion
+        annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:'+TestVersion
+        api 'io.github.FlyJingFish.AndroidAop:android-aop-core:'+TestVersion
+    }
+
+
+
 
 }
