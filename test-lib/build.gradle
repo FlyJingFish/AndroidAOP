@@ -36,8 +36,8 @@ dependencies {
     api project(path: ':android-aop-core')
 
     //线上
-//    api 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.0.1'
-//    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.0.1'
-//    api 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.0.1'
+//    api 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.0.3'
+//    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.0.3'
+//    api 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.0.3'
 
 }

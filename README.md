@@ -24,7 +24,7 @@
 ```gradle
 buildscript {
     dependencies {
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.0.2'
+        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.0.3'
     }
 }
 ```
@@ -45,10 +45,10 @@ plugins {
 ```gradle
 dependencies {
     //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.0.2'
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.0.2'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.0.3'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.0.3'
     //非必须项 👇，如果你想自定义切面需要用到 ⚠️如果是kotlin项目 也要用 annotationProcessor
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.0.2'
+    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.0.3'
 }
 ```
 
