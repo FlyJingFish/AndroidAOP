@@ -77,7 +77,7 @@ dependencies {
 
 ### 下面再着重介绍下 @TryCatch @Permission @CustomIntercept
 
-- @TryCatch 使用此注解你可以设置
+- @TryCatch 使用此注解你可以设置以下设置（非必须）
 ```java
 AndroidAop.INSTANCE.setOnThrowableListener(new OnThrowableListener() {
     @Nullable
@@ -89,7 +89,7 @@ AndroidAop.INSTANCE.setOnThrowableListener(new OnThrowableListener() {
 });
 ```
 
-- @Permission 使用此注解你可以设置
+- @Permission 使用此注解必须配合以下设置（⚠️此步为必须设置的，否则是没效果的）
 ```java
 AndroidAop.INSTANCE.setOnPermissionsInterceptListener(new OnPermissionsInterceptListener() {
     @SuppressLint("CheckResult")
@@ -107,7 +107,7 @@ AndroidAop.INSTANCE.setOnPermissionsInterceptListener(new OnPermissionsIntercept
 });
 ```
 
-- @CustomIntercept 使用此注解你可以设置
+- @CustomIntercept 使用此注解你必须配合以下设置（⚠️此步为必须设置的，否则还有什么意义呢？）
 ```java
 AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener() {
     @Nullable
@@ -140,7 +140,7 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
 
 - **@AndroidAopPointCut** 是只能在方法上做切面的，上述中注解都是通过这个做的
 
-下面以 @CustomIntercept 为例介绍下该如何使用（⚠️注意：自定义的注解，请使用Java代码来写，目前版本还未适配Kotlin，其他代码都可以用Kotlin）
+下面以 @CustomIntercept 为例介绍下该如何使用（⚠️注意：自定义的注解，请使用Java代码来写，目前版本仅对此还未适配Kotlin，其他代码都可以用Kotlin）
 
 ```java
 @AndroidAopPointCut(CustomInterceptCut.class)
@@ -172,7 +172,7 @@ class CustomInterceptCut : BasePointCut<CustomIntercept> {
 }
 ```
 
-- **@AndroidAopMatchClassMethod** 是做匹配类和类方法的切面的
+- **@AndroidAopMatchClassMethod** 是做匹配继承自某类及其对应方法的切面的
 
 ```kotlin
 @AndroidAopMatchClassMethod(
