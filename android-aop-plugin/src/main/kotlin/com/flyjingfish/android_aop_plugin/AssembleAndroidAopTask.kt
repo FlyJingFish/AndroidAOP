@@ -114,16 +114,17 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         buildConfigCacheFile = File(temporaryDir, "buildAndroidAopConfigCache.json")
 //        val wovenInfo = loadBuildConfig(buildConfigCacheFile)
 //        if(wovenInfo.aopMatchCuts != null){
-//            WovenInfoUtils.aopMatchCuts = wovenInfo.aopMatchCuts
+//            WovenInfoUtils.aopMatchCuts = wovenInfo.aopMatchCuts!!
 //        }
 //        if(wovenInfo.aopMethodCuts != null){
-//            WovenInfoUtils.aopMethodCuts = wovenInfo.aopMethodCuts
+//            WovenInfoUtils.aopMethodCuts = wovenInfo.aopMethodCuts!!
 //        }
 //        if(wovenInfo.classPaths != null){
-//            WovenInfoUtils.classPaths = wovenInfo.classPaths
+//            WovenInfoUtils.classPaths = wovenInfo.classPaths!!
 //        }
 
 //        logger.error("buildConfigCacheFile = ${buildConfigCacheFile.absolutePath}")
+//        logger.error("buildConfig = $wovenInfo")
 
         jarOutput = JarOutputStream(BufferedOutputStream(FileOutputStream(output.get().asFile)))
         val scanTimeCost = measureTimeMillis {
@@ -192,7 +193,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         }
 
         saveBuildConfig()
-        ClassPoolUtils.initClassPool()
+//        ClassPoolUtils.initClassPool()
 //        logger.error("第二遍找到要注入代码的类---------")
         //第二遍找配置有注解的类和方法
         allDirectories.get().forEach { directory ->
@@ -298,10 +299,12 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 try {
                     val entryName = jarEntry.name
                     logger.info("Scan to jar---- [${jarEntry}]")
-                    if (jarEntry.isDirectory || jarEntry.name.isEmpty()) {
+//                    if (jarEntry.isDirectory || entryName.isEmpty() || !entryName.endsWith(_CLASS) || entryName.startsWith("META-INF/")) {
+//                        continue
+//                    }
+                    if (jarEntry.isDirectory || entryName.isEmpty() || entryName.startsWith("META-INF/")) {
                         continue
                     }
-
 
                     logger.info("Scan to jar ==== [${jarEntry}][${entryName}]")
 
@@ -337,9 +340,10 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
 
                 } catch (e: Exception) {
-                    if (!(e is ZipException && e.message?.startsWith("duplicate entry:") == true)) {
-                        logger.warn("Merge jar error entry:[${jarEntry.name}], error message:$e")
-                    }
+                    throw RuntimeException(e)
+//                    if (!(e is ZipException && e.message?.startsWith("duplicate entry:") == true)) {
+//                        logger.warn("Merge jar error entry:[${jarEntry.name}], error message:$e")
+//                    }
                 }
             }
             jarFile.close()
