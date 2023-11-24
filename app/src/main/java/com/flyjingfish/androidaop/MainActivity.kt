@@ -18,6 +18,7 @@ import com.flyjingfish.androidaop.databinding.ActivityMainBinding
 import com.flyjingfish.test_lib.BaseActivity
 
 class MainActivity: BaseActivity() {
+
     lateinit var binding:ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +53,20 @@ class MainActivity: BaseActivity() {
         binding.btnMatchClassMethod.setOnClickListener {
             setLogcat("匹配类-方法切面 继承自的 androidx.appcompat.app.AppCompatActivity 的 startActivity 方法")
             startActivity(Intent(this,SecondActivity::class.java))
+        }
+        binding.btnStaticMethod.setOnClickListener {
+            ThirdActivity.start(this,3,object : ThirdActivity.OnPhotoSelectListener {
+                override fun onBack() {
+                    setLogcat("测试静态方法，回调了")
+                }
+            })
+        }
+        binding.btnStaticMethod2.setOnClickListener {
+            StaticClass.onStaticPermission(this,3,object : ThirdActivity.OnPhotoSelectListener {
+                override fun onBack() {
+                    setLogcat("测试静态类方法，回调了")
+                }
+            })
         }
     }
 

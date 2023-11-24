@@ -32,6 +32,7 @@ public final class AndroidAopJoinPoint {
         return returnValue;
     }
     private Object target;
+    private String targetClassName;
     private Object[] mArgs;
     private String[] mArgClassNames;
     private String targetMethodName;
@@ -45,6 +46,12 @@ public final class AndroidAopJoinPoint {
         this.originalMethodName = originalMethodName;
         this.targetMethodName = targetMethodName;
     }
+    public AndroidAopJoinPoint(String targetClassName, String originalMethodName, String targetMethodName) {
+        this.targetClassName = targetClassName;
+        this.originalMethodName = originalMethodName;
+        this.targetMethodName = targetMethodName;
+    }
+
 
     public String getCutMatchClassName() {
         return cutMatchClassName;

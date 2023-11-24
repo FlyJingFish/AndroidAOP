@@ -12,6 +12,7 @@ import javassist.Modifier
 import javassist.NotFoundException
 import javassist.bytecode.AnnotationsAttribute
 import javassist.bytecode.LocalVariableAttribute
+import javassist.bytecode.SignatureAttribute
 import javassist.bytecode.annotation.Annotation
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassReader
@@ -147,17 +148,12 @@ object WovenIntoCode {
                     isHasArgs = len > 0
                     for (i in 0 until len) {
                         val index = i + pos
-                        val signature = attr.signature(i + pos)
-                        argsBuffer.append(
-                            String.format(Conversions.getArgsXObject(
-                                signature
-                            ), "\$"+index)
-
-                        )
+                        val signature = attr.signature(index)
+                        argsBuffer.append(String.format(Conversions.getArgsXObject(signature), "\$"+index))
                         if (i != len - 1) {
                             argsBuffer.append(",")
                         }
-                        paramNames.add(attr.variableName(i + pos))
+                        paramNames.add(attr.variableName(index))
                     }
                 }
                 val allSignature = ctMethod.signature
@@ -166,14 +162,17 @@ object WovenIntoCode {
                         allSignature.substring(allSignature.indexOf(")") + 1)
                     ), "pointCut.joinPointExecute()"
                 )
+                val targetClassName = ctClass.name
                 val body =
-                    """ {AndroidAopJoinPoint pointCut = new AndroidAopJoinPoint(${if (isStaticMethod) "$0" else "$0,\"$oldMethodName\",\"$targetMethodName\""});"""+
+                    """ {AndroidAopJoinPoint pointCut = new AndroidAopJoinPoint(${if (isStaticMethod) "\"$targetClassName\",\"$oldMethodName\",\"$targetMethodName\"" else "$0,\"$oldMethodName\",\"$targetMethodName\""});"""+
                             (if (cutClassName != null) "        pointCut.setCutMatchClassName(\"$cutClassName\");\n" else "") +
                             (if (isHasArgs) "        String[] classNames = new String[]{$paramsClassNamesBuffer};\n" else "") +
                             (if (isHasArgs) "        pointCut.setArgClassNames(classNames);\n" else "") +
                             (if (isHasArgs) "        Object[] args = new Object[]{$argsBuffer};\n" else "") +
                             (if (isHasArgs) "        pointCut.setArgs(args);\n" else "        pointCut.setArgs(null);\n") +
                             "        "+returnStr+";}"
+                println(paramNames)
+                println(body)
                 ctMethod.setBody(body)
             } catch (e: NotFoundException) {
                 throw RuntimeException(e)

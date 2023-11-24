@@ -45,6 +45,8 @@ public class MyApp extends Application {
                 }else if (target instanceof Fragment){
                     RxPermissions rxPermissions = new RxPermissions((Fragment) target);
                     rxPermissions.request(permissions).subscribe(call::onCall);
+                }else {
+                    joinPoint.proceed();
                 }
             }
         });
