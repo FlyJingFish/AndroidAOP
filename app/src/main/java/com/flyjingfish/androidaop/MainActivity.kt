@@ -47,7 +47,7 @@ class MainActivity: BaseActivity() {
             onPermission(this,3)
         }
         binding.btnCustomIntercept.setOnClickListener {
-            onCustomIntercept()
+            onCustomIntercept(1,2,3,'4',5,6f, 7.0,false)
         }
     }
 
@@ -97,7 +97,10 @@ class MainActivity: BaseActivity() {
     }
 
     @CustomIntercept("我是自定义数据")
-    fun onCustomIntercept(){
-        setLogcat("@CustomIntercept 进入方法")
+    fun onCustomIntercept(val1 : Int,short: Short,
+                          byte: Byte,char: Char,
+                          long: Long,float: Float,
+                          double: Double,boolean: Boolean){
+        setLogcat("@CustomIntercept 进入方法=$val1,$short,$byte,$char,$long,$float,$double,$boolean")
     }
 }
