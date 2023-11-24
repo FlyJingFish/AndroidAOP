@@ -60,7 +60,7 @@ class MainActivity: BaseActivity() {
         binding.btnStaticMethod.setOnClickListener {
             ThirdActivity.start(this,3,object : ThirdActivity.OnPhotoSelectListener {
                 override fun onBack() {
-                    setLogcat("测试 Kotlin 伴生对象方法，300毫秒内点击两次才可进入")
+                    setLogcat("测试 Kotlin 伴生对象方法，5000毫秒内只能调用一次")
                 }
             })
         }

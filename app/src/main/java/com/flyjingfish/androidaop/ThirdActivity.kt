@@ -1,9 +1,7 @@
 package com.flyjingfish.androidaop
 
-import android.Manifest
 import android.os.Bundle
-import com.flyjingfish.android_aop_core.annotations.DoubleClick
-import com.flyjingfish.android_aop_core.annotations.Permission
+import com.flyjingfish.android_aop_core.annotations.SingleClick
 import com.flyjingfish.test_lib.BaseActivity
 
 class ThirdActivity : BaseActivity() {
@@ -11,7 +9,7 @@ class ThirdActivity : BaseActivity() {
         fun start(activity: MainActivity,listener:OnPhotoSelectListener?){
             start(activity,1,listener)
         }
-        @DoubleClick(300)
+        @SingleClick(5000)
         fun start(activity: MainActivity,maxSelect :Int,listener:OnPhotoSelectListener?){
             listener?.onBack()
         }

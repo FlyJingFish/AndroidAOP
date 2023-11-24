@@ -17,6 +17,10 @@
 
 **4、本库没有使用 AspectJ，织入代码量极少，侵入性极低**
 
+#### [点此下载apk,也可扫下边二维码下载](https://github.com/FlyJingFish/AndroidAOP/blob/master/apk/release/app-release.apk?raw=true)
+
+<img src="/screenshot/qrcode.png" alt="show" width="200px" />
+
 ### 版本限制
 
 最低Gradle版本：8.0

@@ -7,17 +7,9 @@ AndroidAopConfig {
     // debug 为true打开日志方便调试
     debug true
 }
-def buildTime() {
-    return new Date().format("yyyy_MM_dd_HH_mm_ss", TimeZone.getDefault())
-}
 android {
     namespace 'com.flyjingfish.androidaop'
     compileSdk 34
-    applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            output.outputFileName = "AndroidAop-${variant.flavorName}-${variant.buildType.name}-${rootProject.version}-${buildTime()}.apk"
-        }
-    }
 
     defaultConfig {
         applicationId "com.flyjingfish.androidaop"
