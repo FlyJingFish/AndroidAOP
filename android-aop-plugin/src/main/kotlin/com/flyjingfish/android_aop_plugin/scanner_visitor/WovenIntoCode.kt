@@ -149,11 +149,9 @@ object WovenIntoCode {
                         val index = i + pos
                         val signature = attr.signature(i + pos)
                         argsBuffer.append(
-                            String.format(
                                 Conversions.getArgsXObject(
                                     signature
                                 ), "$$index"
-                            )
                         )
                         if (i != len - 1) {
                             argsBuffer.append(",")

@@ -1,18 +1,16 @@
 package com.flyjingfish.test_lib
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 
 abstract class BaseActivity :AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+
+    override fun startActivity(intent: Intent?) {
+        super.startActivity(intent)
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
-    open fun onTest(){
-
+    override fun startActivity(intent: Intent?, options: Bundle?) {
+        super.startActivity(intent, options)
     }
 }

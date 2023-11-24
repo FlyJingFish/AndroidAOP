@@ -7,14 +7,17 @@ import com.flyjingfish.android_aop_core.annotations.SingleClick
 class SingleClickCut : ClickCut<SingleClick>() {
     override fun invoke(joinPoint: ProceedJoinPoint, anno: SingleClick): Any? {
         var view: View? = null
-        for (arg in joinPoint.args) {
-            if (arg is View) {
-                view = arg
-                break
+        joinPoint.args?.let {
+            for (arg in it) {
+                if (arg is View) {
+                    view = arg
+                    break
+                }
             }
         }
-        if (view != null) {
-            if (!isDoubleClick(view, anno.value)) {
+        val targetView = view
+        if (targetView != null) {
+            if (!isDoubleClick(targetView, anno.value)) {
                 joinPoint.proceed()
             }
         }else{

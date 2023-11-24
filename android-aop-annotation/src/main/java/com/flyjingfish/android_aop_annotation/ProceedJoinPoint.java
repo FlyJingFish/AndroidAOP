@@ -9,11 +9,17 @@ public final class ProceedJoinPoint {
     private Method targetMethod;
     private Method originalMethod;
     private AopMethod targetAopMethod;
-    public Object proceed() throws InvocationTargetException, IllegalAccessException {
+    public Object proceed(){
         return proceed(args);
     }
-    public Object proceed(Object[] args) throws InvocationTargetException, IllegalAccessException {
-        return targetMethod.invoke(target,args);
+    public Object proceed(Object[] args){
+        try {
+            return targetMethod.invoke(target,args);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e.getTargetException());
+        }
     }
 
     public AopMethod getTargetMethod() {

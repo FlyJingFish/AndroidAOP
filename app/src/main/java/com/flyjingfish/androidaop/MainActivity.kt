@@ -1,95 +1,103 @@
 package com.flyjingfish.androidaop
 
+import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.os.Looper
-import android.util.Log
-import android.widget.Button
+import androidx.lifecycle.Lifecycle
+import com.flyjingfish.android_aop_core.annotations.CustomIntercept
+import com.flyjingfish.android_aop_core.annotations.DoubleClick
 import com.flyjingfish.android_aop_core.annotations.IOThread
 import com.flyjingfish.android_aop_core.annotations.MainThread
+import com.flyjingfish.android_aop_core.annotations.OnLifecycle
 import com.flyjingfish.android_aop_core.annotations.Permission
+import com.flyjingfish.android_aop_core.annotations.SingleClick
 import com.flyjingfish.android_aop_core.annotations.TryCatch
 import com.flyjingfish.android_aop_core.enums.ThreadType
+import com.flyjingfish.androidaop.databinding.ActivityMainBinding
 import com.flyjingfish.test_lib.BaseActivity
 
 class MainActivity: BaseActivity() {
-
+    lateinit var binding:ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        var round :Round ?=null
-        findViewById<Button>(R.id.haha).setOnClickListener {
-            round = Round()
-            onClick(round!!)
-            startActivity(Intent(this,SecondActivity::class.java))
-        }
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        findViewById<Button>(R.id.haha1).setOnClickListener {
-            round?.setRunnable { }
-
-            startActivity(Intent(this,ThirdActivity::class.java))
+        binding.btnSingleClick.setOnClickListener {
             onSingleClick()
         }
-
-        findViewById<Button>(R.id.haha2).setOnClickListener {
-            onTest()
-            round?.getRunnable()
-
-            val number = onDoubleClick()
-
-            Log.e("number", "====$number")
+        binding.btnDoubleClick.setOnClickListener {
+            onDoubleClick()
         }
-
+        binding.btnIOThread.setOnClickListener {
+            onIOThread()
+        }
+        binding.btnMainThread.setOnClickListener {
+            onMainThread()
+        }
+        binding.btnOnLifecycle.setOnClickListener {
+            setLogcat("当前设置的是 OnStop 才执行，你先按Home再回来看下方日志")
+            onLifecycle()
+        }
+        binding.btnTryCatch.setOnClickListener {
+            onTryCatch()
+        }
+        binding.btnPermission.setOnClickListener {
+            onPermission(this,3)
+        }
+        binding.btnCustomIntercept.setOnClickListener {
+            onCustomIntercept()
+        }
     }
 
-    override fun onResume() {
-        super.onResume()
+    @SingleClick(5000)
+    fun onSingleClick(){
+        setLogcat("@SingleClick 5000毫秒内只能点击一次")
     }
-//    public fun onClick(){
-//        Log.e("onClick","------")
-//        //插入逻辑
-//        val round = Round()
-//        round.setRunnable {
-//            onClick1()
-//        }
-//
-//    }
+
+    @DoubleClick(300)
+    fun onDoubleClick(){
+        setLogcat("@DoubleClick 300毫秒内点击两次才可进入")
+    }
 
     @IOThread(ThreadType.SingleIO)
-    fun onClick(round: Round){
-        Log.e("Test_MainThread","是否主线程="+(Looper.getMainLooper() == Looper.myLooper()))
-        Log.e("Test_MainThread","开始睡5秒")
+    fun onIOThread(){
+        setLogcat("@IOThread 是否主线程="+(Looper.getMainLooper() == Looper.myLooper())+",开始睡5秒，然后进入调用主线程方法")
         Thread.sleep(5000)
-        Log.e("Test_MainThread","睡醒了")
         onMainThread()
     }
 
+    @MainThread
+    fun setLogcat(text:String){
+        binding.tvLogcat.append(text+"\n")
+    }
 
     @MainThread
     fun onMainThread(){
-//        val testInterface = TestInterface();
-//        testInterface.onTest()
-        Log.e("Test_MainThread","onMainThread是否主线程="+(Looper.getMainLooper() == Looper.myLooper()))
+        setLogcat("@MainThread 是否主线程="+(Looper.getMainLooper() == Looper.myLooper())+"睡醒了")
     }
 
-    @Permission("11111","222222")
-//    @MyAnno
-    fun onSingleClick(){
-        Log.e("Test_click","onSingleClick")
+    @OnLifecycle(Lifecycle.Event.ON_STOP)
+    fun onLifecycle(){
+        setLogcat("@OnLifecycle 注解的方法进入了")
     }
 
     var o :Round?=null
-
-
     @TryCatch
-    fun onDoubleClick():Int{
+    fun onTryCatch():Int{
         var number = 1;
         number = o!!.number
         return number
     }
 
-    override fun onTest(){
-
+    @Permission(Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    fun onPermission(activity: BaseActivity,maxSelect :Int){
+        setLogcat("@Permission 获得权限了进入了方法 activity$activity,maxSelect=$maxSelect")
     }
 
+    @CustomIntercept("我是自定义数据")
+    fun onCustomIntercept(){
+        setLogcat("@CustomIntercept 进入方法")
+    }
 }

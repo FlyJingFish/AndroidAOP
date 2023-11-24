@@ -1,11 +1,15 @@
 package com.flyjingfish.androidaop;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint;
 import com.flyjingfish.android_aop_core.annotations.CustomIntercept;
@@ -16,6 +20,12 @@ import com.flyjingfish.android_aop_core.listeners.OnPermissionsInterceptListener
 import com.flyjingfish.android_aop_core.listeners.OnRequestPermissionListener;
 import com.flyjingfish.android_aop_core.listeners.OnThrowableListener;
 import com.flyjingfish.android_aop_core.utils.AndroidAop;
+import com.tbruyelle.rxpermissions3.RxPermissions;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class MyApp extends Application {
     @Override
@@ -26,14 +36,16 @@ public class MyApp extends Application {
             @Override
             public void requestPermission(@NonNull ProceedJoinPoint joinPoint, @NonNull Permission permission, @NonNull OnRequestPermissionListener call) {
                 Object target = joinPoint.getTarget();
-                Log.e("requestPermission",""+permission.value());
-//                if (target instanceof FragmentActivity){
-//                    RxPermissions rxPermissions = new RxPermissions((FragmentActivity) target);
-//                    rxPermissions.request(permission.value()).subscribe(call::onCall);
-//                }else if (target instanceof Fragment){
-//                    RxPermissions rxPermissions = new RxPermissions((Fragment) target);
-//                    rxPermissions.request(permission.value()).subscribe(call::onCall);
-//                }
+                String[] permissions = permission.value();
+                permissions = check13ReadExternalStorage(permissions);
+                Log.e("requestPermission",""+permissions);
+                if (target instanceof FragmentActivity){
+                    RxPermissions rxPermissions = new RxPermissions((FragmentActivity) target);
+                    rxPermissions.request(permissions).subscribe(call::onCall);
+                }else if (target instanceof Fragment){
+                    RxPermissions rxPermissions = new RxPermissions((Fragment) target);
+                    rxPermissions.request(permissions).subscribe(call::onCall);
+                }
             }
         });
 
@@ -45,7 +57,8 @@ public class MyApp extends Application {
                 //  joinPoint.proceed(args)可以修改方法传入的参数，如果需要改写返回值，则在 return 处返回即可
                 //  不调用 proceed 就不会执行拦截切面方法内的代码
                 Log.e("CustomIntercept","invoke"+(customIntercept == null));
-                return null;
+                ToastUtils.INSTANCE.makeText(MyApp.this,"进入 @CustomIntercept 拦截器，value="+customIntercept.value()[0]);
+                return joinPoint.proceed();
             }
         });
 
@@ -55,8 +68,23 @@ public class MyApp extends Application {
             public Object handleThrowable(@NonNull String flag, @Nullable Throwable throwable,TryCatch tryCatch) {
                 // TODO: 2023/11/11 发生异常可根据你当时传入的flag作出相应处理，如果需要改写返回值，则在 return 处返回即可
                 Log.e("ThrowableListener","handleThrowable");
+                ToastUtils.INSTANCE.makeText(MyApp.this,"@TryCatch Throwable="+throwable.getMessage());
                 return 3;
             }
         });
+    }
+
+    public static String[] check13ReadExternalStorage(String[] permissions) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && (Arrays.asList(permissions).contains(android.Manifest.permission.READ_EXTERNAL_STORAGE)||Arrays.asList(permissions).contains(android.Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
+            ArrayList<String> list = new ArrayList<>(permissions.length);
+            Collections.addAll(list, permissions);
+            list.remove(android.Manifest.permission.READ_EXTERNAL_STORAGE);
+            list.remove(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            list.add(android.Manifest.permission.READ_MEDIA_IMAGES);
+            list.add(android.Manifest.permission.READ_MEDIA_AUDIO);
+            list.add(Manifest.permission.READ_MEDIA_VIDEO);
+            return list.toArray(new String[0]);
+        }
+        return permissions;
     }
 }
