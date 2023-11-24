@@ -138,7 +138,7 @@ object WovenIntoCode {
                         val name = aClass.name
                         paramsClassNamesBuffer.append("\"").append(name).append("\"")
                         if (i != ctClasses.size - 1) {
-                            argsBuffer.append(",")
+                            paramsClassNamesBuffer.append(",")
                         }
                     }
                     val len = ctClasses.size
@@ -149,9 +149,10 @@ object WovenIntoCode {
                         val index = i + pos
                         val signature = attr.signature(i + pos)
                         argsBuffer.append(
-                                Conversions.getArgsXObject(
-                                    signature
-                                ), "$$index"
+                            String.format(Conversions.getArgsXObject(
+                                signature
+                            ), "\$"+index)
+
                         )
                         if (i != len - 1) {
                             argsBuffer.append(",")
@@ -173,6 +174,7 @@ object WovenIntoCode {
                             (if (isHasArgs) "        Object[] args = new Object[]{$argsBuffer};\n" else "") +
                             (if (isHasArgs) "        pointCut.setArgs(args);\n" else "        pointCut.setArgs(null);\n") +
                             "        "+returnStr+";}"
+                println(body)
                 ctMethod.setBody(body)
             } catch (e: NotFoundException) {
                 throw RuntimeException(e)

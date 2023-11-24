@@ -61,13 +61,13 @@ public final class AndroidAopJoinPoint {
     public void setArgs(Object[] args) {
         this.mArgs = args;
         try {
-            Class[] classes = null;
+            Class<?>[] classes = null;
             if (args != null && args.length > 0){
                 classes = new Class[args.length];
                 int index = 0;
                 for (String className : mArgClassNames) {
                     try {
-                        Class c = Class.forName(className);
+                        Class<?> c = Conversions.getClass_(className);
                         classes[index] = c;
                     } catch (ClassNotFoundException ignored) {
                     }
