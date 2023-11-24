@@ -49,6 +49,9 @@ class MainActivity: BaseActivity() {
         binding.btnCustomIntercept.setOnClickListener {
             onCustomIntercept(1,2,3,'4',5,6f, 7.0,false)
         }
+        binding.btnMatchClassMethod.setOnClickListener {
+            startActivity(Intent(this,ThirdActivity::class.java))
+        }
     }
 
     @SingleClick(5000)

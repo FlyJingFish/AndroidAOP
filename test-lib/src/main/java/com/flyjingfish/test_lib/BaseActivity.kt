@@ -6,10 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 
 abstract class BaseActivity :AppCompatActivity() {
 
-    override fun startActivity(intent: Intent?) {
-        super.startActivity(intent)
-    }
-
     override fun startActivity(intent: Intent?, options: Bundle?) {
         super.startActivity(intent, options)
     }

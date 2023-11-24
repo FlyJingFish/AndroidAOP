@@ -172,23 +172,16 @@ class CustomInterceptCut : BasePointCut<CustomIntercept> {
 }
 ```
 
-- **@AndroidAopMatchClassMethod** 是做匹配继承自某类及其对应方法的切面的
+- **@AndroidAopMatchClassMethod** 是做匹配继承自某类及其对应方法的切面的（⚠️注意：自定义的匹配类方法切面，请使用Java代码来写，目前版本仅对此还未适配Kotlin，其他代码都可以用Kotlin）
 
-```kotlin
-@AndroidAopMatchClassMethod(
-    targetClassName = "com.flyjingfish.test_lib.BaseActivity",
-    methodName = ["onCreate", "onResume", "onTest"]
-)
-class MatchActivityOnCreate : MatchClassMethod {
-    override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
-        Log.e("MatchActivityMethod", "=====invoke=====$methodName")
-        return try {
-            joinPoint.proceed()
-        } catch (e: InvocationTargetException) {
-            throw RuntimeException(e)
-        } catch (e: IllegalAccessException) {
-            throw RuntimeException(e)
-        }
+```java
+@AndroidAopMatchClassMethod(targetClassName = "androidx.appcompat.app.AppCompatActivity",methodName = {"startActivity"})
+public class MatchActivityMethod implements MatchClassMethod {
+    @Nullable
+    @Override
+    public Object invoke(@NonNull ProceedJoinPoint joinPoint, @NonNull String methodName) {
+        Log.e("MatchActivityMethod","=====invoke====="+methodName);
+        return joinPoint.proceed();
     }
 }
 ```

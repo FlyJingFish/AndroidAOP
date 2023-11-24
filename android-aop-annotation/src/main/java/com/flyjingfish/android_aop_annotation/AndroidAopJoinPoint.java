@@ -62,7 +62,7 @@ public final class AndroidAopJoinPoint {
         this.mArgs = args;
         try {
             Class<?>[] classes = null;
-            if (args != null && args.length > 0){
+            if (mArgClassNames != null && mArgClassNames.length > 0){
                 classes = new Class[args.length];
                 int index = 0;
                 for (String className : mArgClassNames) {
@@ -74,21 +74,18 @@ public final class AndroidAopJoinPoint {
 
                     index++;
                 }
-            }
-            if (classes != null){
-                if (cutMatchClassName != null){
-                    targetMethod = target.getClass().getMethod(targetMethodName,classes);
-                }else {
-                    targetMethod = target.getClass().getDeclaredMethod(targetMethodName,classes);
-                }
-                originalMethod = target.getClass().getDeclaredMethod(originalMethodName,classes);
             }else {
-                if (cutMatchClassName != null){
-                    targetMethod = target.getClass().getMethod(targetMethodName);
-                }else {
-                    targetMethod = target.getClass().getDeclaredMethod(targetMethodName);
-                }
-                originalMethod = target.getClass().getDeclaredMethod(originalMethodName);
+                classes = new Class<?>[0];
+            }
+            try {
+                targetMethod = target.getClass().getDeclaredMethod(targetMethodName,classes);
+            } catch (NoSuchMethodException e) {
+                targetMethod = target.getClass().getMethod(targetMethodName,classes);
+            }
+            try {
+                originalMethod = target.getClass().getDeclaredMethod(originalMethodName,classes);
+            } catch (NoSuchMethodException e) {
+                originalMethod = target.getClass().getMethod(originalMethodName,classes);
             }
             targetMethod.setAccessible(true);
             originalMethod.setAccessible(true);

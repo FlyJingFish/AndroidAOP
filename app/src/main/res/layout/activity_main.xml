@@ -14,7 +14,7 @@
         app:constraint_referenced_ids="btn_SingleClick,
         btn_DoubleClick, btn_IOThread,
         btn_MainThread,btn_OnLifecycle,btn_TryCatch,
-        btn_Permission,btn_CustomIntercept"
+        btn_Permission,btn_CustomIntercept,btn_MatchClassMethod"
         />
     <Button
         android:id="@+id/btn_SingleClick"
@@ -80,13 +80,21 @@
         app:layout_constraintTop_toTopOf="parent"
         android:textAllCaps="false"
         android:text="\@CustomIntercept"/>
+    <Button
+        android:id="@+id/btn_MatchClassMethod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textAllCaps="false"
+        android:text="匹配类"/>
     <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_CustomIntercept">
+        app:layout_constraintTop_toBottomOf="@+id/btn_MatchClassMethod">
         <TextView
             android:id="@+id/tv_logcat"
             android:layout_width="match_parent"

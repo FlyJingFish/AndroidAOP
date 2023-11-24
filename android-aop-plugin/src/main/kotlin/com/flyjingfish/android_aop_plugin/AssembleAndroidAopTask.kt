@@ -253,7 +253,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     }
                 } catch (e: Exception) {
                     if (!(e is ZipException && e.message?.startsWith("duplicate entry:") == true)) {
-                        logger.warn("Merge jar error entry:[${jarEntry.name}], error message:$e")
+                        logger.error("Merge jar error entry:[${jarEntry.name}], error message:$e")
                     }
                 }
             }
@@ -340,9 +340,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
 
                 } catch (e: Exception) {
-                    if (!(e is ZipException && e.message?.startsWith("duplicate entry:") == true)) {
-                        logger.error("Merge jar error entry:[${jarEntry.name}], error message:$e")
-                    }
+                    throw RuntimeException("Merge jar error entry:[${jarEntry.name}], error message:$e,通常情况下你需要先重启Android Studio,然后clean一下项目即可，如果还有问题请到Github联系作者")
                 }
             }
             jarFile.close()
