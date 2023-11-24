@@ -50,7 +50,8 @@ class MainActivity: BaseActivity() {
             onCustomIntercept(1,2,3,'4',5,6f, 7.0,false)
         }
         binding.btnMatchClassMethod.setOnClickListener {
-            startActivity(Intent(this,ThirdActivity::class.java))
+            setLogcat("匹配类-方法切面 继承自的 androidx.appcompat.app.AppCompatActivity 的 startActivity 方法")
+            startActivity(Intent(this,SecondActivity::class.java))
         }
     }
 

@@ -20,9 +20,9 @@ import com.flyjingfish.android_aop_core.listeners.OnPermissionsInterceptListener
 import com.flyjingfish.android_aop_core.listeners.OnRequestPermissionListener;
 import com.flyjingfish.android_aop_core.listeners.OnThrowableListener;
 import com.flyjingfish.android_aop_core.utils.AndroidAop;
+import com.flyjingfish.test_lib.ToastUtils;
 import com.tbruyelle.rxpermissions3.RxPermissions;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
