@@ -11,7 +11,7 @@ object Utils {
      */
     fun getMethodName(joinPoint: ProceedJoinPoint): String {
         val methodName = joinPoint.targetMethod.name //方法名
-        return getClassName(joinPoint.target.javaClass) + "." + methodName
+        return getClassName(joinPoint.targetClass) + "." + methodName
     }
 
     fun getClassName(cls: Class<*>?): String {

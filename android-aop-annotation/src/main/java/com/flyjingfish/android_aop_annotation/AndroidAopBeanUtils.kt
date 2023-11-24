@@ -7,18 +7,13 @@ object AndroidAopBeanUtils {
     private val matchClassMethodMap = ConcurrentHashMap<String, MatchClassMethod?>()
 
     fun getBasePointCut(joinPoint: ProceedJoinPoint, clsName: String): BasePointCut<Annotation>? {
-        val className = joinPoint.target.javaClass.name
+        val className = joinPoint.targetClass.name
         val methodName = joinPoint.targetMethod.name
-        val key = "$className.$methodName"
-        var basePointCut: BasePointCut<Annotation>?
-        if ("".equals(key)) {
+        val key = "$className-${joinPoint.target}-$methodName"
+        var basePointCut: BasePointCut<Annotation>? = basePointCutMap[key]
+        if (basePointCut == null) {
             basePointCut = getNewPointCut(clsName)
-        } else {
-            basePointCut = basePointCutMap[key]
-            if (basePointCut == null) {
-                basePointCut = getNewPointCut(clsName)
-                basePointCutMap[key] = basePointCut
-            }
+            basePointCutMap[key] = basePointCut
         }
         return basePointCut
     }
@@ -45,18 +40,13 @@ object AndroidAopBeanUtils {
 
 
     fun getMatchClassMethod(joinPoint: ProceedJoinPoint, clsName: String): MatchClassMethod {
-        val className = joinPoint.target.javaClass.name
+        val className = joinPoint.targetClass.name
         val methodName = joinPoint.targetMethod.name
-        val key = "$className.$methodName"
-        var matchClassMethod: MatchClassMethod?
-        if ("".equals(key)) {
+        val key = "$className-${joinPoint.target}-$methodName"
+        var matchClassMethod: MatchClassMethod? = matchClassMethodMap[key]
+        if (matchClassMethod == null) {
             matchClassMethod = getNewMatchClassMethod(clsName)
-        } else {
-            matchClassMethod = matchClassMethodMap[key]
-            if (matchClassMethod == null) {
-                matchClassMethod = getNewMatchClassMethod(clsName)
-                matchClassMethodMap[key] = matchClassMethod
-            }
+            matchClassMethodMap[key] = matchClassMethod
         }
         return matchClassMethod
     }

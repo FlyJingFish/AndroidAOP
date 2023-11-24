@@ -12,8 +12,6 @@ public class Round {
    public Round() {
     }
 
-//    @DebugLog
-//    @CustomIntercept
     @MyAnno
     public Runnable getRunnable() {
         Log.e("Round","setRunnable");

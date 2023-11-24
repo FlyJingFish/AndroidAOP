@@ -62,10 +62,8 @@
 -keepclassmembers class * {
     @com.flyjingfish.test_lib.annotation.* <methods>;
 }
--keepnames class * extends com.flyjingfish.test_lib.BaseActivity{
-    void onCreate(...);
-    void onResume(...);
-    void onTest(...);
+-keepnames class * extends androidx.appcompat.app.AppCompatActivity{
+    void startActivity(...);
 }
 
 # 你自定义的混淆规则 -----end-----

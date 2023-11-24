@@ -1,19 +1,19 @@
 package com.flyjingfish.android_aop_plugin.utils
 
 
-object Conversions {
+object ClassNameToConversions {
     private val argsToObject: MutableMap<String, String> = HashMap()
     private val returnToValue: MutableMap<String, String> = HashMap()
 
     init {
-        argsToObject["I"] = "intObject(%1\$s)"
-        argsToObject["S"] = "shortObject(%1\$s)"
-        argsToObject["B"] = "byteObject(%1\$s)"
-        argsToObject["C"] = "charObject(%1\$s)"
-        argsToObject["J"] = "longObject(%1\$s)"
-        argsToObject["F"] = "floatObject(%1\$s)"
-        argsToObject["D"] = "doubleObject(%1\$s)"
-        argsToObject["Z"] = "booleanObject(%1\$s)"
+        argsToObject["int"] = "intObject(%1\$s)"
+        argsToObject["short"] = "shortObject(%1\$s)"
+        argsToObject["byte"] = "byteObject(%1\$s)"
+        argsToObject["char"] = "charObject(%1\$s)"
+        argsToObject["long"] = "longObject(%1\$s)"
+        argsToObject["float"] = "floatObject(%1\$s)"
+        argsToObject["double"] = "doubleObject(%1\$s)"
+        argsToObject["boolean"] = "booleanObject(%1\$s)"
         returnToValue["I"] = "intValue(%1\$s)"
         returnToValue["S"] = "shortValue(%1\$s)"
         returnToValue["B"] = "byteValue(%1\$s)"

@@ -8,11 +8,37 @@ abstract class ClickCut<T : Annotation> : BasePointCut<T> {
 
     private var sLastClickViewId = 0
 
+    fun isSingleClick(v: View, intervalMillis: Long): Boolean {
+        val time = System.currentTimeMillis()
+        val viewId = v.id
+        val timeD = time - sLastClickTime
+        return if (timeD in 1 until intervalMillis && viewId == sLastClickViewId) {
+            false
+        } else {
+            sLastClickTime = time
+            sLastClickViewId = viewId
+            true
+        }
+    }
+
+    fun isSingleClick(intervalMillis: Long): Boolean {
+        val time = System.currentTimeMillis()
+        val timeD = time - sLastClickTime
+        return if (timeD in 1 until intervalMillis) {
+            false
+        } else {
+            sLastClickTime = time
+            true
+        }
+    }
+
     fun isDoubleClick(v: View, intervalMillis: Long): Boolean {
         val time = System.currentTimeMillis()
         val viewId = v.id
         val timeD = time - sLastClickTime
         return if (timeD in 1 until intervalMillis && viewId == sLastClickViewId) {
+            sLastClickTime = time
+            sLastClickViewId = viewId
             true
         } else {
             sLastClickTime = time
@@ -25,6 +51,7 @@ abstract class ClickCut<T : Annotation> : BasePointCut<T> {
         val time = System.currentTimeMillis()
         val timeD = time - sLastClickTime
         return if (timeD in 1 until intervalMillis) {
+            sLastClickTime = time
             true
         } else {
             sLastClickTime = time

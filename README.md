@@ -133,6 +133,8 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
 
 不调用 proceed 就不会执行拦截切面方法内的代码，return什么也无所谓了
 
+PS：ProceedJoinPoint.target 如果为null的话是因为注入的方法是静态的，通常只有java才会这样
+
 
 ### 此外本库也同样支持让你自己做切面，语法相对来说也比较简单
 
@@ -269,6 +271,12 @@ abstract class BaseActivity :AppCompatActivity() {
     void onTest(...);
 }
 ```
+
+### 常见问题
+
+1、Build时报错 "ZipFile invalid LOC header (bad signature)"
+
+- 请重启Android Studio，然后 clean 项目
 
 ### 赞赏
 

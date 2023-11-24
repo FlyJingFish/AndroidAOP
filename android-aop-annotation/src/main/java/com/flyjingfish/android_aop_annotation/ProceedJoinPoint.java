@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 public final class ProceedJoinPoint {
     public Object[] args;
     public Object target;
+    public Class<?> targetClass;
     private Method targetMethod;
     private Method originalMethod;
     private AopMethod targetAopMethod;
@@ -38,5 +39,13 @@ public final class ProceedJoinPoint {
 
     public Object getTarget() {
         return target;
+    }
+
+    public Class<?> getTargetClass() {
+        return targetClass;
+    }
+
+    void setTargetClass(Class<?> targetClass) {
+        this.targetClass = targetClass;
     }
 }

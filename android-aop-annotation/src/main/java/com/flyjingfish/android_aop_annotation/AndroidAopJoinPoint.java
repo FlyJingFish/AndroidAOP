@@ -11,6 +11,7 @@ public final class AndroidAopJoinPoint {
         proceedJoinPoint.args = mArgs;
         proceedJoinPoint.setOriginalMethod(originalMethod);
         proceedJoinPoint.setTargetMethod(targetMethod);
+        proceedJoinPoint.setTargetClass(targetClass);
         Annotation[] annotations = originalMethod.getAnnotations();
         Object returnValue = null;
 
@@ -32,6 +33,7 @@ public final class AndroidAopJoinPoint {
         return returnValue;
     }
     private Object target;
+    private Class<?> targetClass;
     private String targetClassName;
     private Object[] mArgs;
     private String[] mArgClassNames;
@@ -84,15 +86,29 @@ public final class AndroidAopJoinPoint {
             }else {
                 classes = new Class<?>[0];
             }
+            Class<?> tClass = null;
+            if (target != null) {
+                tClass = target.getClass();
+            }else if (targetClassName != null){
+                try {
+                    tClass = Class.forName(targetClassName);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (tClass == null){
+                throw new RuntimeException("织入代码异常");
+            }
+            targetClass = tClass;
             try {
-                targetMethod = target.getClass().getDeclaredMethod(targetMethodName,classes);
+                targetMethod = tClass.getDeclaredMethod(targetMethodName,classes);
             } catch (NoSuchMethodException e) {
-                targetMethod = target.getClass().getMethod(targetMethodName,classes);
+                targetMethod = tClass.getMethod(targetMethodName,classes);
             }
             try {
-                originalMethod = target.getClass().getDeclaredMethod(originalMethodName,classes);
+                originalMethod = tClass.getDeclaredMethod(originalMethodName,classes);
             } catch (NoSuchMethodException e) {
-                originalMethod = target.getClass().getMethod(originalMethodName,classes);
+                originalMethod = tClass.getMethod(originalMethodName,classes);
             }
             targetMethod.setAccessible(true);
             originalMethod.setAccessible(true);

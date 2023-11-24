@@ -25,8 +25,8 @@ class OnLifecycleCut : BasePointCut<OnLifecycle> {
 
     private fun invokeLifecycle(joinPoint: ProceedJoinPoint, annotation: OnLifecycle){
         when (val target = joinPoint.target) {
-            is FragmentActivity -> {
-                target.lifecycle.addObserver(object : LifecycleEventObserver{
+            is Fragment -> {
+                target.viewLifecycleOwner.lifecycle.addObserver(object : LifecycleEventObserver{
                     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
                         if (event == annotation.value){
                             source.lifecycle.removeObserver(this)
@@ -36,8 +36,8 @@ class OnLifecycleCut : BasePointCut<OnLifecycle> {
                 })
             }
 
-            is Fragment -> {
-                target.viewLifecycleOwner.lifecycle.addObserver(object : LifecycleEventObserver{
+            is LifecycleOwner -> {
+                target.lifecycle.addObserver(object : LifecycleEventObserver{
                     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
                         if (event == annotation.value){
                             source.lifecycle.removeObserver(this)

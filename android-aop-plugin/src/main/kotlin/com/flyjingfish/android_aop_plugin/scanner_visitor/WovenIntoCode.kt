@@ -1,9 +1,9 @@
 package com.flyjingfish.android_aop_plugin.scanner_visitor
 
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
-import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
-import com.flyjingfish.android_aop_plugin.utils.Conversions
+import com.flyjingfish.android_aop_plugin.utils.ClassNameToConversions
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
+import com.flyjingfish.android_aop_plugin.utils.printLog
 import javassist.CannotCompileException
 import javassist.ClassPool
 import javassist.CtClass
@@ -11,8 +11,6 @@ import javassist.CtMethod
 import javassist.Modifier
 import javassist.NotFoundException
 import javassist.bytecode.AnnotationsAttribute
-import javassist.bytecode.LocalVariableAttribute
-import javassist.bytecode.SignatureAttribute
 import javassist.bytecode.annotation.Annotation
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassReader
@@ -61,8 +59,15 @@ object WovenIntoCode {
                     exceptions: Array<String>?
                 ): MethodVisitor? {
                     return if (oldMethodName == name && oldDescriptor == descriptor) {
+                        var newAccess = when(access){
+                            Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC,
+                            Opcodes.ACC_STATIC,
+                            Opcodes.ACC_PROTECTED + Opcodes.ACC_STATIC,
+                            Opcodes.ACC_PRIVATE + Opcodes.ACC_STATIC -> Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC
+                            else -> Opcodes.ACC_PUBLIC
+                        }
                         super.visitMethod(
-                            Opcodes.ACC_PUBLIC,
+                            newAccess,
                             targetMethodName,
                             descriptor,
                             signature,
@@ -79,7 +84,7 @@ object WovenIntoCode {
             }, 0)
         }
 //        val cp = ClassPoolUtils.classPool
-        var cp = ClassPool(null)
+        val cp = ClassPool(null)
         cp.appendSystemPath()
 //        System.out.println(WovenInfoUtils.INSTANCE.getClassPaths());
         for (classPath in WovenInfoUtils.classPaths){
@@ -106,6 +111,14 @@ object WovenIntoCode {
                     getCtMethod(ctClass, oldMethodName, oldDescriptor)
                 val targetMethod =
                     getCtMethod(ctClass, targetMethodName, oldDescriptor)
+                if (ctMethod == null){
+                    printLog("------ctMethod ${oldMethodName}${oldDescriptor} 方法找不到了-----")
+                    return@forEach
+                }else if (targetMethod == null){
+                    printLog("------targetMethod ${targetMethodName}${oldDescriptor} 方法找不到了-----")
+                    return@forEach
+                }
+
                 val ccFile = ctClass.classFile
                 val constpool = ccFile.constPool
 
@@ -119,46 +132,36 @@ object WovenIntoCode {
                     Annotation("androidx.annotation.Keep", constpool)
                 annotAttr.addAnnotation(annot)
                 targetMethod!!.methodInfo.addAttribute(annotAttr)
-                val paramNames: MutableList<String> =
-                    ArrayList()
-                val methodInfo = ctMethod!!.methodInfo
-                val codeAttribute = methodInfo.codeAttribute
-                val attr =
-                    codeAttribute.getAttribute(LocalVariableAttribute.tag) as LocalVariableAttribute
-                val argsBuffer = StringBuffer()
+//                val paramNames: MutableList<String> =
+//                    ArrayList()
                 val isStaticMethod =
-                    Modifier.isStatic(ctMethod.modifiers)
-                var isHasArgs = false
-                val paramsClassNames: List<String> =
-                    ArrayList()
+                    Modifier.isStatic(ctMethod!!.modifiers)
+                val argsBuffer = StringBuffer()
+
                 val paramsClassNamesBuffer = StringBuffer()
-                if (attr != null) {
-                    val ctClasses = ctMethod.parameterTypes
-                    for (i in ctClasses.indices) {
-                        val aClass = ctClasses[i]
-                        val name = aClass.name
-                        paramsClassNamesBuffer.append("\"").append(name).append("\"")
-                        if (i != ctClasses.size - 1) {
-                            paramsClassNamesBuffer.append(",")
-                        }
-                    }
-                    val len = ctClasses.size
-                    // 非静态的成员函数的第一个参数是this
-                    val pos = if (isStaticMethod) 0 else 1
-                    isHasArgs = len > 0
-                    for (i in 0 until len) {
-                        val index = i + pos
-                        val signature = attr.signature(index)
-                        argsBuffer.append(String.format(Conversions.getArgsXObject(signature), "\$"+index))
-                        if (i != len - 1) {
-                            argsBuffer.append(",")
-                        }
-                        paramNames.add(attr.variableName(index))
+                val ctClasses = ctMethod.parameterTypes
+                val len = ctClasses.size
+                // 非静态的成员函数的第一个参数是this
+                val pos =  1
+                val isHasArgs = len > 0
+                for (i in ctClasses.indices) {
+                    val aClass = ctClasses[i]
+                    val name = aClass.name
+
+                    paramsClassNamesBuffer.append("\"").append(name).append("\"")
+
+                    val index = i + pos
+
+                    argsBuffer.append(String.format(ClassNameToConversions.getArgsXObject(name), "\$"+index))
+
+                    if (i != len - 1) {
+                        paramsClassNamesBuffer.append(",")
+                        argsBuffer.append(",")
                     }
                 }
                 val allSignature = ctMethod.signature
                 val returnStr = String.format(
-                    Conversions.getReturnXObject(
+                    ClassNameToConversions.getReturnXObject(
                         allSignature.substring(allSignature.indexOf(")") + 1)
                     ), "pointCut.joinPointExecute()"
                 )
@@ -171,8 +174,7 @@ object WovenIntoCode {
                             (if (isHasArgs) "        Object[] args = new Object[]{$argsBuffer};\n" else "") +
                             (if (isHasArgs) "        pointCut.setArgs(args);\n" else "        pointCut.setArgs(null);\n") +
                             "        "+returnStr+";}"
-                println(paramNames)
-                println(body)
+                printLog(body)
                 ctMethod.setBody(body)
             } catch (e: NotFoundException) {
                 throw RuntimeException(e)
@@ -186,7 +188,7 @@ object WovenIntoCode {
     @Throws(NotFoundException::class)
     fun getCtMethod(ctClass: CtClass, methodName: String?, descriptor: String): CtMethod? {
         val ctMethods = ctClass.getDeclaredMethods(methodName)
-        if (ctMethods != null && ctMethods.size > 0) {
+        if (ctMethods != null && ctMethods.isNotEmpty()) {
             for (ctMethod in ctMethods) {
                 val allSignature = ctMethod.signature
                 if (descriptor == allSignature) {

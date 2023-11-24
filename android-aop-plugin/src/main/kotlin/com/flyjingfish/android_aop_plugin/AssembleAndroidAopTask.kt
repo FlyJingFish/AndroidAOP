@@ -291,14 +291,14 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         }
 //        logger.info("Scan to project [${project.project.}]")
         allJars.get().forEach { file ->
-            logger.info("Scan to jar [${file.asFile.absolutePath}]")
+//            logger.info("Scan to jar [${file.asFile.absolutePath}]")
             val jarFile = JarFile(file.asFile)
             val enumeration = jarFile.entries()
             while (enumeration.hasMoreElements()) {
                 val jarEntry = enumeration.nextElement()
                 try {
                     val entryName = jarEntry.name
-                    logger.info("Scan to jar---- [${jarEntry}]")
+//                    logger.info("Scan to jar---- [${jarEntry}]")
 //                    if (jarEntry.isDirectory || entryName.isEmpty() || !entryName.endsWith(_CLASS) || entryName.startsWith("META-INF/")) {
 //                        continue
 //                    }
@@ -306,7 +306,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                         continue
                     }
 
-                    logger.info("Scan to jar ==== [${jarEntry}][${entryName}]")
+//                    logger.info("Scan to jar ==== [${jarEntry}][${entryName}]")
 
 
                     val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(entryName)

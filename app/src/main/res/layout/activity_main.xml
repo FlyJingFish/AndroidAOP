@@ -96,7 +96,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:textAllCaps="false"
-        android:text="静态方法"/>
+        android:text="Kotlin 伴生对象方法"/>
     <Button
         android:id="@+id/btn_static_method2"
         android:layout_width="wrap_content"
@@ -104,21 +104,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:textAllCaps="false"
-        android:text="静态类方法"/>
+        android:text="Java静态方法"/>
     <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_static_method">
+        app:layout_constraintTop_toBottomOf="@+id/btn_static_method2">
         <TextView
             android:id="@+id/tv_logcat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:textSize="15sp"
-            android:text="日志:\n"/>
+            android:text="日志:（点此清除）\n"/>
     </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
