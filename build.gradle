@@ -82,7 +82,13 @@ task bumpVersion() {
         text = text.replaceAll("io.github.FlyJingFish.AndroidAop:android-aop-annotation:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-annotation:"+newVersionName)
         text = text.replaceAll("io.github.FlyJingFish.AndroidAop:android-aop-processor:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-processor:"+newVersionName)
 
+        File gradleFile = new File("gradle.properties")
+        String gradleText = gradleFile.text
+        String text2 = gradleText.replaceAll("TestVersion = "+oldVersionName,"TestVersion = "+newVersionName)
+
+
         configFile.write(text)
+        gradleFile.write(text2)
         println("升级版本号完成，versionName = "+newVersionName)
     }
 }

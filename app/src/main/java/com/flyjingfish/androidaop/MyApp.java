@@ -28,9 +28,11 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class MyApp extends Application {
+    public static MyApp INSTANCE;
     @Override
     public void onCreate() {
         super.onCreate();
+        INSTANCE = this;
         AndroidAop.INSTANCE.setOnPermissionsInterceptListener(new OnPermissionsInterceptListener() {
             @SuppressLint("CheckResult")
             @Override

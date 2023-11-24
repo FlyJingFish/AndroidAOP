@@ -15,7 +15,7 @@
         btn_DoubleClick, btn_IOThread,
         btn_MainThread,btn_OnLifecycle,btn_TryCatch,
         btn_Permission,btn_CustomIntercept,btn_MatchClassMethod,
-        btn_static_method,btn_static_method2"
+        btn_topFun,btn_static_method,btn_static_method2"
         />
     <Button
         android:id="@+id/btn_SingleClick"
@@ -89,6 +89,14 @@
         app:layout_constraintTop_toTopOf="parent"
         android:textAllCaps="false"
         android:text="匹配类"/>
+    <Button
+        android:id="@+id/btn_topFun"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textAllCaps="false"
+        android:text="顶层函数"/>
     <Button
         android:id="@+id/btn_static_method"
         android:layout_width="wrap_content"

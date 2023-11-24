@@ -5,7 +5,7 @@ plugins {
 }
 AndroidAopConfig {
     // debug 为true打开日志方便调试
-    debug false
+    debug true
 }
 def buildTime() {
     return new Date().format("yyyy_MM_dd_HH_mm_ss", TimeZone.getDefault())

@@ -54,6 +54,9 @@ class MainActivity: BaseActivity() {
             setLogcat("匹配类-方法切面 继承自的 androidx.appcompat.app.AppCompatActivity 的 startActivity 方法")
             startActivity(Intent(this,SecondActivity::class.java))
         }
+        binding.btnTopFun.setOnClickListener {
+            testTopFun()
+        }
         binding.btnStaticMethod.setOnClickListener {
             ThirdActivity.start(this,3,object : ThirdActivity.OnPhotoSelectListener {
                 override fun onBack() {
