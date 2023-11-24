@@ -2,9 +2,7 @@ pluginManagement {
     repositories {
         if (LocalTest){
             mavenLocal()
-            System.out.println("pluginManagement=local")
         }else {
-            System.out.println("pluginManagement=online")
             maven { url "https://s01.oss.sonatype.org/content/repositories/iogithubflyjingfish-"+SonatypeTestCode }
         }
         google()

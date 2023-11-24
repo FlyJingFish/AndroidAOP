@@ -33,13 +33,11 @@ dependencies {
 
     if (LocalTest){
         //本地
-        System.out.println("test_lib=local")
         api project(path: ':android-aop-annotation')
         annotationProcessor project(path: ':android-aop-processor')
         api project(path: ':android-aop-core')
     }else {
         //线上
-        System.out.println("test_lib=online")
         api 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:'+TestVersion
         annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:'+TestVersion
         api 'io.github.FlyJingFish.AndroidAop:android-aop-core:'+TestVersion

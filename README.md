@@ -30,7 +30,7 @@
 ```gradle
 buildscript {
     dependencies {
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.0.3'
+        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.0.4'
     }
 }
 ```
@@ -51,10 +51,10 @@ plugins {
 ```gradle
 dependencies {
     //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.0.3'
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.0.3'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.0.4'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.0.4'
     //非必须项 👇，如果你想自定义切面需要用到 ⚠️如果是kotlin项目 也要用 annotationProcessor
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.0.3'
+    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.0.4'
 }
 ```
 
@@ -186,11 +186,22 @@ public class MatchActivityMethod implements MatchClassMethod {
 }
 ```
 
-上边表示凡是继承自 com.flyjingfish.test_lib.BaseActivity 的类执行 onCreate 和 onResume 方法时则进行切面
+其对应的就是下边的代码
+```kotlin
+abstract class BaseActivity :AppCompatActivity() {
+
+    override fun startActivity(intent: Intent?, options: Bundle?) {
+        super.startActivity(intent, options)
+    }
+}
+```
+
+上边表示凡是继承自 androidx.appcompat.app.AppCompatActivity 的类执行 startActivity 方法时则进行切面
 
 ⚠️注意如果你没写对应的方法或者没有重写父类的该方法则切面无效
 
-例如你想做退出登陆逻辑时可以使用这个
+例如你想做退出登陆逻辑时可以使用上边这个，只要在页面内跳转就可以检测是否需要退出登陆
+
 
 #### 混淆规则
 
