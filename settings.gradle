@@ -22,6 +22,16 @@ dependencyResolutionManagement {
         mavenCentral()
         maven { url 'https://jitpack.io' }
     }
+
+    versionCatalogs {
+        libs {
+            version('ksp', '1.8.0-1.0.9')
+            library('kotlinpoet', 'com.squareup:kotlinpoet:1.12.0')
+            library('ksp', 'com.google.devtools.ksp', 'symbol-processing-api').versionRef('ksp')
+            library('autoservice.annotations', 'com.google.auto.service:auto-service-annotations:1.0.1')
+            library('ksp-autoservice', 'dev.zacsweers.autoservice:auto-service-ksp:1.0.0')
+        }
+    }
 }
 rootProject.name = "AndroidAOP"
 include ':app'
@@ -30,3 +40,4 @@ include ':android-aop-processor'
 include ':android-aop-plugin'
 include ':android-aop-core'
 include ':test-lib'
+include ':android-aop-ksp'

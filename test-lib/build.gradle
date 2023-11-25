@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.devtools.ksp'
 }
 
 android {
@@ -20,6 +21,13 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
+
+    kotlin {
+        sourceSets {
+            // 让IDE识别KSP生成的代码
+            main.kotlin.srcDirs += 'build/generated/ksp'
+        }
+    }
 }
 
 dependencies {
@@ -34,7 +42,8 @@ dependencies {
     if (LocalTest){
         //本地
         api project(path: ':android-aop-annotation')
-        annotationProcessor project(path: ':android-aop-processor')
+//        annotationProcessor project(path: ':android-aop-processor')
+        ksp project(':android-aop-ksp')
         api project(path: ':android-aop-core')
     }else {
         //线上

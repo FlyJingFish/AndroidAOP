@@ -1,0 +1,25 @@
+plugins {
+    id 'java-library'
+    id 'org.jetbrains.kotlin.jvm'
+    id 'com.google.devtools.ksp'
+}
+
+javadoc {
+    title = "AndroidAop Ksp ${version} API"
+    options.bottom = 'AndroidAop'
+}
+
+apply from: "$rootDir/gradle/java_base.gradle"
+apply from: "$rootDir/gradle/java_publish.gradle"
+dependencies {
+    implementation project(path: ':android-aop-annotation')
+    implementation libs.kotlinpoet
+    implementation libs.ksp
+    implementation libs.autoservice.annotations
+    ksp libs.ksp.autoservice
+}
+//kotlin {
+//    jvmToolchain {
+//        languageVersion.set(JavaLanguageVersion.of(11))
+//    }
+//}

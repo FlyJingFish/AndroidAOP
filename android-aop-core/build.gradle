@@ -1,14 +1,22 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.devtools.ksp'
 }
 apply from: "$rootDir/gradle/android_base.gradle"
 apply from: "$rootDir/gradle/android_publish.gradle"
 android {
     namespace 'com.flyjingfish.android_aop_core'
+    kotlin {
+        sourceSets {
+            // 让IDE识别KSP生成的代码
+            main.kotlin.srcDirs += 'build/generated/ksp'
+        }
+    }
 }
 
 dependencies {
     implementation project(path: ':android-aop-annotation')
-    annotationProcessor project(path: ':android-aop-processor')
+//    annotationProcessor project(path: ':android-aop-processor')
+    ksp project(':android-aop-ksp')
 }
