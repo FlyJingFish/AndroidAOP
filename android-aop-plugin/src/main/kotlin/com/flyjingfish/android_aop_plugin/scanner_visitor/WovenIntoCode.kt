@@ -23,6 +23,7 @@ import java.io.InputStream
 
 
 object WovenIntoCode {
+    private const val METHOD_SUFFIX = "\$\$AndroidAOP"
     @Throws(Exception::class)
     fun modifyClass(
         inputStreamBytes: ByteArray?,
@@ -33,7 +34,7 @@ object WovenIntoCode {
         cr.accept(object : ClassVisitor(Opcodes.ASM4, cw) {}, 0)
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
             val oldMethodName = value.methodName
-            val targetMethodName = oldMethodName + "AndroidAopAutoMethod"
+            val targetMethodName = oldMethodName + METHOD_SUFFIX
             val oldDescriptor = value.descriptor
             cr.accept(object : ClassVisitor(Opcodes.ASM4, cw) {
                 override fun visitAnnotation(
@@ -111,7 +112,7 @@ object WovenIntoCode {
         cp.importPackage("androidx.annotation.Keep")
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
             val oldMethodName = value.methodName
-            val targetMethodName = oldMethodName + "AndroidAopAutoMethod"
+            val targetMethodName = oldMethodName + METHOD_SUFFIX
             val oldDescriptor = value.descriptor
             val cutClassName = value.cutClassName
             try {
