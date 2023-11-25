@@ -178,6 +178,8 @@ class CustomInterceptCut : BasePointCut<CustomIntercept> {
 }
 ```
 
+CustomInterceptCut 继承自 BasePointCut，可以看到 BasePointCut 上有一泛型，这个泛型就是上边的 CustomIntercept 注解，两者是互相关联的
+
 - **@AndroidAopMatchClassMethod** 是做匹配继承自某类及其对应方法的切面的（⚠️注意：自定义的匹配类方法切面，请使用Java代码来写，目前版本仅对此还未适配Kotlin，其他代码都可以用Kotlin）
 
 ```java
