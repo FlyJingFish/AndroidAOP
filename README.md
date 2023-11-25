@@ -77,7 +77,7 @@ dependencies {
 
 ### 这块强调一下 @OnLifecycle
 
-**@OnLifecycle 加到的位置必须是属于直接或间接继承自 FragmentActivity 或 Fragment的方法才有用（即这个方法是直接或间接继承FragmentActivity 或 Fragment的类的）**
+**@OnLifecycle 加到的位置必须是属于直接或间接继承自 FragmentActivity 或 Fragment的方法才有用（即这个方法是直接或间接继承FragmentActivity 或 Fragment的类的）或者说拥有对象实现LifecycleOwner也可以**
 
 ### 下面再着重介绍下 @TryCatch @Permission @CustomIntercept
 
