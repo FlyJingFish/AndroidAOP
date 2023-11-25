@@ -140,11 +140,11 @@ object WovenIntoCode {
                 val annot =
                     Annotation("androidx.annotation.Keep", constpool)
                 annotAttr.addAnnotation(annot)
-                targetMethod!!.methodInfo.addAttribute(annotAttr)
+                targetMethod.methodInfo.addAttribute(annotAttr)
 //                val paramNames: MutableList<String> =
 //                    ArrayList()
                 val isStaticMethod =
-                    Modifier.isStatic(ctMethod!!.modifiers)
+                    Modifier.isStatic(ctMethod.modifiers)
                 val argsBuffer = StringBuffer()
 
                 val paramsClassNamesBuffer = StringBuffer()
