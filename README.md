@@ -42,6 +42,7 @@ plugins {
     id 'com.google.devtools.ksp' version '1.8.0-1.0.9' apply false
 }
 ```
+[Kotlin 和 KSP Github 的匹配版本号列表](https://github.com/google/ksp/releases)
 
 #### 二、在 app 的build.gradle添加（此步为必须项）
 
