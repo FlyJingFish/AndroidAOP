@@ -76,7 +76,7 @@ dependencies {
 }
 ```
 
-**提示：ksp 或 annotationProcessor只能当前 module 起作用**
+**提示：ksp 或 annotationProcessor只是在当前 module 起作用**
 
 ### 本库内置了一些功能注解可供你直接使用
 
