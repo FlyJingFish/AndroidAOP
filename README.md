@@ -37,6 +37,10 @@ buildscript {
         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.0.6'
     }
 }
+plugins {
+    //非必须项 👇，如果需要自定义切面，并且使用 android-aop-ksp 这个库的话需要配置 ，下边版本号根据你项目的 Kotlin 版本决定
+    id 'com.google.devtools.ksp' version '1.8.0-1.0.9' apply false
+}
 ```
 
 #### 二、在 app 的build.gradle添加（此步为必须项）
@@ -53,14 +57,24 @@ plugins {
 #### 三、引入依赖库
 
 ```gradle
+plugins {
+    //非必须项 👇，如果需要自定义切面，并且使用 android-aop-ksp 这个库的话需要配置 
+    id 'com.google.devtools.ksp'
+}
+
 dependencies {
     //必须项 👇
     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.0.6'
     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.0.6'
-    //非必须项 👇，如果你想自定义切面需要用到 ⚠️如果是kotlin项目 也要用 annotationProcessor
+    //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
+    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.0.6'
+    //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.0.6'
+    //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
 }
 ```
+
+****
 
 ### 本库内置了一些功能注解可供你直接使用
 
@@ -146,7 +160,7 @@ PS：ProceedJoinPoint.target 如果为null的话是因为注入的方法是静�
 
 - **@AndroidAopPointCut** 是只能在方法上做切面的，上述中注解都是通过这个做的
 
-下面以 @CustomIntercept 为例介绍下该如何使用（⚠️注意：自定义的注解，请使用Java代码来写，目前版本仅对此还未适配Kotlin，其他代码都可以用Kotlin）
+下面以 @CustomIntercept 为例介绍下该如何使用（⚠️注意：自定义的注解如果是 Kotlin 代码请用 android-aop-ksp 那个库）
 
 ```java
 @AndroidAopPointCut(CustomInterceptCut.class)
@@ -180,7 +194,7 @@ class CustomInterceptCut : BasePointCut<CustomIntercept> {
 
 CustomInterceptCut 继承自 BasePointCut，可以看到 BasePointCut 上有一泛型，这个泛型就是上边的 CustomIntercept 注解，两者是互相关联的
 
-- **@AndroidAopMatchClassMethod** 是做匹配继承自某类及其对应方法的切面的（⚠️注意：自定义的匹配类方法切面，请使用Java代码来写，目前版本仅对此还未适配Kotlin，其他代码都可以用Kotlin）
+- **@AndroidAopMatchClassMethod** 是做匹配继承自某类及其对应方法的切面的（⚠️注意：自定义的匹配类方法切面如果是 Kotlin 代码请用 android-aop-ksp 那个库）
 
 ```java
 @AndroidAopMatchClassMethod(targetClassName = "androidx.appcompat.app.AppCompatActivity",methodName = {"startActivity"})
