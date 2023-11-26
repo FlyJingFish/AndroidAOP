@@ -34,6 +34,7 @@
 ```gradle
 buildscript {
     dependencies {
+        //必须项 👇
         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.0.6'
     }
 }
