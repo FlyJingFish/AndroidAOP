@@ -17,6 +17,5 @@ android {
 
 dependencies {
     implementation project(path: ':android-aop-annotation')
-//    annotationProcessor project(path: ':android-aop-processor')
     ksp project(':android-aop-ksp')
 }

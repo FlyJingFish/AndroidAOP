@@ -48,7 +48,8 @@ dependencies {
     }else {
         //线上
         api 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:'+TestVersion
-        annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:'+TestVersion
+//        annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:'+TestVersion
+        ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:'+TestVersion
         api 'io.github.FlyJingFish.AndroidAop:android-aop-core:'+TestVersion
     }
 
