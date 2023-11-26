@@ -22,12 +22,12 @@ android {
         jvmTarget = '17'
     }
 
-    kotlin {
-        sourceSets {
-            // 让IDE识别KSP生成的代码
-            main.kotlin.srcDirs += 'build/generated/ksp'
-        }
-    }
+//    kotlin {
+//        sourceSets {
+//            // 让IDE识别KSP生成的代码
+//            main.kotlin.srcDirs += 'build/generated/ksp'
+//        }
+//    }
 }
 
 dependencies {

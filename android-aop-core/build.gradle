@@ -7,12 +7,6 @@ apply from: "$rootDir/gradle/android_base.gradle"
 apply from: "$rootDir/gradle/android_publish.gradle"
 android {
     namespace 'com.flyjingfish.android_aop_core'
-    kotlin {
-        sourceSets {
-            // 让IDE识别KSP生成的代码
-            main.kotlin.srcDirs += 'build/generated/ksp'
-        }
-    }
 }
 
 dependencies {
