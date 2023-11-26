@@ -65,12 +65,19 @@ class MainActivity: BaseActivity() {
             })
         }
         binding.btnStaticMethod2.setOnClickListener {
-
             StaticClass.onStaticPermission(this,3,object : ThirdActivity.OnPhotoSelectListener {
                 override fun onBack() {
                     setLogcat("测试 Java 静态方法，5000毫秒内只能调用一次")
                 }
             })
+        }
+        val testBean = TestBean()
+        binding.btnFieldSet.setOnClickListener {
+            testBean.name = "1111"
+        }
+
+        binding.btnFieldGet.setOnClickListener {
+            val name = testBean.name
         }
 
         binding.tvLogcat.setOnClickListener { binding.tvLogcat.text = "日志:（点此清除）\n" }

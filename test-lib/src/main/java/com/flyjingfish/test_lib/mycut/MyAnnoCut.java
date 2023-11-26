@@ -11,6 +11,6 @@ public class MyAnnoCut implements BasePointCut<MyAnno> {
     @Nullable
     @Override
     public Object invoke(@NonNull ProceedJoinPoint joinPoint, @NonNull MyAnno anno) {
-        return null;
+        return joinPoint.proceed();
     }
 }

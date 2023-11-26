@@ -6,9 +6,9 @@ import com.flyjingfish.test_lib.mycut.MyAnnoCut2
 
 @AndroidAopPointCut(MyAnnoCut2::class)
 @Target(
-    AnnotationTarget.ANNOTATION_CLASS,
+    AnnotationTarget.FUNCTION,
     AnnotationTarget.PROPERTY_GETTER,
-    AnnotationTarget.PROPERTY_SETTER
+    AnnotationTarget.PROPERTY_SETTER,
 )
 @Retention(AnnotationRetention.RUNTIME)
 @Keep

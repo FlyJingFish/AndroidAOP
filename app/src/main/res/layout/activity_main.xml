@@ -5,6 +5,7 @@
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <androidx.constraintlayout.helper.widget.Flow
+        android:id="@+id/flow"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
@@ -15,7 +16,7 @@
         btn_DoubleClick, btn_IOThread,
         btn_MainThread,btn_OnLifecycle,btn_TryCatch,
         btn_Permission,btn_CustomIntercept,btn_MatchClassMethod,
-        btn_topFun,btn_static_method,btn_static_method2"
+        btn_topFun,btn_static_method,btn_static_method2,btn_field_set,btn_field_get"
         />
     <Button
         android:id="@+id/btn_SingleClick"
@@ -113,13 +114,29 @@
         app:layout_constraintTop_toTopOf="parent"
         android:textAllCaps="false"
         android:text="Java静态方法"/>
+    <Button
+        android:id="@+id/btn_field_set"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textAllCaps="false"
+        android:text="Kotlin Field set方法"/>
+    <Button
+        android:id="@+id/btn_field_get"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textAllCaps="false"
+        android:text="Kotlin Field get方法"/>
     <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_static_method2">
+        app:layout_constraintTop_toBottomOf="@+id/flow">
         <TextView
             android:id="@+id/tv_logcat"
             android:layout_width="match_parent"

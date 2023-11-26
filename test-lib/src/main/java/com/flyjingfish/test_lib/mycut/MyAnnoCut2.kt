@@ -6,6 +6,6 @@ import com.flyjingfish.test_lib.annotation.MyAnno2
 
 class MyAnnoCut2 : BasePointCut<MyAnno2> {
     override operator fun invoke(joinPoint: ProceedJoinPoint, anno: MyAnno2): Any? {
-        return null
+        return joinPoint.proceed()
     }
 }

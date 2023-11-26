@@ -42,6 +42,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
     for (symbol in symbols) {
       var targetClassName :String ?= null
       var isRetention = false
+      var isTarget = false
       for (annotation in symbol.annotations) {
 
         for (argument in annotation.arguments) {
@@ -52,6 +53,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
 //              logger.error("argument.value = ${(argument.value as KSType).declaration.packageName.asString()}")
             }
           }else if (annotation.toString() == "@Target") {
+            isTarget = true
             if (argument.name?.getShortName() == "value") {
               if (argument.value is ElementType){
                 val value = argument.value
@@ -63,7 +65,11 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
                 for (s in value) {
                   if (symbol.origin == Origin.JAVA){
                     if ("METHOD" != s.toString()){
-                      throw IllegalArgumentException("注意：请给 $symbol 设置 @Target 为 METHOD ")
+                      if (value.size>1){
+                        throw IllegalArgumentException("注意： $symbol 只可以设置 @Target 为 METHOD 这一种")
+                      }else{
+                        throw IllegalArgumentException("注意：请给 $symbol 设置 @Target 为 METHOD ")
+                      }
                     }
                   }else if (symbol.origin == Origin.KOTLIN){
                     if ("kotlin.annotation.AnnotationTarget.FUNCTION" != s.toString()){
@@ -71,19 +77,26 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
                     }
                   }
                 }
-              }else if (argument.value is Array<*>){
-                val value : Array<*> = argument.value as Array<*>
+              }
+//              logger.error("symbol=${symbol},origin=${symbol.origin},name=${argument.name?.getShortName().toString()},value=${argument.value} Target = ${argument.value?.javaClass?.name}")
+//              val retention = argument.value.toString()
+            }else if (argument.name?.getShortName() == "allowedTargets"){
+              if (argument.value is ArrayList<*>){
+                val value : ArrayList<*> = argument.value as ArrayList<*>
                 for (s in value) {
-                  if (symbol.origin == Origin.KOTLIN){
-                    if ("kotlin.annotation.AnnotationTarget.FUNCTION" != s.toString()){
-                      throw IllegalArgumentException("注意：请给 $symbol 设置 @Target 为 FUNCTION ")
+                  if (symbol.origin == Origin.JAVA){
+                    if ("METHOD" != s.toString()){
+                      throw IllegalArgumentException("注意：请给 $symbol 设置 @Target 为 METHOD ")
+                    }
+                  }else if (symbol.origin == Origin.KOTLIN){
+                    if ("kotlin.annotation.AnnotationTarget.FUNCTION" != s.toString()&&"kotlin.annotation.AnnotationTarget.PROPERTY_GETTER" != s.toString()&&"kotlin.annotation.AnnotationTarget.PROPERTY_SETTER" != s.toString()){
+                      throw IllegalArgumentException("注意：$symbol 只可设置 @Target 为 FUNCTION、PROPERTY_SETTER 或 PROPERTY_GETTER")
                     }
                   }
                 }
               }
-              logger.error("Target = ${argument.value?.javaClass?.name}")
-//              val retention = argument.value.toString()
             }
+//            logger.error("symbol=${symbol},origin=${symbol.origin},name=${argument.name?.getShortName().toString()},value=${argument.value} Target = ${argument.value?.javaClass?.name}")
           }else if (annotation.toString() == "@Retention") {
             isRetention = true
             if (argument.name?.getShortName() == "value") {
@@ -101,6 +114,13 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       }
       if (!isRetention){
         throw IllegalArgumentException("注意：请给 $symbol 设置 @Retention 为 RUNTIME ")
+      }
+      if (!isTarget){
+        if (symbol.origin == Origin.JAVA){
+          throw IllegalArgumentException("注意：请给 $symbol 设置 @Retention 为 METHOD ")
+        }else if (symbol.origin == Origin.KOTLIN){
+          throw IllegalArgumentException("注意：请给 $symbol 设置 @Retention 为 FUNCTION、PROPERTY_SETTER 或 PROPERTY_GETTER 至少一种")
+        }
       }
 
       val className = (symbol as KSClassDeclaration).packageName.asString() +"."+ symbol

@@ -22,6 +22,7 @@ object ClassNameToConversions {
         returnToValue["F"] = "floatValue(%1\$s)"
         returnToValue["D"] = "doubleValue(%1\$s)"
         returnToValue["Z"] = "booleanValue(%1\$s)"
+        returnToValue["Ljava/lang/String;"] = "stringValue(%1\$s)"
     }
 
     fun getArgsXObject(key: String): String {

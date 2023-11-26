@@ -31,12 +31,12 @@ object WovenIntoCode {
     ): ByteArray {
         val cr = ClassReader(inputStreamBytes)
         val cw = ClassWriter(cr, 0)
-        cr.accept(object : ClassVisitor(Opcodes.ASM4, cw) {}, 0)
+        cr.accept(object : ClassVisitor(Opcodes.ASM8, cw) {}, 0)
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
             val oldMethodName = value.methodName
             val targetMethodName = oldMethodName + METHOD_SUFFIX
             val oldDescriptor = value.descriptor
-            cr.accept(object : ClassVisitor(Opcodes.ASM4, cw) {
+            cr.accept(object : ClassVisitor(Opcodes.ASM8, cw) {
                 override fun visitAnnotation(
                     descriptor: String,
                     visible: Boolean
@@ -183,6 +183,7 @@ object WovenIntoCode {
                             (if (isHasArgs) "        Object[] args = new Object[]{$argsBuffer};\n" else "") +
                             (if (isHasArgs) "        pointCut.setArgs(args);\n" else "        pointCut.setArgs(null);\n") +
                             "        "+returnStr+";}"
+                printLog(allSignature)
                 printLog(body)
                 ctMethod.setBody(body)
             } catch (e: NotFoundException) {

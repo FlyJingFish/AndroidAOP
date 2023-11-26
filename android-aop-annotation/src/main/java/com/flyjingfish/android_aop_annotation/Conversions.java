@@ -174,6 +174,17 @@ public final class Conversions {
 		}
 	}
 
+	public static String stringValue(Object o) {
+		if (o == null) {
+			return null;
+		} else if (o instanceof String) {
+			return (String) o;
+		} else {
+			throw new ClassCastException(o.getClass().getName() +
+					" can not be converted to boolean");
+		}
+	}
+
 	// identity function for now.  This is not typed to "void" because we happen
 	// to know that in Java, any void context (i.e., {@link ExprStmt})
 	// can also handle a return value.

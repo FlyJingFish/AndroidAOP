@@ -14,7 +14,7 @@ import com.flyjingfish.test_lib.ToastUtils;
 
 import java.lang.reflect.InvocationTargetException;
 
-@AndroidAopMatchClassMethod(targetClassName = "androidx.appcompat.app.AppCompatActivity",methodName = {"startActivity"})
+//@AndroidAopMatchClassMethod(targetClassName = "androidx.appcompat.app.AppCompatActivity",methodName = {"startActivity"})
 public class MatchActivityMethod implements MatchClassMethod {
     @Nullable
     @Override

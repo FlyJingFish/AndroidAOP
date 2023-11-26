@@ -11,7 +11,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 
-@Target(ElementType.TYPE)
+@Target({ElementType.ANNOTATION_TYPE})
 @Retention(SOURCE)
 public @interface AndroidAopPointCut {
     Class<? extends BasePointCut> value();
