@@ -7,8 +7,6 @@ import com.google.devtools.ksp.processing.SymbolProcessorProvider
 @AutoService(SymbolProcessorProvider::class)
 class AndroidAopSymbolProcessorProvider : SymbolProcessorProvider {
   override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
-
-    println("---------AndroidAopSymbolProcessorProvider---------")
     return AndroidAopSymbolProcessor(environment.codeGenerator, environment.logger)
   }
 }

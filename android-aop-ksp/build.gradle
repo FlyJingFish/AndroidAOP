@@ -18,8 +18,3 @@ dependencies {
     implementation libs.autoservice.annotations
     ksp libs.ksp.autoservice
 }
-//kotlin {
-//    jvmToolchain {
-//        languageVersion.set(JavaLanguageVersion.of(11))
-//    }
-//}
