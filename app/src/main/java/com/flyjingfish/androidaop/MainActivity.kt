@@ -16,6 +16,7 @@ import com.flyjingfish.android_aop_core.annotations.TryCatch
 import com.flyjingfish.android_aop_core.enums.ThreadType
 import com.flyjingfish.androidaop.databinding.ActivityMainBinding
 import com.flyjingfish.test_lib.BaseActivity
+import com.flyjingfish.test_lib.annotation.MyAnno2
 
 class MainActivity: BaseActivity() {
 
@@ -80,6 +81,10 @@ class MainActivity: BaseActivity() {
             val name = testBean.name
         }
 
+        binding.btnKotlinAnno.setOnClickListener {
+            onMyAnno2()
+        }
+
         binding.tvLogcat.setOnClickListener { binding.tvLogcat.text = "日志:（点此清除）\n" }
     }
 
@@ -135,4 +140,10 @@ class MainActivity: BaseActivity() {
                           double: Double,boolean: Boolean){
         setLogcat("@CustomIntercept 进入方法=$val1,$short,$byte,$char,$long,$float,$double,$boolean")
     }
+
+    @MyAnno2
+    fun onMyAnno2(){
+        setLogcat("自定义Kotlin 注解切面进入方法")
+    }
+
 }
