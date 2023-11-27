@@ -14,15 +14,15 @@ object ClassNameToConversions {
         argsToObject["float"] = "floatObject(%1\$s)"
         argsToObject["double"] = "doubleObject(%1\$s)"
         argsToObject["boolean"] = "booleanObject(%1\$s)"
-        returnToValue["I"] = "intValue(%1\$s)"
-        returnToValue["S"] = "shortValue(%1\$s)"
-        returnToValue["B"] = "byteValue(%1\$s)"
-        returnToValue["C"] = "charValue(%1\$s)"
-        returnToValue["J"] = "longValue(%1\$s)"
-        returnToValue["F"] = "floatValue(%1\$s)"
-        returnToValue["D"] = "doubleValue(%1\$s)"
-        returnToValue["Z"] = "booleanValue(%1\$s)"
-        returnToValue["Ljava/lang/String;"] = "stringValue(%1\$s)"
+        returnToValue["int"] = "intValue(%1\$s)"
+        returnToValue["short"] = "shortValue(%1\$s)"
+        returnToValue["byte"] = "byteValue(%1\$s)"
+        returnToValue["char"] = "charValue(%1\$s)"
+        returnToValue["long"] = "longValue(%1\$s)"
+        returnToValue["float"] = "floatValue(%1\$s)"
+        returnToValue["double"] = "doubleValue(%1\$s)"
+        returnToValue["boolean"] = "booleanValue(%1\$s)"
+        returnToValue["java.lang.String"] = "stringValue(%1\$s)"
     }
 
     fun getArgsXObject(key: String): String {
@@ -37,7 +37,9 @@ object ClassNameToConversions {
 
     fun getReturnXObject(key: String): String {
         var value = returnToValue[key]
-        value = if (value == null) {
+        value = if(key == "void"){
+            "%1\$s"
+        }else if (value == null) {
             "return %1\$s"
         } else {
             "return Conversions.$value"

@@ -149,6 +149,7 @@ object WovenIntoCode {
 
                 val paramsClassNamesBuffer = StringBuffer()
                 val ctClasses = ctMethod.parameterTypes
+                val returnType = ctMethod.returnType
                 val len = ctClasses.size
                 // 非静态的成员函数的第一个参数是this
                 val pos =  1
@@ -168,11 +169,9 @@ object WovenIntoCode {
                         argsBuffer.append(",")
                     }
                 }
-                val allSignature = ctMethod.signature
+
                 val returnStr = String.format(
-                    ClassNameToConversions.getReturnXObject(
-                        allSignature.substring(allSignature.indexOf(")") + 1)
-                    ), "pointCut.joinPointExecute()"
+                    ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointExecute()"
                 )
                 val targetClassName = ctClass.name
                 val body =
@@ -183,7 +182,9 @@ object WovenIntoCode {
                             (if (isHasArgs) "        Object[] args = new Object[]{$argsBuffer};\n" else "") +
                             (if (isHasArgs) "        pointCut.setArgs(args);\n" else "        pointCut.setArgs(null);\n") +
                             "        "+returnStr+";}"
-                printLog(allSignature)
+                val allSignature = ctMethod.signature
+                printLog("returnType = ${returnType.name}")
+                printLog("allSignature = $allSignature")
                 printLog(body)
                 ctMethod.setBody(body)
             } catch (e: NotFoundException) {
