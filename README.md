@@ -17,6 +17,8 @@
 
 **4、本库没有使用 AspectJ，织入代码量极少，侵入性极低**
 
+##### 声明下：本库没有使用 AspectJ ，目前的功能用不着市面上那些基于 AspectJ 做出来的Aop框架的那些配置，当然将来在增加功能的时候不排除会增加一些可选配置
+
 #### [点此下载apk,也可扫下边二维码下载](https://github.com/FlyJingFish/AndroidAOP/blob/master/apk/release/app-release.apk?raw=true)
 
 <img src="/screenshot/qrcode.png" alt="show" width="200px" />
@@ -90,6 +92,8 @@ dependencies {
 | @TryCatch        |    value = 你自定义加的一个flag    |     加入此注解可为您的方法包裹一层 try catch 代码      |
 | @Permission      |      value = 权限的字符串数组      |     申请权限的操作，加入此注解可使您的代码在获取权限后才执行      |
 | @CustomIntercept | value = 你自定义加的一个字符串数组的flag |           自定义拦截，配合 AndroidAop.setOnCustomInterceptListener 使用，属于万金油           |
+
+[上述注解使用示例都在这](https://github.com/FlyJingFish/AndroidAOP/blob/master/app/src/main/java/com/flyjingfish/androidaop/MainActivity.kt)
 
 ### 这块强调一下 @OnLifecycle
 
