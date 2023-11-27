@@ -24,7 +24,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 /**
- * 单击注解，加入此注解，可是你的方法只有单击时才可进入
+ * 单击注解，加入此注解，可使你的方法只有单击时才可进入
  */
 @AndroidAopPointCut(SingleClickCut.class)
 @Retention(RetentionPolicy.RUNTIME)

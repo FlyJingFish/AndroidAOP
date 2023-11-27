@@ -9,7 +9,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 自定义拦截，此注解可以加到方法和构造器上
+ * 自定义拦截，此注解可以加到方法上
  */
 @AndroidAopPointCut(CustomInterceptCut.class)
 @Target({ElementType.METHOD})
