@@ -62,7 +62,7 @@ public class MyApp extends Application {
                 //  不调用 proceed 就不会执行拦截切面方法内的代码
                 Log.e("CustomIntercept","invoke"+(customIntercept == null));
                 ToastUtils.INSTANCE.makeText(MyApp.this,"进入 @CustomIntercept 拦截器，value="+customIntercept.value()[0]);
-                return joinPoint.proceed(new Object[]{2,(short)3,(byte)4,'5',6L,7f, 8.0d,true});
+                return joinPoint.proceed(2,(short)3,(byte)4,'5',6L,7f, 8.0d,true);
             }
         });
 

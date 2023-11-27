@@ -13,7 +13,7 @@ public final class ProceedJoinPoint {
     public Object proceed(){
         return proceed(args);
     }
-    public Object proceed(Object[] args){
+    public Object proceed(Object... args){
         try {
             return targetMethod.invoke(target,args);
         } catch (IllegalAccessException e) {
