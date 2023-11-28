@@ -316,10 +316,10 @@ abstract class BaseActivity :AppCompatActivity() {
 ```
 
 如果你用到了 **@AndroidAopMatchClassMethod** 做切面，那你需要为切面内的方法做混淆处理
-下面是上文提到的 **MatchActivityOnCreate** 类的匹配规则，对应的逻辑是 匹配的 为继承自 com.flyjingfish.test_lib.BaseActivity 的类的 startActivity 方法加入切面
+下面是上文提到的 **MatchActivityOnCreate** 类的匹配规则，对应的逻辑是 匹配的 为继承自 androidx.appcompat.app.AppCompatActivity 的类的 startActivity 方法加入切面
 
 ```
--keepnames class * extends com.flyjingfish.test_lib.BaseActivity{
+-keepnames class * extends androidx.appcompat.app.AppCompatActivity{
     void startActivity(...);
 }
 ```
