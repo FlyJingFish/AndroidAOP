@@ -80,9 +80,14 @@ dependencies {
 ```
 **提示：ksp 或 annotationProcessor只是在当前 module 起作用**
 
-#### 四、可选配置项
+#### 四、在 app 的build.gradle添加（此步为可选配置项）
 
 ```gradle
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'android.aop'
+}
 androidAopConfig {
     // enabled 为false 切面不再起作用
     enabled true 
@@ -90,12 +95,15 @@ androidAopConfig {
     include 'com.flyjingfish.androidaop'
     include 'com.flyjingfish.test_lib'
     // exclude 是扫描时排除的包
-    // 移除kotlin相关，编译错误和提升速度
+    // 可排除 kotlin 相关，提高速度
     exclude 'kotlin.jvm', 'kotlin.internal'
     exclude 'kotlinx.coroutines.internal', 'kotlinx.coroutines.android'
 }
+android {
+    ...
+}
 ```
-**提示：合理使用 include 和 exclude 可提高编译速度**
+**提示：合理使用 include 和 exclude 可提高编译速度，这块的设置是**
 
 ### 本库内置了一些功能注解可供你直接使用
 
