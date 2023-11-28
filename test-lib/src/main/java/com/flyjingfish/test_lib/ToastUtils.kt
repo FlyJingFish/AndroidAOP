@@ -1,10 +1,12 @@
 package com.flyjingfish.test_lib
 
+import android.app.Application
 import android.content.Context
 import android.widget.Toast
 
 object ToastUtils {
     private var mToast: Toast? = null
+    lateinit var app:Application
 
     fun makeText(context: Context, text: CharSequence) {
         makeText(context, text, Toast.LENGTH_SHORT)?.show()

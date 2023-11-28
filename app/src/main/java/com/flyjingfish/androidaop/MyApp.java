@@ -32,6 +32,7 @@ public class MyApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        ToastUtils.INSTANCE.setApp(this);
         INSTANCE = this;
         AndroidAop.INSTANCE.setOnPermissionsInterceptListener(new OnPermissionsInterceptListener() {
             @SuppressLint("CheckResult")

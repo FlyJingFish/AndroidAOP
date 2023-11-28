@@ -135,11 +135,11 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     val isClassFile = file.name.endsWith(_CLASS)
                     val tranEntryName = file.absolutePath.replace("/", ".")
                         .replace("\\", ".")
-                    printLog("tranEntryName="+tranEntryName)
-                    if (tranEntryName.contains("com.flyjingfish")){
-                        printLog("isIncludeFilterMatched="+Utils.isIncludeFilterMatched(tranEntryName, includes) )
-                        printLog("isExcludeFilterMatched="+Utils.isExcludeFilterMatched(tranEntryName, excludes) )
-                    }
+//                    printLog("tranEntryName="+tranEntryName)
+//                    if (tranEntryName.contains("com.flyjingfish")){
+//                        printLog("isIncludeFilterMatched="+Utils.isIncludeFilterMatched(tranEntryName, includes) )
+//                        printLog("isExcludeFilterMatched="+Utils.isExcludeFilterMatched(tranEntryName, excludes) )
+//                    }
                     if (isClassFile && Utils.isIncludeFilterMatched(tranEntryName, includes) && !Utils.isExcludeFilterMatched(tranEntryName, excludes)) {
                         FileInputStream(file).use { inputs ->
                             val bytes = inputs.readAllBytes();
@@ -175,6 +175,11 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     val isClassFile = entryName.endsWith(_CLASS)
                     val tranEntryName = entryName.replace("/", ".")
                         .replace("\\", ".")
+//                    printLog("tranEntryName="+tranEntryName)
+//                    if (tranEntryName.contains("com.flyjingfish")){
+//                        printLog("isIncludeFilterMatched="+Utils.isIncludeFilterMatched(tranEntryName, includes) )
+//                        printLog("isExcludeFilterMatched="+Utils.isExcludeFilterMatched(tranEntryName, excludes) )
+//                    }
                     if (isClassFile && Utils.isIncludeFilterMatched(tranEntryName, includes) && !Utils.isExcludeFilterMatched(tranEntryName, excludes)) {
 
                         jarFile.getInputStream(jarEntry).use { inputs ->
