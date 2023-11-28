@@ -33,8 +33,7 @@ public final class ProceedJoinPoint {
 
     void setOriginalMethod(Method originalMethod) {
         this.originalMethod = originalMethod;
-        targetAopMethod = new AopMethod();
-        targetAopMethod.setOriginalMethod(originalMethod);
+        targetAopMethod = new AopMethod(originalMethod);
     }
 
     public Object getTarget() {

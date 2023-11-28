@@ -1,44 +1,22 @@
 package com.flyjingfish.android_aop_annotation;
 
 
+import com.flyjingfish.android_aop_annotation.base.BasePointCut;
+import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
+import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils;
+import com.flyjingfish.android_aop_annotation.utils.JoinAnnoCutUtils;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 public final class AndroidAopJoinPoint {
-    public Object joinPointExecute(){
-        ProceedJoinPoint proceedJoinPoint = new ProceedJoinPoint();
-        proceedJoinPoint.target = target;
-        proceedJoinPoint.args = mArgs;
-        proceedJoinPoint.setOriginalMethod(originalMethod);
-        proceedJoinPoint.setTargetMethod(targetMethod);
-        proceedJoinPoint.setTargetClass(targetClass);
-        Annotation[] annotations = originalMethod.getAnnotations();
-        Object returnValue = null;
-
-        if (cutMatchClassName != null){
-            MatchClassMethod matchClassMethod = AndroidAopBeanUtils.INSTANCE.getMatchClassMethod(proceedJoinPoint,cutMatchClassName);
-            matchClassMethod.invoke(proceedJoinPoint,proceedJoinPoint.getTargetMethod().name);
-        }
-
-        for (Annotation annotation : annotations) {
-            String cutClassName = JoinAnnoCutUtils.getCutClassName(annotation.annotationType().getName());
-            if (cutClassName != null){
-                BasePointCut<Annotation> basePointCut = AndroidAopBeanUtils.INSTANCE.getBasePointCut(proceedJoinPoint,cutClassName);
-                if (basePointCut != null){
-                    returnValue = basePointCut.invoke(proceedJoinPoint,annotation);
-                }
-            }
-        }
-
-        return returnValue;
-    }
     private Object target;
     private Class<?> targetClass;
     private String targetClassName;
     private Object[] mArgs;
     private String[] mArgClassNames;
-    private String targetMethodName;
-    private String originalMethodName;
+    private final String targetMethodName;
+    private final String originalMethodName;
     private Method targetMethod;
     private Method originalMethod;
     private String cutMatchClassName;
@@ -55,22 +33,46 @@ public final class AndroidAopJoinPoint {
     }
 
 
-    public String getCutMatchClassName() {
-        return cutMatchClassName;
-    }
-
     public void setCutMatchClassName(String cutMatchClassName) {
         this.cutMatchClassName = cutMatchClassName;
     }
 
-    public Object[] getArgs() {
-        return mArgs;
+    public void setArgClassNames(String[] argClassNames) {
+        this.mArgClassNames = argClassNames;
+    }
+
+    public Object joinPointExecute(){
+        ProceedJoinPoint proceedJoinPoint = new ProceedJoinPoint();
+        proceedJoinPoint.target = target;
+        proceedJoinPoint.args = mArgs;
+        proceedJoinPoint.setOriginalMethod(originalMethod);
+        proceedJoinPoint.setTargetMethod(targetMethod);
+        proceedJoinPoint.setTargetClass(targetClass);
+        Annotation[] annotations = originalMethod.getAnnotations();
+        Object returnValue = null;
+
+        if (cutMatchClassName != null){
+            MatchClassMethod matchClassMethod = AndroidAopBeanUtils.INSTANCE.getMatchClassMethod(proceedJoinPoint,cutMatchClassName);
+            matchClassMethod.invoke(proceedJoinPoint,proceedJoinPoint.getTargetMethod().getName());
+        }
+
+        for (Annotation annotation : annotations) {
+            String cutClassName = JoinAnnoCutUtils.getCutClassName(annotation.annotationType().getName());
+            if (cutClassName != null){
+                BasePointCut<Annotation> basePointCut = AndroidAopBeanUtils.INSTANCE.getBasePointCut(proceedJoinPoint,cutClassName);
+                if (basePointCut != null){
+                    returnValue = basePointCut.invoke(proceedJoinPoint,annotation);
+                }
+            }
+        }
+
+        return returnValue;
     }
 
     public void setArgs(Object[] args) {
         this.mArgs = args;
         try {
-            Class<?>[] classes = null;
+            Class<?>[] classes;
             if (mArgClassNames != null && mArgClassNames.length > 0){
                 classes = new Class[args.length];
                 int index = 0;
@@ -117,11 +119,5 @@ public final class AndroidAopJoinPoint {
         }
     }
 
-    public String[] getArgClassNames() {
-        return mArgClassNames;
-    }
 
-    public void setArgClassNames(String[] argClassNames) {
-        this.mArgClassNames = argClassNames;
-    }
 }

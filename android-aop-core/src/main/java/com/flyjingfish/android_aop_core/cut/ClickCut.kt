@@ -1,7 +1,7 @@
 package com.flyjingfish.android_aop_core.cut
 
 import android.view.View
-import com.flyjingfish.android_aop_annotation.BasePointCut
+import com.flyjingfish.android_aop_annotation.base.BasePointCut
 
 abstract class ClickCut<T : Annotation> : BasePointCut<T> {
     private var sLastClickTime: Long = 0

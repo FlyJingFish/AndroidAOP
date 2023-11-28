@@ -4,7 +4,7 @@ package com.flyjingfish.android_aop_annotation.anno;
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 
-import com.flyjingfish.android_aop_annotation.BasePointCut;
+import com.flyjingfish.android_aop_annotation.base.BasePointCut;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

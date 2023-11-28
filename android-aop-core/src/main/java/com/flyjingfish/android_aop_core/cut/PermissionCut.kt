@@ -1,7 +1,7 @@
 package com.flyjingfish.android_aop_core.cut
 
-import com.flyjingfish.android_aop_annotation.BasePointCut
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
+import com.flyjingfish.android_aop_annotation.base.BasePointCut
 import com.flyjingfish.android_aop_core.annotations.Permission
 import com.flyjingfish.android_aop_core.listeners.OnRequestPermissionListener
 import com.flyjingfish.android_aop_core.utils.AndroidAop

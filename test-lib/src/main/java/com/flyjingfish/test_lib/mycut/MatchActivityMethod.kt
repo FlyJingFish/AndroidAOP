@@ -3,9 +3,9 @@ package com.flyjingfish.test_lib.mycut
 import android.app.Activity
 import android.content.Context
 import android.util.Log
-import com.flyjingfish.android_aop_annotation.MatchClassMethod
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod
+import com.flyjingfish.android_aop_annotation.base.MatchClassMethod
 import com.flyjingfish.test_lib.ToastUtils.makeText
 
 @AndroidAopMatchClassMethod(

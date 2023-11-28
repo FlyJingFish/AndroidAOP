@@ -32,10 +32,10 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface DoubleClick {
 
-    long DEFAULT_INTERVAL_MILLIS = 1000;
+    long DEFAULT_INTERVAL_MILLIS = 300;
 
     /**
-     * @return 快速点击的间隔（ms），默认是1000ms
+     * @return 两次点击的最大用时（ms），默认是300ms
      */
     long value() default DEFAULT_INTERVAL_MILLIS;
 }

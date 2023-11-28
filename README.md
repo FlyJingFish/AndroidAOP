@@ -17,7 +17,8 @@
 
 **4、本库没有使用 AspectJ，织入代码量极少，侵入性极低**
 
-##### 声明下：本库没有使用 AspectJ ，目前的功能用不着市面上那些基于 AspectJ 做出来的Aop框架的那些配置，当然将来在增加功能的时候不排除会增加一些可选配置
+##### 声明下：本库没有使用 AspectJ ，目前的功能用不着市面上那些基于 AspectJ 做出来的Aop框架的那些配置，当然将来在增加功能的时候不排除会增加一些可选配置。
+
 
 #### [点此下载apk,也可扫下边二维码下载](https://github.com/FlyJingFish/AndroidAOP/blob/master/apk/release/app-release.apk?raw=true)
 
@@ -82,22 +83,22 @@ dependencies {
 
 ### 本库内置了一些功能注解可供你直接使用
 
-| 注解名称             |            参数说明            |                 功能说明                  |
-|------------------|:--------------------------:|:-------------------------------------:|
-| @SingleClick     |        value = 时间间隔        |      单击注解，加入此注解，可使你的方法只有单击时才可进入       |
-| @DoubleClick     |        value = 时间间隔        |       双击注解，加入此注解，可使你的方法双击时才可进入        |
-| @IOThread        |     ThreadType = 线程类型      |   切换到子线程的操作，加入此注解可使你的方法内的代码切换到子线程执行   |
-| @MainThread      |            无参数             |   切换到主线程的操作，加入此注解可使你的方法内的代码切换到主线程执行   |
-| @OnLifecycle     |  value = Lifecycle.Event   | 监听生命周期的操作，加入此注解可使你的方法内的代码在对应生命周期内才去执行 |
-| @TryCatch        |    value = 你自定义加的一个flag    |     加入此注解可为您的方法包裹一层 try catch 代码      |
-| @Permission      |      value = 权限的字符串数组      |     申请权限的操作，加入此注解可使您的代码在获取权限后才执行      |
-| @CustomIntercept | value = 你自定义加的一个字符串数组的flag |           自定义拦截，配合 AndroidAop.setOnCustomInterceptListener 使用，属于万金油           |
+| 注解名称             |            参数说明            |                           功能说明                            |
+|------------------|:--------------------------:|:---------------------------------------------------------:|
+| @SingleClick     |  value = 快速点击的间隔，默认1000ms  |                单击注解，加入此注解，可使你的方法只有单击时才可进入                 |
+| @DoubleClick     | value = 两次点击的最大用时，默认300ms  |                 双击注解，加入此注解，可使你的方法双击时才可进入                  |
+| @IOThread        |     ThreadType = 线程类型      |             切换到子线程的操作，加入此注解可使你的方法内的代码切换到子线程执行             |
+| @MainThread      |            无参数             |             切换到主线程的操作，加入此注解可使你的方法内的代码切换到主线程执行             |
+| @OnLifecycle     |  value = Lifecycle.Event   |           监听生命周期的操作，加入此注解可使你的方法内的代码在对应生命周期内才去执行           |
+| @TryCatch        |    value = 你自定义加的一个flag    |               加入此注解可为您的方法包裹一层 try catch 代码                |
+| @Permission      |      value = 权限的字符串数组      |               申请权限的操作，加入此注解可使您的代码在获取权限后才执行                |
+| @CustomIntercept | value = 你自定义加的一个字符串数组的flag | 自定义拦截，配合 AndroidAop.setOnCustomInterceptListener 使用，属于万金油 |
 
 [上述注解使用示例都在这](https://github.com/FlyJingFish/AndroidAOP/blob/master/app/src/main/java/com/flyjingfish/androidaop/MainActivity.kt)
 
 ### 这块强调一下 @OnLifecycle
 
-**@OnLifecycle 加到的位置必须是属于直接或间接继承自 FragmentActivity 或 Fragment的方法才有用（即这个方法是直接或间接继承FragmentActivity 或 Fragment的类的）或者说拥有对象实现LifecycleOwner也可以**
+**@OnLifecycle 加到的位置必须是属于直接或间接继承自 FragmentActivity 或 Fragment的方法才有用（即这个方法是直接或间接继承FragmentActivity 或 Fragment的类的）或者注解方法的对象实现LifecycleOwner也可以**
 
 ### 下面再着重介绍下 @TryCatch @Permission @CustomIntercept
 
@@ -126,6 +127,8 @@ AndroidAop.INSTANCE.setOnPermissionsInterceptListener(new OnPermissionsIntercept
         }else if (target instanceof Fragment){
             RxPermissions rxPermissions = new RxPermissions((Fragment) target);
             rxPermissions.request(permission.value()).subscribe(call::onCall);
+        }else{
+            // TODO: target 不是 FragmentActivity 或 Fragment ，说明注解所在方法不在其中，请自行处理这种情况
         }
     }
 });
@@ -146,19 +149,6 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
 ```
 
 👆上边三个监听，最好放到你的 application 中
-
-
-在这介绍下 在使用 ProceedJoinPoint 这个对象的 proceed() 或 proceed(args) 表示执行原来方法的逻辑，区别是：
-
-- proceed() 不传参，表示不改变当初的传入参数，
-- proceed(args) 有参数，表示改写当时传入的参数
-
-在此的return 返回的就是对应拦截的那个方法返回的
-
-不调用 proceed 就不会执行拦截切面方法内的代码，return什么也无所谓了
-
-PS：ProceedJoinPoint.target 如果为null的话是因为注入的方法是静态的，通常只有java才会这样
-
 
 ### 此外本库也同样支持让你自己做切面，语法相对来说也比较简单
 
@@ -186,6 +176,7 @@ public @interface CustomIntercept {
 
 CustomInterceptCut 的代码如下：
 
+CustomInterceptCut 继承自 BasePointCut，可以看到 BasePointCut 上有一泛型，这个泛型就是上边的 CustomIntercept 注解，两者是互相关联的
 ```kotlin
 class CustomInterceptCut : BasePointCut<CustomIntercept> {
     override fun invoke(
@@ -198,7 +189,20 @@ class CustomInterceptCut : BasePointCut<CustomIntercept> {
 }
 ```
 
-CustomInterceptCut 继承自 BasePointCut，可以看到 BasePointCut 上有一泛型，这个泛型就是上边的 CustomIntercept 注解，两者是互相关联的
+
+在这介绍下 在使用 ProceedJoinPoint 这个对象的 proceed() 或 proceed(args) 表示执行原来方法的逻辑，区别是：
+
+- proceed() 不传参，表示不改变当初的传入参数
+- proceed(args) 有参数，表示改写当时传入的参数
+- 不调用 proceed 就不会执行拦截切面方法内的代码
+
+在此的return 返回的就是对应拦截的那个方法返回的
+
+**另外请注意尽量不要把切面注解放到系统方法上，例如：Activity 的 onCreate() onResume() 等**
+**即便是加了在切面处理时不要有耗时操作，joinPoint.proceed() 要正常执行，否则会出现意想不到的问题，例如：ANR**
+
+
+PS：ProceedJoinPoint.target 如果为null的话是因为注入的方法是静态的，通常只有java才会这样
 
 - **@AndroidAopMatchClassMethod** 是做匹配继承自某类及其对应方法的切面的（⚠️注意：自定义的匹配类方法切面如果是 Kotlin 代码请用 android-aop-ksp 那个库）
 
