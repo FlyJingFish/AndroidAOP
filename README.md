@@ -218,6 +218,7 @@ class CustomInterceptCut : BasePointCut<CustomIntercept> {
 在此的return 返回的就是对应拦截的那个方法返回的
 
 - 如果切面方法**有返回值**，这块的返回值就是切面方法返回值
+- 另外如果切面方法**有返回值**，这块的返回值类型要和切面方法返回类型保持一致
 - 如果切面方法**没有返回值**，这块返回什么无所谓的
 
 **另外请注意尽量不要把切面注解放到系统方法上，例如：Activity 的 onCreate() onResume() 等**
@@ -239,6 +240,8 @@ public class MatchActivityMethod implements MatchClassMethod {
     }
 }
 ```
+
+这块 ProceedJoinPoint 这个对象的 proceed() 或 proceed(args) 以及这里的返回值和上文提到的逻辑是一致的
 
 其对应的就是下边的代码
 ```kotlin
@@ -313,13 +316,11 @@ abstract class BaseActivity :AppCompatActivity() {
 ```
 
 如果你用到了 **@AndroidAopMatchClassMethod** 做切面，那你需要为切面内的方法做混淆处理
-下面是上文提到的 **MatchActivityOnCreate** 类的匹配规则，对应的逻辑是 匹配的 为继承自 com.flyjingfish.test_lib.BaseActivity 的类的 onCreate ，onResume，onTest三个方法加入切面
+下面是上文提到的 **MatchActivityOnCreate** 类的匹配规则，对应的逻辑是 匹配的 为继承自 com.flyjingfish.test_lib.BaseActivity 的类的 startActivity 方法加入切面
 
 ```
 -keepnames class * extends com.flyjingfish.test_lib.BaseActivity{
-    void onCreate(...);
-    void onResume(...);
-    void onTest(...);
+    void startActivity(...);
 }
 ```
 
