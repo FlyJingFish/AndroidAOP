@@ -171,9 +171,13 @@ public class AnnotationMethodScanner extends ClassVisitor {
                 }
             }
         }
+        if (onCallBackMethod != null){
+            onCallBackMethod.onFinish();
+        }
     }
 
     public interface OnCallBackMethod{
         void onBackName(MethodRecord methodRecord);
+        void onFinish();
     }
 }
