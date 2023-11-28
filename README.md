@@ -103,7 +103,7 @@ android {
     ...
 }
 ```
-**提示：合理使用 include 和 exclude 可提高编译速度**
+**提示：合理使用 include 和 exclude 可提高编译速度，建议直接使用 include 设置你项目的相关包名（包括 app 和自定义 module 的）**
 
 ### 本库内置了一些功能注解可供你直接使用
 
