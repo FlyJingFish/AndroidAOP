@@ -214,7 +214,7 @@ class CustomInterceptCut : BasePointCut<CustomIntercept> {
 在这介绍下 在使用 ProceedJoinPoint 这个对象的 proceed() 或 proceed(args) 表示执行原来方法的逻辑，区别是：
 
 - proceed() 不传参，表示不改变当初的传入参数
-- proceed(args) 有参数，表示改写当时传入的参数
+- proceed(args) 有参数，表示改写当时传入的参数，注意传入的参数个数，以及每个参数的类型要和切面方法保持一致
 - 不调用 proceed 就不会执行拦截切面方法内的代码
 
 在此的return 返回的就是对应拦截的那个方法返回的
