@@ -78,6 +78,7 @@ dependencies {
     //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
 }
 ```
+**提示：ksp 或 annotationProcessor只是在当前 module 起作用**
 
 #### 四、可选配置项
 
@@ -85,17 +86,16 @@ dependencies {
 androidAopConfig {
     // enabled 为false 切面不再起作用
     enabled true 
-    // include 是包含的扫描包
+    // include 不设置默认全部扫描，设置后只扫描设置的包名的代码
     include 'com.flyjingfish.androidaop'
     include 'com.flyjingfish.test_lib'
-    // exclude 是排除的扫描包
+    // exclude 是扫描时排除的包
     // 移除kotlin相关，编译错误和提升速度
     exclude 'kotlin.jvm', 'kotlin.internal'
     exclude 'kotlinx.coroutines.internal', 'kotlinx.coroutines.android'
 }
 ```
-
-**提示：ksp 或 annotationProcessor只是在当前 module 起作用**
+**提示：合理使用 include 和 exclude 可提高编译速度**
 
 ### 本库内置了一些功能注解可供你直接使用
 
