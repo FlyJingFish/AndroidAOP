@@ -1,8 +1,8 @@
-package com.flyjingfish.androidaop
+package com.flyjingfish.androidaop.test
 
 import com.flyjingfish.android_aop_core.annotations.SingleClick
+import com.flyjingfish.androidaop.MyApp
 import com.flyjingfish.test_lib.ToastUtils
-import com.flyjingfish.test_lib.annotation.MyAnno2
 
 class TestBean {
     var name:String = "test"

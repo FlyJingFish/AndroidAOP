@@ -27,6 +27,10 @@ public class AnnotationMethodScanner extends ClassVisitor {
     Logger logger;
     private final OnCallBackMethod onCallBackMethod;
     private final byte[] classByte;
+    private boolean isDescendantClass;
+    private AopMatchCut aopMatchCut;
+    private final List<MethodRecord> cacheMethodRecords = new ArrayList<>();
+    private String className;
 
     public AnnotationMethodScanner(Logger logger,byte[] classByte,OnCallBackMethod onCallBackMethod) {
         super(Opcodes.ASM8);
@@ -37,10 +41,6 @@ public class AnnotationMethodScanner extends ClassVisitor {
     }
 
 
-    private boolean isDescendantClass;
-    private AopMatchCut aopMatchCut;
-    private List<MethodRecord> cacheMethodRecords = new ArrayList<>();
-    private String className;
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
         className = name;
@@ -171,13 +171,9 @@ public class AnnotationMethodScanner extends ClassVisitor {
                 }
             }
         }
-        if (onCallBackMethod != null){
-            onCallBackMethod.onFinish();
-        }
     }
 
     public interface OnCallBackMethod{
         void onBackName(MethodRecord methodRecord);
-        void onFinish();
     }
 }

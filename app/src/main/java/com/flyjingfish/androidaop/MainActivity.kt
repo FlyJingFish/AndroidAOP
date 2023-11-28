@@ -15,6 +15,9 @@ import com.flyjingfish.android_aop_core.annotations.SingleClick
 import com.flyjingfish.android_aop_core.annotations.TryCatch
 import com.flyjingfish.android_aop_core.enums.ThreadType
 import com.flyjingfish.androidaop.databinding.ActivityMainBinding
+import com.flyjingfish.androidaop.test.Round
+import com.flyjingfish.androidaop.test2.StaticClass
+import com.flyjingfish.androidaop.test.TestBean
 import com.flyjingfish.test_lib.BaseActivity
 import com.flyjingfish.test_lib.annotation.MyAnno2
 
@@ -120,7 +123,7 @@ class MainActivity: BaseActivity() {
         setLogcat("@OnLifecycle 注解的方法进入了")
     }
 
-    var o :Round?=null
+    var o : Round?=null
     @TryCatch
     fun onTryCatch():Int{
         var number = 1;

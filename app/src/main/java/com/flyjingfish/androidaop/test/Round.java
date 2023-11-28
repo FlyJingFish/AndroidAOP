@@ -1,4 +1,4 @@
-package com.flyjingfish.androidaop;
+package com.flyjingfish.androidaop.test;
 
 import android.util.Log;
 

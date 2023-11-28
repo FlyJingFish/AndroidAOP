@@ -6,6 +6,12 @@ plugins {
 AndroidAopConfig {
     // debug 为true打开日志方便调试
     debug true
+    // 测试
+    include 'com.flyjingfish.androidaop.test2'
+    exclude 'com.flyjingfish.androidaop.test'
+    // 移除kotlin相关，编译错误和提升速度
+    exclude 'kotlin.jvm', 'kotlin.internal'
+    exclude 'kotlinx.coroutines.internal', 'kotlinx.coroutines.android'
 }
 android {
     namespace 'com.flyjingfish.androidaop'

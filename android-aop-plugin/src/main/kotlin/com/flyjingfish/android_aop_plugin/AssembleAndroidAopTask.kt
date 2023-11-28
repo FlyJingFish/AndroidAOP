@@ -2,8 +2,8 @@ package com.flyjingfish.android_aop_plugin
 
 import com.flyjingfish.android_aop_plugin.beans.ClassMethodRecord
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
+import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.scanner_visitor.AnnotationMethodScanner
-import com.flyjingfish.android_aop_plugin.scanner_visitor.AnnotationMethodScanner.OnCallBackMethod
 import com.flyjingfish.android_aop_plugin.scanner_visitor.AnnotationScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.RegisterMapWovenInfoCode
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
@@ -33,7 +33,6 @@ import kotlin.system.measureTimeMillis
 
 abstract class AssembleAndroidAopTask : DefaultTask() {
 
-
     @get:InputFiles
     abstract val allJars: ListProperty<RegularFile>
 
@@ -62,7 +61,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
     private fun scanFile() {
         loadJoinPointConfig()
-        searchJoinPointAndWovenInfoCode()
+        searchJoinPointLocation()
+        wovenIntoCode()
     }
 
     private fun loadJoinPointConfig(){
@@ -126,57 +126,37 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 //        ClassPoolUtils.initClassPool()
     }
 
-    private fun searchJoinPointAndWovenInfoCode(){
+    private fun searchJoinPointLocation(){
+        val includes = AndroidAopConfig.includes
+        val excludes = AndroidAopConfig.excludes
         allDirectories.get().forEach { directory ->
             directory.asFile.walk().forEach { file ->
                 if (file.isFile) {
-                    val relativePath = directory.asFile.toURI().relativize(file.toURI()).path
-                    if (file.name.endsWith(_CLASS)) {
-
+                    val isClassFile = file.name.endsWith(_CLASS)
+                    val tranEntryName = file.absolutePath.replace("/", ".")
+                        .replace("\\", ".")
+                    printLog("tranEntryName="+tranEntryName)
+                    if (tranEntryName.contains("com.flyjingfish")){
+                        printLog("isIncludeFilterMatched="+Utils.isIncludeFilterMatched(tranEntryName, includes) )
+                        printLog("isExcludeFilterMatched="+Utils.isExcludeFilterMatched(tranEntryName, excludes) )
+                    }
+                    if (isClassFile && Utils.isIncludeFilterMatched(tranEntryName, includes) && !Utils.isExcludeFilterMatched(tranEntryName, excludes)) {
                         FileInputStream(file).use { inputs ->
                             val bytes = inputs.readAllBytes();
                             if (bytes.isNotEmpty()){
                                 try {
                                     val classReader = ClassReader(bytes)
                                     classReader.accept(AnnotationMethodScanner(
-                                        logger, bytes,object :OnCallBackMethod{
-                                            override fun onBackName(methodRecord: MethodRecord) {
-                                                val record = ClassMethodRecord(file.absolutePath, methodRecord)
-                                                WovenInfoUtils.addClassMethodRecords(record)
-                                            }
-
-                                            override fun onFinish() {
-                                                val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(file.absolutePath)
-                                                if (methodsRecord != null){
-                                                    FileInputStream(file).use { inputs ->
-                                                        val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),methodsRecord)
-                                                        jarOutput.putNextEntry(JarEntry(relativePath.replace(File.separatorChar, '/')))
-                                                        ByteArrayInputStream(byteArray).use {
-                                                            it.copyTo(jarOutput)
-                                                        }
-                                                        jarOutput.closeEntry()
-                                                    }
-                                                }else{
-                                                    jarOutput.putNextEntry(JarEntry(relativePath.replace(File.separatorChar, '/')))
-                                                    file.inputStream().use { inputStream ->
-                                                        inputStream.copyTo(jarOutput)
-                                                    }
-                                                    jarOutput.closeEntry()
-                                                }
-
-                                            }
-                                        }
-                                    ), ClassReader.EXPAND_FRAMES)
+                                        logger, bytes
+                                    ) {
+                                        val record = ClassMethodRecord(file.absolutePath, it)
+                                        WovenInfoUtils.addClassMethodRecords(record)
+//                                        logger.error("Scanned method:[${file.absolutePath}][${it}]")
+                                    }, ClassReader.EXPAND_FRAMES)
                                 } catch (e: Exception) {
                                 }
                             }
                         }
-                    }else{
-                        jarOutput.putNextEntry(JarEntry(relativePath.replace(File.separatorChar, '/')))
-                        file.inputStream().use { inputStream ->
-                            inputStream.copyTo(jarOutput)
-                        }
-                        jarOutput.closeEntry()
                     }
 
                 }
@@ -189,70 +169,111 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 val jarEntry = enumeration.nextElement()
                 try {
                     val entryName = jarEntry.name
-                    if (jarEntry.isDirectory || entryName.isEmpty() || entryName.startsWith("META-INF/")) {
+                    if (jarEntry.isDirectory || jarEntry.name.isEmpty()) {
                         continue
                     }
-                    if (entryName.endsWith(_CLASS)) {
+                    val isClassFile = entryName.endsWith(_CLASS)
+                    val tranEntryName = entryName.replace("/", ".")
+                        .replace("\\", ".")
+                    if (isClassFile && Utils.isIncludeFilterMatched(tranEntryName, includes) && !Utils.isExcludeFilterMatched(tranEntryName, excludes)) {
+
                         jarFile.getInputStream(jarEntry).use { inputs ->
                             val bytes = inputs.readAllBytes();
                             if (bytes.isNotEmpty()){
                                 try {
                                     val classReader = ClassReader(bytes)
                                     classReader.accept(AnnotationMethodScanner(
-                                        logger, bytes,object :OnCallBackMethod{
-                                            override fun onBackName(methodRecord: MethodRecord) {
-                                                val record = ClassMethodRecord(entryName, methodRecord)
-                                                WovenInfoUtils.addClassMethodRecords(record)
-                                            }
-
-                                            override fun onFinish() {
-                                                val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(entryName)
-                                                if (methodsRecord != null){
-                                                    jarFile.getInputStream(jarEntry).use { inputs ->
-                                                        val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),methodsRecord)
-                                                        jarOutput.putNextEntry(JarEntry(entryName))
-                                                        ByteArrayInputStream(byteArray).use {
-                                                            it.copyTo(jarOutput)
-                                                        }
-                                                        jarOutput.closeEntry()
-                                                    }
-                                                }else if (Utils.dotToSlash(Utils.MethodAnnoUtils) + _CLASS == entryName) {
-                                                    jarFile.getInputStream(jarEntry).use { inputs ->
-                                                        val originInject = inputs.readAllBytes()
-                                                        val resultByteArray = RegisterMapWovenInfoCode().execute(ByteArrayInputStream(originInject))
-                                                        jarOutput.putNextEntry(JarEntry(entryName))
-                                                        ByteArrayInputStream(resultByteArray).use {
-                                                            it.copyTo(jarOutput!!)
-                                                        }
-                                                        jarOutput.closeEntry()
-                                                    }
-                                                }else{
-                                                    jarOutput.putNextEntry(JarEntry(entryName))
-                                                    jarFile.getInputStream(jarEntry).use {
-                                                        it.copyTo(jarOutput)
-                                                    }
-                                                    jarOutput.closeEntry()
-                                                }
-                                            }
-                                        }
-                                    ) , ClassReader.EXPAND_FRAMES)
+                                        logger, bytes
+                                    ) {
+                                        val record = ClassMethodRecord(entryName, it)
+                                        WovenInfoUtils.addClassMethodRecords(record)
+                                    }, ClassReader.EXPAND_FRAMES)
                                 } catch (e: Exception) {
                                 }
-                            }else{
-                                jarOutput.putNextEntry(JarEntry(entryName))
-                                jarFile.getInputStream(jarEntry).use {
-                                    it.copyTo(jarOutput)
-                                }
-                                jarOutput.closeEntry()
                             }
                         }
+                    }
+                } catch (e: Exception) {
+                    if (!(e is ZipException && e.message?.startsWith("duplicate entry:") == true)) {
+                        logger.error("Merge jar error entry:[${jarEntry.name}], error message:$e")
+                    }
+                }
+            }
+            jarFile.close()
+        }
+    }
+
+    private fun wovenIntoCode(){
+        allDirectories.get().forEach { directory ->
+            directory.asFile.walk().forEach { file ->
+                if (file.isFile) {
+                    val relativePath = directory.asFile.toURI().relativize(file.toURI()).path
+
+
+                    val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(file.absolutePath)
+                    if (methodsRecord != null){
+                        FileInputStream(file).use { inputs ->
+                            val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),methodsRecord)
+                            jarOutput.putNextEntry(JarEntry(relativePath.replace(File.separatorChar, '/')))
+                            ByteArrayInputStream(byteArray).use {
+                                it.copyTo(jarOutput)
+                            }
+                            jarOutput.closeEntry()
+                        }
                     }else{
+                        jarOutput.putNextEntry(JarEntry(relativePath.replace(File.separatorChar, '/')))
+                        file.inputStream().use { inputStream ->
+                            inputStream.copyTo(jarOutput)
+                        }
+                        jarOutput.closeEntry()
+                    }
+                }
+            }
+        }
+        allJars.get().forEach { file ->
+            val jarFile = JarFile(file.asFile)
+            val enumeration = jarFile.entries()
+            while (enumeration.hasMoreElements()) {
+                val jarEntry = enumeration.nextElement()
+                try {
+                    val entryName = jarEntry.name
+//                    if (jarEntry.isDirectory || entryName.isEmpty() || !entryName.endsWith(_CLASS) || entryName.startsWith("META-INF/")) {
+//                        continue
+//                    }
+                    if (jarEntry.isDirectory || entryName.isEmpty() || entryName.startsWith("META-INF/")) {
+                        continue
+                    }
+
+                    val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(entryName)
+
+                    if (methodsRecord != null){
+                        jarFile.getInputStream(jarEntry).use { inputs ->
+                            val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),methodsRecord)
+                            jarOutput.putNextEntry(JarEntry(entryName))
+                            ByteArrayInputStream(byteArray).use {
+                                it.copyTo(jarOutput)
+                            }
+                            jarOutput.closeEntry()
+                        }
+                    }else if (Utils.dotToSlash(Utils.MethodAnnoUtils) + _CLASS == entryName) {
+                        jarFile.getInputStream(jarEntry).use { inputs ->
+                            val originInject = inputs.readAllBytes()
+                            val resultByteArray = RegisterMapWovenInfoCode().execute(ByteArrayInputStream(originInject))
+                            jarOutput.putNextEntry(JarEntry(entryName))
+                            ByteArrayInputStream(resultByteArray).use {
+                                it.copyTo(jarOutput)
+                            }
+                            jarOutput.closeEntry()
+                        }
+                    } else{
                         jarOutput.putNextEntry(JarEntry(entryName))
                         jarFile.getInputStream(jarEntry).use {
                             it.copyTo(jarOutput)
                         }
                         jarOutput.closeEntry()
                     }
+
+
                 } catch (e: Exception) {
                     throw RuntimeException("Merge jar error entry:[${jarEntry.name}], error message:$e,通常情况下你需要先重启Android Studio,然后clean一下项目即可，如果还有问题请到Github联系作者")
                 }

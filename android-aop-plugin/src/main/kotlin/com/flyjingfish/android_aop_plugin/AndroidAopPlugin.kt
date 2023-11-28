@@ -21,16 +21,24 @@ class AndroidAopPlugin : Plugin<Project> {
         androidComponents.onVariants { variant ->
             val androidAopConfig = project.extensions.getByType(AndroidAopConfig::class.java)
             AndroidAopConfig.debug = androidAopConfig.debug
-            val task = project.tasks.register("${variant.name}AssembleAndroidAopTask", AssembleAndroidAopTask::class.java)
-            variant.artifacts
-                .forScope(ScopedArtifacts.Scope.ALL)
-                .use(task)
-                .toTransform(
-                    ScopedArtifact.CLASSES,
-                    AssembleAndroidAopTask::allJars,
-                    AssembleAndroidAopTask::allDirectories,
-                    AssembleAndroidAopTask::output
-                )
+            androidAopConfig.includes.forEach {
+                AndroidAopConfig.includes.add("$it.")
+            }
+            androidAopConfig.excludes.forEach {
+                AndroidAopConfig.excludes.add("$it.")
+            }
+            if (androidAopConfig.enabled){
+                val task = project.tasks.register("${variant.name}AssembleAndroidAopTask", AssembleAndroidAopTask::class.java)
+                variant.artifacts
+                    .forScope(ScopedArtifacts.Scope.ALL)
+                    .use(task)
+                    .toTransform(
+                        ScopedArtifact.CLASSES,
+                        AssembleAndroidAopTask::allJars,
+                        AssembleAndroidAopTask::allDirectories,
+                        AssembleAndroidAopTask::output
+                    )
+            }
         }
     }
 }
