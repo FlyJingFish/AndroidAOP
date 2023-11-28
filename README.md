@@ -263,7 +263,6 @@ abstract class BaseActivity :AppCompatActivity() {
 ```
 # AndroidAop必备混淆规则 -----start-----
 
-
 -keep @com.flyjingfish.android_aop_core.annotations.* class * {*;}
 -keep @com.flyjingfish.android_aop_annotation.anno.* class * {*;}
 -keep class * {
@@ -275,19 +274,19 @@ abstract class BaseActivity :AppCompatActivity() {
     @com.flyjingfish.android_aop_annotation.anno.* <methods>;
 }
 
--keepnames class * implements com.flyjingfish.android_aop_annotation.BasePointCut
--keepnames class * implements com.flyjingfish.android_aop_annotation.MatchClassMethod
--keep class * implements com.flyjingfish.android_aop_annotation.BasePointCut{
+-keepnames class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut
+-keepnames class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod
+-keep class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut{
     public <init>();
 }
--keepclassmembers class * implements com.flyjingfish.android_aop_annotation.BasePointCut{
+-keepclassmembers class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut{
     <methods>;
 }
 
--keep class * implements com.flyjingfish.android_aop_annotation.MatchClassMethod{
+-keep class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod{
     public <init>();
 }
--keepclassmembers class * implements com.flyjingfish.android_aop_annotation.MatchClassMethod{
+-keepclassmembers class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod{
     <methods>;
 }
 
