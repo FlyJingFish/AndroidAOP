@@ -17,8 +17,6 @@
 
 **4、本库不是基于 AspectJ 实现的，织入代码量极少，侵入性极低**
 
-##### 声明下：本库没有使用 AspectJ ，目前的功能用不着市面上那些基于 AspectJ 做出来的Aop框架的那些配置，当然将来在增加功能的时候不排除会增加一些可选配置。
-
 
 #### [点此下载apk,也可扫下边二维码下载](https://github.com/FlyJingFish/AndroidAOP/blob/master/apk/release/app-release.apk?raw=true)
 
