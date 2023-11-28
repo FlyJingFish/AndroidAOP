@@ -193,7 +193,7 @@ public @interface CustomIntercept {
 
 - @Retention 只可以用 RetentionPolicy.RUNTIME
 
-- CustomInterceptCut 的代码如下：
+CustomInterceptCut 的代码如下：
 
 CustomInterceptCut 继承自 BasePointCut，可以看到 BasePointCut 上有一泛型，这个泛型就是上边的 CustomIntercept 注解，两者是互相关联的
 ```kotlin
