@@ -78,7 +78,7 @@ dependencies {
 ```
 **提示：ksp 或 annotationProcessor只是在当前 module 起作用**
 
-#### 四、在 app 的build.gradle添加（此步为可选配置项）
+#### 四、在 app 的build.gradle添加 androidAopConfig 配置项（此步为可选配置项）
 
 ```gradle
 plugins {
