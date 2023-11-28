@@ -169,11 +169,11 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
 
 👆上边三个监听，最好放到你的 application 中
 
-### 此外本库也同样支持让你自己做切面，语法相对来说也比较简单
+## 此外本库也同样支持让你自己做切面，实现起来非常简单！
 
-## 本库中提供了 @AndroidAopPointCut 和 @AndroidAopMatchClassMethod 两种切面供你使用
+### 本库通过 @AndroidAopPointCut 和 @AndroidAopMatchClassMethod 两种注解，实现自定义切面
 
-- **@AndroidAopPointCut** 是只能在方法上做切面的，上述中注解都是通过这个做的
+#### **@AndroidAopPointCut** 是只能在方法上做切面的，上述中注解都是通过这个做的
 
 下面以 @CustomIntercept 为例介绍下该如何使用（⚠️注意：自定义的注解如果是 Kotlin 代码请用 android-aop-ksp 那个库）
 
@@ -185,15 +185,15 @@ public @interface CustomIntercept {
     String[] value() default {};
 }
 ```
-**@AndroidAopPointCut** 的 **CustomInterceptCut.class** 为您处理切面的类
+- **@AndroidAopPointCut** 的 **CustomInterceptCut.class** 为您处理切面的类
 
-@Target 的 ElementType.METHOD 表示作用在方法上
+- @Target 只作用在方法上，设置其他无作用
+  - 对于 Java 可以设置 ElementType.METHOD 这一个
+  - 对于 Kotlin 可以设置 AnnotationTarget.FUNCTION,AnnotationTarget.PROPERTY_GETTER,AnnotationTarget.PROPERTY_SETTER 这三个
 
-@Retention 只可以用 RetentionPolicy.RUNTIME
+- @Retention 只可以用 RetentionPolicy.RUNTIME
 
-@Target 只可以传 ElementType.METHOD传其他无作用
-
-CustomInterceptCut 的代码如下：
+- CustomInterceptCut 的代码如下：
 
 CustomInterceptCut 继承自 BasePointCut，可以看到 BasePointCut 上有一泛型，这个泛型就是上边的 CustomIntercept 注解，两者是互相关联的
 ```kotlin
@@ -223,7 +223,7 @@ class CustomInterceptCut : BasePointCut<CustomIntercept> {
 
 PS：ProceedJoinPoint.target 如果为null的话是因为注入的方法是静态的，通常只有java才会这样
 
-- **@AndroidAopMatchClassMethod** 是做匹配继承自某类及其对应方法的切面的（⚠️注意：自定义的匹配类方法切面如果是 Kotlin 代码请用 android-aop-ksp 那个库）
+#### **@AndroidAopMatchClassMethod** 是做匹配继承自某类及其对应方法的切面的（⚠️注意：自定义的匹配类方法切面如果是 Kotlin 代码请用 android-aop-ksp 那个库）
 
 ```java
 @AndroidAopMatchClassMethod(targetClassName = "androidx.appcompat.app.AppCompatActivity",methodName = {"startActivity"})
