@@ -84,9 +84,7 @@ dependencies {
 
 ```gradle
 plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
-    id 'android.aop'
+    ...
 }
 androidAopConfig {
     // enabled 为false 切面不再起作用
