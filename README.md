@@ -217,6 +217,9 @@ class CustomInterceptCut : BasePointCut<CustomIntercept> {
 
 在此的return 返回的就是对应拦截的那个方法返回的
 
+- 如果切面方法**有返回值**，这块的返回值就是切面方法返回值
+- 如果切面方法**没有返回值**，这块返回什么无所谓的
+
 **另外请注意尽量不要把切面注解放到系统方法上，例如：Activity 的 onCreate() onResume() 等**
 **即便是加了在切面处理时不要有耗时操作，joinPoint.proceed() 要正常执行，否则会出现意想不到的问题，例如：ANR**
 
