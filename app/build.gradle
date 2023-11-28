@@ -3,7 +3,8 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'android.aop'
 }
-AndroidAopConfig {
+androidAopConfig {
+    enabled true
     // debug 为true打开日志方便调试
     debug true
     // 测试

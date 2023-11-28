@@ -79,6 +79,22 @@ dependencies {
 }
 ```
 
+#### 四、可选配置项
+
+```gradle
+androidAopConfig {
+    // enabled 为false 切面不再起作用
+    enabled true 
+    // include 是包含的扫描包
+    include 'com.flyjingfish.androidaop'
+    include 'com.flyjingfish.test_lib'
+    // exclude 是排除的扫描包
+    // 移除kotlin相关，编译错误和提升速度
+    exclude 'kotlin.jvm', 'kotlin.internal'
+    exclude 'kotlinx.coroutines.internal', 'kotlinx.coroutines.android'
+}
+```
+
 **提示：ksp 或 annotationProcessor只是在当前 module 起作用**
 
 ### 本库内置了一些功能注解可供你直接使用

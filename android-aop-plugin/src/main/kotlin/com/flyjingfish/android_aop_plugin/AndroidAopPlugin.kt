@@ -16,7 +16,7 @@ class AndroidAopPlugin : Plugin<Project> {
             logger.error("Plugin ['android.aop'] can only be used under the application, not under the module library invalid!")
             return
         }
-        project.extensions.add("AndroidAopConfig", AndroidAopConfig::class.java)
+        project.extensions.add("androidAopConfig", AndroidAopConfig::class.java)
         val androidComponents = project.extensions.getByType(AndroidComponentsExtension::class.java)
         androidComponents.onVariants { variant ->
             val androidAopConfig = project.extensions.getByType(AndroidAopConfig::class.java)
