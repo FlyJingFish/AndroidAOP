@@ -72,7 +72,7 @@ dependencies {
     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.0.7'
     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.0.7'
     //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.0.6'
+    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.0.7'
     //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.0.7'
     //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
