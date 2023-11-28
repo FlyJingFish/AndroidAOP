@@ -90,8 +90,7 @@ androidAopConfig {
     // enabled 为false 切面不再起作用
     enabled true 
     // include 不设置默认全部扫描，设置后只扫描设置的包名的代码
-    include 'com.flyjingfish.androidaop'
-    include 'com.flyjingfish.test_lib'
+    include '你项目的包名','自定义module的包名','自定义module的包名'
     // exclude 是扫描时排除的包
     // 可排除 kotlin 相关，提高速度
     exclude 'kotlin.jvm', 'kotlin.internal'
