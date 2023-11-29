@@ -229,10 +229,10 @@ class CustomInterceptCut : BasePointCut<CustomIntercept> {
 
 PS：ProceedJoinPoint.target 如果为null的话是因为注入的方法是静态的，一般是 Java 的静态方法和 Kotlin 的顶层函数会出现这种情况
 
-#### 二、**@AndroidAopMatchClassMethod** 是做匹配继承自某类及其对应方法的切面的（⚠️注意：自定义的匹配类方法切面如果是 Kotlin 代码请用 android-aop-ksp 那个库）
+#### 二、**@AndroidAopMatchClassMethod** 是做匹配某类及其对应方法的切面的（⚠️注意：自定义的匹配类方法切面如果是 Kotlin 代码请用 android-aop-ksp 那个库）
 
 ```java
-@AndroidAopMatchClassMethod(targetClassName = "androidx.appcompat.app.AppCompatActivity",methodName = {"startActivity"})
+@AndroidAopMatchClassMethod(targetClassName = "androidx.appcompat.app.AppCompatActivity",methodName = {"startActivity"},type = MatchType.SELF)
 public class MatchActivityMethod implements MatchClassMethod {
     @Nullable
     @Override
@@ -242,6 +242,10 @@ public class MatchActivityMethod implements MatchClassMethod {
     }
 }
 ```
+
+type 有两种类型（不设置默认 EXTENDS）：
+- EXTENDS 表示匹配的是**继承于** targetClassName 所设置的类
+- SELF 表示匹配的是 targetClassName 所设置类的**自身**
 
 这块 ProceedJoinPoint 这个对象的 proceed() 或 proceed(args) 以及这里的返回值和上文提到的逻辑是一致的
 
