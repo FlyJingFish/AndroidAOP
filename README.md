@@ -36,7 +36,7 @@
 buildscript {
     dependencies {
         //必须项 👇
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.0.7'
+        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.0.8'
     }
 }
 plugins {
@@ -67,12 +67,12 @@ plugins {
 
 dependencies {
     //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.0.7'
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.0.7'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.0.8'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.0.8'
     //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.0.7'
+    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.0.8'
     //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.0.7'
+    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.0.8'
     //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
 }
 ```
@@ -232,7 +232,7 @@ PS：ProceedJoinPoint.target 如果为null的话是因为注入的方法是静�
 #### 二、**@AndroidAopMatchClassMethod** 是做匹配某类及其对应方法的切面的（⚠️注意：自定义的匹配类方法切面如果是 Kotlin 代码请用 android-aop-ksp 那个库）
 
 ```java
-@AndroidAopMatchClassMethod(targetClassName = "androidx.appcompat.app.AppCompatActivity",methodName = {"startActivity"},type = MatchType.SELF)
+@AndroidAopMatchClassMethod(targetClassName = "androidx.appcompat.app.AppCompatActivity",methodName = {"startActivity"},type = MatchType.EXTENDS)
 public class MatchActivityMethod implements MatchClassMethod {
     @Nullable
     @Override
@@ -263,7 +263,11 @@ abstract class BaseActivity :AppCompatActivity() {
 
 ⚠️注意如果你没写对应的方法或者没有重写父类的该方法则切面无效
 
-例如你想做退出登陆逻辑时可以使用上边这个，只要在页面内跳转就可以检测是否需要退出登陆
+#### 实用场景：
+
+- 例如你想做退出登陆逻辑时可以使用上边这个，只要在页面内跳转就可以检测是否需要退出登陆
+
+- 又或者你想在三方库某个方法上设置切面，可以直接设置对应类名，对应方法，然后 type = MatchType.SELF，这样可以侵入三方库的代码
 
 
 #### 混淆规则
