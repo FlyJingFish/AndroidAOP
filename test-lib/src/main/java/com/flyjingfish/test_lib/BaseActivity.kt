@@ -9,4 +9,8 @@ abstract class BaseActivity :AppCompatActivity() {
     override fun startActivity(intent: Intent?, options: Bundle?) {
         super.startActivity(intent, options)
     }
+
+    override fun onResume() {
+        super.onResume()
+    }
 }

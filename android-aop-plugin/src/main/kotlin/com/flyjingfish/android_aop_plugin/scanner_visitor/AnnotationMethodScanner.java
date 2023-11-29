@@ -75,7 +75,8 @@ public class AnnotationMethodScanner extends ClassVisitor {
 //        ClassPool cp = ClassPool.getDefault();
 
 
-                if (aopMatchCut.getBaseClassName().equals(Utils.INSTANCE.slashToDot(superName))) {
+                if ((AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getBaseClassName().equals(Utils.INSTANCE.slashToDot(superName)))
+                    ||(AopMatchCut.MatchType.SELF.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getBaseClassName().equals(Utils.INSTANCE.slashToDot(name)))) {
                     this.isDescendantClass= true;
                     AnnotationMethodScanner.this.aopMatchCut = aopMatchCut;
                 }

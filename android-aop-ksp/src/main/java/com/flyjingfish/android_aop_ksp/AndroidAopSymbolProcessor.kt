@@ -168,6 +168,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
     for (symbol in symbols) {
       var targetClassName :String ?= null
       var methodNames :ArrayList<String> ?= null
+      var matchType = "EXTENDS"
       for (annotation in symbol.annotations) {
 
 
@@ -178,6 +179,9 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
             }
             if (argument.name?.getShortName() == "methodName") {
               methodNames = argument.value as ArrayList<String>
+            }
+            if (argument.name?.getShortName() == "matchType") {
+              matchType = argument.value.toString()
             }
           }
         }
@@ -214,6 +218,10 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
             .addMember(
               "pointCutClassName = %S",
               className
+            )
+            .addMember(
+              "matchType = %S",
+              matchType
             )
             .build()
         )

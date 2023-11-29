@@ -5,6 +5,7 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatch;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopMethod;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopPointCut;
+import com.flyjingfish.android_aop_annotation.enums.MatchType;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -143,6 +144,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
                 AndroidAopMatchClassMethod cut = element.getAnnotation(AndroidAopMatchClassMethod.class);
                 String className = cut.targetClassName();
                 String[] methodNames = cut.methodName();
+                MatchType matchType = cut.type();
                 StringBuilder stringBuilder = new StringBuilder();
                 for (int i = 0; i < methodNames.length; i++) {
                     stringBuilder.append(methodNames[i]);
@@ -158,6 +160,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
                                 .addMember("baseClassName", "$S", className)
                                 .addMember("methodNames", "$S", stringBuilder)
                                 .addMember("pointCutClassName", "$S", element)
+                                .addMember("matchType", "$S", matchType.name())
                                 .build());
 
                 typeBuilder.addMethod(whatsMyName1.build());

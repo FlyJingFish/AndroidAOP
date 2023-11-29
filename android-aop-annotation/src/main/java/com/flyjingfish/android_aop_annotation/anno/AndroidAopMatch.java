@@ -11,4 +11,5 @@ public @interface AndroidAopMatch {
     String baseClassName();
     String methodNames();
     String pointCutClassName();
+    String matchType();
 }
