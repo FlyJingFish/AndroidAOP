@@ -34,23 +34,22 @@
     @com.flyjingfish.android_aop_annotation.anno.* <methods>;
 }
 
--keepnames class * implements com.flyjingfish.android_aop_annotation.BasePointCut
--keepnames class * implements com.flyjingfish.android_aop_annotation.MatchClassMethod
--keep class * implements com.flyjingfish.android_aop_annotation.BasePointCut{
+-keepnames class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut
+-keepnames class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod
+-keep class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut{
     public <init>();
 }
--keepclassmembers class * implements com.flyjingfish.android_aop_annotation.BasePointCut{
+-keepclassmembers class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut{
     <methods>;
 }
 
--keep class * implements com.flyjingfish.android_aop_annotation.MatchClassMethod{
+-keep class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod{
     public <init>();
 }
--keepclassmembers class * implements com.flyjingfish.android_aop_annotation.MatchClassMethod{
+-keepclassmembers class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod{
     <methods>;
 }
 
-# AndroidAop必备混淆规则 -----end-----
 # AndroidAop必备混淆规则 -----end-----
 
 

@@ -6,7 +6,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/FlyJingFish/AndroidAop.svg)](https://github.com/FlyJingFish/AndroidAop/issues)
 [![GitHub license](https://img.shields.io/github/license/FlyJingFish/AndroidAop.svg)](https://github.com/FlyJingFish/AndroidAop/blob/master/LICENSE)
 
-### AndroidAOP 是专属于 Android 端 Aop 框架，只需一个注解就可以请求权限、切换线程、禁止多点、监测生命周期等等，**没有使用 AspectJ**，也可以定制出属于你的 Aop 代码，心动不如行动，赶紧用起来吧
+### AndroidAOP 是专属于 Android 端 Aop 框架，只需一个注解就可以请求权限、切换线程、禁止多点、监测生命周期等等，**本库不是基于 AspectJ 实现的 Aop**，当然你也可以定制出属于你的 Aop 代码，心动不如行动，赶紧用起来吧
 ## 特色功能
 
 1、本库内置了开发中常用的一些切面注解供你使用
@@ -15,9 +15,7 @@
 
 3、本库同步支持 Java 和 Kotlin 代码
 
-**4、本库没有使用 AspectJ，织入代码量极少，侵入性极低**
-
-##### 声明下：本库没有使用 AspectJ ，目前的功能用不着市面上那些基于 AspectJ 做出来的Aop框架的那些配置，当然将来在增加功能的时候不排除会增加一些可选配置。
+**4、本库不是基于 AspectJ 实现的，织入代码量极少，侵入性极低**
 
 
 #### [点此下载apk,也可扫下边二维码下载](https://github.com/FlyJingFish/AndroidAOP/blob/master/apk/release/app-release.apk?raw=true)
@@ -80,14 +78,14 @@ dependencies {
 ```
 **提示：ksp 或 annotationProcessor只是在当前 module 起作用**
 
-#### 四、在 app 的build.gradle添加（此步为可选配置项）
+#### 四、在 app 的build.gradle添加 androidAopConfig 配置项（此步为可选配置项）
 
 ```gradle
 plugins {
     ...
 }
 androidAopConfig {
-    // enabled 为false 切面不再起作用
+    // enabled 为 false 切面不再起作用，默认不写为 true
     enabled true 
     // include 不设置默认全部扫描，设置后只扫描设置的包名的代码
     include '你项目的包名','自定义module的包名','自定义module的包名'
@@ -101,6 +99,8 @@ android {
 }
 ```
 **提示：合理使用 include 和 exclude 可提高编译速度，建议直接使用 include 设置你项目的相关包名（包括 app 和自定义 module 的）**
+
+**另外设置此处之后由于 Android Studio 可能有缓存，建议重启 AS 并 clean 下项目再继续开发**
 
 ### 本库内置了一些功能注解可供你直接使用
 
@@ -119,7 +119,7 @@ android {
 
 ### 这块强调一下 @OnLifecycle
 
-**@OnLifecycle 加到的位置必须是属于直接或间接继承自 FragmentActivity 或 Fragment的方法才有用（即这个方法是直接或间接继承FragmentActivity 或 Fragment的类的）或者注解方法的对象实现LifecycleOwner也可以**
+**@OnLifecycle 加到的方法所属对象必须是属于直接或间接继承自 FragmentActivity 或 Fragment的方法才有用，或者注解方法的对象实现 LifecycleOwner 也可以**
 
 ### 下面再着重介绍下 @TryCatch @Permission @CustomIntercept
 
@@ -171,11 +171,11 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
 
 👆上边三个监听，最好放到你的 application 中
 
-### 此外本库也同样支持让你自己做切面，语法相对来说也比较简单
+## 此外本库也同样支持让你自己做切面，实现起来非常简单！
 
-## 本库中提供了 @AndroidAopPointCut 和 @AndroidAopMatchClassMethod 两种切面供你使用
+### 本库通过 @AndroidAopPointCut 和 @AndroidAopMatchClassMethod 两种注解，实现自定义切面
 
-- **@AndroidAopPointCut** 是只能在方法上做切面的，上述中注解都是通过这个做的
+#### 一、**@AndroidAopPointCut** 是只能在方法上做切面的，上述中注解都是通过这个做的
 
 下面以 @CustomIntercept 为例介绍下该如何使用（⚠️注意：自定义的注解如果是 Kotlin 代码请用 android-aop-ksp 那个库）
 
@@ -187,13 +187,13 @@ public @interface CustomIntercept {
     String[] value() default {};
 }
 ```
-**@AndroidAopPointCut** 的 **CustomInterceptCut.class** 为您处理切面的类
+- **@AndroidAopPointCut** 的 **CustomInterceptCut.class** 为您处理切面的类
 
-@Target 的 ElementType.METHOD 表示作用在方法上
+- @Target 只作用在方法上，设置其他无作用
+  - 对于 Java 可以设置 ElementType.METHOD 这一个
+  - 对于 Kotlin 可以设置 AnnotationTarget.FUNCTION,AnnotationTarget.PROPERTY_GETTER,AnnotationTarget.PROPERTY_SETTER 这三个
 
-@Retention 只可以用 RetentionPolicy.RUNTIME
-
-@Target 只可以传 ElementType.METHOD传其他无作用
+- @Retention 只可以用 RetentionPolicy.RUNTIME
 
 CustomInterceptCut 的代码如下：
 
@@ -214,18 +214,22 @@ class CustomInterceptCut : BasePointCut<CustomIntercept> {
 在这介绍下 在使用 ProceedJoinPoint 这个对象的 proceed() 或 proceed(args) 表示执行原来方法的逻辑，区别是：
 
 - proceed() 不传参，表示不改变当初的传入参数
-- proceed(args) 有参数，表示改写当时传入的参数
+- proceed(args) 有参数，表示改写当时传入的参数，注意传入的参数个数，以及每个参数的类型要和切面方法保持一致
 - 不调用 proceed 就不会执行拦截切面方法内的代码
 
 在此的return 返回的就是对应拦截的那个方法返回的
+
+- 如果切面方法**有返回值**，这块的返回值就是切面方法返回值
+- 另外如果切面方法**有返回值**，这块的返回值类型要和切面方法返回类型保持一致
+- 如果切面方法**没有返回值**，这块返回什么无所谓的
 
 **另外请注意尽量不要把切面注解放到系统方法上，例如：Activity 的 onCreate() onResume() 等**
 **即便是加了在切面处理时不要有耗时操作，joinPoint.proceed() 要正常执行，否则会出现意想不到的问题，例如：ANR**
 
 
-PS：ProceedJoinPoint.target 如果为null的话是因为注入的方法是静态的，通常只有java才会这样
+PS：ProceedJoinPoint.target 如果为null的话是因为注入的方法是静态的，一般是 Java 的静态方法和 Kotlin 的顶层函数会出现这种情况
 
-- **@AndroidAopMatchClassMethod** 是做匹配继承自某类及其对应方法的切面的（⚠️注意：自定义的匹配类方法切面如果是 Kotlin 代码请用 android-aop-ksp 那个库）
+#### 二、**@AndroidAopMatchClassMethod** 是做匹配继承自某类及其对应方法的切面的（⚠️注意：自定义的匹配类方法切面如果是 Kotlin 代码请用 android-aop-ksp 那个库）
 
 ```java
 @AndroidAopMatchClassMethod(targetClassName = "androidx.appcompat.app.AppCompatActivity",methodName = {"startActivity"})
@@ -238,6 +242,8 @@ public class MatchActivityMethod implements MatchClassMethod {
     }
 }
 ```
+
+这块 ProceedJoinPoint 这个对象的 proceed() 或 proceed(args) 以及这里的返回值和上文提到的逻辑是一致的
 
 其对应的就是下边的代码
 ```kotlin
@@ -263,7 +269,6 @@ abstract class BaseActivity :AppCompatActivity() {
 ```
 # AndroidAop必备混淆规则 -----start-----
 
-
 -keep @com.flyjingfish.android_aop_core.annotations.* class * {*;}
 -keep @com.flyjingfish.android_aop_annotation.anno.* class * {*;}
 -keep class * {
@@ -275,19 +280,19 @@ abstract class BaseActivity :AppCompatActivity() {
     @com.flyjingfish.android_aop_annotation.anno.* <methods>;
 }
 
--keepnames class * implements com.flyjingfish.android_aop_annotation.BasePointCut
--keepnames class * implements com.flyjingfish.android_aop_annotation.MatchClassMethod
--keep class * implements com.flyjingfish.android_aop_annotation.BasePointCut{
+-keepnames class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut
+-keepnames class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod
+-keep class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut{
     public <init>();
 }
--keepclassmembers class * implements com.flyjingfish.android_aop_annotation.BasePointCut{
+-keepclassmembers class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut{
     <methods>;
 }
 
--keep class * implements com.flyjingfish.android_aop_annotation.MatchClassMethod{
+-keep class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod{
     public <init>();
 }
--keepclassmembers class * implements com.flyjingfish.android_aop_annotation.MatchClassMethod{
+-keepclassmembers class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod{
     <methods>;
 }
 
@@ -313,13 +318,11 @@ abstract class BaseActivity :AppCompatActivity() {
 ```
 
 如果你用到了 **@AndroidAopMatchClassMethod** 做切面，那你需要为切面内的方法做混淆处理
-下面是上文提到的 **MatchActivityOnCreate** 类的匹配规则，对应的逻辑是 匹配的 为继承自 com.flyjingfish.test_lib.BaseActivity 的类的 onCreate ，onResume，onTest三个方法加入切面
+下面是上文提到的 **MatchActivityOnCreate** 类的匹配规则，对应的逻辑是 匹配的 为继承自 androidx.appcompat.app.AppCompatActivity 的类的 startActivity 方法加入切面
 
 ```
--keepnames class * extends com.flyjingfish.test_lib.BaseActivity{
-    void onCreate(...);
-    void onResume(...);
-    void onTest(...);
+-keepnames class * extends androidx.appcompat.app.AppCompatActivity{
+    void startActivity(...);
 }
 ```
 
