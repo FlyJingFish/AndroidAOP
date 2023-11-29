@@ -59,8 +59,8 @@ object WovenIntoCode {
                     signature: String?,
                     exceptions: Array<String>?
                 ): MethodVisitor? {
-                    printLog("oldMethodName="+oldMethodName+"oldDescriptor="+oldDescriptor)
-                    printLog("name="+name+"descriptor="+descriptor)
+//                    printLog("oldMethodName="+oldMethodName+"oldDescriptor="+oldDescriptor)
+//                    printLog("name="+name+"descriptor="+descriptor)
                     return if (oldMethodName == name && oldDescriptor == descriptor) {
 //                        if (oldMethodName == "testTopFun"){
 //                            printLog("visitMethod,access=$access")

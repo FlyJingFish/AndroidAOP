@@ -8,7 +8,7 @@ androidAopConfig {
     // debug 为true打开日志方便调试
     debug true
     // 测试
-    exclude 'com.flyjingfish.test_lib'
+//    exclude 'com.flyjingfish.test_lib'
     // 移除kotlin相关，编译错误和提升速度
     exclude 'kotlin.jvm', 'kotlin.internal'
     exclude 'kotlinx.coroutines.internal', 'kotlinx.coroutines.android'

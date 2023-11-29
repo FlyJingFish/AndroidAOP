@@ -180,8 +180,10 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
             if (argument.name?.getShortName() == "methodName") {
               methodNames = argument.value as ArrayList<String>
             }
-            if (argument.name?.getShortName() == "matchType") {
-              matchType = argument.value.toString()
+            if (argument.name?.getShortName() == "type") {
+              val typeStr = argument.value.toString()
+              matchType = typeStr.substring(typeStr.lastIndexOf(".")+1)
+//              logger.error("argument.value = ${(argument.value as KSType).}")
             }
           }
         }

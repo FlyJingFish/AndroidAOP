@@ -28,7 +28,7 @@ public class AnnotationMethodScanner extends ClassVisitor {
     private final OnCallBackMethod onCallBackMethod;
     private final byte[] classByte;
     private boolean isDescendantClass;
-    private AopMatchCut aopMatchCut;
+    private List<AopMatchCut> aopMatchCuts = new ArrayList<>();
     private final List<MethodRecord> cacheMethodRecords = new ArrayList<>();
     private String className;
 
@@ -44,9 +44,7 @@ public class AnnotationMethodScanner extends ClassVisitor {
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
         className = name;
-        if (superName != null){
-
-            WovenInfoUtils.INSTANCE.getAopMatchCuts().forEach((key, aopMatchCut)->{
+        WovenInfoUtils.INSTANCE.getAopMatchCuts().forEach((key, aopMatchCut)->{
 //                try{
 //                    ClassPool cp = new ClassPool(null);
 //                    cp.appendSystemPath();
@@ -75,13 +73,12 @@ public class AnnotationMethodScanner extends ClassVisitor {
 //        ClassPool cp = ClassPool.getDefault();
 
 
-                if ((AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getBaseClassName().equals(Utils.INSTANCE.slashToDot(superName)))
+            if ((AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getBaseClassName().equals(Utils.INSTANCE.slashToDot(superName)))
                     ||(AopMatchCut.MatchType.SELF.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getBaseClassName().equals(Utils.INSTANCE.slashToDot(name)))) {
-                    this.isDescendantClass= true;
-                    AnnotationMethodScanner.this.aopMatchCut = aopMatchCut;
-                }
-            });
-        }
+                this.isDescendantClass= true;
+                AnnotationMethodScanner.this.aopMatchCuts.add(aopMatchCut);
+            }
+        });
         super.visit(version, access, name, signature, superName, interfaces);
 
     }
@@ -137,25 +134,27 @@ public class AnnotationMethodScanner extends ClassVisitor {
     public MethodVisitor visitMethod(int access, String name, String descriptor,
                                      String signature, String[] exceptions) {
         if (isDescendantClass){
-            for (String methodName : aopMatchCut.getMethodNames()) {
-                if (methodName.equals(name)){
-                    boolean isBack = true;
-                    try {
-                        ClassPool classPool = new ClassPool(null);
-                        InputStream byteArrayInputStream = new ByteArrayInputStream(classByte);
-                        CtClass ctClass = classPool.makeClass(byteArrayInputStream);
-                        CtMethod ctMethod = getCtMethod(ctClass,name,descriptor);
-                        MethodInfo methodInfo = ctMethod.getMethodInfo();
-                        CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
-                        if (codeAttribute == null){
-                            isBack = false;
+            for (AopMatchCut aopMatchCut : aopMatchCuts) {
+                for (String methodName : aopMatchCut.getMethodNames()) {
+                    if (methodName.equals(name)){
+                        boolean isBack = true;
+                        try {
+                            ClassPool classPool = new ClassPool(null);
+                            InputStream byteArrayInputStream = new ByteArrayInputStream(classByte);
+                            CtClass ctClass = classPool.makeClass(byteArrayInputStream);
+                            CtMethod ctMethod = getCtMethod(ctClass,name,descriptor);
+                            MethodInfo methodInfo = ctMethod.getMethodInfo();
+                            CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
+                            if (codeAttribute == null){
+                                isBack = false;
+                            }
+                        } catch (Exception ignored) {
                         }
-                    } catch (Exception ignored) {
+                        if (isBack){
+                            cacheMethodRecords.add(new MethodRecord(name,descriptor, aopMatchCut.getCutClassName()));
+                        }
+                        break;
                     }
-                    if (isBack){
-                        cacheMethodRecords.add(new MethodRecord(name,descriptor, aopMatchCut.getCutClassName()));
-                    }
-                    break;
                 }
             }
         }
@@ -168,6 +167,7 @@ public class AnnotationMethodScanner extends ClassVisitor {
         if (isDescendantClass){
             for (MethodRecord cacheMethodRecord : cacheMethodRecords) {
                 if (onCallBackMethod != null){
+                    logger.error("cacheMethodRecord="+cacheMethodRecord);
                     onCallBackMethod.onBackName(cacheMethodRecord);
                 }
             }
