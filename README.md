@@ -15,7 +15,9 @@
 
 3、本库同步支持 Java 和 Kotlin 代码
 
-**4、本库不是基于 AspectJ 实现的，织入代码量极少，侵入性极低**
+4、本库支持切入三方库
+
+**5、本库不是基于 AspectJ 实现的，织入代码量极少，侵入性极低**
 
 
 #### [点此下载apk,也可扫下边二维码下载](https://github.com/FlyJingFish/AndroidAOP/blob/master/apk/release/app-release.apk?raw=true)
@@ -339,7 +341,7 @@ class MatchActivityMethod : MatchClassMethod {
 
 - 例如你想做退出登陆逻辑时可以使用上边这个，只要在页面内跳转就可以检测是否需要退出登陆
 
-- 又或者你想在三方库某个方法上设置切面，可以直接设置对应类名，对应方法，然后 type = MatchType.SELF，这样可以侵入三方库的代码
+- 又或者你想在三方库某个方法上设置切面，可以直接设置对应类名，对应方法，然后 type = MatchType.SELF，这样可以侵入三方库的代码，当然这么做记得修改上文提到的 androidAopConfig 的配置
 
 
 #### 混淆规则
