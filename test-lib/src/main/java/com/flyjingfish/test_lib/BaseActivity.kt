@@ -13,8 +13,10 @@ abstract class BaseActivity :AppCompatActivity() {
     override fun onResume() {
         super.onResume()
     }
-
     fun onTest(){
+
+    }
+    fun onTest(max:Int,value:String){
 
     }
 }

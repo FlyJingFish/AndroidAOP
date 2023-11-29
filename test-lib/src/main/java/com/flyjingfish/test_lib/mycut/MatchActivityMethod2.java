@@ -12,14 +12,14 @@ import com.flyjingfish.android_aop_annotation.enums.MatchType;
 
 @AndroidAopMatchClassMethod(
         targetClassName = "com.flyjingfish.test_lib.BaseActivity",
-        methodName = {"onResume"},
+        methodName = {"onResume","onTest()"},
         type = MatchType.SELF
 )
 public class MatchActivityMethod2 implements MatchClassMethod {
     @Nullable
     @Override
     public Object invoke(@NonNull ProceedJoinPoint joinPoint, @NonNull String methodName) {
-        Log.e("MatchActivityMethod2","======"+methodName);
+        Log.e("MatchActivityMethod2","======"+methodName+",getParameterTypes="+joinPoint.getTargetMethod().getParameterTypes().length);
         return joinPoint.proceed();
     }
 }

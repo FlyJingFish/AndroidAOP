@@ -1,6 +1,7 @@
 package com.flyjingfish.android_aop_plugin.scanner_visitor;
 
 import com.flyjingfish.android_aop_plugin.beans.AopMatchCut;
+import com.flyjingfish.android_aop_plugin.beans.MatchMethodInfo;
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord;
 import com.flyjingfish.android_aop_plugin.utils.Utils;
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils;
@@ -136,19 +137,56 @@ public class AnnotationMethodScanner extends ClassVisitor {
         if (isDescendantClass){
             for (AopMatchCut aopMatchCut : aopMatchCuts) {
                 for (String methodName : aopMatchCut.getMethodNames()) {
-                    if (methodName.equals(name)){
+                    MatchMethodInfo matchMethodInfo = Utils.INSTANCE.getMethodInfo(methodName);
+                    if (matchMethodInfo != null && name.equals(matchMethodInfo.getName())){
                         boolean isBack = true;
                         try {
                             ClassPool classPool = new ClassPool(null);
+                            if (matchMethodInfo.getParamTypes() != null || matchMethodInfo.getReturnType() != null){
+                                classPool.appendSystemPath();
+                                for (String classPath : WovenInfoUtils.INSTANCE.getClassPaths()){
+                                    try {
+                                        classPool.appendClassPath(classPath);
+                                    } catch (NotFoundException ignored) {
+                                    }
+                                }
+                            }
                             InputStream byteArrayInputStream = new ByteArrayInputStream(classByte);
                             CtClass ctClass = classPool.makeClass(byteArrayInputStream);
                             CtMethod ctMethod = getCtMethod(ctClass,name,descriptor);
+                            if (matchMethodInfo.getParamTypes() != null){
+                                CtClass[] ctClasses = ctMethod.getParameterTypes();
+                                StringBuilder paramStr = new StringBuilder();
+                                paramStr.append("(");
+                                int length = ctClasses.length;
+                                for (int i = 0; i < length; i++) {
+                                    paramStr.append(ctClasses[i].getName());
+                                    if (i != length - 1){
+                                        paramStr.append(",");
+                                    }
+                                }
+                                paramStr.append(")");
+                                //有设置参数类型这一项
+                                if (!paramStr.toString().equals(matchMethodInfo.getParamTypes())){
+                                    isBack = false;
+                                }
+                            }
+                            if (matchMethodInfo.getReturnType() != null){
+                                CtClass returnCtClass = ctMethod.getReturnType();
+                                String returnType = returnCtClass.getName();
+                                //有设置返回类型这一项
+                                if (!returnType.equals(matchMethodInfo.getReturnType())){
+                                    isBack = false;
+                                }
+                            }
+//                            logger.error("paramStr="+paramStr+",returnType="+returnType+",matchMethodInfo="+matchMethodInfo);
                             MethodInfo methodInfo = ctMethod.getMethodInfo();
                             CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
                             if (codeAttribute == null){
                                 isBack = false;
                             }
                         } catch (Exception ignored) {
+                            ignored.printStackTrace();
                         }
                         if (isBack){
                             cacheMethodRecords.add(new MethodRecord(name,descriptor, aopMatchCut.getCutClassName()));

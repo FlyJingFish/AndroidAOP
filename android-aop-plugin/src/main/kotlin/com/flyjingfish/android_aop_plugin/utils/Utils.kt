@@ -1,7 +1,10 @@
 package com.flyjingfish.android_aop_plugin.utils
 
+import com.flyjingfish.android_aop_plugin.beans.MatchMethodInfo
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import java.io.File
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 object Utils {
     const val MethodAnnoUtils = "com.flyjingfish.android_aop_core.utils.MethodAnnoUtils"
@@ -65,6 +68,50 @@ object Utils {
     enum class FilterPolicy {
         INCLUDE,
         EXCLUDE
+    }
+
+    fun getMethodInfo(methodName: String): MatchMethodInfo? {
+        val pattern: Pattern = Pattern.compile("\\(.*?\\)")
+        val matcher: Matcher = pattern.matcher(methodName)
+        var returnType: String? = null
+        var name: String? = null
+        var params: String? = null
+        if (matcher.find()) {
+            val paramStr: String = matcher.group()
+            val nameStr: String = matcher.replaceAll("")
+            val names = nameStr.split(" ")
+            if (names.size == 2) {
+                returnType = names[0]
+                name = names[1]
+            } else {
+                name = nameStr
+            }
+            params = paramStr
+        } else if (methodName.contains(" ")) {
+            val names = methodName.split(" ").toTypedArray()
+            if (names.size == 2) {
+                name = names[1]
+                returnType = names[0]
+            } else {
+                for (s in names) {
+                    if ("" != s) {
+                        name = s
+                    }
+                }
+            }
+        } else {
+            name = methodName
+        }
+        var matchMethodInfo: MatchMethodInfo? = null
+        if (name != null && "" != name) {
+            matchMethodInfo = MatchMethodInfo()
+            matchMethodInfo.name = name
+            if (returnType != null && "" != returnType) {
+                matchMethodInfo.returnType = returnType
+            }
+            matchMethodInfo.paramTypes = params
+        }
+        return matchMethodInfo
     }
 }
 

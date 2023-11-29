@@ -82,10 +82,12 @@ class MainActivity: BaseActivity2() {
 
         binding.btnFieldGet.setOnClickListener {
             val name = testBean.name
+            onTest()
         }
 
         binding.btnKotlinAnno.setOnClickListener {
             onMyAnno2()
+            onTest(1,"2")
         }
 
         binding.tvLogcat.setOnClickListener { binding.tvLogcat.text = "日志:（点此清除）\n" }
