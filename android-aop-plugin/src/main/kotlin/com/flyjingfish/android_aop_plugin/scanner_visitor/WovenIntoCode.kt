@@ -176,8 +176,9 @@ object WovenIntoCode {
                     ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointExecute()"
                 )
                 val targetClassName = ctClass.name
+                val constructor = "\"$targetClassName\",${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\"";
                 val body =
-                    """ {AndroidAopJoinPoint pointCut = new AndroidAopJoinPoint(${if (isStaticMethod) "\"$targetClassName\",\"$oldMethodName\",\"$targetMethodName\"" else "$0,\"$oldMethodName\",\"$targetMethodName\""});"""+
+                    """ {AndroidAopJoinPoint pointCut = new AndroidAopJoinPoint($constructor);"""+
                             (if (cutClassName != null) "        pointCut.setCutMatchClassName(\"$cutClassName\");\n" else "") +
                             (if (isHasArgs) "        String[] classNames = new String[]{$paramsClassNamesBuffer};\n" else "") +
                             (if (isHasArgs) "        pointCut.setArgClassNames(classNames);\n" else "") +

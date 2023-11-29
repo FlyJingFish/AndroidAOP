@@ -21,7 +21,7 @@ import com.flyjingfish.androidaop.test.TestBean
 import com.flyjingfish.test_lib.BaseActivity
 import com.flyjingfish.test_lib.annotation.MyAnno2
 
-class MainActivity: BaseActivity() {
+class MainActivity: BaseActivity2() {
 
     lateinit var binding:ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {

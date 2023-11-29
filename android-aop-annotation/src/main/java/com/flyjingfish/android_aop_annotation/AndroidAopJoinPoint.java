@@ -21,13 +21,14 @@ public final class AndroidAopJoinPoint {
     private Method originalMethod;
     private String cutMatchClassName;
 
-    public AndroidAopJoinPoint(Object target, String originalMethodName, String targetMethodName) {
-        this.target = target;
-        this.originalMethodName = originalMethodName;
-        this.targetMethodName = targetMethodName;
-    }
-    public AndroidAopJoinPoint(String targetClassName, String originalMethodName, String targetMethodName) {
+    public AndroidAopJoinPoint(String targetClassName, Object target, String originalMethodName, String targetMethodName) {
         this.targetClassName = targetClassName;
+        try {
+            targetClass = Class.forName(targetClassName);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        this.target = target;
         this.originalMethodName = originalMethodName;
         this.targetMethodName = targetMethodName;
     }
@@ -41,7 +42,7 @@ public final class AndroidAopJoinPoint {
         this.mArgClassNames = argClassNames;
     }
 
-    public Object joinPointExecute(){
+    public Object joinPointExecute() {
         ProceedJoinPoint proceedJoinPoint = new ProceedJoinPoint();
         proceedJoinPoint.target = target;
         proceedJoinPoint.args = mArgs;
@@ -51,17 +52,17 @@ public final class AndroidAopJoinPoint {
         Annotation[] annotations = originalMethod.getAnnotations();
         Object returnValue = null;
 
-        if (cutMatchClassName != null){
-            MatchClassMethod matchClassMethod = AndroidAopBeanUtils.INSTANCE.getMatchClassMethod(proceedJoinPoint,cutMatchClassName);
-            matchClassMethod.invoke(proceedJoinPoint,proceedJoinPoint.getTargetMethod().getName());
+        if (cutMatchClassName != null) {
+            MatchClassMethod matchClassMethod = AndroidAopBeanUtils.INSTANCE.getMatchClassMethod(proceedJoinPoint, cutMatchClassName);
+            matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
         }
 
         for (Annotation annotation : annotations) {
             String cutClassName = JoinAnnoCutUtils.getCutClassName(annotation.annotationType().getName());
-            if (cutClassName != null){
-                BasePointCut<Annotation> basePointCut = AndroidAopBeanUtils.INSTANCE.getBasePointCut(proceedJoinPoint,cutClassName);
-                if (basePointCut != null){
-                    returnValue = basePointCut.invoke(proceedJoinPoint,annotation);
+            if (cutClassName != null) {
+                BasePointCut<Annotation> basePointCut = AndroidAopBeanUtils.INSTANCE.getBasePointCut(proceedJoinPoint, cutClassName);
+                if (basePointCut != null) {
+                    returnValue = basePointCut.invoke(proceedJoinPoint, annotation);
                 }
             }
         }
@@ -73,7 +74,7 @@ public final class AndroidAopJoinPoint {
         this.mArgs = args;
         try {
             Class<?>[] classes;
-            if (mArgClassNames != null && mArgClassNames.length > 0){
+            if (mArgClassNames != null && mArgClassNames.length > 0) {
                 classes = new Class[args.length];
                 int index = 0;
                 for (String className : mArgClassNames) {
@@ -85,32 +86,36 @@ public final class AndroidAopJoinPoint {
 
                     index++;
                 }
-            }else {
+            } else {
                 classes = new Class<?>[0];
             }
             Class<?> tClass = null;
             if (target != null) {
                 tClass = target.getClass();
-            }else if (targetClassName != null){
-                try {
-                    tClass = Class.forName(targetClassName);
-                } catch (ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
             }
-            if (tClass == null){
+            if (tClass == null) {
+                tClass = targetClass;
+            }
+            if (tClass == null) {
                 throw new RuntimeException("织入代码异常");
             }
-            targetClass = tClass;
             try {
-                targetMethod = tClass.getDeclaredMethod(targetMethodName,classes);
+                targetMethod = tClass.getDeclaredMethod(targetMethodName, classes);
             } catch (NoSuchMethodException e) {
-                targetMethod = tClass.getMethod(targetMethodName,classes);
+                try {
+                    targetMethod = tClass.getMethod(targetMethodName, classes);
+                } catch (NoSuchMethodException ex) {
+                    targetMethod = targetClass.getDeclaredMethod(targetMethodName, classes);
+                }
             }
             try {
-                originalMethod = tClass.getDeclaredMethod(originalMethodName,classes);
+                originalMethod = tClass.getDeclaredMethod(originalMethodName, classes);
             } catch (NoSuchMethodException e) {
-                originalMethod = tClass.getMethod(originalMethodName,classes);
+                try {
+                    originalMethod = tClass.getMethod(originalMethodName, classes);
+                } catch (NoSuchMethodException ex) {
+                    originalMethod = targetClass.getDeclaredMethod(originalMethodName, classes);
+                }
             }
             targetMethod.setAccessible(true);
             originalMethod.setAccessible(true);
