@@ -11,8 +11,8 @@ import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
 import com.flyjingfish.android_aop_annotation.enums.MatchType;
 
 @AndroidAopMatchClassMethod(
-        targetClassName = "com.flyjingfish.test_lib.BaseActivity",
-        methodName = {"onResume","onTest()"},
+        targetClassName = "com.flyjingfish.test_lib.TestMatch",
+        methodName = {"void test1(int,java.lang.String)","String test2(int,java.lang.String)"},
         type = MatchType.SELF
 )
 public class MatchActivityMethod2 implements MatchClassMethod {

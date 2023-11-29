@@ -36,7 +36,7 @@
 buildscript {
     dependencies {
         //必须项 👇
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.0.8'
+        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.0.9'
     }
 }
 plugins {
@@ -67,12 +67,12 @@ plugins {
 
 dependencies {
     //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.0.8'
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.0.8'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.0.9'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.0.9'
     //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.0.8'
+    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.0.9'
     //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.0.8'
+    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.0.9'
     //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
 }
 ```
@@ -231,6 +231,8 @@ PS：ProceedJoinPoint.target 如果为null的话是因为注入的方法是静�
 
 #### 二、**@AndroidAopMatchClassMethod** 是做匹配某类及其对应方法的切面的（⚠️注意：自定义的匹配类方法切面如果是 Kotlin 代码请用 android-aop-ksp 那个库）
 
+**1、方法名部分不写返回值和参数类型，这样的话如果有重名方法会全部匹配到**
+
 ```java
 @AndroidAopMatchClassMethod(targetClassName = "androidx.appcompat.app.AppCompatActivity",methodName = {"startActivity"},type = MatchType.EXTENDS)
 public class MatchActivityMethod implements MatchClassMethod {
@@ -263,7 +265,78 @@ abstract class BaseActivity :AppCompatActivity() {
 
 ⚠️注意如果你没写对应的方法或者没有重写父类的该方法则切面无效
 
-#### 实用场景：
+**2、另外方法也支持精准匹配，用法如下**
+
+这个是要匹配的类
+
+```java
+package com.flyjingfish.test_lib;
+
+public class TestMatch {
+    public void test1(int value1,String value2){
+
+    }
+
+    public String test2(int value1,String value2){
+        return value1+value2;
+    }
+}
+
+```
+
+下边是匹配写法：
+
+```kotlin
+package com.flyjingfish.test_lib.mycut;
+
+@AndroidAopMatchClassMethod(
+        targetClassName = "com.flyjingfish.test_lib.TestMatch",
+        methodName = ["void test1(int,java.lang.String)","java.lang.String test2(int,java.lang.String)"],
+        type = MatchType.SELF
+)
+class MatchActivityMethod : MatchClassMethod {
+  override operator fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
+    Log.e("MatchActivityMethod2","======"+methodName+",getParameterTypes="+joinPoint.getTargetMethod().getParameterTypes().length);
+    return joinPoint.proceed()
+  }
+}
+
+```
+
+匹配的写法如下
+
+返回值类型 方法名(参数类型,参数类型)
+
+- 返回值类型 可以不用写
+- 方法名 必须写
+- 参数类型 可以不用写，写的话用 **()** 包裹起来，多个参数类型用 **,** 隔开，没有参数就只写 **()**
+- 返回值类型 和 方法名 之间用空格隔开
+- 返回值类型 和 参数类型 都要用 Java 的类型表示，除了 8 种基本类型之外，其他引用类型都是 包名.类名
+- 返回值类型 和 参数类型 不写的话就是不验证
+
+下边给出 8 种基本类型 和 String 的 Kotlin 对 Java 对应表
+
+| Java 类型             |   Kotlin 类型   |
+|---------------------|:-------------:|
+| int                 |      Int      | 
+| short               |     Short     |                
+| byte                |     Byte      |                
+| char                |     Char      |                
+| long                |     Long      |                
+| float               |     Float     |                
+| double              |    Double     |                
+| boolean             |    Boolean    |   
+| java.lang.Integer   |     Int?      | 
+| java.lang.Short     |    Short?     |                
+| java.lang.Byte      |     Byte?     |                
+| java.lang.Character |     Char?     |                
+| java.lang.Long      |     Long?     |                
+| java.lang.Float     |    Float?     |                
+| java.lang.Double    |    Double?    |                
+| java.lang.Boolean   |   Boolean?    |   
+| java.lang.String    | kotlin.String |   
+
+#### 匹配切面实用场景：
 
 - 例如你想做退出登陆逻辑时可以使用上边这个，只要在页面内跳转就可以检测是否需要退出登陆
 
