@@ -272,7 +272,7 @@ abstract class BaseActivity :AppCompatActivity() {
 
 上边表示凡是继承自 androidx.appcompat.app.AppCompatActivity 的类执行 startActivity 方法时则进行切面
 
-⚠️注意如果你没写对应的方法或者没有重写父类的该方法则切面无效
+⚠️注意如果你没写对应的方法或者没有重写父类的该方法则切面无效，另外对同一个类的同一个方法不要做多次匹配，否则只有一个会生效
 
 **2、另外方法也支持精准匹配，用法如下**
 
