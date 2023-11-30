@@ -296,7 +296,7 @@ package com.flyjingfish.test_lib.mycut;
         methodName = ["void test1(int,java.lang.String)","java.lang.String test2(int,java.lang.String)"],
         type = MatchType.SELF
 )
-class MatchActivityMethod : MatchClassMethod {
+class MatchTestMatchMethod : MatchClassMethod {
   override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
     Log.e("MatchActivityMethod2","======"+methodName+",getParameterTypes="+joinPoint.getTargetMethod().getParameterTypes().length);
     return joinPoint.proceed()
