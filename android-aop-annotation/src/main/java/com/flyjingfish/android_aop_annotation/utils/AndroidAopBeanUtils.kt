@@ -5,7 +5,7 @@ import com.flyjingfish.android_aop_annotation.base.BasePointCut
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod
 import java.util.concurrent.ConcurrentHashMap
 
-object AndroidAopBeanUtils {
+internal object AndroidAopBeanUtils {
     private val basePointCutMap = ConcurrentHashMap<String, BasePointCut<Annotation>?>()
     private val matchClassMethodMap = ConcurrentHashMap<String, MatchClassMethod?>()
 

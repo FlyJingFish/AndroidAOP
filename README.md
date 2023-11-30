@@ -38,7 +38,7 @@
 buildscript {
     dependencies {
         //必须项 👇
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.1.0'
+        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.1.1'
     }
 }
 plugins {
@@ -69,12 +69,12 @@ plugins {
 
 dependencies {
     //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.1.0'
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.1.0'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.1.1'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.1.1'
     //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.1.0'
+    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.1.1'
     //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.1.0'
+    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.1.1'
     //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
 }
 ```
@@ -121,7 +121,20 @@ android {
 
 ### 这块强调一下 @OnLifecycle
 
-**@OnLifecycle 加到的方法所属对象必须是属于直接或间接继承自 FragmentActivity 或 Fragment的方法才有用，或者注解方法的对象实现 LifecycleOwner 也可以**
+- **1、@OnLifecycle 加到的方法所属对象必须是属于直接或间接继承自 FragmentActivity 或 Fragment的方法才有用，或者注解方法的对象实现 LifecycleOwner 也可以**
+- 2、如果第1点不符合的情况下，可以给切面方法第一个参数设置为第1点的类型，在调用切面方法传入也是可以的，例如：
+
+```java
+public class StaticClass {
+    @SingleClick(5000)
+    @OnLifecycle(Lifecycle.Event.ON_RESUME)
+    public static void onStaticPermission(MainActivity activity, int maxSelect , ThirdActivity.OnPhotoSelectListener back){
+        back.onBack();
+    }
+
+}
+```
+
 
 ### 下面再着重介绍下 @TryCatch @Permission @CustomIntercept
 
@@ -353,6 +366,86 @@ class MatchTestMatchMethod : MatchClassMethod {
 
 - 又或者你想在三方库某个方法上设置切面，可以直接设置对应类名，对应方法，然后 type = MatchType.SELF，这样可以侵入三方库的代码，当然这么做记得修改上文提到的 androidAopConfig 的配置
 
+#### 切面启示
+
+1、不知道大家有没有这样的需求，有一个接口在多处使用，这种情况大家可能写一个工具类封装一下。
+
+其实对于这种需求，可以做一个注解切面，在切面处理时可以在请求完数据后，给切面方法传回去即可，例如：
+
+```kotlin
+@AndroidAopPointCut(CommonDataCut::class)
+@Target(
+    AnnotationTarget.FUNCTION
+)
+@Retention(AnnotationRetention.RUNTIME)
+@Keep
+annotation class CommonData
+```
+```kotlin
+class CommonDataCut : BasePointCut<CommonData> {
+    override fun invoke(
+        joinPoint: ProceedJoinPoint,
+        anno: CommonData
+    ): Any? {
+        // 在这写网络请求数据,数据返回后调用 joinPoint.proceed(data) 把数据传回方法
+        joinPoint.proceed(data)
+        return null
+    }
+}
+```
+```kotlin
+@CommonData
+fun onTest(data:Data){
+    //因为切面已经把数据传回来了，所以数据不再为null
+}
+//在调用方法时随便传个null，当进入到切面后得到数据，在进入方法后数据就有了
+binding.btnSingleClick.setOnClickListener {
+    onTest(null)
+}
+
+```
+2、另外对于切面注解是没办法传入对象什么的，或者数据是动态的，那怎么办呢？
+
+```kotlin
+@AndroidAopPointCut(CommonDataCut::class)
+@Target(
+    AnnotationTarget.FUNCTION
+)
+@Retention(AnnotationRetention.RUNTIME)
+@Keep
+annotation class CommonData
+
+```
+```kotlin
+class CommonDataCut : BasePointCut<CommonData> {
+    override fun invoke(
+        joinPoint: ProceedJoinPoint,
+        anno: CommonData
+    ): Any? {
+        if (!args.isNullOrEmpty()) {
+            val arg1 = args[0] // 这个就是传入的数据，这样可以随便往切面内传数据了
+            
+            
+        }
+        return joinPoint.proceed()
+    }
+}
+
+```
+```kotlin
+@CommonData
+fun onTest(number:Int){
+    
+}
+
+binding.btnSingleClick.setOnClickListener {
+   //在调用方法时传入动态数据
+    onTest(1)
+}
+
+```
+
+3、综上所述，其实切面能给我们开发带来很多便携之处，关键看大家怎么用了
 
 #### 混淆规则
 
