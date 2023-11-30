@@ -19,6 +19,7 @@ import com.flyjingfish.androidaop.test.Round
 import com.flyjingfish.androidaop.test2.StaticClass
 import com.flyjingfish.androidaop.test.TestBean
 import com.flyjingfish.test_lib.BaseActivity
+import com.flyjingfish.test_lib.TestMatch
 import com.flyjingfish.test_lib.annotation.MyAnno2
 
 class MainActivity: BaseActivity2() {
@@ -68,6 +69,7 @@ class MainActivity: BaseActivity2() {
                 }
             })
         }
+
         binding.btnStaticMethod2.setOnClickListener {
             StaticClass.onStaticPermission(this,3,object : ThirdActivity.OnPhotoSelectListener {
                 override fun onBack() {
@@ -75,6 +77,7 @@ class MainActivity: BaseActivity2() {
                 }
             })
         }
+
         val testBean = TestBean()
         binding.btnFieldSet.setOnClickListener {
             testBean.name = "1111"
@@ -86,6 +89,11 @@ class MainActivity: BaseActivity2() {
 
         binding.btnKotlinAnno.setOnClickListener {
             onMyAnno2()
+        }
+
+        val testMatch = TestMatch()
+        binding.btnTestMuch.setOnClickListener {
+            testMatch.test2(1,"2")
         }
 
         binding.tvLogcat.setOnClickListener { binding.tvLogcat.text = "日志:（点此清除）\n" }

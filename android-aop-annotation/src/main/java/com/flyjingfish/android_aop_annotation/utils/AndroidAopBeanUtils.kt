@@ -9,10 +9,10 @@ object AndroidAopBeanUtils {
     private val basePointCutMap = ConcurrentHashMap<String, BasePointCut<Annotation>?>()
     private val matchClassMethodMap = ConcurrentHashMap<String, MatchClassMethod?>()
 
-    fun getBasePointCut(joinPoint: ProceedJoinPoint, clsName: String): BasePointCut<Annotation>? {
+    fun getBasePointCut(joinPoint: ProceedJoinPoint, clsName: String,annotationName : String): BasePointCut<Annotation>? {
         val className = joinPoint.targetClass.name
         val methodName = joinPoint.targetMethod.name
-        val key = "$className-${joinPoint.target}-$methodName"
+        val key = "$className-${joinPoint.target}-$methodName-$annotationName"
         var basePointCut: BasePointCut<Annotation>? = basePointCutMap[key]
         if (basePointCut == null) {
             basePointCut = getNewPointCut(clsName)
@@ -45,7 +45,7 @@ object AndroidAopBeanUtils {
     fun getMatchClassMethod(joinPoint: ProceedJoinPoint, clsName: String): MatchClassMethod {
         val className = joinPoint.targetClass.name
         val methodName = joinPoint.targetMethod.name
-        val key = "$className-${joinPoint.target}-$methodName"
+        val key = "$className-${joinPoint.target}-$methodName-$clsName"
         var matchClassMethod: MatchClassMethod? = matchClassMethodMap[key]
         if (matchClassMethod == null) {
             matchClassMethod = getNewMatchClassMethod(clsName)

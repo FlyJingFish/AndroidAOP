@@ -101,8 +101,7 @@ object WovenIntoCode {
         for (classPath in WovenInfoUtils.classPaths){
             try {
                 cp.appendClassPath(classPath)
-            } catch (e: NotFoundException) {
-                throw RuntimeException(e)
+            } catch (_: NotFoundException) {
             }
         }
 //        ClassPool cp = ClassPool.getDefault();

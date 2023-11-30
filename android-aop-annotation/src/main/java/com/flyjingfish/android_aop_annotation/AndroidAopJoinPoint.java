@@ -8,6 +8,9 @@ import com.flyjingfish.android_aop_annotation.utils.JoinAnnoCutUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public final class AndroidAopJoinPoint {
     private Object target;
@@ -50,24 +53,85 @@ public final class AndroidAopJoinPoint {
         proceedJoinPoint.setTargetMethod(targetMethod);
         proceedJoinPoint.setTargetClass(targetClass);
         Annotation[] annotations = originalMethod.getAnnotations();
-        Object returnValue = null;
+        Object[] returnValue = new Object[1];
 
-        if (cutMatchClassName != null) {
-            MatchClassMethod matchClassMethod = AndroidAopBeanUtils.INSTANCE.getMatchClassMethod(proceedJoinPoint, cutMatchClassName);
-            matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
-        }
+        final List<PointCutAnnotation> basePointCuts = new ArrayList<>();
 
         for (Annotation annotation : annotations) {
-            String cutClassName = JoinAnnoCutUtils.getCutClassName(annotation.annotationType().getName());
+            String annotationName = annotation.annotationType().getName();
+            String cutClassName = JoinAnnoCutUtils.getCutClassName(annotationName);
             if (cutClassName != null) {
-                BasePointCut<Annotation> basePointCut = AndroidAopBeanUtils.INSTANCE.getBasePointCut(proceedJoinPoint, cutClassName);
+                BasePointCut<Annotation> basePointCut = AndroidAopBeanUtils.INSTANCE.getBasePointCut(proceedJoinPoint, cutClassName,annotationName);
                 if (basePointCut != null) {
-                    returnValue = basePointCut.invoke(proceedJoinPoint, annotation);
+                    PointCutAnnotation pointCutAnnotation = new PointCutAnnotation(annotation, basePointCut);
+                    basePointCuts.add(pointCutAnnotation);
                 }
             }
         }
 
-        return returnValue;
+        if (cutMatchClassName != null) {
+            MatchClassMethod matchClassMethod = AndroidAopBeanUtils.INSTANCE.getMatchClassMethod(proceedJoinPoint, cutMatchClassName);
+            PointCutAnnotation pointCutAnnotation = new PointCutAnnotation(matchClassMethod);
+            basePointCuts.add(pointCutAnnotation);
+        }
+        Iterator<PointCutAnnotation> iterator = basePointCuts.iterator();
+
+
+        if (basePointCuts.size() > 1) {
+            proceedJoinPoint.setOnInvokeListener(returnValue1 -> {
+                if (iterator.hasNext()){
+                    PointCutAnnotation nextCutAnnotation = iterator.next();
+//                    System.out.println("====3===="+nextCutAnnotation);
+                    iterator.remove();
+                    proceedJoinPoint.setHasNext(iterator.hasNext());
+                    if (nextCutAnnotation.basePointCut != null) {
+                        returnValue[0] = nextCutAnnotation.basePointCut.invoke(proceedJoinPoint, nextCutAnnotation.annotation);
+                    } else {
+                        returnValue[0] = nextCutAnnotation.matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
+                    }
+//                    System.out.println("====4===="+nextCutAnnotation);
+                }
+            });
+        }
+
+        proceedJoinPoint.setHasNext(basePointCuts.size() > 1);
+        PointCutAnnotation cutAnnotation = iterator.next();
+        iterator.remove();
+//        System.out.println("====1===="+cutAnnotation);
+        if (cutAnnotation.basePointCut != null) {
+            returnValue[0] = cutAnnotation.basePointCut.invoke(proceedJoinPoint, cutAnnotation.annotation);
+        } else {
+            returnValue[0] = cutAnnotation.matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
+        }
+//        System.out.println("====2===="+cutAnnotation);
+
+
+
+        return returnValue[0];
+    }
+
+    static class PointCutAnnotation {
+        Annotation annotation;
+        BasePointCut<Annotation> basePointCut;
+        MatchClassMethod matchClassMethod;
+
+        public PointCutAnnotation(Annotation annotation, BasePointCut<Annotation> basePointCut) {
+            this.annotation = annotation;
+            this.basePointCut = basePointCut;
+        }
+
+        public PointCutAnnotation(MatchClassMethod matchClassMethod) {
+            this.matchClassMethod = matchClassMethod;
+        }
+
+        @Override
+        public String toString() {
+            return "PointCutAnnotation{" +
+                    "annotation=" + (annotation != null ? annotation.annotationType().getName():"null") +
+                    ", basePointCut=" + (basePointCut != null ? basePointCut.getClass().getName():"null")  +
+                    ", matchClassMethod=" + (matchClassMethod != null ? matchClassMethod.getClass().getName():"null")  +
+                    '}';
+        }
     }
 
     public void setArgs(Object[] args) {

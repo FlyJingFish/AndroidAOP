@@ -13,7 +13,7 @@ import com.flyjingfish.test_lib.ToastUtils.makeText
     methodName = ["startActivity"]
 )
 class MatchActivityMethod : MatchClassMethod {
-    override operator fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
+    override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
         Log.e("MatchActivityMethod", "=====invoke=====$methodName")
         if (joinPoint.target is Activity) {
             makeText((joinPoint.target as Context), "进入匹配类切面")
