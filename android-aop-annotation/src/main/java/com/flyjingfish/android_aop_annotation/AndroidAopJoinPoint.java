@@ -46,12 +46,11 @@ public final class AndroidAopJoinPoint {
     }
 
     public Object joinPointExecute() {
-        ProceedJoinPoint proceedJoinPoint = new ProceedJoinPoint();
+        ProceedJoinPoint proceedJoinPoint = new ProceedJoinPoint(targetClass);
         proceedJoinPoint.target = target;
         proceedJoinPoint.args = mArgs;
         proceedJoinPoint.setOriginalMethod(originalMethod);
         proceedJoinPoint.setTargetMethod(targetMethod);
-        proceedJoinPoint.setTargetClass(targetClass);
         Annotation[] annotations = originalMethod.getAnnotations();
         Object[] returnValue = new Object[1];
 

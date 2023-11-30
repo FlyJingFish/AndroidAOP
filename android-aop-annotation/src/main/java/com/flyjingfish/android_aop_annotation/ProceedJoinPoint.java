@@ -1,20 +1,33 @@
 package com.flyjingfish.android_aop_annotation;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public final class ProceedJoinPoint {
+    @Nullable
     public Object[] args;
+    @Nullable
     public Object target;
+    @NotNull
     public Class<?> targetClass;
     private Method targetMethod;
     private Method originalMethod;
     private AopMethod targetAopMethod;
     private OnInvokeListener onInvokeListener;
     private boolean hasNext;
+
+    public ProceedJoinPoint(Class<?> targetClass) {
+        this.targetClass = targetClass;
+    }
+
+    @Nullable
     public Object proceed(){
         return proceed(args);
     }
+    @Nullable
     public Object proceed(Object... args){
         this.args = args;
         try {
@@ -33,6 +46,7 @@ public final class ProceedJoinPoint {
         }
     }
 
+    @NotNull
     public AopMethod getTargetMethod() {
         return targetAopMethod;
     }
@@ -46,15 +60,17 @@ public final class ProceedJoinPoint {
         targetAopMethod = new AopMethod(originalMethod);
     }
 
+    @Nullable
     public Object getTarget() {
         return target;
     }
 
+    @NotNull
     public Class<?> getTargetClass() {
         return targetClass;
     }
 
-    void setTargetClass(Class<?> targetClass) {
+    void setTargetClass(@NotNull Class<?> targetClass) {
         this.targetClass = targetClass;
     }
 

@@ -12,9 +12,9 @@ import com.flyjingfish.android_aop_core.utils.AppExecutors
 
 class OnLifecycleCut : BasePointCut<OnLifecycle> {
     override fun invoke(joinPoint: ProceedJoinPoint, anno: OnLifecycle): Any? {
-        if (Looper.getMainLooper() == Looper.myLooper()){
+        if (Looper.getMainLooper() == Looper.myLooper()) {
             invokeLifecycle(joinPoint, anno)
-        }else{
+        } else {
             AppExecutors.mainThread().execute {
                 invokeLifecycle(joinPoint, anno)
             }
@@ -22,23 +22,39 @@ class OnLifecycleCut : BasePointCut<OnLifecycle> {
         return null
     }
 
-    private fun invokeLifecycle(joinPoint: ProceedJoinPoint, annotation: OnLifecycle){
+    private fun invokeLifecycle(joinPoint: ProceedJoinPoint, annotation: OnLifecycle) {
         when (val target = joinPoint.target) {
-            is Fragment -> {
-                target.viewLifecycleOwner.lifecycle.addObserver(object : LifecycleEventObserver{
-                    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                        if (event == annotation.value){
-                            source.lifecycle.removeObserver(this)
-                            joinPoint.proceed()
-                        }
-                    }
-                })
-            }
-
             is LifecycleOwner -> {
-                target.lifecycle.addObserver(object : LifecycleEventObserver{
+                addObserver(target,joinPoint, annotation)
+            }
+            else -> {
+                val args = joinPoint.args
+                if (!args.isNullOrEmpty()) {
+                    val arg1 = args[0]
+                    if (arg1 is LifecycleOwner){
+                        addObserver(arg1,joinPoint, annotation)
+                    }else{
+                        joinPoint.proceed()
+                    }
+                }else{
+                    joinPoint.proceed()
+                }
+            }
+        }
+
+    }
+
+    private fun addObserver(
+        lifecycleOwner: LifecycleOwner,
+        joinPoint: ProceedJoinPoint,
+        annotation: OnLifecycle
+    ) {
+        when (lifecycleOwner) {
+            is Fragment -> {
+                lifecycleOwner.viewLifecycleOwner.lifecycle.addObserver(object :
+                    LifecycleEventObserver {
                     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                        if (event == annotation.value){
+                        if (event == annotation.value) {
                             source.lifecycle.removeObserver(this)
                             joinPoint.proceed()
                         }
@@ -47,9 +63,15 @@ class OnLifecycleCut : BasePointCut<OnLifecycle> {
             }
 
             else -> {
-                joinPoint.proceed()
+                lifecycleOwner.lifecycle.addObserver(object : LifecycleEventObserver {
+                    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+                        if (event == annotation.value) {
+                            source.lifecycle.removeObserver(this)
+                            joinPoint.proceed()
+                        }
+                    }
+                })
             }
         }
-
     }
 }
