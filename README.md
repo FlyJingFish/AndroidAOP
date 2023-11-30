@@ -363,6 +363,44 @@ class MatchTestMatchMethod : MatchClassMethod {
 
 - 又或者你想在三方库某个方法上设置切面，可以直接设置对应类名，对应方法，然后 type = MatchType.SELF，这样可以侵入三方库的代码，当然这么做记得修改上文提到的 androidAopConfig 的配置
 
+#### 切面启示
+
+不知道大家有没有这样的需求，有一个或多个接口在多处使用，这种情况大家可能写一个工具类封装一下。
+
+其实对于这种需求，可以做一个注解切面，在切面处理时可以在请求完数据后，给切面方法传回去即可，例如：
+
+```kotlin
+@AndroidAopPointCut(CommonDataCut::class)
+@Target(
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY_GETTER,
+    AnnotationTarget.PROPERTY_SETTER,
+)
+@Retention(AnnotationRetention.RUNTIME)
+@Keep
+annotation class CommonData
+
+class CommonDataCut : BasePointCut<CommonData> {
+    override fun invoke(
+        joinPoint: ProceedJoinPoint,
+        anno: CommonData
+    ): Any? {
+        // 在这写网络请求数据,数据返回后调用 joinPoint.proceed(data) 把数据传回方法
+        joinPoint.proceed(data)
+        return null
+    }
+}
+
+@CommonData
+fun onTest(data:Data){
+    //因为切面已经把数据传回来了，所以数据不在为null
+}
+//在调用方法时随便传个null，当进入到切面后得到数据，在进入方法后数据就有了
+binding.btnSingleClick.setOnClickListener {
+    onTest(null)
+}
+
+```
 
 #### 混淆规则
 
