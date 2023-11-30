@@ -377,7 +377,8 @@ class MatchTestMatchMethod : MatchClassMethod {
 @Retention(AnnotationRetention.RUNTIME)
 @Keep
 annotation class CommonData
-
+```
+```kotlin
 class CommonDataCut : BasePointCut<CommonData> {
     override fun invoke(
         joinPoint: ProceedJoinPoint,
@@ -388,7 +389,8 @@ class CommonDataCut : BasePointCut<CommonData> {
         return null
     }
 }
-
+```
+```kotlin
 @CommonData
 fun onTest(data:Data){
     //因为切面已经把数据传回来了，所以数据不在为null
@@ -410,6 +412,8 @@ binding.btnSingleClick.setOnClickListener {
 @Keep
 annotation class CommonData
 
+```
+```kotlin
 class CommonDataCut : BasePointCut<CommonData> {
     override fun invoke(
         joinPoint: ProceedJoinPoint,
@@ -424,6 +428,8 @@ class CommonDataCut : BasePointCut<CommonData> {
     }
 }
 
+```
+```kotlin
 @CommonData
 fun onTest(number:Int){
     
