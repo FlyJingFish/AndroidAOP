@@ -393,7 +393,7 @@ class CommonDataCut : BasePointCut<CommonData> {
 ```kotlin
 @CommonData
 fun onTest(data:Data){
-    //因为切面已经把数据传回来了，所以数据不在为null
+    //因为切面已经把数据传回来了，所以数据不再为null
 }
 //在调用方法时随便传个null，当进入到切面后得到数据，在进入方法后数据就有了
 binding.btnSingleClick.setOnClickListener {
