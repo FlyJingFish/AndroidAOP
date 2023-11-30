@@ -442,6 +442,8 @@ binding.btnSingleClick.setOnClickListener {
 
 ```
 
+3、综上所述，其实切面能给我们开发带来很多便携之处，关键看大家怎么用了
+
 #### 混淆规则
 
 下边是涉及到本库的一些必须混淆规则
