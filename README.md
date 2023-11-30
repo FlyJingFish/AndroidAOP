@@ -322,27 +322,30 @@ class MatchTestMatchMethod : MatchClassMethod {
 - 返回值类型 和 参数类型 都要用 Java 的类型表示，除了 8 种基本类型之外，其他引用类型都是 包名.类名
 - 返回值类型 和 参数类型 不写的话就是不验证
 
-下边给出 8 种基本类型 和 String 的 Kotlin 对 Java 对应表
+下边给出 8 种基本类型 String、Unit、Any 的 Kotlin 对 Java 对应表
 
-| Java 类型             |   Kotlin 类型   |
-|---------------------|:-------------:|
-| int                 |      Int      | 
-| short               |     Short     |                
-| byte                |     Byte      |                
-| char                |     Char      |                
-| long                |     Long      |                
-| float               |     Float     |                
-| double              |    Double     |                
-| boolean             |    Boolean    |   
-| java.lang.Integer   |     Int?      | 
-| java.lang.Short     |    Short?     |                
-| java.lang.Byte      |     Byte?     |                
-| java.lang.Character |     Char?     |                
-| java.lang.Long      |     Long?     |                
-| java.lang.Float     |    Float?     |                
-| java.lang.Double    |    Double?    |                
-| java.lang.Boolean   |   Boolean?    |   
-| java.lang.String    | kotlin.String |   
+| Java 类型             | Kotlin 类型 |
+|---------------------|:---------:|
+| int                 |    Int    | 
+| short               |   Short   |                
+| byte                |   Byte    |                
+| char                |   Char    |                
+| long                |   Long    |                
+| float               |   Float   |                
+| double              |  Double   |                
+| boolean             |  Boolean  |   
+| java.lang.Integer   |   Int?    | 
+| java.lang.Short     |  Short?   |                
+| java.lang.Byte      |   Byte?   |                
+| java.lang.Character |   Char?   |                
+| java.lang.Long      |   Long?   |                
+| java.lang.Float     |  Float?   |                
+| java.lang.Double    |  Double?  |                
+| java.lang.Boolean   | Boolean?  |   
+| java.lang.String    |  String   |   
+| void                |   Unit    |   
+| java.lang.Void      |   Unit?   |   
+| java.lang.Object    |    Any    |   
 
 #### 匹配切面实用场景：
 
