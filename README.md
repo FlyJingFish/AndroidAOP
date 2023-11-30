@@ -297,7 +297,7 @@ package com.flyjingfish.test_lib.mycut;
         type = MatchType.SELF
 )
 class MatchActivityMethod : MatchClassMethod {
-  override operator fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
+  override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
     Log.e("MatchActivityMethod2","======"+methodName+",getParameterTypes="+joinPoint.getTargetMethod().getParameterTypes().length);
     return joinPoint.proceed()
   }
