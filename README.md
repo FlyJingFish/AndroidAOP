@@ -365,16 +365,14 @@ class MatchTestMatchMethod : MatchClassMethod {
 
 #### 切面启示
 
-不知道大家有没有这样的需求，有一个或多个接口在多处使用，这种情况大家可能写一个工具类封装一下。
+1、不知道大家有没有这样的需求，有一个或多个接口在多处使用，这种情况大家可能写一个工具类封装一下。
 
 其实对于这种需求，可以做一个注解切面，在切面处理时可以在请求完数据后，给切面方法传回去即可，例如：
 
 ```kotlin
 @AndroidAopPointCut(CommonDataCut::class)
 @Target(
-    AnnotationTarget.FUNCTION,
-    AnnotationTarget.PROPERTY_GETTER,
-    AnnotationTarget.PROPERTY_SETTER,
+    AnnotationTarget.FUNCTION
 )
 @Retention(AnnotationRetention.RUNTIME)
 @Keep
@@ -398,6 +396,42 @@ fun onTest(data:Data){
 //在调用方法时随便传个null，当进入到切面后得到数据，在进入方法后数据就有了
 binding.btnSingleClick.setOnClickListener {
     onTest(null)
+}
+
+```
+2、另外对于切面注解是没办法传入对象什么的，或者数据是动态的，那怎么办呢？
+
+```kotlin
+@AndroidAopPointCut(CommonDataCut::class)
+@Target(
+    AnnotationTarget.FUNCTION
+)
+@Retention(AnnotationRetention.RUNTIME)
+@Keep
+annotation class CommonData
+
+class CommonDataCut : BasePointCut<CommonData> {
+    override fun invoke(
+        joinPoint: ProceedJoinPoint,
+        anno: CommonData
+    ): Any? {
+        if (!args.isNullOrEmpty()) {
+            val arg1 = args[0] // 这个就是传入的数据，这样可以随便往切面内传数据了
+            
+            
+        }
+        return joinPoint.proceed()
+    }
+}
+
+@CommonData
+fun onTest(number:Int){
+    
+}
+
+binding.btnSingleClick.setOnClickListener {
+   //在调用方法时传入动态数据
+    onTest(1)
 }
 
 ```
