@@ -38,7 +38,7 @@
 buildscript {
     dependencies {
         //必须项 👇
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.0.9'
+        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.1.0'
     }
 }
 plugins {
@@ -69,12 +69,12 @@ plugins {
 
 dependencies {
     //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.0.9'
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.0.9'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.1.0'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.1.0'
     //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.0.9'
+    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.1.0'
     //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.0.9'
+    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.1.0'
     //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
 }
 ```
@@ -343,6 +343,7 @@ class MatchTestMatchMethod : MatchClassMethod {
 
 - 又或者你想在三方库某个方法上设置切面，可以直接设置对应类名，对应方法，然后 type = MatchType.SELF，这样可以侵入三方库的代码，当然这么做记得修改上文提到的 androidAopConfig 的配置
 
+#### 提示：多个切面叠加到一个方法上时注解优先于匹配切面，注解切面之间从上到下依次执行
 
 #### 混淆规则
 
