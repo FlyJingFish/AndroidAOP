@@ -451,7 +451,7 @@ binding.btnSingleClick.setOnClickListener {
 @AndroidAopMatchClassMethod(
     targetClassName = "android.view.View.OnClickListener",
     methodName = ["onClick"],
-    type = MatchType.EXTENDS
+    type = MatchType.EXTENDS //type 一定是 EXTENDS 因为你想 hook 所有继承了 OnClickListener 的类
 )
 class MatchOnClick : MatchClassMethod {
     override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
