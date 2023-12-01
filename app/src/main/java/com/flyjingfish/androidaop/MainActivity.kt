@@ -32,9 +32,15 @@ class MainActivity: BaseActivity2() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btnSingleClick.setOnClickListener{
-            onSingleClick()
-        }
+//        binding.btnSingleClick.setOnClickListener{
+//            onSingleClick()
+//        }
+        binding.btnSingleClick.setOnClickListener(object :OnClickListener{
+            override fun onClick(v: View?) {
+                onSingleClick()
+            }
+
+        })
         binding.btnDoubleClick.setOnClickListener {
             onDoubleClick()
         }

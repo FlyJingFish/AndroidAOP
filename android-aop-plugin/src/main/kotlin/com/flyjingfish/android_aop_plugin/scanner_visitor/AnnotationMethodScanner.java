@@ -1,6 +1,7 @@
 package com.flyjingfish.android_aop_plugin.scanner_visitor;
 
 import com.flyjingfish.android_aop_plugin.beans.AopMatchCut;
+import com.flyjingfish.android_aop_plugin.beans.LambdaMethod;
 import com.flyjingfish.android_aop_plugin.beans.MatchMethodInfo;
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord;
 import com.flyjingfish.android_aop_plugin.utils.Utils;
@@ -20,6 +21,8 @@ import org.slf4j.Logger;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import javassist.ClassPool;
@@ -232,51 +235,106 @@ public class AnnotationMethodScanner extends ClassNode {
         methods.add(myMethodVisitor);
         return myMethodVisitor;
     }
-
+    List<LambdaMethod> lambdaMethodList = new ArrayList<>();
     @Override
     public void visitEnd() {
         super.visitEnd();
-        WovenInfoUtils.INSTANCE.getAopMatchCuts().forEach((key, aopMatchCut) -> {
-            if (AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getMethodNames().length == 1){
-                this.methods.forEach(methodNode -> {
-                    for (AbstractInsnNode node : methodNode.instructions) {
-                        if (node instanceof InvokeDynamicInsnNode tmpNode) {
-                            String desc = tmpNode.desc;
-                            Type descType = Type.getType(desc);
-                            Type samBaseType = descType.getReturnType();
-                            //sam 接口名
-                            String samBase = samBaseType.getDescriptor();
-                            //sam 方法名
-                            String samMethodName = tmpNode.name;
-                            Object[] bsmArgs = tmpNode.bsmArgs;
+//        WovenInfoUtils.INSTANCE.getAopMatchCuts().forEach((key, aopMatchCut) -> {
+//            if (className.contains("MainActivity")){
+//                logger.error("======aopMatchCut="+aopMatchCut+"=size"+WovenInfoUtils.INSTANCE.getAopMatchCuts().size());
+//            }
+//            if (aopMatchCut.getMethodNames().length == 1){
+//                this.methods.forEach(methodNode -> {
+//                    for (AbstractInsnNode node : methodNode.instructions) {
+//                        if (node instanceof InvokeDynamicInsnNode tmpNode) {
+//                            String desc = tmpNode.desc;
+//                            Type descType = Type.getType(desc);
+//                            Type samBaseType = descType.getReturnType();
+//                            //sam 接口名
+//                            String samBase = samBaseType.getDescriptor();
+//                            //sam 方法名
+//                            String samMethodName = tmpNode.name;
+//                            Object[] bsmArgs = tmpNode.bsmArgs;
+////                            Type samMethodType = (Type) bsmArgs[0];
+//                            Handle methodName = (Handle) bsmArgs[1];
+//                            //sam 实现方法实际参数描述符
+////                            Type implMethodType = (Type) bsmArgs[2];
+//
+//                            String lambdaName = methodName.getName();
+////                            String bsmMethodNameAndDescriptor = samMethodName + samMethodType.getDescriptor();
+//                            String thisClassName = Utils.INSTANCE.slashToDot(samBase.substring(1).replaceAll(";","")).replaceAll("\\$", ".");
+//                            logger.error("className="+className+",tmpNode.name="+tmpNode.name+",desc=" + desc + ",samBase=" + samBase + ",samMethodName="
+//                                    + samMethodName + ",methodName=" + lambdaName+ ",methodDesc=" + methodName.getDesc()+",thisClassName="+thisClassName);
+//                            for (String aopMatchCutMethodName : aopMatchCut.getMethodNames()) {
+//                                logger.error("======aopMatchCutMethodName="+aopMatchCutMethodName+"=aopMatchCut.getBaseClassName()="+aopMatchCut.getBaseClassName()+"=");
+//                                if (samMethodName.equals(aopMatchCutMethodName) && aopMatchCut.getBaseClassName().equals(thisClassName)){
+//                                    MethodRecord methodRecord = new MethodRecord(lambdaName, methodName.getDesc(), aopMatchCut.getCutClassName());
+//                                    logger.error("======methodRecord="+methodRecord);
+////                                    logger.error("======aopMatchCut="+aopMatchCut.getMatchType()+"=="+ AopMatchCut.MatchType.EXTENDS.name());
+//                                    if (onCallBackMethod != null) {
+//                                        onCallBackMethod.onBackName(methodRecord);
+//                                    }
+//                                }
+//                            }
+//
+//                        }
+//
+//                    }
+//
+//                });
+//            }
+//        });
+
+        this.methods.forEach(methodNode -> {
+//            logger.error(className+"======methods.forEach=");
+            for (AbstractInsnNode node : methodNode.instructions) {
+                if (node instanceof InvokeDynamicInsnNode tmpNode) {
+                    String desc = tmpNode.desc;
+                    Type descType = Type.getType(desc);
+                    Type samBaseType = descType.getReturnType();
+                    //sam 接口名
+                    String samBase = samBaseType.getDescriptor();
+                    //sam 方法名
+                    String samMethodName = tmpNode.name;
+                    Object[] bsmArgs = tmpNode.bsmArgs;
 //                            Type samMethodType = (Type) bsmArgs[0];
-                            Handle methodName = (Handle) bsmArgs[1];
-                            //sam 实现方法实际参数描述符
+                    Handle methodName = (Handle) bsmArgs[1];
+                    //sam 实现方法实际参数描述符
 //                            Type implMethodType = (Type) bsmArgs[2];
 
-                            String lambdaName = methodName.getName();
+                    String lambdaName = methodName.getName();
 //                            String bsmMethodNameAndDescriptor = samMethodName + samMethodType.getDescriptor();
-                            String thisClassName = Utils.INSTANCE.slashToDot(samBase.substring(1).replaceAll(";","")).replaceAll("\\$", ".");
-//                            logger.error("className="+className+",tmpNode.name="+tmpNode.name+",desc=" + desc + ",samBase=" + samBase + ",samMethodName=" + samMethodName + ",bsmMethodNameAndDescriptor=" + bsmMethodNameAndDescriptor+ ",methodName=" + lambdaName+ ",methodDesc=" + methodName.getDesc()+",thisClassName="+thisClassName);
-                            for (String aopMatchCutMethodName : aopMatchCut.getMethodNames()) {
-                                if (samMethodName.equals(aopMatchCutMethodName) && aopMatchCut.getBaseClassName().equals(thisClassName)){
-                                    MethodRecord methodRecord = new MethodRecord(lambdaName, methodName.getDesc(), aopMatchCut.getCutClassName());
-//                                    logger.error("======methodRecord="+methodRecord);
+                    String thisClassName = Utils.INSTANCE.slashToDot(samBase.substring(1).replaceAll(";","")).replaceAll("\\$", ".");
+//                    logger.error("className="+className+",tmpNode.name="+tmpNode.name+",desc=" + desc + ",samBase=" + samBase + ",samMethodName="
+//                            + samMethodName + ",methodName=" + lambdaName+ ",methodDesc=" + methodName.getDesc()+",thisClassName="+thisClassName);
+                    String lambdaDesc = methodName.getDesc();
+                    LambdaMethod lambdaMethod = new LambdaMethod(samMethodName,thisClassName,lambdaName,lambdaDesc);
+                    lambdaMethodList.add(lambdaMethod);
+                }
+
+            }
+            if (lambdaMethodList.size() > 0){
+//            logger.error(className+"======lambdaMethodList="+lambdaMethodList);
+                WovenInfoUtils.INSTANCE.getAopMatchCuts().forEach((key, aopMatchCut) -> {
+//                if (className.contains("MainActivity")){
+//                    logger.error("======aopMatchCut="+aopMatchCut+"=size"+WovenInfoUtils.INSTANCE.getAopMatchCuts().size());
+//                }
+                    if (AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getMethodNames().length == 1){
+                        for (LambdaMethod lambdaMethod : lambdaMethodList) {
+                            String aopMatchCutMethodName = aopMatchCut.getMethodNames()[0];
+                            if (lambdaMethod.getSamMethodName().equals(aopMatchCutMethodName) && aopMatchCut.getBaseClassName().equals(lambdaMethod.getThisClassName())){
+                                MethodRecord methodRecord = new MethodRecord(lambdaMethod.getLambdaName(), lambdaMethod.getLambdaDesc(), aopMatchCut.getCutClassName());
+//                            logger.error("======methodRecord="+methodRecord);
 //                                    logger.error("======aopMatchCut="+aopMatchCut.getMatchType()+"=="+ AopMatchCut.MatchType.EXTENDS.name());
-                                    if (onCallBackMethod != null) {
-                                        onCallBackMethod.onBackName(methodRecord);
-                                    }
+                                if (onCallBackMethod != null) {
+                                    onCallBackMethod.onBackName(methodRecord);
                                 }
                             }
-
                         }
-
                     }
-
                 });
             }
         });
-
 
 
         if (isDescendantClass) {
@@ -290,6 +348,9 @@ public class AnnotationMethodScanner extends ClassNode {
 
 
     }
+
+
+
     public interface OnCallBackMethod {
         void onBackName(MethodRecord methodRecord);
     }

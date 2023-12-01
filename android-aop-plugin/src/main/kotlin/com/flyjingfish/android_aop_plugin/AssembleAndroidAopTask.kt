@@ -121,7 +121,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             }
             jarFile.close()
         }
-        logger.error(""+WovenInfoUtils.aopMatchCuts)
+//        logger.error(""+WovenInfoUtils.aopMatchCuts)
 //        InitConfig.saveBuildConfig()
 //        ClassPoolUtils.initClassPool()
     }
