@@ -460,7 +460,13 @@ class MatchOnClick : MatchClassMethod {
 }
 ```
 
-这块提示下，对于使用了 lambda 点击监听的，ProceedJoinPoint 的 target 不是 android.view.View.OnClickListener，methodName 不是 onClick；
+这块提示下，对于使用了 lambda 点击监听的；
+
+ProceedJoinPoint 的 target 不是 android.view.View.OnClickListener
+- 对于Java target 是 所在文件最外层的那个类的对象
+- 对于Kotlin target 是 null
+
+invoke 回调的 methodName 也不是 onClick 而是编译时自动生成的方法名，类似于这样 onCreate$lambda$14 里边包含了 lambda 关键字
 
 对于 onClick(view:View) 的 view
 - 如果是 Kotlin 的代码 ProceedJoinPoint.args[1]
