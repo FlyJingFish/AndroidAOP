@@ -7,7 +7,7 @@ import com.flyjingfish.android_aop_annotation.base.MatchClassMethod
 
 @AndroidAopMatchClassMethod(
     targetClassName = "android.view.View.OnClickListener",
-    methodName = ["onClick"]
+    methodName = ["void onClick(android.view.View)"]
 )
 class MatchOnClick : MatchClassMethod {
     override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
