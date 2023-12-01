@@ -445,7 +445,7 @@ binding.btnSingleClick.setOnClickListener {
 
 ```
 
-3、加入想 Hook 所有的 android.view.View.OnClickListener 的 onClick，说白了就是想全局监测所有的设置 OnClickListener 的点击事件，代码如下：
+3、假如想 Hook 所有的 android.view.View.OnClickListener 的 onClick，说白了就是想全局监测所有的设置 OnClickListener 的点击事件，代码如下：
 
 ```kotlin
 @AndroidAopMatchClassMethod(
