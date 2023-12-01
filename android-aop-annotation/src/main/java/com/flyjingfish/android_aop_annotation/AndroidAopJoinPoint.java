@@ -29,7 +29,7 @@ public final class AndroidAopJoinPoint {
         try {
             targetClass = Class.forName(targetClassName);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(targetClassName + "的类名不可被混淆");
         }
         this.target = target;
         this.originalMethodName = originalMethodName;

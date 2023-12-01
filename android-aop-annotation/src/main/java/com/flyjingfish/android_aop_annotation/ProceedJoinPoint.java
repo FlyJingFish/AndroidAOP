@@ -19,7 +19,7 @@ public final class ProceedJoinPoint {
     private OnInvokeListener onInvokeListener;
     private boolean hasNext;
 
-    public ProceedJoinPoint(Class<?> targetClass) {
+    public ProceedJoinPoint(@NotNull Class<?> targetClass) {
         this.targetClass = targetClass;
     }
 
