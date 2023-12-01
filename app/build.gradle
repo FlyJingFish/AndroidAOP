@@ -10,8 +10,8 @@ androidAopConfig {
     // 测试
 //    exclude 'com.flyjingfish.test_lib'
     // 移除kotlin相关，编译错误和提升速度
-    exclude 'kotlin.jvm', 'kotlin.internal'
-    exclude 'kotlinx.coroutines.internal', 'kotlinx.coroutines.android'
+//    exclude 'kotlin.jvm', 'kotlin.internal'
+//    exclude 'kotlinx.coroutines.internal', 'kotlinx.coroutines.android'
 }
 android {
     namespace 'com.flyjingfish.androidaop'

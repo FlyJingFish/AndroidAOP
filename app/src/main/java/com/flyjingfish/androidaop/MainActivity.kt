@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.os.Looper
+import android.view.View
+import android.view.View.OnClickListener
 import androidx.lifecycle.Lifecycle
 import com.flyjingfish.android_aop_core.annotations.CustomIntercept
 import com.flyjingfish.android_aop_core.annotations.DoubleClick
@@ -30,9 +32,15 @@ class MainActivity: BaseActivity2() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btnSingleClick.setOnClickListener {
-            onSingleClick()
-        }
+//        binding.btnSingleClick.setOnClickListener {
+//            onSingleClick()
+//        }
+        binding.btnSingleClick.setOnClickListener(object : OnClickListener{
+            override fun onClick(v: View?) {
+                onSingleClick()
+            }
+
+        })
         binding.btnDoubleClick.setOnClickListener {
             onDoubleClick()
         }

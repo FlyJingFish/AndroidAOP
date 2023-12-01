@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javassist.ClassPool;
@@ -45,6 +46,10 @@ public class AnnotationMethodScanner extends ClassVisitor {
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
         className = name;
+        if (name.contains("TestMatch")){
+
+            logger.error("name="+name+",superName="+superName+",interfaces="+new ArrayList<>(Arrays.asList(interfaces)));
+        }
         WovenInfoUtils.INSTANCE.getAopMatchCuts().forEach((key, aopMatchCut)->{
 //                try{
 //                    ClassPool cp = new ClassPool(null);
@@ -72,9 +77,18 @@ public class AnnotationMethodScanner extends ClassVisitor {
 //                    e.printStackTrace();
 //                }
 //        ClassPool cp = ClassPool.getDefault();
+            boolean isContainInterface = false;
+            if (interfaces != null){
+                for (String anInterface : interfaces) {
+                    String inter = Utils.INSTANCE.slashToDot(anInterface).replaceAll("\\$",".");
+                    if (inter.equals(aopMatchCut.getBaseClassName())){
+                        isContainInterface = true;
+                        break;
+                    }
+                }
+            }
 
-
-            if ((AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getBaseClassName().equals(Utils.INSTANCE.slashToDot(superName)))
+            if (isContainInterface || (AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getBaseClassName().equals(Utils.INSTANCE.slashToDot(superName)))
                     ||(AopMatchCut.MatchType.SELF.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getBaseClassName().equals(Utils.INSTANCE.slashToDot(name)))) {
                 this.isDescendantClass= true;
                 AnnotationMethodScanner.this.aopMatchCuts.add(aopMatchCut);
