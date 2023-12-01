@@ -51,14 +51,6 @@ public class AnnotationMethodScanner extends ClassNode {
     }
 
     @Override
-    public void visitInnerClass(String name, String outerName, String innerName, int access) {
-        super.visitInnerClass(name, outerName, innerName, access);
-        if (name.contains("MainActivity")) {
-            logger.error("name=" + name + ",outerName=" + outerName + ",innerName=" + innerName);
-        }
-    }
-
-    @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
         className = name;
 //        if (name.contains("TestMatch")){
@@ -249,94 +241,63 @@ private final
     @Override
     public void visitEnd() {
         super.visitEnd();
-        if (className.contains("MainActivity")) {
-            logger.error("visitEnd=1");
+//        if (className.contains("MainActivity")) {
+//            logger.error("visitEnd=1");
+//
+//
+//        }
 
+        WovenInfoUtils.INSTANCE.getAopMatchCuts().forEach((key, aopMatchCut) -> {
             this.methods.forEach(methodNode -> {
-                logger.error("visitEnd=2=name="+methodNode.name);
+                logger.error("visitEnd=2=name="+methodNode.name+",desc="+methodNode.desc);
                 for (AbstractInsnNode node : methodNode.instructions) {
                     logger.error("visitEnd=3="+node);
                     if (node instanceof InvokeDynamicInsnNode) {
                         InvokeDynamicInsnNode tmpNode = (InvokeDynamicInsnNode) node;
-//形如：(Ljava/util/Date;)Ljava/util/function/Consumer;   可以从 desc 中获取函数式接口，以及动态参数的内容。
-//如果没有参数那么描述符的参数部分应该是空。
 
                         String desc = tmpNode.desc;
                         Type descType = Type.getType(desc);
                         Type samBaseType = descType.getReturnType();
-//sam 接口名
+                        //sam 接口名
                         String samBase = samBaseType.getDescriptor();
-//sam 方法名
+                        //sam 方法名
                         String samMethodName = tmpNode.name;
                         Object[] bsmArgs = tmpNode.bsmArgs;
 //sam 方法描述符
 
                         Type samMethodType = (Type) bsmArgs[0];
-
+                        Handle methodName = (Handle) bsmArgs[1];
 //sam 实现方法实际参数描述符
 
                         Type implMethodType = (Type) bsmArgs[2];
 
+                        String  lamadaName = methodName.getName();
+
 //sam name + desc，可以用来辨别是否是需要 Hook 的 lambda 表达式
 
                         String bsmMethodNameAndDescriptor = samMethodName + samMethodType.getDescriptor();
-
 //中间方法的名称
-
+                        String className = Utils.INSTANCE.slashToDot(samBase.substring(1).replaceAll(";","")).replaceAll("\\$", ".");
                         String middleMethodName = "lambda$" + samMethodName + "$sa" + counter.incrementAndGet();
-                        logger.error("tmpNode.name="+tmpNode.name+",desc=" + desc + ",samBase=" + samBase + ",samMethodName=" + samMethodName + ",bsmMethodNameAndDescriptor=" + bsmMethodNameAndDescriptor+ ",middleMethodName=" + middleMethodName);
-//
-////中间方法的描述符
-//
-//                    String middleMethodDesc = "";
-//
-//                    Type[] descArgTypes = descType.getArgumentTypes();
-//
-//                    if (descArgTypes.length == 0) {
-//
-//                        middleMethodDesc = implMethodType.getDescriptor();
-//
-//                    } else {
-//
-//                        middleMethodDesc = "(";
-//
-//                        for (Type tmpType : descArgTypes) {
-//
-//                            middleMethodDesc += tmpType.getDescriptor();
-//
-//                        }
-//
-//                        middleMethodDesc += implMethodType.getDescriptor().replace("(", "");
-//
-//                    }
-//
-////INDY 原本的 handle，需要将此 handle 替换成新的 handle
-//
-//                    Handle oldHandle = (Handle) bsmArgs[1];
-//
-//                    Handle newHandle = new Handle(Opcodes.H_INVOKESTATIC, this.name, middleMethodName, middleMethodDesc, false);
-//
-//                    InvokeDynamicInsnNode newDynamicNode = new InvokeDynamicInsnNode(tmpNode.name, tmpNode.desc, tmpNode.bsm, samMethodType, newHandle, implMethodType);
-//
-//                    iterator.remove();
-//
-//                    iterator.add(newDynamicNode);
-//
-//                    generateMiddleMethod(oldHandle, middleMethodName, middleMethodDesc);
+                        logger.error("tmpNode.name="+tmpNode.name+",desc=" + desc + ",samBase=" + samBase + ",samMethodName=" + samMethodName + ",bsmMethodNameAndDescriptor=" + bsmMethodNameAndDescriptor+ ",methodName=" + lamadaName+ ",methodDesc=" + methodName.getDesc()+",className="+className);
+                        for (String aopMatchCutMethodName : aopMatchCut.getMethodNames()) {
+                            if (samMethodName.equals(aopMatchCutMethodName) && aopMatchCut.getBaseClassName().equals(className)){
+                                cacheMethodRecords.add(new MethodRecord(lamadaName, desc, aopMatchCut.getCutClassName()));
+                            }
+                        }
 
                     }
 
                 }
 
             });
+        });
+
+
+        if (className.contains("MainActivity")) {
+            logger.error("cacheMethodRecords=" + cacheMethodRecords.toString());
         }
-
-//        this.methods.addAll(syntheticMethodList);
-
-//        accept(cv);
-
-
-        if (isDescendantClass) {
+        if (cacheMethodRecords.size() > 0) {
             for (MethodRecord cacheMethodRecord : cacheMethodRecords) {
                 if (onCallBackMethod != null) {
                     logger.error("cacheMethodRecord=" + cacheMethodRecord);
@@ -346,96 +307,6 @@ private final
         }
 
 
-
-    }
-    private void generateMiddleMethod (Handle oldHandle, String middleMethodName, String
-            middleMethodDesc){
-
-////开始对生成的方法中插入或者调用相应的代码
-//
-//        MethodNode methodNode = new MethodNode(Opcodes.ACC_PRIVATE | Opcodes.ACC_STATIC /*| Opcodes.ACC_SYNTHETIC*/,
-//
-//                middleMethodName, middleMethodDesc, null, null);
-//
-//        methodNode.visitCode();
-//
-//// 此块 tag 具体可以参考: [https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-6.html#jvms-6.5.invokedynamic](https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-6.html#jvms-6.5.invokedynamic)
-//
-//        int accResult = oldHandle.getTag();
-//
-//        switch (accResult) {
-//
-//            case Opcodes.H_INVOKEINTERFACE:
-//
-//                accResult = Opcodes.INVOKEINTERFACE;
-//
-//                break;
-//
-//            case Opcodes.H_INVOKESPECIAL:
-//
-////private, this, super 等会调用
-//
-//                accResult = Opcodes.INVOKESPECIAL;
-//
-//                break;
-//
-//            case Opcodes.H_NEWINVOKESPECIAL:
-//
-////constructors
-//
-//                accResult = Opcodes.INVOKESPECIAL;
-//
-//                methodNode.visitTypeInsn(Opcodes.NEW, oldHandle.getOwner());
-//
-//                methodNode.visitInsn(Opcodes.DUP);
-//
-//                break;
-//
-//            case Opcodes.H_INVOKESTATIC:
-//
-//                accResult = Opcodes.INVOKESTATIC;
-//
-//                break;
-//
-//            case Opcodes.H_INVOKEVIRTUAL:
-//
-//                accResult = Opcodes.INVOKEVIRTUAL;
-//
-//                break;
-//
-//        }
-//
-//        Type middleMethodType = Type.getType(middleMethodDesc);
-//
-//        Type[] argumentsType = middleMethodType.getArgumentTypes();
-//
-//        if (argumentsType.length > 0) {
-//
-//            int loadIndex = 0;
-//
-//            for (Type tmpType : argumentsType) {
-//
-//                int opcode = tmpType.getOpcode(Opcodes.ILOAD);
-//
-//                methodNode.visitVarInsn(opcode, loadIndex);
-//
-//                loadIndex += tmpType.getSize();
-//
-//            }
-//
-//        }
-//
-//        methodNode.visitMethodInsn(accResult, oldHandle.getOwner(), oldHandle.getName(), oldHandle.getDesc(), false);
-//
-//        Type returnType = middleMethodType.getReturnType();
-//
-//        int returnOpcodes = returnType.getOpcode(Opcodes.IRETURN);
-//
-//        methodNode.visitInsn(returnOpcodes);
-//
-//        methodNode.visitEnd();
-//
-//        syntheticMethodList.add(methodNode);
 
     }
     public interface OnCallBackMethod {
