@@ -450,7 +450,8 @@ binding.btnSingleClick.setOnClickListener {
 ```kotlin
 @AndroidAopMatchClassMethod(
     targetClassName = "android.view.View.OnClickListener",
-    methodName = ["onClick"]
+    methodName = ["onClick"],
+    type = MatchType.EXTENDS
 )
 class MatchOnClick : MatchClassMethod {
     override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
