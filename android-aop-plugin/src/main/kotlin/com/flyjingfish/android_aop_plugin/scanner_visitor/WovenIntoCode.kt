@@ -59,23 +59,11 @@ object WovenIntoCode {
                     signature: String?,
                     exceptions: Array<String>?
                 ): MethodVisitor? {
-//                    printLog("oldMethodName="+oldMethodName+"oldDescriptor="+oldDescriptor)
-//                    printLog("name="+name+"descriptor="+descriptor)
                     return if (oldMethodName == name && oldDescriptor == descriptor) {
-//                        if (oldMethodName == "testTopFun"){
-//                            printLog("visitMethod,access=$access")
-//                        }
-                        val newAccess = when(access){
-                            Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC,
-                            Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC + Opcodes.ACC_FINAL,
-                            Opcodes.ACC_STATIC,
-                            Opcodes.ACC_STATIC + Opcodes.ACC_FINAL,
-                            Opcodes.ACC_PROTECTED + Opcodes.ACC_STATIC,
-                            Opcodes.ACC_PROTECTED + Opcodes.ACC_STATIC + Opcodes.ACC_FINAL,
-                            Opcodes.ACC_PRIVATE + Opcodes.ACC_STATIC ,
-                            Opcodes.ACC_PRIVATE + Opcodes.ACC_STATIC + Opcodes.ACC_FINAL,
-                            -> Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC
-                            else -> Opcodes.ACC_PUBLIC
+                        val newAccess = if (access and Opcodes.ACC_STATIC != 0){
+                            Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC + Opcodes.ACC_FINAL
+                        }else{
+                            Opcodes.ACC_PUBLIC + Opcodes.ACC_FINAL
                         }
                         super.visitMethod(
                             newAccess,
