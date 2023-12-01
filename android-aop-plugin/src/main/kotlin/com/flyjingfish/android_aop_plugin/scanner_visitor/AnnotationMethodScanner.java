@@ -7,7 +7,6 @@ import com.flyjingfish.android_aop_plugin.utils.Utils;
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils;
 
 import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -21,10 +20,7 @@ import org.slf4j.Logger;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -236,71 +232,56 @@ public class AnnotationMethodScanner extends ClassNode {
         methods.add(myMethodVisitor);
         return myMethodVisitor;
     }
-private final 
-    AtomicInteger counter = new AtomicInteger(0);
+
     @Override
     public void visitEnd() {
         super.visitEnd();
-//        if (className.contains("MainActivity")) {
-//            logger.error("visitEnd=1");
-//
-//
-//        }
-
         WovenInfoUtils.INSTANCE.getAopMatchCuts().forEach((key, aopMatchCut) -> {
-            this.methods.forEach(methodNode -> {
-                logger.error("visitEnd=2=name="+methodNode.name+",desc="+methodNode.desc);
-                for (AbstractInsnNode node : methodNode.instructions) {
-                    logger.error("visitEnd=3="+node);
-                    if (node instanceof InvokeDynamicInsnNode) {
-                        InvokeDynamicInsnNode tmpNode = (InvokeDynamicInsnNode) node;
+            if (AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getMethodNames().length == 1){
+                this.methods.forEach(methodNode -> {
+                    for (AbstractInsnNode node : methodNode.instructions) {
+                        if (node instanceof InvokeDynamicInsnNode tmpNode) {
+                            String desc = tmpNode.desc;
+                            Type descType = Type.getType(desc);
+                            Type samBaseType = descType.getReturnType();
+                            //sam 接口名
+                            String samBase = samBaseType.getDescriptor();
+                            //sam 方法名
+                            String samMethodName = tmpNode.name;
+                            Object[] bsmArgs = tmpNode.bsmArgs;
+//                            Type samMethodType = (Type) bsmArgs[0];
+                            Handle methodName = (Handle) bsmArgs[1];
+                            //sam 实现方法实际参数描述符
+//                            Type implMethodType = (Type) bsmArgs[2];
 
-                        String desc = tmpNode.desc;
-                        Type descType = Type.getType(desc);
-                        Type samBaseType = descType.getReturnType();
-                        //sam 接口名
-                        String samBase = samBaseType.getDescriptor();
-                        //sam 方法名
-                        String samMethodName = tmpNode.name;
-                        Object[] bsmArgs = tmpNode.bsmArgs;
-//sam 方法描述符
-
-                        Type samMethodType = (Type) bsmArgs[0];
-                        Handle methodName = (Handle) bsmArgs[1];
-//sam 实现方法实际参数描述符
-
-                        Type implMethodType = (Type) bsmArgs[2];
-
-                        String  lamadaName = methodName.getName();
-
-//sam name + desc，可以用来辨别是否是需要 Hook 的 lambda 表达式
-
-                        String bsmMethodNameAndDescriptor = samMethodName + samMethodType.getDescriptor();
-//中间方法的名称
-                        String className = Utils.INSTANCE.slashToDot(samBase.substring(1).replaceAll(";","")).replaceAll("\\$", ".");
-                        String middleMethodName = "lambda$" + samMethodName + "$sa" + counter.incrementAndGet();
-                        logger.error("tmpNode.name="+tmpNode.name+",desc=" + desc + ",samBase=" + samBase + ",samMethodName=" + samMethodName + ",bsmMethodNameAndDescriptor=" + bsmMethodNameAndDescriptor+ ",methodName=" + lamadaName+ ",methodDesc=" + methodName.getDesc()+",className="+className);
-                        for (String aopMatchCutMethodName : aopMatchCut.getMethodNames()) {
-                            if (samMethodName.equals(aopMatchCutMethodName) && aopMatchCut.getBaseClassName().equals(className)){
-                                cacheMethodRecords.add(new MethodRecord(lamadaName, desc, aopMatchCut.getCutClassName()));
+                            String lambdaName = methodName.getName();
+//                            String bsmMethodNameAndDescriptor = samMethodName + samMethodType.getDescriptor();
+                            String thisClassName = Utils.INSTANCE.slashToDot(samBase.substring(1).replaceAll(";","")).replaceAll("\\$", ".");
+//                            logger.error("className="+className+",tmpNode.name="+tmpNode.name+",desc=" + desc + ",samBase=" + samBase + ",samMethodName=" + samMethodName + ",bsmMethodNameAndDescriptor=" + bsmMethodNameAndDescriptor+ ",methodName=" + lambdaName+ ",methodDesc=" + methodName.getDesc()+",thisClassName="+thisClassName);
+                            for (String aopMatchCutMethodName : aopMatchCut.getMethodNames()) {
+                                if (samMethodName.equals(aopMatchCutMethodName) && aopMatchCut.getBaseClassName().equals(thisClassName)){
+                                    MethodRecord methodRecord = new MethodRecord(lambdaName, methodName.getDesc(), aopMatchCut.getCutClassName());
+//                                    logger.error("======methodRecord="+methodRecord);
+//                                    logger.error("======aopMatchCut="+aopMatchCut.getMatchType()+"=="+ AopMatchCut.MatchType.EXTENDS.name());
+                                    if (onCallBackMethod != null) {
+                                        onCallBackMethod.onBackName(methodRecord);
+                                    }
+                                }
                             }
+
                         }
 
                     }
 
-                }
-
-            });
+                });
+            }
         });
 
 
-        if (className.contains("MainActivity")) {
-            logger.error("cacheMethodRecords=" + cacheMethodRecords.toString());
-        }
-        if (cacheMethodRecords.size() > 0) {
+
+        if (isDescendantClass) {
             for (MethodRecord cacheMethodRecord : cacheMethodRecords) {
                 if (onCallBackMethod != null) {
-                    logger.error("cacheMethodRecord=" + cacheMethodRecord);
                     onCallBackMethod.onBackName(cacheMethodRecord);
                 }
             }

@@ -209,6 +209,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     }
 
     private fun wovenIntoCode(){
+//        logger.error("getClassMethodRecord="+WovenInfoUtils.classMethodRecords)
         allDirectories.get().forEach { directory ->
             directory.asFile.walk().forEach { file ->
                 if (file.isFile) {

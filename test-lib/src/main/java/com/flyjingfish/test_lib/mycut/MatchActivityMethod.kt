@@ -8,10 +8,10 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod
 import com.flyjingfish.test_lib.ToastUtils.makeText
 
-//@AndroidAopMatchClassMethod(
-//    targetClassName = "androidx.appcompat.app.AppCompatActivity",
-//    methodName = ["startActivity"]
-//)
+@AndroidAopMatchClassMethod(
+    targetClassName = "androidx.appcompat.app.AppCompatActivity",
+    methodName = ["startActivity"]
+)
 class MatchActivityMethod : MatchClassMethod {
     override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
         Log.e("MatchActivityMethod", "=====invoke=====$methodName")

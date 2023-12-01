@@ -11,6 +11,7 @@ import javassist.CtMethod
 import javassist.Modifier
 import javassist.NotFoundException
 import javassist.bytecode.AnnotationsAttribute
+import javassist.bytecode.AttributeInfo
 import javassist.bytecode.annotation.Annotation
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassReader
@@ -130,6 +131,23 @@ object WovenIntoCode {
                     Annotation("androidx.annotation.Keep", constpool)
                 annotAttr.addAnnotation(annot)
                 targetMethod.methodInfo.addAttribute(annotAttr)
+
+                //给原有方法增加 @Keep，防止被混淆
+                val attributeInfos :List<AttributeInfo> = ctMethod.methodInfo.attributes
+                var annotationsAttribute :AnnotationsAttribute ?= null
+                for (attributeInfo in attributeInfos) {
+                    if (attributeInfo is AnnotationsAttribute){
+                        annotationsAttribute = attributeInfo
+                        break
+                    }
+                }
+                if (annotationsAttribute == null){
+                    annotationsAttribute = AnnotationsAttribute(constpool, AnnotationsAttribute.visibleTag)
+                }
+                val annotation = Annotation("androidx.annotation.Keep", constpool);
+                annotationsAttribute.addAnnotation(annotation);
+                ctMethod.methodInfo.addAttribute(annotationsAttribute);
+
 //                val paramNames: MutableList<String> =
 //                    ArrayList()
                 val isStaticMethod =

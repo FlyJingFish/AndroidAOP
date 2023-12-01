@@ -2,13 +2,11 @@ package com.flyjingfish.test_lib;
 
 
 import android.util.Log;
-import android.view.View;
 
 import com.flyjingfish.android_aop_core.annotations.SingleClick;
 import com.flyjingfish.test_lib.annotation.MyAnno;
-import com.flyjingfish.test_lib.annotation.MyAnno2;
 
-public class TestMatch implements View.OnClickListener {
+public class TestMatch{
     public void test1(){
 
     }
@@ -26,8 +24,4 @@ public class TestMatch implements View.OnClickListener {
         return value1+value2;
     }
 
-    @Override
-    public void onClick(View v) {
-
-    }
 }
