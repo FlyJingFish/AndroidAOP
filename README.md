@@ -445,7 +445,35 @@ binding.btnSingleClick.setOnClickListener {
 
 ```
 
-3、综上所述，其实切面能给我们开发带来很多便携之处，关键看大家怎么用了
+3、加入想 Hook 所有的 android.view.View.OnClickListener 的 onClick，说白了就是想全局监测所有的设置 OnClickListener 的点击事件，代码如下：
+
+```kotlin
+@AndroidAopMatchClassMethod(
+    targetClassName = "android.view.View.OnClickListener",
+    methodName = ["onClick"]
+)
+class MatchOnClick : MatchClassMethod {
+    override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
+        Log.e("MatchOnClick", "=====invoke=====$methodName")
+        return joinPoint.proceed()
+    }
+}
+```
+
+这块提示下，对于使用了 lambda 点击监听的，ProceedJoinPoint 的 target 不是 android.view.View.OnClickListener，methodName 不是 onClick；
+
+对于 onClick(view:View) 的 view
+- 如果是 Kotlin 的代码 ProceedJoinPoint.args[1]
+- 如果是 Java 的代码 ProceedJoinPoint.args[0]
+
+这块不在继续赘述了，自己用一下就知道了；
+
+**总结下：其实对于所有的 lambda 的 ProceedJoinPoint.args**
+
+- 如果是 Kotlin 第一个参数是切点所在文件最外层的那个类的对象，后边的参数就是 hook 方法的所有参数
+- 如果是 Java 从第一个参数开始就是 hook 方法的所有参数
+
+4、综上所述，其实切面能给我们开发带来很多便携之处，关键看大家怎么用了
 
 #### 混淆规则
 
