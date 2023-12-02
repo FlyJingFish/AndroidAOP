@@ -277,7 +277,8 @@ public class MatchActivityMethod implements MatchClassMethod {
     @Nullable
     @Override
     public Object invoke(@NonNull ProceedJoinPoint joinPoint, @NonNull String methodName) {
-        Log.e("MatchActivityMethod","=====invoke====="+methodName);
+        // 在此写你的逻辑 
+        //不想执行原来方法逻辑，👇就不调用下边这句 
         return joinPoint.proceed();
     }
 }
@@ -335,6 +336,8 @@ package com.flyjingfish.test_lib.mycut;
 class MatchTestMatchMethod : MatchClassMethod {
   override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
     Log.e("MatchTestMatchMethod","======"+methodName+",getParameterTypes="+joinPoint.getTargetMethod().getParameterTypes().length);
+    // 在此写你的逻辑 
+    //不想执行原来方法逻辑，👇就不调用下边这句
     return joinPoint.proceed()
   }
 }
