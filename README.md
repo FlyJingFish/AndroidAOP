@@ -367,14 +367,7 @@ public class MatchActivityMethod implements MatchClassMethod {
 # 你自定义的混淆规则 -----end-----
 ```
 
-如果你用到了 **@AndroidAopMatchClassMethod** 做切面，那你需要为切面内的方法做混淆处理
-下面对应的逻辑是 匹配的 为继承自 androidx.appcompat.app.AppCompatActivity 的类的 startActivity 方法加入切面
-
-```
--keepnames class * extends androidx.appcompat.app.AppCompatActivity{
-    void startActivity(...);
-}
-```
+如果你用到了 **@AndroidAopMatchClassMethod** 做切面 无需多做处理
 
 ### 常见问题
 
