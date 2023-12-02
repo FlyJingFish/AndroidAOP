@@ -192,7 +192,9 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
 
 #### 一、**@AndroidAopPointCut** 是在方法上通过注解的形式做切面的，上述中注解都是通过这个做的
 
-下面以 @CustomIntercept 为例介绍下该如何使用（⚠️注意：自定义的注解如果是 Kotlin 代码请用 android-aop-ksp 那个库）
+⚠️注意：自定义的注解如果是 Kotlin 代码请用 android-aop-ksp 那个库
+
+下面以 @CustomIntercept 为例介绍下该如何使用
 
 - 创建注解
 
@@ -231,7 +233,9 @@ fun onCustomIntercept(){
 
 ```
 
-#### 二、**@AndroidAopMatchClassMethod** 是做匹配某类及其对应方法的切面的（⚠️注意：自定义的匹配类方法切面如果是 Kotlin 代码请用 android-aop-ksp 那个库）
+#### 二、**@AndroidAopMatchClassMethod** 是做匹配某类及其对应方法的切面的
+
+⚠️注意：自定义的匹配类方法切面如果是 Kotlin 代码请用 android-aop-ksp 那个库
 
 - 例子一
 
