@@ -259,7 +259,7 @@ class CustomInterceptCut : BasePointCut<CustomIntercept> {
 - 多个切面叠加到一个方法上时注解优先于匹配切面（下文的匹配切面），注解切面之间从上到下依次执行
 - 调用 **proceed** 才会执行下一个切面，多个切面中最后一个切面执行 **proceed** 才会调用切面方法内的代码
 - 在前边切面中调用 **proceed(args)** 可更新方法传入参数，并在下一个切面中也会拿到上一层更新的参数
-- 切面方法的 return 返回值是最后一个非异步调用 proceed 切面的返回值；如果多个切面中存在一个异步调用 proceed 的，那返回值就是其上一个切面的返回值
+- 切面方法的 return 返回值（就是 invoke 的返回值）是最后一个非异步调用 proceed 切面的返回值；
 
 **另外请注意尽量不要把切面注解放到系统方法上，例如：Activity 的 onCreate() onResume() 等**
 **即便是加了在切面处理时不要有耗时操作，joinPoint.proceed() 要正常执行，否则会出现意想不到的问题，例如：ANR**
