@@ -190,25 +190,11 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
 
 ### 本库通过 @AndroidAopPointCut 和 @AndroidAopMatchClassMethod 两种注解，实现自定义切面
 
-其对应的处理切面的类是
-
-- @AndroidAopPointCut 对应 BasePointCut
-```kotlin
-interface BasePointCut<T : Annotation> {
-    fun invoke(joinPoint: ProceedJoinPoint, anno: T): Any?
-}
-```
-- @AndroidAopMatchClassMethod 对应 MatchClassMethod
-```kotlin
-interface MatchClassMethod {
-    fun invoke(joinPoint: ProceedJoinPoint, methodName:String): Any?
-}
-```
-上边的 invoke 就是进入切面的回调，在你实现上边两个接口后在 invoke 里边写你的逻辑。详细使用方法下边有介绍
-
 #### 一、**@AndroidAopPointCut** 是在方法上通过注解的形式做切面的，上述中注解都是通过这个做的
 
 下面以 @CustomIntercept 为例介绍下该如何使用（⚠️注意：自定义的注解如果是 Kotlin 代码请用 android-aop-ksp 那个库）
+
+- 创建注解
 
 ```java
 @AndroidAopPointCut(CustomInterceptCut.class)
@@ -218,17 +204,9 @@ public @interface CustomIntercept {
     String[] value() default {};
 }
 ```
-- **@AndroidAopPointCut** 的 **CustomInterceptCut.class** 为您处理切面的类
 
-- @Target 只作用在方法上，设置其他无作用
-  - 对于 Java 可以设置 ElementType.METHOD 这一个
-  - 对于 Kotlin 可以设置 AnnotationTarget.FUNCTION,AnnotationTarget.PROPERTY_GETTER,AnnotationTarget.PROPERTY_SETTER 这三个
+- 创建注解处理切面的类
 
-- @Retention 只可以用 RetentionPolicy.RUNTIME
-
-CustomInterceptCut 的代码如下：
-
-CustomInterceptCut 继承自 BasePointCut，可以看到 BasePointCut 上有一泛型，这个泛型就是上边的 CustomIntercept 注解，两者是互相关联的
 ```kotlin
 class CustomInterceptCut : BasePointCut<CustomIntercept> {
     override fun invoke(
@@ -241,72 +219,21 @@ class CustomInterceptCut : BasePointCut<CustomIntercept> {
 }
 ```
 
+- 使用
 
-在这介绍下 在使用 ProceedJoinPoint 这个对象的 proceed() 或 proceed(args) 表示执行原来方法的逻辑，区别是：
+直接将你写的注解加到任意一个方法上，例如加到了 onCustomIntercept() 当 onCustomIntercept() 被调用时首先会进入到上文提到的 CustomInterceptCut 的 invoke 方法上
 
-- proceed() 不传参，表示不改变当初的传入参数
-- proceed(args) 有参数，表示改写当时传入的参数，注意传入的参数个数，以及每个参数的类型要和切面方法保持一致
-- 不调用 proceed 就不会执行拦截切面方法内的代码
+```kotlin
+@CustomIntercept("我是自定义数据")
+fun onCustomIntercept(){
+    
+}
 
-在此的 return 返回的就是对应拦截的那个方法返回的
-
-- 如果切面方法**有返回值**，这块的返回值就是切面方法返回值
-- 另外如果切面方法**有返回值**，这块的返回值类型要和切面方法返回类型保持一致
-- 如果切面方法**没有返回值**，这块返回什么无所谓的
-
-**同一个方法存在多个注解或匹配切面时**
-
-- 多个切面叠加到一个方法上时注解优先于匹配切面（下文的匹配切面），注解切面之间从上到下依次执行
-- 调用 **proceed** 才会执行下一个切面，多个切面中最后一个切面执行 **proceed** 才会调用切面方法内的代码
-- 在前边切面中调用 **proceed(args)** 可更新方法传入参数，并在下一个切面中也会拿到上一层更新的参数
-- 最后一个非异步调用 proceed 切面的返回值（就是 invoke 的返回值）就是切入方法的返回值；
-
-**另外请注意尽量不要把切面注解放到系统方法上，例如：Activity 的 onCreate() onResume() 等**
-**即便是加了在切面处理时不要有耗时操作，joinPoint.proceed() 要正常执行，否则会出现意想不到的问题，例如：ANR**
-
-
-PS：ProceedJoinPoint.target 如果为null的话是因为注入的方法是静态的，一般是 Java 的静态方法和 Kotlin 的顶层函数会出现这种情况
+```
 
 #### 二、**@AndroidAopMatchClassMethod** 是做匹配某类及其对应方法的切面的（⚠️注意：自定义的匹配类方法切面如果是 Kotlin 代码请用 android-aop-ksp 那个库）
 
-**1、方法名部分不写返回值和参数类型，这样的话如果有重名方法会全部匹配到**
-
-```java
-@AndroidAopMatchClassMethod(targetClassName = "androidx.appcompat.app.AppCompatActivity",methodName = {"startActivity"},type = MatchType.EXTENDS)
-public class MatchActivityMethod implements MatchClassMethod {
-    @Nullable
-    @Override
-    public Object invoke(@NonNull ProceedJoinPoint joinPoint, @NonNull String methodName) {
-        // 在此写你的逻辑 
-        //不想执行原来方法逻辑，👇就不调用下边这句 
-        return joinPoint.proceed();
-    }
-}
-```
-
-type 有两种类型（不设置默认 EXTENDS）：
-- EXTENDS 表示匹配的是**继承于** targetClassName 所设置的类
-- SELF 表示匹配的是 targetClassName 所设置类的**自身**
-
-这块 ProceedJoinPoint 这个对象的 proceed() 或 proceed(args) 以及这里的返回值和上文提到的逻辑是一致的
-
-其对应的就是下边的代码
-```kotlin
-abstract class BaseActivity :AppCompatActivity() {
-
-    override fun startActivity(intent: Intent?, options: Bundle?) {
-        super.startActivity(intent, options)
-    }
-}
-```
-
-上边表示凡是继承自 androidx.appcompat.app.AppCompatActivity 的类执行 startActivity 方法时则进行切面
-
-⚠️注意如果你没写对应的方法或者没有重写父类的该方法则切面无效，另外对同一个类的同一个方法不要做多次匹配，否则只有一个会生效
-
-**2、另外方法也支持精准匹配，用法如下**
-
-这个是要匹配的类
+- 例子一
 
 ```java
 package com.flyjingfish.test_lib;
@@ -323,14 +250,14 @@ public class TestMatch {
 
 ```
 
-下边是匹配写法：
+假如 TestMatch 是要匹配的类，而你想要匹配到 test2 这个方法，下边是匹配写法：
 
 ```kotlin
 package com.flyjingfish.test_lib.mycut;
 
 @AndroidAopMatchClassMethod(
         targetClassName = "com.flyjingfish.test_lib.TestMatch",
-        methodName = ["void test1(int,java.lang.String)","java.lang.String test2(int,java.lang.String)"],
+        methodName = ["test2"],
         type = MatchType.SELF
 )
 class MatchTestMatchMethod : MatchClassMethod {
@@ -344,40 +271,30 @@ class MatchTestMatchMethod : MatchClassMethod {
 
 ```
 
-匹配的写法公式： **返回值类型 方法名(参数类型,参数类型)**
+可以看到上方 AndroidAopMatchClassMethod 设置的 type 是 MatchType.SELF 表示只匹配 TestMatch 这个类自身，不考虑其子类
 
+- 例子二
 
-- 返回值类型 可以不用写
-- 方法名 必须写
-- 参数类型 可以不用写，写的话用 **()** 包裹起来，多个参数类型用 **,** 隔开，没有参数就只写 **()**
-- 返回值类型 和 方法名 之间用空格隔开
-- 返回值类型 和 参数类型 都要用 Java 的类型表示，除了 8 种基本类型之外，其他引用类型都是 包名.类名
-- 返回值类型 和 参数类型 不写的话就是不验证
+想要监测所有继承自 AppCompatActivity 类的所有 startActivity 的跳转
 
-下边给出 8 种基本类型 String、Unit、Any 的 Kotlin 对 Java 对应表
+```java
+@AndroidAopMatchClassMethod(
+   targetClassName = "androidx.appcompat.app.AppCompatActivity",
+   methodName = {"startActivity"},
+   type = MatchType.EXTENDS
+)
+public class MatchActivityMethod implements MatchClassMethod {
+    @Nullable
+    @Override
+    public Object invoke(@NonNull ProceedJoinPoint joinPoint, @NonNull String methodName) {
+        // 在此写你的逻辑 
+        return joinPoint.proceed();
+    }
+}
+```
 
-| Java 类型             | Kotlin 类型 |
-|---------------------|:---------:|
-| int                 |    Int    | 
-| short               |   Short   |                
-| byte                |   Byte    |                
-| char                |   Char    |                
-| long                |   Long    |                
-| float               |   Float   |                
-| double              |  Double   |                
-| boolean             |  Boolean  |   
-| java.lang.Integer   |   Int?    | 
-| java.lang.Short     |  Short?   |                
-| java.lang.Byte      |   Byte?   |                
-| java.lang.Character |   Char?   |                
-| java.lang.Long      |   Long?   |                
-| java.lang.Float     |  Float?   |                
-| java.lang.Double    |  Double?  |                
-| java.lang.Boolean   | Boolean?  |   
-| java.lang.String    |  String   |   
-| void                |   Unit    |   
-| java.lang.Void      |   Unit?   |   
-| java.lang.Object    |    Any    |   
+可以看到上方 AndroidAopMatchClassMethod 设置的 type 是 MatchType.EXTENDS 表示匹配所有继承自 AppCompatActivity 的子类
+
 
 #### 匹配切面实用场景：
 
