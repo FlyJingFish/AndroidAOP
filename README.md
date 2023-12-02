@@ -194,7 +194,7 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
 
 ## [详细使用请看wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopPointCut)
 
-⚠️注意：自定义的注解如果是 Kotlin 代码请用 android-aop-ksp 那个库
+⚠️注意：自定义的注解（也就是被 @AndroidAopPointCut 注解的注解）如果是 Kotlin 代码请用 android-aop-ksp 那个库
 
 下面以 @CustomIntercept 为例介绍下该如何使用
 
@@ -245,7 +245,7 @@ fun onCustomIntercept(){
 
 ## [详细使用请看wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)
 
-⚠️注意：自定义的匹配类方法切面如果是 Kotlin 代码请用 android-aop-ksp 那个库
+⚠️注意：自定义的匹配类方法切面（也就是被 @AndroidAopMatchClassMethod 注解的代码）如果是 Kotlin 代码请用 android-aop-ksp 那个库
 
 - 例子一
 
