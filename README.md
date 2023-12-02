@@ -218,6 +218,8 @@ class CustomInterceptCut : BasePointCut<CustomIntercept> {
         annotation: CustomIntercept
     ): Any? {
         // 在此写你的逻辑
+        // joinPoint.proceed() 表示继续执行切点方法的逻辑，不调用此方法不会执行切点方法里边的代码
+        // 关于 ProceedJoinPoint 可以看wiki 文档，详细点击下方链接
         return joinPoint.proceed()
     }
 }
