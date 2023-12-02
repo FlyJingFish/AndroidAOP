@@ -37,7 +37,7 @@ public class AnnotationMethodScanner extends ClassNode {
     private final OnCallBackMethod onCallBackMethod;
     private final byte[] classByte;
     private boolean isDescendantClass;
-    private List<AopMatchCut> aopMatchCuts = new ArrayList<>();
+    private final List<AopMatchCut> aopMatchCuts = new ArrayList<>();
     private final List<MethodRecord> cacheMethodRecords = new ArrayList<>();
     private String className;
 
@@ -83,18 +83,18 @@ public class AnnotationMethodScanner extends ClassNode {
 //                    e.printStackTrace();
 //                }
 //        ClassPool cp = ClassPool.getDefault();
-            boolean isContainInterface = false;
+            boolean isImplementsInterface = false;
             if (interfaces != null) {
                 for (String anInterface : interfaces) {
                     String inter = Utils.INSTANCE.slashToDot(anInterface).replaceAll("\\$", ".");
-                    if (inter.equals(aopMatchCut.getBaseClassName())) {
-                        isContainInterface = true;
+                    if (inter.equals(aopMatchCut.getBaseClassName()) && AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType())) {
+                        isImplementsInterface = true;
                         break;
                     }
                 }
             }
 
-            if (isContainInterface || (AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getBaseClassName().equals(Utils.INSTANCE.slashToDot(superName)))
+            if (isImplementsInterface || (AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getBaseClassName().equals(Utils.INSTANCE.slashToDot(superName)))
                     || (AopMatchCut.MatchType.SELF.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getBaseClassName().equals(Utils.INSTANCE.slashToDot(name)))) {
                 this.isDescendantClass = true;
                 AnnotationMethodScanner.this.aopMatchCuts.add(aopMatchCut);

@@ -80,7 +80,6 @@ public final class AndroidAopJoinPoint {
             proceedJoinPoint.setOnInvokeListener(returnValue1 -> {
                 if (iterator.hasNext()){
                     PointCutAnnotation nextCutAnnotation = iterator.next();
-//                    System.out.println("====3===="+nextCutAnnotation);
                     iterator.remove();
                     proceedJoinPoint.setHasNext(iterator.hasNext());
                     if (nextCutAnnotation.basePointCut != null) {
@@ -88,7 +87,6 @@ public final class AndroidAopJoinPoint {
                     } else {
                         returnValue[0] = nextCutAnnotation.matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
                     }
-//                    System.out.println("====4===="+nextCutAnnotation);
                 }
             });
         }
@@ -96,13 +94,11 @@ public final class AndroidAopJoinPoint {
         proceedJoinPoint.setHasNext(basePointCuts.size() > 1);
         PointCutAnnotation cutAnnotation = iterator.next();
         iterator.remove();
-//        System.out.println("====1===="+cutAnnotation);
         if (cutAnnotation.basePointCut != null) {
             returnValue[0] = cutAnnotation.basePointCut.invoke(proceedJoinPoint, cutAnnotation.annotation);
         } else {
             returnValue[0] = cutAnnotation.matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
         }
-//        System.out.println("====2===="+cutAnnotation);
 
 
 
