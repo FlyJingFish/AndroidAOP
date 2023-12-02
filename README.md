@@ -190,6 +190,22 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
 
 ### 本库通过 @AndroidAopPointCut 和 @AndroidAopMatchClassMethod 两种注解，实现自定义切面
 
+其对应的处理切面的类是
+
+- @AndroidAopPointCut 对应 BasePointCut
+```kotlin
+interface BasePointCut<T : Annotation> {
+    fun invoke(joinPoint: ProceedJoinPoint, anno: T): Any?
+}
+```
+- @AndroidAopMatchClassMethod 对应 MatchClassMethod
+```kotlin
+interface MatchClassMethod {
+    fun invoke(joinPoint: ProceedJoinPoint, methodName:String): Any?
+}
+```
+上边的 invoke 就是进入切面的回调，在你实现上边两个接口后在 invoke 里边写你的逻辑。详细使用方法下边有介绍
+
 #### 一、**@AndroidAopPointCut** 是只能在方法上做切面的，上述中注解都是通过这个做的
 
 下面以 @CustomIntercept 为例介绍下该如何使用（⚠️注意：自定义的注解如果是 Kotlin 代码请用 android-aop-ksp 那个库）
