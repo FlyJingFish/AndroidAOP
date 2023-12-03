@@ -328,7 +328,7 @@ public class MatchActivityMethod implements MatchClassMethod {
 - 调用 **[proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)** 才会执行下一个切面，多个切面中最后一个切面执行 **[proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)** 才会调用切面方法内的代码
 - 在前边切面中调用 **[proceed(args)](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)** 可更新方法传入参数，并在下一个切面中也会拿到上一层更新的参数
 - 最后一个非异步调用 [proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint) 切面的返回值（就是 invoke 的返回值）就是切入方法的返回值；
-- 这块类似于 OKHttp 的那个请求链的 Interceptor ，了解过原理的应该很容易理解
+
 
 ### 二、Build时报错 "ZipFile invalid LOC header (bad signature)"
 
