@@ -210,13 +210,13 @@ public @interface CustomIntercept {
 }
 ```
 
-- 创建注解处理切面的类
+- 创建注解处理切面的类（需要实现 BasePointCut 接口，它的泛型填上边的注解）
 
 ```kotlin
 class CustomInterceptCut : BasePointCut<CustomIntercept> {
     override fun invoke(
         joinPoint: ProceedJoinPoint,
-        annotation: CustomIntercept
+        annotation: CustomIntercept //annotation就是你加到方法上的注解
     ): Any? {
         // 在此写你的逻辑
         // joinPoint.proceed() 表示继续执行切点方法的逻辑，不调用此方法不会执行切点方法里边的代码
@@ -244,7 +244,6 @@ fun onCustomIntercept(){
 
 **匹配方法支持精准匹配，[点此看wiki详细使用文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)**
 
-
 ⚠️注意：自定义的匹配类方法切面（也就是被 @AndroidAopMatchClassMethod 注解的代码）如果是 Kotlin 代码请用 android-aop-ksp 那个库
 
 - 例子一
@@ -265,6 +264,8 @@ public class TestMatch {
 ```
 
 假如 TestMatch 是要匹配的类，而你想要匹配到 test2 这个方法，下边是匹配写法：
+
+直接创建处理切面的类（需要实现 MatchClassMethod 接口），并在切面处理类上加上 @AndroidAopMatchClassMethod 及其相关配置即可
 
 ```kotlin
 package com.flyjingfish.test_lib.mycut;
