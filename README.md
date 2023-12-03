@@ -15,9 +15,11 @@
 
 3、本库同步支持 Java 和 Kotlin 代码
 
-4、本库支持切入三方库（只要是打进安装包里的代码，都是可以 Hook 的）
+4、本库支持切入三方库
 
-**5、本库不是基于 AspectJ 实现的，织入代码量极少，侵入性极低**
+5、支持 Lambda 表达式
+
+**6、本库不是基于 AspectJ 实现的，织入代码量极少，侵入性极低**
 
 
 #### [点此下载apk,也可扫下边二维码下载](https://github.com/FlyJingFish/AndroidAOP/blob/master/apk/release/app-release.apk?raw=true)
