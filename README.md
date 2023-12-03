@@ -190,9 +190,8 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
 
 ### 本库通过 @AndroidAopPointCut 和 @AndroidAopMatchClassMethod 两种注解，实现自定义切面
 
-#### 一、**@AndroidAopPointCut** 是在方法上通过注解的形式做切面的，上述中注解都是通过这个做的
+#### 一、**@AndroidAopPointCut** 是在方法上通过注解的形式做切面的，上述中注解都是通过这个做的，[详细使用请看wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopPointCut)
 
-## [详细使用请看wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopPointCut)
 
 ⚠️注意：自定义的注解（也就是被 @AndroidAopPointCut 注解的注解类）如果是 Kotlin 代码请用 android-aop-ksp 那个库
 
@@ -243,7 +242,7 @@ fun onCustomIntercept(){
 
 **匹配方法支持精准匹配，👇点击下方链接看使用说明**
 
-## [详细使用请看wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)
+#### [详细使用请看wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)
 
 ⚠️注意：自定义的匹配类方法切面（也就是被 @AndroidAopMatchClassMethod 注解的代码）如果是 Kotlin 代码请用 android-aop-ksp 那个库
 
@@ -317,7 +316,7 @@ public class MatchActivityMethod implements MatchClassMethod {
 
 - 又或者你想在三方库某个方法上设置切面，可以直接设置对应类名，对应方法，然后 type = MatchType.SELF，这样可以侵入三方库的代码，当然这么做记得修改上文提到的 androidAopConfig 的配置
 
-## [详细使用请看wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki)
+### [详细使用请看wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki)
 
 ### 常见问题
 
