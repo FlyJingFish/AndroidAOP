@@ -240,7 +240,7 @@ fun onCustomIntercept(){
 
 #### 二、**@AndroidAopMatchClassMethod** 是做匹配某类及其对应方法的切面的
 
-**匹配方法支持精准匹配，[点此看wiki详细使用文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)明**
+**匹配方法支持精准匹配，[点此看wiki详细使用文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)**
 
 ####
 
