@@ -78,10 +78,12 @@ internal object AndroidAopBeanUtils {
 
     private fun observeTarget(joinPoint: ProceedJoinPoint,key :String){
         mSingleIO.execute{
-            val target = joinPoint.target
-            if (target != null){
-                val weakReference = KeyWeakReference(target,mTargetKeyReferenceQueue,key)
-                mTargetReferenceMap[key] = weakReference
+            synchronized(AndroidAopBeanUtils){
+                val target = joinPoint.target
+                if (target != null){
+                    val weakReference = KeyWeakReference(target,mTargetKeyReferenceQueue,key)
+                    mTargetReferenceMap[key] = weakReference
+                }
             }
             removeWeaklyReachableObjects()
         }
@@ -94,14 +96,16 @@ internal object AndroidAopBeanUtils {
     }
 
     private fun removeWeaklyReachableObjects() {
-        var ref: KeyWeakReference<*>?
-        do {
-            ref = mTargetKeyReferenceQueue.poll() as KeyWeakReference<*>?
-            if (ref != null) {
-                mTargetReferenceMap.remove(ref.key)
-                mBasePointCutMap.remove(ref.key)
-                mMatchClassMethodMap.remove(ref.key)
-            }
-        } while (ref != null)
+        synchronized(AndroidAopBeanUtils){
+            var ref: KeyWeakReference<*>?
+            do {
+                ref = mTargetKeyReferenceQueue.poll() as KeyWeakReference<*>?
+                if (ref != null) {
+                    mTargetReferenceMap.remove(ref.key)
+                    mBasePointCutMap.remove(ref.key)
+                    mMatchClassMethodMap.remove(ref.key)
+                }
+            } while (ref != null)
+        }
     }
 }
