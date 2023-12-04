@@ -50,49 +50,6 @@ public final class Conversions {
 		return null;
 	}
 
-	static Map<String,String> argsToObject = new HashMap<>();
-	static Map<String,String> returnToValue = new HashMap<>();
-	static {
-		argsToObject.put("I","intObject(%1$s)");
-		argsToObject.put("S","shortObject(%1$s)");
-		argsToObject.put("B","byteObject(%1$s)");
-		argsToObject.put("C","charObject(%1$s)");
-		argsToObject.put("J","longObject(%1$s)");
-		argsToObject.put("F","floatObject(%1$s)");
-		argsToObject.put("D","doubleObject(%1$s)");
-		argsToObject.put("Z","booleanObject(%1$s)");
-
-		returnToValue.put("I","intValue(%1$s)");
-		returnToValue.put("S","shortValue(%1$s)");
-		returnToValue.put("B","byteValue(%1$s)");
-		returnToValue.put("C","charValue(%1$s)");
-		returnToValue.put("J","longValue(%1$s)");
-		returnToValue.put("F","floatValue(%1$s)");
-		returnToValue.put("D","doubleValue(%1$s)");
-		returnToValue.put("Z","booleanValue(%1$s)");
-	}
-
-	public static String getArgsXObject(String key){
-		String value = argsToObject.get(key);
-		if (value == null){
-			value = "%1$s";
-		}else {
-			value = "Conversions."+value;
-		}
-		return value;
-	}
-	public static String getReturnXObject(String key){
-		String value = returnToValue.get(key);
-		if (value == null){
-			value = "return %1$s";
-		}else {
-			value = "return Conversions."+value;
-		}
-		return value;
-	}
-
-
-
 	public static int intValue(Object o) {
 		if (o == null) {
 			return 0;
