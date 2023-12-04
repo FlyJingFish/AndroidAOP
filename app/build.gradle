@@ -90,4 +90,5 @@ dependencies {
 //        annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:'+TestVersion
         ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:'+TestVersion
     }
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 }

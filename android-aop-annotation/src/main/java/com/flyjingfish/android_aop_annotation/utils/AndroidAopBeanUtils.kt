@@ -3,23 +3,33 @@ package com.flyjingfish.android_aop_annotation.utils
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
 import com.flyjingfish.android_aop_annotation.base.BasePointCut
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod
+import java.lang.ref.ReferenceQueue
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 internal object AndroidAopBeanUtils {
-    private val basePointCutMap = ConcurrentHashMap<String, BasePointCut<Annotation>?>()
-    private val matchClassMethodMap = ConcurrentHashMap<String, MatchClassMethod?>()
-
+    private val mBasePointCutMap = ConcurrentHashMap<String, BasePointCut<Annotation>?>()
+    private val mMatchClassMethodMap = ConcurrentHashMap<String, MatchClassMethod?>()
+    private val mTargetReferenceMap = ConcurrentHashMap<String, KeyWeakReference<Any>>()
+    private val mTargetKeyReferenceQueue = ReferenceQueue<Any>()
+    private val mSingleIO: ExecutorService = Executors.newSingleThreadExecutor()
     fun getBasePointCut(joinPoint: ProceedJoinPoint, clsName: String,annotationName : String): BasePointCut<Annotation>? {
         val className = joinPoint.targetClass.name
         val methodName = joinPoint.targetMethod.name
         val key = "$className-${joinPoint.target}-$methodName-$annotationName"
-        var basePointCut: BasePointCut<Annotation>? = basePointCutMap[key]
+        var basePointCut: BasePointCut<Annotation>? = mBasePointCutMap[key]
         if (basePointCut == null) {
             basePointCut = getNewPointCut(clsName)
-            basePointCutMap[key] = basePointCut
+            mBasePointCutMap[key] = basePointCut
+            observeTarget(joinPoint, key)
+        }else{
+            removeWeaklyReachableObjectsOnIOThread()
         }
         return basePointCut
     }
+
+
 
     private fun getNewPointCut(clsName: String): BasePointCut<Annotation>? {
         val cls: Class<out BasePointCut<Annotation>> = try {
@@ -46,10 +56,13 @@ internal object AndroidAopBeanUtils {
         val className = joinPoint.targetClass.name
         val methodName = joinPoint.targetMethod.name
         val key = "$className-${joinPoint.target}-$methodName-$clsName"
-        var matchClassMethod: MatchClassMethod? = matchClassMethodMap[key]
+        var matchClassMethod: MatchClassMethod? = mMatchClassMethodMap[key]
         if (matchClassMethod == null) {
             matchClassMethod = getNewMatchClassMethod(clsName)
-            matchClassMethodMap[key] = matchClassMethod
+            mMatchClassMethodMap[key] = matchClassMethod
+            observeTarget(joinPoint, key)
+        }else{
+            removeWeaklyReachableObjectsOnIOThread()
         }
         return matchClassMethod
     }
@@ -61,5 +74,34 @@ internal object AndroidAopBeanUtils {
             throw RuntimeException(e)
         }
         return cls.newInstance()
+    }
+
+    private fun observeTarget(joinPoint: ProceedJoinPoint,key :String){
+        mSingleIO.execute{
+            val target = joinPoint.target
+            if (target != null){
+                val weakReference = KeyWeakReference(target,mTargetKeyReferenceQueue,key)
+                mTargetReferenceMap[key] = weakReference
+            }
+            removeWeaklyReachableObjects()
+        }
+    }
+
+    private fun removeWeaklyReachableObjectsOnIOThread(){
+        mSingleIO.execute{
+            removeWeaklyReachableObjects()
+        }
+    }
+
+    private fun removeWeaklyReachableObjects() {
+        var ref: KeyWeakReference<*>?
+        do {
+            ref = mTargetKeyReferenceQueue.poll() as KeyWeakReference<*>?
+            if (ref != null) {
+                mTargetReferenceMap.remove(ref.key)
+                mBasePointCutMap.remove(ref.key)
+                mMatchClassMethodMap.remove(ref.key)
+            }
+        } while (ref != null)
     }
 }
