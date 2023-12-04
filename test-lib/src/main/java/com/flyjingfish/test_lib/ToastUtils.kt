@@ -9,7 +9,7 @@ object ToastUtils {
     lateinit var app:Application
 
     fun makeText(context: Context, text: CharSequence) {
-        makeText(context, text, Toast.LENGTH_SHORT)?.show()
+        makeText(context.applicationContext, text, Toast.LENGTH_SHORT)?.show()
     }
 
     private fun makeText(context: Context, text: CharSequence, duration: Int): Toast? {
