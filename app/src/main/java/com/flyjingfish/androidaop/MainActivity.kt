@@ -21,6 +21,7 @@ import com.flyjingfish.androidaop.test.Round
 import com.flyjingfish.androidaop.test2.StaticClass
 import com.flyjingfish.androidaop.test.TestBean
 import com.flyjingfish.test_lib.BaseActivity
+import com.flyjingfish.test_lib.LocaleTransform
 import com.flyjingfish.test_lib.TestMatch
 import com.flyjingfish.test_lib.annotation.MyAnno2
 
@@ -102,6 +103,8 @@ class MainActivity: BaseActivity2() {
         val testMatch = TestMatch()
         binding.btnTestMuch.setOnClickListener {
             testMatch.test2(1,"2")
+
+            LocaleTransform.getLanguage(1)
         }
 
         binding.tvLogcat.setOnClickListener { binding.tvLogcat.text = "日志:（点此清除）\n" }

@@ -40,7 +40,7 @@ object ClassNameToConversions {
         value = if(key == "void"){
             "%1\$s"
         }else if (value == null) {
-            "return %1\$s"
+            "return ($key)%1\$s"
         } else {
             "return Conversions.$value"
         }
