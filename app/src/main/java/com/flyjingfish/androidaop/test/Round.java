@@ -5,7 +5,7 @@ import android.util.Log;
 import com.flyjingfish.test_lib.annotation.MyAnno;
 
 
-public class Round {
+public class Round extends Base2{
     public Runnable runnable;
 
 

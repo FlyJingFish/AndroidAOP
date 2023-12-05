@@ -11,6 +11,7 @@ object WovenInfoUtils {
     var aopMethodCuts: HashMap<String, AopMethodCut> = HashMap()
     var aopMatchCuts: HashMap<String, AopMatchCut> = HashMap()
     var classPaths : ArrayList<String> = ArrayList()
+    var classNameMap: HashMap<String, String> = HashMap()
     private val classMethodRecords: HashMap<String, HashMap<String, MethodRecord>> = HashMap()//类名为key，value为方法map集合
 
     fun addAnnoInfo(info: AopMethodCut) {
@@ -60,5 +61,19 @@ object WovenInfoUtils {
         aopMatchCuts.clear()
         classPaths.clear()
         classMethodRecords.clear()
+        classNameMap.clear()
+    }
+
+    fun addClassName(classPath:String){
+        val key = Utils.slashToDot(classPath).replace(".class","").replace("$",".")
+        val value = Utils.slashToDot(classPath).replace(".class","")
+        if (classPath.equals("android/view/View\$OnClickListener.class")){
+            printLog("key=$key,value=$value")
+        }
+        classNameMap[key] = value;
+    }
+
+    fun getClassString(key:String):String?{
+        return classNameMap[key]
     }
 }

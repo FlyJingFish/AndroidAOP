@@ -16,4 +16,5 @@ public @interface AndroidAopMatch {
     String methodNames();
     String pointCutClassName();
     String matchType();
+    String excludeClasses();
 }

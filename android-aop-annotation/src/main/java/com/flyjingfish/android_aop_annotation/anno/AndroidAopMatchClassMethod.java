@@ -29,4 +29,10 @@ public @interface AndroidAopMatchClassMethod {
      * @return 返回匹配类型 {@link MatchType}
      */
     MatchType type() default MatchType.EXTENDS;
+
+    /**
+     *
+     * @return 排除继承中的类名数组（包含包名）
+     */
+    String[] excludeClasses() default {};
 }

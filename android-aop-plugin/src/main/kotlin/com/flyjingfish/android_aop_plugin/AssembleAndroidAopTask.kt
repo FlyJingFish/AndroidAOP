@@ -5,6 +5,7 @@ import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.scanner_visitor.AnnotationMethodScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.AnnotationScanner
+import com.flyjingfish.android_aop_plugin.scanner_visitor.ClassScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.RegisterMapWovenInfoCode
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import com.flyjingfish.android_aop_plugin.utils.AndroidConfig
@@ -21,6 +22,8 @@ import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.objectweb.asm.ClassReader
+import org.objectweb.asm.ClassVisitor
+import org.objectweb.asm.Opcodes
 import java.io.BufferedOutputStream
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -73,6 +76,26 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         WovenInfoUtils.clear()
         for (file in list) {
             WovenInfoUtils.addClassPath(file.absolutePath)
+            try {
+                val jarFile = JarFile(file)
+                val enumeration = jarFile.entries()
+//                logger.error("jarFile=$jarFile,enumeration=$enumeration")
+                while (enumeration.hasMoreElements()) {
+                    val jarEntry = enumeration.nextElement()
+                    try {
+                        val entryName = jarEntry.name
+//                        logger.error("entryName="+entryName)
+                        if (entryName.endsWith(_CLASS)){
+                            WovenInfoUtils.addClassName(entryName)
+                        }
+                    } catch (_: Exception) {
+
+                    }
+                }
+                jarFile.close()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         //第一遍找配置文件
@@ -80,11 +103,20 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             WovenInfoUtils.addClassPath(directory.asFile.absolutePath)
             directory.asFile.walk().forEach { file ->
                 if (file.isFile) {
+//                    logger.error("file.name="+file.absolutePath)
                     if (file.name.endsWith(END_NAME)) {
                         FileInputStream(file).use { inputs ->
                             val classReader = ClassReader(inputs.readAllBytes())
                             classReader.accept(
                                 AnnotationScanner(
+                                    logger
+                                ), ClassReader.EXPAND_FRAMES)
+                        }
+                    }else if (file.absolutePath.endsWith(_CLASS)){
+                        FileInputStream(file).use { inputs ->
+                            val classReader = ClassReader(inputs.readAllBytes())
+                            classReader.accept(
+                                ClassScanner(
                                     logger
                                 ), ClassReader.EXPAND_FRAMES)
                         }
@@ -106,7 +138,10 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     if (jarEntry.isDirectory || jarEntry.name.isEmpty()) {
                         continue
                     }
-
+                    if (entryName.endsWith(_CLASS)){
+                        WovenInfoUtils.addClassName(entryName)
+                    }
+//                    logger.error("entryName="+entryName)
                     if (entryName.endsWith(END_NAME)) {
                         jarFile.getInputStream(jarEntry).use { inputs ->
                             val classReader = ClassReader(inputs.readAllBytes())

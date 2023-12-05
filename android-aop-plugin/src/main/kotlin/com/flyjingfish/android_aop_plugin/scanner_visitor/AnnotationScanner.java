@@ -20,7 +20,11 @@ public class AnnotationScanner extends ClassVisitor {
         super(Opcodes.ASM8);
         this.logger = logger;
     }
-
+    @Override
+    public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+        super.visit(version, access, name, signature, superName, interfaces);
+        WovenInfoUtils.INSTANCE.addClassName(name);
+    }
     @Override
     public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
         if (descriptor.contains(CLASS_POINT)){
@@ -36,6 +40,7 @@ public class AnnotationScanner extends ClassVisitor {
         String methodNames;
         String pointCutClassName;
         String matchType = "EXTENDS";
+        String excludeClasses;
         MethodAnnoVisitor() {
             super(Opcodes.ASM8);
         }
@@ -60,6 +65,9 @@ public class AnnotationScanner extends ClassVisitor {
                 if (name.equals("matchType")) {
                     matchType = value.toString();
                 }
+                if (name.equals("excludeClasses")) {
+                    excludeClasses = value.toString();
+                }
 //                WovenInfoUtils.INSTANCE.addAnnoInfo(value.toString());
             }
             super.visit(name, value);
@@ -73,7 +81,11 @@ public class AnnotationScanner extends ClassVisitor {
                 WovenInfoUtils.INSTANCE.addAnnoInfo(cut);
             }
             if (baseClassName != null && methodNames != null){
-                AopMatchCut cut = new AopMatchCut(baseClassName,methodNames.split("-"),pointCutClassName,matchType);
+                String[] strings = null;
+                if (excludeClasses != null){
+                    strings = excludeClasses.split("-");
+                }
+                AopMatchCut cut = new AopMatchCut(baseClassName,methodNames.split("-"),pointCutClassName,matchType,strings);
                 WovenInfoUtils.INSTANCE.addMatchInfo(cut);
             }
         }

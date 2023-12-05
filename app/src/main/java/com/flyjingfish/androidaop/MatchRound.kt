@@ -1,4 +1,4 @@
-package com.flyjingfish.test_lib.mycut
+package com.flyjingfish.androidaop
 
 import android.util.Log
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
@@ -7,14 +7,13 @@ import com.flyjingfish.android_aop_annotation.base.MatchClassMethod
 import com.flyjingfish.android_aop_annotation.enums.MatchType
 
 @AndroidAopMatchClassMethod(
-    targetClassName = "android.view.View.OnClickListener",
-    methodName = ["onClick"],
-    type = MatchType.EXTENDS,
-    excludeClasses = ["com.flyjingfish.androidaop.test.MyOnClickListener"]
+    targetClassName = "com.flyjingfish.androidaop.test.Base1",
+    methodName = ["setRunnable"],
+    type = MatchType.EXTENDS
 )
-class MatchOnClick : MatchClassMethod {
+class MatchRound : MatchClassMethod {
     override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
-        Log.e("MatchOnClick", "=====invoke=====$methodName")
+        Log.e("MatchRound", "======$methodName");
         return joinPoint.proceed()
     }
 }

@@ -157,12 +157,20 @@ public class AndroidAopProcessor extends AbstractProcessor {
                 AndroidAopMatchClassMethod cut = element.getAnnotation(AndroidAopMatchClassMethod.class);
                 String className = cut.targetClassName();
                 String[] methodNames = cut.methodName();
+                String[] excludeClasses = cut.excludeClasses();
                 MatchType matchType = cut.type();
-                StringBuilder stringBuilder = new StringBuilder();
+                StringBuilder methodNamesBuilder = new StringBuilder();
                 for (int i = 0; i < methodNames.length; i++) {
-                    stringBuilder.append(methodNames[i]);
+                    methodNamesBuilder.append(methodNames[i]);
                     if (i != methodNames.length -1){
-                        stringBuilder.append("-");
+                        methodNamesBuilder.append("-");
+                    }
+                }
+                StringBuilder excludeClassesBuilder = new StringBuilder();
+                for (int i = 0; i < excludeClasses.length; i++) {
+                    excludeClassesBuilder.append(excludeClasses[i]);
+                    if (i != excludeClasses.length -1){
+                        excludeClassesBuilder.append("-");
                     }
                 }
                 TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(name1+"$$AndroidAopClass")
@@ -171,9 +179,10 @@ public class AndroidAopProcessor extends AbstractProcessor {
                 MethodSpec.Builder whatsMyName1 = whatsMyName("withinAnnotatedClass")
                         .addAnnotation(AnnotationSpec.builder(AndroidAopMatch.class)
                                 .addMember("baseClassName", "$S", className)
-                                .addMember("methodNames", "$S", stringBuilder)
+                                .addMember("methodNames", "$S", methodNamesBuilder)
                                 .addMember("pointCutClassName", "$S", element)
                                 .addMember("matchType", "$S", matchType.name())
+                                .addMember("excludeClasses", "$S", excludeClassesBuilder)
                                 .build());
 
                 typeBuilder.addMethod(whatsMyName1.build());

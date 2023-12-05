@@ -17,6 +17,8 @@ import com.flyjingfish.android_aop_core.annotations.SingleClick
 import com.flyjingfish.android_aop_core.annotations.TryCatch
 import com.flyjingfish.android_aop_core.enums.ThreadType
 import com.flyjingfish.androidaop.databinding.ActivityMainBinding
+import com.flyjingfish.androidaop.test.MyOnClickListener
+import com.flyjingfish.androidaop.test.MyOnClickListener2
 import com.flyjingfish.androidaop.test.Round
 import com.flyjingfish.androidaop.test2.StaticClass
 import com.flyjingfish.androidaop.test.TestBean
@@ -36,18 +38,29 @@ class MainActivity: BaseActivity2() {
 //        binding.btnSingleClick.setOnClickListener{
 //            onSingleClick()
 //        }
-        binding.btnSingleClick.setOnClickListener(object :OnClickListener{
+        binding.btnSingleClick.setOnClickListener(object :MyOnClickListener(){
             override fun onClick(v: View?) {
                 onSingleClick()
             }
 
         })
-        binding.btnDoubleClick.setOnClickListener {
-            onDoubleClick()
-        }
-        binding.btnIOThread.setOnClickListener {
-            onIOThread()
-        }
+//        binding.btnDoubleClick.setOnClickListener {
+//            onDoubleClick()
+//        }
+        binding.btnDoubleClick.setOnClickListener(object : MyOnClickListener2{
+            override fun onClick(v: View?) {
+                onDoubleClick()
+            }
+
+        })
+//        binding.btnIOThread.setOnClickListener {
+//            onIOThread()
+//        }
+        binding.btnIOThread.setOnClickListener(object : MyOnClickListener2{
+            override fun onClick(v: View?) {
+                onDoubleClick()
+            }
+        })
         binding.btnMainThread.setOnClickListener {
             onMainThread()
         }
@@ -91,9 +104,10 @@ class MainActivity: BaseActivity2() {
         binding.btnFieldSet.setOnClickListener {
             testBean.name = "1111"
         }
-
+        val round = Round()
         binding.btnFieldGet.setOnClickListener {
             val name = testBean.name
+            round.setRunnable(Runnable {  })
         }
 
         binding.btnKotlinAnno.setOnClickListener {

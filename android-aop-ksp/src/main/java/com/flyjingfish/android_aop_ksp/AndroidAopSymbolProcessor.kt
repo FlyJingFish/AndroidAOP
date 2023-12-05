@@ -11,7 +11,6 @@ import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.Origin
 import com.google.devtools.ksp.validate
@@ -21,7 +20,6 @@ import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.TypeSpec
 import java.lang.annotation.ElementType
-import java.lang.annotation.RetentionPolicy
 
 class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
                                 private val logger: KSPLogger
@@ -182,6 +180,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
 
       var targetClassName :String ?= null
       var methodNames :ArrayList<String> ?= null
+      var excludeClasses :ArrayList<String> ?= null
       var matchType = "EXTENDS"
       for (annotation in symbol.annotations) {
 
@@ -199,6 +198,9 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
               matchType = typeStr.substring(typeStr.lastIndexOf(".")+1)
 //              logger.error("argument.value = ${(argument.value as KSType).}")
             }
+            if (argument.name?.getShortName() == "excludeClasses") {
+              excludeClasses = argument.value as ArrayList<String>
+            }
           }
         }
 //        logger.error("className = ${symbol},classAllName = ${(symbol as KSClassDeclaration).packageName.asString()},targetClassName=${targetClassName} methodName=${methodNames}")
@@ -213,11 +215,20 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         fileName
       ).addModifiers(KModifier.FINAL)
         .addAnnotation(AndroidAopClass::class)
-      val stringBuilder = StringBuilder()
+      val methodNamesBuilder = StringBuilder()
       for (i in methodNames.indices) {
-        stringBuilder.append(methodNames[i])
+        methodNamesBuilder.append(methodNames[i])
         if (i != methodNames.size - 1) {
-          stringBuilder.append("-")
+          methodNamesBuilder.append("-")
+        }
+      }
+      val excludeClassesBuilder = StringBuilder()
+      if (excludeClasses != null){
+        for (i in excludeClasses.indices) {
+          excludeClassesBuilder.append(excludeClasses[i])
+          if (i != excludeClasses.size - 1) {
+            excludeClassesBuilder.append("-")
+          }
         }
       }
       val whatsMyName1 = whatsMyName("withinAnnotatedClass")
@@ -229,7 +240,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
             )
             .addMember(
               "methodNames = %S",
-              stringBuilder
+              methodNamesBuilder
             )
             .addMember(
               "pointCutClassName = %S",
@@ -238,6 +249,10 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
             .addMember(
               "matchType = %S",
               matchType
+            )
+            .addMember(
+              "excludeClasses = %S",
+              excludeClassesBuilder
             )
             .build()
         )
