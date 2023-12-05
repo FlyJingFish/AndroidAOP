@@ -2,7 +2,7 @@ package com.flyjingfish.android_aop_core.utils
 
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
 
-object Utils {
+internal object Utils {
     /**
      * 获取简约的方法名
      *
@@ -14,7 +14,7 @@ object Utils {
         return getClassName(joinPoint.targetClass) + "." + methodName
     }
 
-    fun getClassName(cls: Class<*>?): String {
+    private fun getClassName(cls: Class<*>?): String {
         if (cls == null) {
             return "<UnKnow Class>"
         }

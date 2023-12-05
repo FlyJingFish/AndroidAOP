@@ -14,6 +14,14 @@ internal object AndroidAopBeanUtils {
     private val mTargetReferenceMap = ConcurrentHashMap<String, KeyWeakReference<Any>>()
     private val mTargetKeyReferenceQueue = ReferenceQueue<Any>()
     private val mSingleIO: ExecutorService = Executors.newSingleThreadExecutor()
+
+    fun getCutClassName(className: String): String? {
+        if (!JoinAnnoCutUtils.isInit()){
+            MethodAnnoUtils.registerMap()
+        }
+        return JoinAnnoCutUtils.getCutClassName(className)
+    }
+
     fun getBasePointCut(joinPoint: ProceedJoinPoint, clsName: String,annotationName : String): BasePointCut<Annotation>? {
         val className = joinPoint.targetClass.name
         val methodName = joinPoint.targetMethod.name

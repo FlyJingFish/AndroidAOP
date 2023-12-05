@@ -5,6 +5,7 @@ import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.api.variant.ScopedArtifacts
 import com.android.build.gradle.AppPlugin
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
+import com.flyjingfish.android_aop_plugin.utils.Utils
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -27,6 +28,8 @@ class AndroidAopPlugin : Plugin<Project> {
             androidAopConfig.excludes.forEach {
                 AndroidAopConfig.excludes.add("$it.")
             }
+            AndroidAopConfig.excludes.add(Utils.annotationPackage)
+            AndroidAopConfig.excludes.add(Utils.corePackage)
             if (androidAopConfig.enabled){
                 val task = project.tasks.register("${variant.name}AssembleAndroidAopTask", AssembleAndroidAopTask::class.java)
                 variant.artifacts

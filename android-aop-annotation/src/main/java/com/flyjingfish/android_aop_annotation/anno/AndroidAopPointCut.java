@@ -12,8 +12,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 
+/**
+ * 定义注解切面的注解，使用这个注解的类需要是注解类
+ */
 @Target({ElementType.ANNOTATION_TYPE})
 @Retention(SOURCE)
 public @interface AndroidAopPointCut {
+    /**
+     *
+     * @return 处理切面的类
+     */
     Class<? extends BasePointCut<? extends Annotation>> value();
 }

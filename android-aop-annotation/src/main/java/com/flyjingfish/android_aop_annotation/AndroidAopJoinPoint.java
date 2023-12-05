@@ -4,7 +4,6 @@ package com.flyjingfish.android_aop_annotation;
 import com.flyjingfish.android_aop_annotation.base.BasePointCut;
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
 import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils;
-import com.flyjingfish.android_aop_annotation.utils.JoinAnnoCutUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -13,9 +12,9 @@ import java.util.Iterator;
 import java.util.List;
 
 public final class AndroidAopJoinPoint {
-    private Object target;
-    private Class<?> targetClass;
-    private String targetClassName;
+    private final Object target;
+    private final Class<?> targetClass;
+//    private final String targetClassName;
     private Object[] mArgs;
     private String[] mArgClassNames;
     private final String targetMethodName;
@@ -25,7 +24,7 @@ public final class AndroidAopJoinPoint {
     private String cutMatchClassName;
 
     public AndroidAopJoinPoint(String targetClassName, Object target, String originalMethodName, String targetMethodName) {
-        this.targetClassName = targetClassName;
+//        this.targetClassName = targetClassName;
         try {
             targetClass = Class.forName(targetClassName);
         } catch (ClassNotFoundException e) {
@@ -46,9 +45,8 @@ public final class AndroidAopJoinPoint {
     }
 
     public Object joinPointExecute() {
-        ProceedJoinPoint proceedJoinPoint = new ProceedJoinPoint(targetClass);
+        ProceedJoinPoint proceedJoinPoint = new ProceedJoinPoint(targetClass, mArgs);
         proceedJoinPoint.target = target;
-        proceedJoinPoint.args = mArgs;
         proceedJoinPoint.setOriginalMethod(originalMethod);
         proceedJoinPoint.setTargetMethod(targetMethod);
         Annotation[] annotations = originalMethod.getAnnotations();
@@ -58,9 +56,9 @@ public final class AndroidAopJoinPoint {
 
         for (Annotation annotation : annotations) {
             String annotationName = annotation.annotationType().getName();
-            String cutClassName = JoinAnnoCutUtils.getCutClassName(annotationName);
+            String cutClassName = AndroidAopBeanUtils.INSTANCE.getCutClassName(annotationName);
             if (cutClassName != null) {
-                BasePointCut<Annotation> basePointCut = AndroidAopBeanUtils.INSTANCE.getBasePointCut(proceedJoinPoint, cutClassName,annotationName);
+                BasePointCut<Annotation> basePointCut = AndroidAopBeanUtils.INSTANCE.getBasePointCut(proceedJoinPoint, cutClassName, annotationName);
                 if (basePointCut != null) {
                     PointCutAnnotation pointCutAnnotation = new PointCutAnnotation(annotation, basePointCut);
                     basePointCuts.add(pointCutAnnotation);
@@ -78,7 +76,7 @@ public final class AndroidAopJoinPoint {
 
         if (basePointCuts.size() > 1) {
             proceedJoinPoint.setOnInvokeListener(returnValue1 -> {
-                if (iterator.hasNext()){
+                if (iterator.hasNext()) {
                     PointCutAnnotation nextCutAnnotation = iterator.next();
                     iterator.remove();
                     proceedJoinPoint.setHasNext(iterator.hasNext());
@@ -101,7 +99,6 @@ public final class AndroidAopJoinPoint {
         }
 
 
-
         return returnValue[0];
     }
 
@@ -122,9 +119,9 @@ public final class AndroidAopJoinPoint {
         @Override
         public String toString() {
             return "PointCutAnnotation{" +
-                    "annotation=" + (annotation != null ? annotation.annotationType().getName():"null") +
-                    ", basePointCut=" + (basePointCut != null ? basePointCut.getClass().getName():"null")  +
-                    ", matchClassMethod=" + (matchClassMethod != null ? matchClassMethod.getClass().getName():"null")  +
+                    "annotation=" + (annotation != null ? annotation.annotationType().getName() : "null") +
+                    ", basePointCut=" + (basePointCut != null ? basePointCut.getClass().getName() : "null") +
+                    ", matchClassMethod=" + (matchClassMethod != null ? matchClassMethod.getClass().getName() : "null") +
                     '}';
         }
     }

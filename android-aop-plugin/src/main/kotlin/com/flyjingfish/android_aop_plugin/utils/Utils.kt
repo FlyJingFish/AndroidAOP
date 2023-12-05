@@ -7,7 +7,9 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 object Utils {
-    const val MethodAnnoUtils = "com.flyjingfish.android_aop_core.utils.MethodAnnoUtils"
+    const val annotationPackage = "com.flyjingfish.android_aop_annotation."
+    const val corePackage = "com.flyjingfish.android_aop_core."
+    const val MethodAnnoUtils = "${annotationPackage}utils.MethodAnnoUtils"
     const val _CLASS = ".class"
     fun dotToSlash(str: String): String {
         return str.replace(".", "/")
