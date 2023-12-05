@@ -31,22 +31,16 @@ internal object AndroidAopBeanUtils {
 
 
 
-    private fun getNewPointCut(clsName: String): BasePointCut<Annotation>? {
+    private fun getNewPointCut(clsName: String): BasePointCut<Annotation> {
         val cls: Class<out BasePointCut<Annotation>> = try {
             Class.forName(clsName) as Class<out BasePointCut<Annotation>>
         } catch (e: ClassNotFoundException) {
             throw RuntimeException(e)
         }
-        val basePointCut: BasePointCut<Annotation>?= if (cls != BasePointCut::class.java) {
-            try {
-                cls.newInstance()
-            } catch (e: IllegalAccessException) {
-                throw RuntimeException(e)
-            } catch (e: InstantiationException) {
-                throw RuntimeException(e)
-            }
+        val basePointCut: BasePointCut<Annotation> = if (cls != BasePointCut::class.java) {
+            cls.getDeclaredConstructor().newInstance()
         }else{
-            null
+            throw IllegalArgumentException("切面处理类必须实现 BasePointCut 接口")
         }
         return basePointCut
     }
@@ -73,7 +67,12 @@ internal object AndroidAopBeanUtils {
         } catch (e: ClassNotFoundException) {
             throw RuntimeException(e)
         }
-        return cls.newInstance()
+        val matchClassMethod: MatchClassMethod = if (cls != MatchClassMethod::class.java) {
+            cls.getDeclaredConstructor().newInstance()
+        }else{
+            throw IllegalArgumentException("切面处理类必须实现 MatchClassMethod 接口")
+        }
+        return matchClassMethod
     }
 
     private fun observeTarget(joinPoint: ProceedJoinPoint,key :String){
