@@ -40,6 +40,7 @@ class MainActivity: BaseActivity2() {
 //        }
         binding.btnSingleClick.setOnClickListener(object :MyOnClickListener(){
             override fun onClick(v: View?) {
+                super.onClick(v)
                 onSingleClick()
             }
 
