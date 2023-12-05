@@ -166,6 +166,20 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
   fun processMatch(resolver: Resolver):List<KSAnnotated>{
     val symbols = resolver.getSymbolsWithAnnotation(AndroidAopMatchClassMethod::class.qualifiedName!!)
     for (symbol in symbols) {
+      var isMatchClassMethod = false
+      if (symbol is KSClassDeclaration){
+        val typeList = symbol.superTypes.toList()
+
+        for (ksTypeReference in typeList) {
+          if (ksTypeReference.toString() == "MatchClassMethod"){
+            isMatchClassMethod = true
+          }
+        }
+      }
+      if (!isMatchClassMethod){
+        throw IllegalArgumentException("注意：$symbol 必须实现 MatchClassMethod 接口")
+      }
+
       var targetClassName :String ?= null
       var methodNames :ArrayList<String> ?= null
       var matchType = "EXTENDS"
@@ -250,49 +264,6 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
     return ret
   }
 
-  fun generate(
-    codeGenerator: CodeGenerator, logger: KSPLogger, list: List<KSPropertyDeclaration>
-  ) {
-// 将获取的符号按包名与类名分组
-    val map = list.groupBy {
-      val parent = it.parent as KSClassDeclaration
-      val key = "${parent::class.java.simpleName},${parent.packageName.asString()}"
-      key
-    }
-
-    map.forEach {
-      val classItem = it.value[0].parent as KSClassDeclaration
-      // 添加文件
-      val fileSpecBuilder = FileSpec.builder(
-        classItem.packageName.asString(),
-        "${classItem::class.java.simpleName}ViewBind"
-      )
-      logger.error("${classItem::class.java.simpleName}ViewBind")
-
-      // 添加方法
-      val functionBuilder = FunSpec.builder("bindView")
-        .receiver(classItem::class.java)
-
-      it.value.forEach { item ->
-        // 获取属性名与注解的值
-        val symbolName = item.simpleName.asString()
-        val annotationValue =
-          (item.annotations.firstOrNull()?.arguments?.firstOrNull()?.value as? Int) ?: 0
-        functionBuilder.addStatement("$symbolName = findViewById(${annotationValue})")
-      }
-      // 写文件
-      codeGenerator
-        .createNewFile(
-          Dependencies.ALL_FILES,
-          "com.flyjingfish.android_aop_core.aop",
-          "${classItem::class.java.simpleName}ViewBind"
-        )
-        .writer()
-        .use { fileSpecBuilder.addFunction(functionBuilder.build())
-          .build().writeTo(it) }
-
-    }
-  }
 
   private fun whatsMyName(name: String): FunSpec.Builder {
     return FunSpec.builder(name).addModifiers(KModifier.FINAL)

@@ -5,6 +5,7 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatch;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopMethod;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopPointCut;
+import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
 import com.flyjingfish.android_aop_annotation.enums.MatchType;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.JavaFile;
@@ -30,10 +31,15 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.MirroredTypeException;
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 
 public class AndroidAopProcessor extends AbstractProcessor {
     Filer mFiler;
     private static final String packageName = "com.flyjingfish.android_aop_core.aop";
+    private TypeMirror matchClassMethodType;
+    private Types types;
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
@@ -59,6 +65,9 @@ public class AndroidAopProcessor extends AbstractProcessor {
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
         super.init(processingEnvironment);
         mFiler = processingEnv.getFiler();
+        Elements elementUtils = processingEnv.getElementUtils();
+        matchClassMethodType = elementUtils.getTypeElement(MatchClassMethod.class.getName()).asType();
+        types = processingEnv.getTypeUtils();
     }
 
     @Override
@@ -66,6 +75,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
         if (isEmpty(set)){
             return false;
         }
+
         processPointCut(set, roundEnvironment);
         processMatch(set, roundEnvironment);
         return false;
@@ -139,6 +149,9 @@ public class AndroidAopProcessor extends AbstractProcessor {
         for (TypeElement typeElement: set){
             Name name = typeElement.getSimpleName();
             for (Element element : elements) {
+                if (!types.isSubtype(element.asType(), matchClassMethodType)) {
+                    throw new IllegalArgumentException("注意：" +element+ " 必须实现 MatchClassMethod 接口");
+                }
                 Name name1 = element.getSimpleName();
 //                System.out.println("======"+element);
                 AndroidAopMatchClassMethod cut = element.getAnnotation(AndroidAopMatchClassMethod.class);
