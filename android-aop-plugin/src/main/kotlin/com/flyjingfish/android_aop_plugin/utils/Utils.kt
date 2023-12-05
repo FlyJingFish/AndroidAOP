@@ -2,9 +2,12 @@ package com.flyjingfish.android_aop_plugin.utils
 
 import com.flyjingfish.android_aop_plugin.beans.MatchMethodInfo
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
+import javassist.ClassPool
+import javassist.NotFoundException
 import java.io.File
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+
 
 object Utils {
     const val annotationPackage = "com.flyjingfish.android_aop_annotation."
@@ -114,6 +117,14 @@ object Utils {
             matchMethodInfo.paramTypes = params
         }
         return matchMethodInfo
+    }
+
+    @Throws(NotFoundException::class)
+    private fun isInstanceof(className: String, instanceofClassName: String): Boolean {
+        val pool = ClassPool.getDefault()
+        val clazz = pool[className]
+        val instanceofClazz = pool[instanceofClassName]
+        return clazz.subtypeOf(instanceofClazz)
     }
 }
 
