@@ -2,10 +2,9 @@ package com.flyjingfish.android_aop_plugin.scanner_visitor
 
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.utils.ClassNameToConversions
-import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
+import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
 import com.flyjingfish.android_aop_plugin.utils.printLog
 import javassist.CannotCompileException
-import javassist.ClassPool
 import javassist.CtClass
 import javassist.CtMethod
 import javassist.Modifier
@@ -83,17 +82,8 @@ object WovenIntoCode {
                 }
             }, 0)
         }
-//        val cp = ClassPoolUtils.classPool
-        val cp = ClassPool(null)
-        cp.appendSystemPath()
-//        System.out.println(WovenInfoUtils.INSTANCE.getClassPaths());
-        for (classPath in WovenInfoUtils.classPaths){
-            try {
-                cp.appendClassPath(classPath)
-            } catch (_: NotFoundException) {
-            }
-        }
-//        ClassPool cp = ClassPool.getDefault();
+        val cp = ClassPoolUtils.getNewClassPool()
+//        val cp = ClassPool.getDefault();
         val byteArrayInputStream: InputStream =
             ByteArrayInputStream(cw.toByteArray())
         val ctClass = cp.makeClass(byteArrayInputStream)
@@ -217,4 +207,5 @@ object WovenIntoCode {
         }
         return null
     }
+
 }

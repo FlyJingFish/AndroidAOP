@@ -8,6 +8,7 @@ import com.flyjingfish.android_aop_plugin.scanner_visitor.AnnotationScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.RegisterMapWovenInfoCode
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import com.flyjingfish.android_aop_plugin.utils.AndroidConfig
+import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.printLog
@@ -69,9 +70,11 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         val androidConfig = AndroidConfig(project)
         val list: List<File> = androidConfig.getBootClasspath()
         printLog("Scan to classPath [${list}]")
+        WovenInfoUtils.clear()
         for (file in list) {
             WovenInfoUtils.addClassPath(file.absolutePath)
         }
+
         //第一遍找配置文件
         allDirectories.get().forEach { directory ->
             WovenInfoUtils.addClassPath(directory.asFile.absolutePath)
@@ -123,7 +126,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         }
 //        logger.error(""+WovenInfoUtils.aopMatchCuts)
 //        InitConfig.saveBuildConfig()
-//        ClassPoolUtils.initClassPool()
+        ClassPoolUtils.initClassPool()
     }
 
     private fun searchJoinPointLocation(){
@@ -147,7 +150,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 try {
                                     val classReader = ClassReader(bytes)
                                     classReader.accept(AnnotationMethodScanner(
-                                        logger, bytes
+                                        logger
                                     ) {
                                         val record = ClassMethodRecord(file.absolutePath, it)
                                         WovenInfoUtils.addClassMethodRecords(record)
@@ -188,7 +191,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 try {
                                     val classReader = ClassReader(bytes)
                                     classReader.accept(AnnotationMethodScanner(
-                                        logger, bytes
+                                        logger
                                     ) {
                                         val record = ClassMethodRecord(entryName, it)
                                         WovenInfoUtils.addClassMethodRecords(record)

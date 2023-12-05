@@ -54,4 +54,11 @@ object WovenInfoUtils {
     fun addClassPath(classPath:String){
         classPaths.add(classPath)
     }
+
+    fun clear(){
+        aopMethodCuts.clear()
+        aopMatchCuts.clear()
+        classPaths.clear()
+        classMethodRecords.clear()
+    }
 }

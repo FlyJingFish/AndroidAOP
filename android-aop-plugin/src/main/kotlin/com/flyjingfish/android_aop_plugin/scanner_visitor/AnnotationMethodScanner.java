@@ -4,6 +4,7 @@ import com.flyjingfish.android_aop_plugin.beans.AopMatchCut;
 import com.flyjingfish.android_aop_plugin.beans.LambdaMethod;
 import com.flyjingfish.android_aop_plugin.beans.MatchMethodInfo;
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord;
+import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils;
 import com.flyjingfish.android_aop_plugin.utils.Utils;
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils;
 
@@ -35,18 +36,17 @@ import javassist.bytecode.MethodInfo;
 public class AnnotationMethodScanner extends ClassNode {
     Logger logger;
     private final OnCallBackMethod onCallBackMethod;
-    private final byte[] classByte;
+//    private final byte[] classByte;
     private boolean isDescendantClass;
     private final List<AopMatchCut> aopMatchCuts = new ArrayList<>();
     private final List<MethodRecord> cacheMethodRecords = new ArrayList<>();
     private String className;
 
-    public AnnotationMethodScanner(Logger logger, byte[] classByte, OnCallBackMethod onCallBackMethod) {
+    public AnnotationMethodScanner(Logger logger,OnCallBackMethod onCallBackMethod) {
         super(Opcodes.ASM9);
         this.logger = logger;
         this.onCallBackMethod = onCallBackMethod;
-        this.classByte = classByte;
-//        classPool = ClassPoolUtils.INSTANCE.getClassPool();
+//        this.classByte = classByte;
     }
 
     @Override
@@ -133,10 +133,12 @@ public class AnnotationMethodScanner extends ClassNode {
             if (WovenInfoUtils.INSTANCE.isContainAnno(descriptor)) {
                 boolean isBack = true;
                 try {
-                    ClassPool classPool = new ClassPool(null);
-                    InputStream byteArrayInputStream = new ByteArrayInputStream(classByte);
-                    CtClass ctClass = classPool.makeClass(byteArrayInputStream);
-                    CtMethod ctMethod = getCtMethod(ctClass, methodName.getMethodName(), methodName.getDescriptor());
+                    ClassPool classPool = ClassPoolUtils.INSTANCE.getClassPool();
+//                    InputStream byteArrayInputStream = new ByteArrayInputStream(classByte);
+//                    CtClass ctClass = classPool.makeClass(byteArrayInputStream);
+                    String clsName = Utils.INSTANCE.slashToDot(className.replaceAll("\\.class",""));
+                    CtClass ctClass =  classPool.get(clsName);
+                    CtMethod ctMethod = WovenIntoCode.INSTANCE.getCtMethod(ctClass, methodName.getMethodName(), methodName.getDescriptor());
                     MethodInfo methodInfo = ctMethod.getMethodInfo();
                     CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
                     if (codeAttribute == null) {
@@ -152,19 +154,6 @@ public class AnnotationMethodScanner extends ClassNode {
         }
     }
 
-    public static CtMethod getCtMethod(CtClass ctClass, String methodName, String descriptor) throws NotFoundException {
-        CtMethod[] ctMethods = ctClass.getDeclaredMethods(methodName);
-        if (ctMethods != null && ctMethods.length > 0) {
-            for (CtMethod ctMethod : ctMethods) {
-                String allSignature = ctMethod.getSignature();
-                if (descriptor.equals(allSignature)) {
-                    return ctMethod;
-                }
-            }
-        }
-        return null;
-    }
-
     @Override
     public MethodVisitor visitMethod(int access, String name, String descriptor,
                                      String signature, String[] exceptions) {
@@ -176,19 +165,12 @@ public class AnnotationMethodScanner extends ClassNode {
                     if (matchMethodInfo != null && name.equals(matchMethodInfo.getName())) {
                         boolean isBack = true;
                         try {
-                            ClassPool classPool = new ClassPool(null);
-                            if (matchMethodInfo.getParamTypes() != null || matchMethodInfo.getReturnType() != null) {
-                                classPool.appendSystemPath();
-                                for (String classPath : WovenInfoUtils.INSTANCE.getClassPaths()) {
-                                    try {
-                                        classPool.appendClassPath(classPath);
-                                    } catch (NotFoundException ignored) {
-                                    }
-                                }
-                            }
-                            InputStream byteArrayInputStream = new ByteArrayInputStream(classByte);
-                            CtClass ctClass = classPool.makeClass(byteArrayInputStream);
-                            CtMethod ctMethod = getCtMethod(ctClass, name, descriptor);
+                            ClassPool classPool = ClassPoolUtils.INSTANCE.getClassPool();
+                            String clsName = Utils.INSTANCE.slashToDot(className.replaceAll("\\.class",""));
+                            CtClass ctClass =  classPool.get(clsName);
+//                            InputStream byteArrayInputStream = new ByteArrayInputStream(classByte);
+//                            CtClass ctClass = classPool.makeClass(byteArrayInputStream);
+                            CtMethod ctMethod = WovenIntoCode.INSTANCE.getCtMethod(ctClass, name, descriptor);
                             if (matchMethodInfo.getParamTypes() != null) {
                                 CtClass[] ctClasses = ctMethod.getParameterTypes();
                                 StringBuilder paramStr = new StringBuilder();
@@ -221,7 +203,6 @@ public class AnnotationMethodScanner extends ClassNode {
                                 isBack = false;
                             }
                         } catch (Exception ignored) {
-//                            ignored.printStackTrace();
                         }
                         if (isBack) {
                             cacheMethodRecords.add(new MethodRecord(name, descriptor, aopMatchCut.getCutClassName()));
@@ -239,51 +220,6 @@ public class AnnotationMethodScanner extends ClassNode {
     @Override
     public void visitEnd() {
         super.visitEnd();
-//        WovenInfoUtils.INSTANCE.getAopMatchCuts().forEach((key, aopMatchCut) -> {
-//            if (className.contains("MainActivity")){
-//                logger.error("======aopMatchCut="+aopMatchCut+"=size"+WovenInfoUtils.INSTANCE.getAopMatchCuts().size());
-//            }
-//            if (aopMatchCut.getMethodNames().length == 1){
-//                this.methods.forEach(methodNode -> {
-//                    for (AbstractInsnNode node : methodNode.instructions) {
-//                        if (node instanceof InvokeDynamicInsnNode tmpNode) {
-//                            String desc = tmpNode.desc;
-//                            Type descType = Type.getType(desc);
-//                            Type samBaseType = descType.getReturnType();
-//                            //sam 接口名
-//                            String samBase = samBaseType.getDescriptor();
-//                            //sam 方法名
-//                            String samMethodName = tmpNode.name;
-//                            Object[] bsmArgs = tmpNode.bsmArgs;
-////                            Type samMethodType = (Type) bsmArgs[0];
-//                            Handle methodName = (Handle) bsmArgs[1];
-//                            //sam 实现方法实际参数描述符
-////                            Type implMethodType = (Type) bsmArgs[2];
-//
-//                            String lambdaName = methodName.getName();
-////                            String bsmMethodNameAndDescriptor = samMethodName + samMethodType.getDescriptor();
-//                            String thisClassName = Utils.INSTANCE.slashToDot(samBase.substring(1).replaceAll(";","")).replaceAll("\\$", ".");
-//                            logger.error("className="+className+",tmpNode.name="+tmpNode.name+",desc=" + desc + ",samBase=" + samBase + ",samMethodName="
-//                                    + samMethodName + ",methodName=" + lambdaName+ ",methodDesc=" + methodName.getDesc()+",thisClassName="+thisClassName);
-//                            for (String aopMatchCutMethodName : aopMatchCut.getMethodNames()) {
-//                                logger.error("======aopMatchCutMethodName="+aopMatchCutMethodName+"=aopMatchCut.getBaseClassName()="+aopMatchCut.getBaseClassName()+"=");
-//                                if (samMethodName.equals(aopMatchCutMethodName) && aopMatchCut.getBaseClassName().equals(thisClassName)){
-//                                    MethodRecord methodRecord = new MethodRecord(lambdaName, methodName.getDesc(), aopMatchCut.getCutClassName());
-//                                    logger.error("======methodRecord="+methodRecord);
-////                                    logger.error("======aopMatchCut="+aopMatchCut.getMatchType()+"=="+ AopMatchCut.MatchType.EXTENDS.name());
-//                                    if (onCallBackMethod != null) {
-//                                        onCallBackMethod.onBackName(methodRecord);
-//                                    }
-//                                }
-//                            }
-//
-//                        }
-//
-//                    }
-//
-//                });
-//            }
-//        });
 
         this.methods.forEach(methodNode -> {
 //            logger.error(className+"======methods.forEach=");
@@ -303,12 +239,12 @@ public class AnnotationMethodScanner extends ClassNode {
 //                            Type implMethodType = (Type) bsmArgs[2];
 
                     String lambdaName = methodName.getName();
-                            String bsmMethodNameAndDescriptor = samMethodName + samMethodType.getDescriptor();
+//                    String bsmMethodNameAndDescriptor = samMethodName + samMethodType.getDescriptor();
                     String thisClassName = Utils.INSTANCE.slashToDot(samBase.substring(1).replaceAll(";","")).replaceAll("\\$", ".");
                     String originalClassName = Utils.INSTANCE.slashToDot(samBase.substring(1).replaceAll(";",""));
-                    logger.error("className="+className+",tmpNode.name="+tmpNode.name+",desc=" + desc + ",samBase=" + samBase + ",samMethodName="
-                            + samMethodName + ",methodName=" + lambdaName+ ",methodDesc=" + methodName.getDesc()+",thisClassName="+thisClassName+
-                            ",getDescriptor"+samMethodType.getDescriptor());
+//                    logger.error("className="+className+",tmpNode.name="+tmpNode.name+",desc=" + desc + ",samBase=" + samBase + ",samMethodName="
+//                            + samMethodName + ",methodName=" + lambdaName+ ",methodDesc=" + methodName.getDesc()+",thisClassName="+thisClassName+
+//                            ",getDescriptor"+samMethodType.getDescriptor());
                     String lambdaDesc = methodName.getDesc();
                     String samMethodDesc = samMethodType.getDescriptor();
                     LambdaMethod lambdaMethod = new LambdaMethod(samMethodName,samMethodDesc,thisClassName,originalClassName,lambdaName,lambdaDesc);
@@ -332,18 +268,11 @@ public class AnnotationMethodScanner extends ClassNode {
                             if (matchMethodInfo != null && name.equals(matchMethodInfo.getName())) {
                                 boolean isBack = true;
                                 try {
-                                    ClassPool classPool = new ClassPool(null);
+                                    ClassPool classPool = ClassPoolUtils.INSTANCE.getClassPool();
                                     CtMethod ctMethod = null;
                                     if (matchMethodInfo.getParamTypes() != null || matchMethodInfo.getReturnType() != null) {
-                                        classPool.appendSystemPath();
-                                        for (String classPath : WovenInfoUtils.INSTANCE.getClassPaths()) {
-                                            try {
-                                                classPool.appendClassPath(classPath);
-                                            } catch (NotFoundException ignored) {
-                                            }
-                                        }
                                         CtClass ctClass = classPool.get(lambdaMethod.getOriginalClassName());
-                                        ctMethod = getCtMethod(ctClass, name, descriptor);
+                                        ctMethod = WovenIntoCode.INSTANCE.getCtMethod(ctClass, name, descriptor);
                                     }
                                     if (matchMethodInfo.getParamTypes() != null && ctMethod != null) {
                                         CtClass[] ctClasses = ctMethod.getParameterTypes();
