@@ -121,14 +121,11 @@ object Utils {
 
     @Throws(NotFoundException::class)
     fun isInstanceof(classNameKey: String, instanceofClassNameKey: String): Boolean {
-//        printLog("isInstanceof1,classNameKey$classNameKey,instanceofClassNameKey$instanceofClassNameKey")
         val className: String? = WovenInfoUtils.getClassString(classNameKey)
         val instanceofClassName: String? = WovenInfoUtils.getClassString(instanceofClassNameKey)
-//        printLog("isInstanceof2,className$className,instanceofClassName$instanceofClassName")
         if (className == null || instanceofClassName == null){
             return false
         }
-//        printLog("isInstanceof3,className$className,instanceofClassName$instanceofClassName")
         val pool = ClassPoolUtils.classPool
         val clazz = pool!!.get(className)
         val instanceofClazz = pool.get(instanceofClassName)

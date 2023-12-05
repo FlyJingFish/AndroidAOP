@@ -67,9 +67,6 @@ object WovenInfoUtils {
     fun addClassName(classPath:String){
         val key = Utils.slashToDot(classPath).replace(".class","").replace("$",".")
         val value = Utils.slashToDot(classPath).replace(".class","")
-        if (classPath.equals("android/view/View\$OnClickListener.class")){
-            printLog("key=$key,value=$value")
-        }
         classNameMap[key] = value;
     }
 
