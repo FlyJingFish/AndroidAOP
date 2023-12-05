@@ -57,6 +57,7 @@ public class AnnotationMethodScanner extends ClassNode {
         WovenInfoUtils.INSTANCE.getAopMatchCuts().forEach((key, aopMatchCut) -> {
             String[] excludeClazz = aopMatchCut.getExcludeClass();
             boolean exclude = false;
+            boolean isSubType = false;
             if (excludeClazz != null){
                 String clsName = Utils.INSTANCE.slashToDot(className).replaceAll("\\$", ".");
                 for (String clazz : excludeClazz) {
@@ -78,24 +79,17 @@ public class AnnotationMethodScanner extends ClassNode {
                     }
                 }
 
-                if (isImplementsInterface || (AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getBaseClassName().equals(Utils.INSTANCE.slashToDot(superName).replaceAll("\\$", ".")))
-                        || (AopMatchCut.MatchType.SELF.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getBaseClassName().equals(Utils.INSTANCE.slashToDot(name).replaceAll("\\$", ".")))) {
+                if (isImplementsInterface
+                        || (AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getBaseClassName().equals(Utils.INSTANCE.slashToDot(superName).replaceAll("\\$", ".")))
+                        ) {
+                    isSubType = true;
                     this.isDescendantClass = true;
                     AnnotationMethodScanner.this.aopMatchCuts.add(aopMatchCut);
                 }
             }
-            if (!isDescendantClass){
+            if (!isSubType){
                 String clsName = Utils.INSTANCE.slashToDot(className).replaceAll("\\$", ".");
                 String parentClsName = aopMatchCut.getBaseClassName();
-                exclude = false;
-                if (excludeClazz != null){
-                    for (String clazz : excludeClazz) {
-                        if (clsName.equals(clazz)){
-                            exclude = true;
-                            break;
-                        }
-                    }
-                }
                 if (!exclude && AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType())
                         && !clsName.equals(parentClsName)) {
                     try {
@@ -112,6 +106,10 @@ public class AnnotationMethodScanner extends ClassNode {
                     }
 
                 }
+            }
+            if ((AopMatchCut.MatchType.SELF.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getBaseClassName().equals(Utils.INSTANCE.slashToDot(name).replaceAll("\\$", ".")))) {
+                this.isDescendantClass = true;
+                AnnotationMethodScanner.this.aopMatchCuts.add(aopMatchCut);
             }
         });
         super.visit(version, access, name, signature, superName, interfaces);
@@ -274,33 +272,17 @@ public class AnnotationMethodScanner extends ClassNode {
 //                }
                     if (AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getMethodNames().length == 1){
                         for (LambdaMethod lambdaMethod : lambdaMethodList) {
-                            String clsName = lambdaMethod.getThisClassName();
-                            String parentClsName = aopMatchCut.getBaseClassName();
-                            String[] excludeClazz = aopMatchCut.getExcludeClass();
-                            boolean exclude = false;
-                            boolean parent = false;
-                            if (excludeClazz != null){
-                                for (String clazz : excludeClazz) {
-                                    if (clsName.equals(clazz)){
-                                        exclude = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (!exclude){
-                                parent = aopMatchCut.getBaseClassName().equals(lambdaMethod.getThisClassName());
-                            }
+                            boolean subType = aopMatchCut.getBaseClassName().equals(lambdaMethod.getThisClassName());
 //                            logger.error("lambdaMethod="+lambdaMethod+",parent="+parent);
-                            if (!parent){
-                                if (!exclude && AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType()) && !clsName.equals(parentClsName)) {
-                                    try {
-                                        parent = Utils.INSTANCE.isInstanceof(clsName,parentClsName);
+                            if (!subType){
+                                String clsName = lambdaMethod.getThisClassName();
+                                String parentClsName = aopMatchCut.getBaseClassName();
+                                try {
+                                    subType = Utils.INSTANCE.isInstanceof(clsName,parentClsName);
 //                                        logger.error("className="+className+"lambdaMethod="+lambdaMethod+",isInstanceof="+parent);
 
-                                    } catch (NotFoundException e) {
-                                        e.printStackTrace();
-                                    }
-
+                                } catch (NotFoundException e) {
+                                    e.printStackTrace();
                                 }
                             }
                             String name = lambdaMethod.getSamMethodName();
@@ -308,7 +290,7 @@ public class AnnotationMethodScanner extends ClassNode {
                             String aopMatchCutMethodName = aopMatchCut.getMethodNames()[0];
 
                             MatchMethodInfo matchMethodInfo = Utils.INSTANCE.getMethodInfo(aopMatchCutMethodName);
-                            if (parent && matchMethodInfo != null && name.equals(matchMethodInfo.getName())) {
+                            if (subType && matchMethodInfo != null && name.equals(matchMethodInfo.getName())) {
                                 boolean isBack = true;
                                 try {
                                     ClassPool classPool = ClassPoolUtils.INSTANCE.getClassPool();
