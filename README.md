@@ -264,7 +264,6 @@ public class TestMatch {
 
 假如 TestMatch 是要匹配的类，而你想要匹配到 test2 这个方法，下边是匹配写法：
 
-直接创建处理切面的类（需要实现 MatchClassMethod 接口），并在切面处理类上加上 @AndroidAopMatchClassMethod 及其相关配置即可
 
 ```kotlin
 package com.flyjingfish.test_lib.mycut;
@@ -289,25 +288,24 @@ class MatchTestMatchMethod : MatchClassMethod {
 
 - 例子二
 
-想要监测所有继承自 AppCompatActivity 类的所有 startActivity 的跳转
+假如想 Hook 所有的 android.view.View.OnClickListener 的 onClick，说白了就是想全局监测所有的设置 OnClickListener 的点击事件，代码如下：
 
-```java
+```kotlin
 @AndroidAopMatchClassMethod(
-   targetClassName = "androidx.appcompat.app.AppCompatActivity",
-   methodName = {"startActivity"},
-   type = MatchType.EXTENDS
+    targetClassName = "android.view.View.OnClickListener",
+    methodName = ["onClick"],
+    type = MatchType.EXTENDS //type 一定是 EXTENDS 因为你想 hook 所有继承了 OnClickListener 的类
 )
-public class MatchActivityMethod implements MatchClassMethod {
-    @Nullable
-    @Override
-    public Object invoke(@NonNull ProceedJoinPoint joinPoint, @NonNull String methodName) {
-        // 在此写你的逻辑 
-        return joinPoint.proceed();
+class MatchOnClick : MatchClassMethod {
+//    @SingleClick(5000) //联合 @SingleClick ，给所有点击增加防多点，6不6
+    override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
+        Log.e("MatchOnClick", "=====invoke=====$methodName")
+        return joinPoint.proceed()
     }
 }
 ```
 
-可以看到上方 AndroidAopMatchClassMethod 设置的 type 是 MatchType.EXTENDS 表示匹配所有继承自 AppCompatActivity 的子类，另外继承只考虑直接的子类，不考虑子类的子类
+可以看到上方 AndroidAopMatchClassMethod 设置的 type 是 MatchType.EXTENDS 表示匹配所有继承自 OnClickListener 的子类，另外继承只考虑直接的子类，不考虑子类的子类
 
 **⚠️注意：如果子类没有该方法，则切面无效，另外对同一个类的同一个方法不要做多次匹配，否则只有一个会生效**
 
