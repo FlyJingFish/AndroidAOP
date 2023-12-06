@@ -61,7 +61,7 @@ public class AnnotationMethodScanner extends ClassNode {
             if (excludeClazz != null){
                 String clsName = Utils.INSTANCE.slashToDotClassName(className);
                 for (String clazz : excludeClazz) {
-                    if (clsName.equals(clazz)){
+                    if (clsName.equals(Utils.INSTANCE.slashToDotClassName(clazz))){
                         exclude = true;
                         break;
                     }
@@ -69,18 +69,21 @@ public class AnnotationMethodScanner extends ClassNode {
             }
             if (!exclude){
                 boolean isImplementsInterface = false;
-                if (interfaces != null) {
-                    for (String anInterface : interfaces) {
-                        String inter = Utils.INSTANCE.slashToDotClassName(anInterface);
-                        if (inter.equals(aopMatchCut.getBaseClassName()) && AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType())) {
-                            isImplementsInterface = true;
-                            break;
+                if (AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType())){
+                    if (interfaces != null) {
+                        for (String anInterface : interfaces) {
+                            String inter = Utils.INSTANCE.slashToDotClassName(anInterface);
+                            if (inter.equals(Utils.INSTANCE.slashToDotClassName(aopMatchCut.getBaseClassName()))) {
+                                isImplementsInterface = true;
+                                break;
+                            }
                         }
                     }
                 }
 
                 if (isImplementsInterface
-                        || (AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getBaseClassName().equals(Utils.INSTANCE.slashToDotClassName(superName)))
+                    || (AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType())
+                        && Utils.INSTANCE.slashToDotClassName(aopMatchCut.getBaseClassName()).equals(Utils.INSTANCE.slashToDotClassName(superName)))
                         ) {
                     isSubType = true;
                     this.isDescendantClass = true;
@@ -91,10 +94,10 @@ public class AnnotationMethodScanner extends ClassNode {
                 String clsName = Utils.INSTANCE.slashToDotClassName(className);
                 String parentClsName = aopMatchCut.getBaseClassName();
                 if (!exclude && AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType())
-                        && !clsName.equals(parentClsName)) {
+                        && !clsName.equals(Utils.INSTANCE.slashToDotClassName(parentClsName))) {
                     try {
 
-                        boolean isInstanceof = Utils.INSTANCE.isInstanceof(Utils.INSTANCE.slashToDotClassName(className),parentClsName);
+                        boolean isInstanceof = Utils.INSTANCE.isInstanceof(clsName,Utils.INSTANCE.slashToDotClassName(parentClsName));
 //                        logger.error("isInstanceof="+isInstanceof);
                         if (isInstanceof){
                             this.isDescendantClass = true;
@@ -107,7 +110,7 @@ public class AnnotationMethodScanner extends ClassNode {
 
                 }
             }
-            if ((AopMatchCut.MatchType.SELF.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getBaseClassName().equals(Utils.INSTANCE.slashToDotClassName(name)))) {
+            if ((AopMatchCut.MatchType.SELF.name().equals(aopMatchCut.getMatchType()) && Utils.INSTANCE.slashToDotClassName(aopMatchCut.getBaseClassName()).equals(Utils.INSTANCE.slashToDotClassName(name)))) {
                 this.isDescendantClass = true;
                 AnnotationMethodScanner.this.aopMatchCuts.add(aopMatchCut);
             }
@@ -272,13 +275,13 @@ public class AnnotationMethodScanner extends ClassNode {
 //                }
                     if (AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getMethodNames().length == 1){
                         for (LambdaMethod lambdaMethod : lambdaMethodList) {
-                            boolean subType = aopMatchCut.getBaseClassName().equals(lambdaMethod.getThisClassName());
+                            boolean subType = Utils.INSTANCE.slashToDotClassName(aopMatchCut.getBaseClassName()).equals(lambdaMethod.getThisClassName());
 //                            logger.error("lambdaMethod="+lambdaMethod+",parent="+parent);
                             if (!subType){
                                 String clsName = lambdaMethod.getThisClassName();
                                 String parentClsName = aopMatchCut.getBaseClassName();
                                 try {
-                                    subType = Utils.INSTANCE.isInstanceof(clsName,parentClsName);
+                                    subType = Utils.INSTANCE.isInstanceof(clsName,Utils.INSTANCE.slashToDotClassName(parentClsName));
 //                                        logger.error("className="+className+"lambdaMethod="+lambdaMethod+",isInstanceof="+parent);
 
                                 } catch (NotFoundException e) {
@@ -337,14 +340,6 @@ public class AnnotationMethodScanner extends ClassNode {
                             }
 
 
-//                            if (lambdaMethod.getSamMethodName().equals(aopMatchCutMethodName) && aopMatchCut.getBaseClassName().equals(lambdaMethod.getThisClassName())){
-//                                MethodRecord methodRecord = new MethodRecord(lambdaMethod.getLambdaName(), lambdaMethod.getLambdaDesc(), aopMatchCut.getCutClassName());
-////                            logger.error("======methodRecord="+methodRecord);
-////                                    logger.error("======aopMatchCut="+aopMatchCut.getMatchType()+"=="+ AopMatchCut.MatchType.EXTENDS.name());
-//                                if (onCallBackMethod != null) {
-//                                    onCallBackMethod.onBackName(methodRecord);
-//                                }
-//                            }
                         }
                     }
                 });
