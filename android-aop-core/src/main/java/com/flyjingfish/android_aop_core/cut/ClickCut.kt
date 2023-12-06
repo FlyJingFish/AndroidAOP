@@ -4,30 +4,30 @@ import android.view.View
 import com.flyjingfish.android_aop_annotation.base.BasePointCut
 
 abstract class ClickCut<T : Annotation> : BasePointCut<T> {
-    private var sLastClickTime: Long = 0
+    private var mLastClickTime: Long = 0
 
-    private var sLastClickViewId = 0
+    private var mLastClickViewId = 0
 
     fun isSingleClick(v: View, intervalMillis: Long): Boolean {
         val time = System.currentTimeMillis()
         val viewId = v.id
-        val timeD = time - sLastClickTime
-        return if (timeD in 1 until intervalMillis && viewId == sLastClickViewId) {
+        val timeD = time - mLastClickTime
+        return if (timeD in 1 until intervalMillis && viewId == mLastClickViewId) {
             false
         } else {
-            sLastClickTime = time
-            sLastClickViewId = viewId
+            mLastClickTime = time
+            mLastClickViewId = viewId
             true
         }
     }
 
     fun isSingleClick(intervalMillis: Long): Boolean {
         val time = System.currentTimeMillis()
-        val timeD = time - sLastClickTime
+        val timeD = time - mLastClickTime
         return if (timeD in 1 until intervalMillis) {
             false
         } else {
-            sLastClickTime = time
+            mLastClickTime = time
             true
         }
     }
@@ -35,26 +35,26 @@ abstract class ClickCut<T : Annotation> : BasePointCut<T> {
     fun isDoubleClick(v: View, intervalMillis: Long): Boolean {
         val time = System.currentTimeMillis()
         val viewId = v.id
-        val timeD = time - sLastClickTime
-        return if (timeD in 1 until intervalMillis && viewId == sLastClickViewId) {
-            sLastClickTime = 0
-            sLastClickViewId = viewId
+        val timeD = time - mLastClickTime
+        return if (timeD in 1 until intervalMillis && viewId == mLastClickViewId) {
+            mLastClickTime = 0
+            mLastClickViewId = viewId
             true
         } else {
-            sLastClickTime = time
-            sLastClickViewId = viewId
+            mLastClickTime = time
+            mLastClickViewId = viewId
             false
         }
     }
 
     fun isDoubleClick(intervalMillis: Long): Boolean {
         val time = System.currentTimeMillis()
-        val timeD = time - sLastClickTime
+        val timeD = time - mLastClickTime
         return if (timeD in 1 until intervalMillis) {
-            sLastClickTime = 0
+            mLastClickTime = 0
             true
         } else {
-            sLastClickTime = time
+            mLastClickTime = time
             false
         }
     }
