@@ -1,8 +1,8 @@
 pluginManagement {
     repositories {
-        if (LocalTest){
+        if (TestType == "0"){
             mavenLocal()
-        }else {
+        }else if (TestType == "1"){
             maven { url "https://s01.oss.sonatype.org/content/repositories/iogithubflyjingfish-"+SonatypeTestCode }
         }
         google()
@@ -13,9 +13,9 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        if (LocalTest){
+        if (TestType == "0"){
             mavenLocal()
-        }else {
+        }else if (TestType == "1"){
             maven { url "https://s01.oss.sonatype.org/content/repositories/iogithubflyjingfish-"+SonatypeTestCode }
         }
         google()

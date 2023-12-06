@@ -83,7 +83,7 @@ dependencies {
     implementation 'com.github.tbruyelle:rxpermissions:0.12'
     implementation 'io.reactivex.rxjava3:rxjava:3.0.4'
     implementation project(path: ":test-lib")
-    if (LocalTest){
+    if (TestType == "0"){
         //本地
         ksp project(':android-aop-ksp')
     }else {
