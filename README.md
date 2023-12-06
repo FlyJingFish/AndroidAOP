@@ -169,6 +169,7 @@ AndroidAop.INSTANCE.setOnPermissionsInterceptListener(new OnPermissionsIntercept
             rxPermissions.request(permission.value()).subscribe(call::onCall);
         }else{
             // TODO: target 不是 FragmentActivity 或 Fragment ，说明注解所在方法不在其中，请自行处理这种情况
+            // 建议：切点方法第一个参数可以设置为 FragmentActivity 或 Fragment ，然后 joinPoint.args[0] 就可以拿到
         }
     }
 });
