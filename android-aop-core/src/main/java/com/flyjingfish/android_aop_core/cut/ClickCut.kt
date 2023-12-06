@@ -37,7 +37,7 @@ abstract class ClickCut<T : Annotation> : BasePointCut<T> {
         val viewId = v.id
         val timeD = time - sLastClickTime
         return if (timeD in 1 until intervalMillis && viewId == sLastClickViewId) {
-            sLastClickTime = time
+            sLastClickTime = 0
             sLastClickViewId = viewId
             true
         } else {
@@ -51,7 +51,7 @@ abstract class ClickCut<T : Annotation> : BasePointCut<T> {
         val time = System.currentTimeMillis()
         val timeD = time - sLastClickTime
         return if (timeD in 1 until intervalMillis) {
-            sLastClickTime = time
+            sLastClickTime = 0
             true
         } else {
             sLastClickTime = time
