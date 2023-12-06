@@ -43,7 +43,7 @@
 buildscript {
     dependencies {
         //必须项 👇
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.1.5'
+        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.1.6'
     }
 }
 plugins {
@@ -74,12 +74,12 @@ plugins {
 
 dependencies {
     //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.1.5'
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.1.5'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.1.6'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.1.6'
     //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.1.5'
+    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.1.6'
     //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.1.5'
+    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.1.6'
     //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
 }
 ```
@@ -308,7 +308,7 @@ class MatchOnClick : MatchClassMethod {
 }
 ```
 
-可以看到上方 AndroidAopMatchClassMethod 设置的 type 是 MatchType.EXTENDS 表示匹配所有继承自 OnClickListener 的子类，另外继承只考虑直接的子类，不考虑子类的子类
+可以看到上方 AndroidAopMatchClassMethod 设置的 type 是 MatchType.EXTENDS 表示匹配所有继承自 OnClickListener 的子类，另外继承的如果不是直接的子类，[请参考Wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)
 
 **⚠️注意：如果子类没有该方法，则切面无效，另外对同一个类的同一个方法不要做多次匹配，否则只有一个会生效**
 
