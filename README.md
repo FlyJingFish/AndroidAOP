@@ -121,7 +121,7 @@ android {
 | @Permission      |      value = 权限的字符串数组      |               申请权限的操作，加入此注解可使您的代码在获取权限后才执行                |
 | @CustomIntercept | value = 你自定义加的一个字符串数组的flag | 自定义拦截，配合 AndroidAop.setOnCustomInterceptListener 使用，属于万金油 |
 
-[上述注解使用示例都在这](https://github.com/FlyJingFish/AndroidAOP/blob/master/app/src/main/java/com/flyjingfish/androidaop/MainActivity.kt)
+[上述注解使用示例都在这](https://github.com/FlyJingFish/AndroidAOP/blob/master/app/src/main/java/com/flyjingfish/androidaop/MainActivity.kt#L128)
 
 ### 这块强调一下 @OnLifecycle
 
