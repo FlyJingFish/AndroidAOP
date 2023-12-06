@@ -59,7 +59,7 @@ class MainActivity: BaseActivity2() {
 //        }
         binding.btnIOThread.setOnClickListener(object : MyOnClickListener2{
             override fun onClick(v: View?) {
-                onDoubleClick()
+                onIOThread()
             }
         })
         binding.btnMainThread.setOnClickListener {
