@@ -59,7 +59,7 @@ public class AnnotationMethodScanner extends ClassNode {
             boolean exclude = false;
             boolean isSubType = false;
             if (excludeClazz != null){
-                String clsName = Utils.INSTANCE.slashToDot(className).replaceAll("\\$", ".");
+                String clsName = Utils.INSTANCE.slashToDotClassName(className);
                 for (String clazz : excludeClazz) {
                     if (clsName.equals(clazz)){
                         exclude = true;
@@ -71,7 +71,7 @@ public class AnnotationMethodScanner extends ClassNode {
                 boolean isImplementsInterface = false;
                 if (interfaces != null) {
                     for (String anInterface : interfaces) {
-                        String inter = Utils.INSTANCE.slashToDot(anInterface).replaceAll("\\$", ".");
+                        String inter = Utils.INSTANCE.slashToDotClassName(anInterface);
                         if (inter.equals(aopMatchCut.getBaseClassName()) && AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType())) {
                             isImplementsInterface = true;
                             break;
@@ -80,7 +80,7 @@ public class AnnotationMethodScanner extends ClassNode {
                 }
 
                 if (isImplementsInterface
-                        || (AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getBaseClassName().equals(Utils.INSTANCE.slashToDot(superName).replaceAll("\\$", ".")))
+                        || (AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getBaseClassName().equals(Utils.INSTANCE.slashToDotClassName(superName)))
                         ) {
                     isSubType = true;
                     this.isDescendantClass = true;
@@ -88,13 +88,13 @@ public class AnnotationMethodScanner extends ClassNode {
                 }
             }
             if (!isSubType){
-                String clsName = Utils.INSTANCE.slashToDot(className).replaceAll("\\$", ".");
+                String clsName = Utils.INSTANCE.slashToDotClassName(className);
                 String parentClsName = aopMatchCut.getBaseClassName();
                 if (!exclude && AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType())
                         && !clsName.equals(parentClsName)) {
                     try {
 
-                        boolean isInstanceof = Utils.INSTANCE.isInstanceof(Utils.INSTANCE.slashToDot(className).replaceAll("\\$","."),parentClsName);
+                        boolean isInstanceof = Utils.INSTANCE.isInstanceof(Utils.INSTANCE.slashToDotClassName(className),parentClsName);
 //                        logger.error("isInstanceof="+isInstanceof);
                         if (isInstanceof){
                             this.isDescendantClass = true;
@@ -107,7 +107,7 @@ public class AnnotationMethodScanner extends ClassNode {
 
                 }
             }
-            if ((AopMatchCut.MatchType.SELF.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getBaseClassName().equals(Utils.INSTANCE.slashToDot(name).replaceAll("\\$", ".")))) {
+            if ((AopMatchCut.MatchType.SELF.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getBaseClassName().equals(Utils.INSTANCE.slashToDotClassName(name)))) {
                 this.isDescendantClass = true;
                 AnnotationMethodScanner.this.aopMatchCuts.add(aopMatchCut);
             }
@@ -148,7 +148,7 @@ public class AnnotationMethodScanner extends ClassNode {
                     ClassPool classPool = ClassPoolUtils.INSTANCE.getClassPool();
 //                    InputStream byteArrayInputStream = new ByteArrayInputStream(classByte);
 //                    CtClass ctClass = classPool.makeClass(byteArrayInputStream);
-                    String clsName = Utils.INSTANCE.slashToDot(className.replaceAll("\\.class",""));
+                    String clsName = Utils.INSTANCE.slashToDot(className);
                     CtClass ctClass =  classPool.get(clsName);
                     CtMethod ctMethod = WovenIntoCode.INSTANCE.getCtMethod(ctClass, methodName.getMethodName(), methodName.getDescriptor());
                     MethodInfo methodInfo = ctMethod.getMethodInfo();
@@ -178,7 +178,7 @@ public class AnnotationMethodScanner extends ClassNode {
                         boolean isBack = true;
                         try {
                             ClassPool classPool = ClassPoolUtils.INSTANCE.getClassPool();
-                            String clsName = Utils.INSTANCE.slashToDot(className.replaceAll("\\.class",""));
+                            String clsName = Utils.INSTANCE.slashToDot(className);
                             CtClass ctClass =  classPool.get(clsName);
 //                            InputStream byteArrayInputStream = new ByteArrayInputStream(classByte);
 //                            CtClass ctClass = classPool.makeClass(byteArrayInputStream);

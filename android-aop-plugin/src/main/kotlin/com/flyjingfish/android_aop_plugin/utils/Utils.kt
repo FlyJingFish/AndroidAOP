@@ -2,9 +2,10 @@ package com.flyjingfish.android_aop_plugin.utils
 
 import com.flyjingfish.android_aop_plugin.beans.MatchMethodInfo
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
-import javassist.ClassPool
 import javassist.NotFoundException
 import java.io.File
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -28,6 +29,10 @@ object Utils {
 
     fun isIncludeFilterMatched(str: String?, filters: List<String>?): Boolean {
         return isFilterMatched(str, filters, FilterPolicy.INCLUDE)
+    }
+
+    fun slashToDotClassName(str: String): String {
+        return str.replace("/", ".").replace("$", ".")
     }
 
     private fun isFilterMatched(
@@ -130,6 +135,28 @@ object Utils {
         val clazz = pool!!.get(className)
         val instanceofClazz = pool.get(instanceofClassName)
         return clazz.subtypeOf(instanceofClazz)
+    }
+
+    fun computeMD5(string: String): String? {
+        return try {
+            val messageDigest = MessageDigest.getInstance("MD5")
+            val digestBytes = messageDigest.digest(string.toByteArray())
+            bytesToHex(digestBytes)
+        } catch (var3: NoSuchAlgorithmException) {
+            throw IllegalStateException(var3)
+        }
+    }
+
+    private fun bytesToHex(bytes: ByteArray): String? {
+        val hexString = StringBuilder()
+        for (b in bytes) {
+            val hex = Integer.toHexString(0xff and b.toInt())
+            if (hex.length == 1) {
+                hexString.append('0')
+            }
+            hexString.append(hex)
+        }
+        return hexString.toString()
     }
 }
 

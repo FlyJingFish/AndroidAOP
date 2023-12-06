@@ -3,6 +3,7 @@ package com.flyjingfish.android_aop_plugin.scanner_visitor
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.utils.ClassNameToConversions
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
+import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.printLog
 import javassist.CannotCompileException
 import javassist.CtClass
@@ -34,9 +35,21 @@ object WovenIntoCode {
         cr.accept(object : ClassVisitor(Opcodes.ASM8, cw) {}, 0)
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
             val oldMethodName = value.methodName
-            val targetMethodName = oldMethodName + METHOD_SUFFIX
+//            val targetMethodName = oldMethodName + METHOD_SUFFIX
             val oldDescriptor = value.descriptor
             cr.accept(object : ClassVisitor(Opcodes.ASM8, cw) {
+                var classNameMd5:String ?= null
+                override fun visit(
+                    version: Int,
+                    access: Int,
+                    name: String,
+                    signature: String?,
+                    superName: String?,
+                    interfaces: Array<out String>?
+                ) {
+                    super.visit(version, access, name, signature, superName, interfaces)
+                    classNameMd5 = Utils.computeMD5(Utils.slashToDot(name))
+                }
                 override fun visitAnnotation(
                     descriptor: String,
                     visible: Boolean
@@ -63,11 +76,11 @@ object WovenIntoCode {
                         val newAccess = if (access and Opcodes.ACC_STATIC != 0){
                             Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC + Opcodes.ACC_FINAL
                         }else{
-                            Opcodes.ACC_PUBLIC
+                            Opcodes.ACC_PUBLIC + Opcodes.ACC_FINAL
                         }
                         super.visitMethod(
                             newAccess,
-                            targetMethodName,
+                            "$oldMethodName$$$classNameMd5$METHOD_SUFFIX",
                             descriptor,
                             signature,
                             exceptions
@@ -91,8 +104,9 @@ object WovenIntoCode {
         cp.importPackage("com.flyjingfish.android_aop_annotation.Conversions")
         cp.importPackage("androidx.annotation.Keep")
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
+            val targetClassName = ctClass.name
             val oldMethodName = value.methodName
-            val targetMethodName = oldMethodName + METHOD_SUFFIX
+            val targetMethodName = "$oldMethodName$$${Utils.computeMD5(targetClassName)}$METHOD_SUFFIX"
             val oldDescriptor = value.descriptor
             val cutClassName = value.cutClassName
             try {
@@ -170,7 +184,7 @@ object WovenIntoCode {
                 val returnStr = String.format(
                     ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointExecute()"
                 )
-                val targetClassName = ctClass.name
+
                 val constructor = "\"$targetClassName\",${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\"";
                 val body =
                     """ {AndroidAopJoinPoint pointCut = new AndroidAopJoinPoint($constructor);"""+
