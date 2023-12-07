@@ -9,8 +9,8 @@ import com.flyjingfish.android_aop_annotation.enums.MatchType
 @AndroidAopMatchClassMethod(
     targetClassName = "android.view.View.OnClickListener",
     methodName = ["onClick"],
-    type = MatchType.EXTENDS,
-    excludeClasses = ["com.flyjingfish.androidaop.test.MyOnClickListener"]
+    type = MatchType.LEAF_EXTENDS,
+//    excludeClasses = ["com.flyjingfish.androidaop.test.MyOnClickListener"]
 )
 class MatchOnClick : MatchClassMethod {
     override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {

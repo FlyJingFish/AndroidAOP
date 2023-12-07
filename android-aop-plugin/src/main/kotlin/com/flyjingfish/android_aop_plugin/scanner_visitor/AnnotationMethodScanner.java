@@ -38,7 +38,6 @@ public class AnnotationMethodScanner extends ClassNode {
     Logger logger;
     private final OnCallBackMethod onCallBackMethod;
 //    private final byte[] classByte;
-    private boolean isDescendantClass;
     private final List<AopMatchCut> aopMatchCuts = new ArrayList<>();
     private final List<MethodRecord> cacheMethodRecords = new ArrayList<>();
     private String className;
@@ -55,63 +54,95 @@ public class AnnotationMethodScanner extends ClassNode {
         className = name;
 //        logger.error("className="+className+",superName="+superName+",interfaces="+ Arrays.asList(interfaces));
         WovenInfoUtils.INSTANCE.getAopMatchCuts().forEach((key, aopMatchCut) -> {
-            String[] excludeClazz = aopMatchCut.getExcludeClass();
-            boolean exclude = false;
-            boolean isSubType = false;
-            if (excludeClazz != null){
-                String clsName = Utils.INSTANCE.slashToDotClassName(className);
-                for (String clazz : excludeClazz) {
-                    if (clsName.equals(Utils.INSTANCE.slashToDotClassName(clazz))){
-                        exclude = true;
-                        break;
+            if (!AopMatchCut.MatchType.SELF.name().equals(aopMatchCut.getMatchType())){
+                String[] excludeClazz = aopMatchCut.getExcludeClass();
+                boolean exclude = false;
+                boolean isDirectExtends = false;
+                if (excludeClazz != null){
+                    String clsName = Utils.INSTANCE.slashToDotClassName(className);
+                    for (String clazz : excludeClazz) {
+                        if (clsName.equals(Utils.INSTANCE.slashToDotClassName(clazz))){
+                            exclude = true;
+                            break;
+                        }
                     }
                 }
-            }
-            if (!exclude){
-                boolean isImplementsInterface = false;
-                if (AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType())){
-                    if (interfaces != null) {
-                        for (String anInterface : interfaces) {
-                            String inter = Utils.INSTANCE.slashToDotClassName(anInterface);
-                            if (inter.equals(Utils.INSTANCE.slashToDotClassName(aopMatchCut.getBaseClassName()))) {
-                                isImplementsInterface = true;
-                                break;
+
+                if (!exclude){
+                    boolean isImplementsInterface = false;
+                    if (AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType())){
+                        if (interfaces != null) {
+                            for (String anInterface : interfaces) {
+                                String inter = Utils.INSTANCE.slashToDotClassName(anInterface);
+                                if (inter.equals(Utils.INSTANCE.slashToDotClassName(aopMatchCut.getBaseClassName()))) {
+                                    isImplementsInterface = true;
+                                    break;
+                                }
                             }
                         }
                     }
-                }
 
-                if (isImplementsInterface
-                    || (AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType())
-                        && Utils.INSTANCE.slashToDotClassName(aopMatchCut.getBaseClassName()).equals(Utils.INSTANCE.slashToDotClassName(superName)))
-                        ) {
-                    isSubType = true;
-                    this.isDescendantClass = true;
-                    AnnotationMethodScanner.this.aopMatchCuts.add(aopMatchCut);
-                }
-            }
-            if (!isSubType){
-                String clsName = Utils.INSTANCE.slashToDotClassName(className);
-                String parentClsName = aopMatchCut.getBaseClassName();
-                if (!exclude && AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType())
-                        && !clsName.equals(Utils.INSTANCE.slashToDotClassName(parentClsName))) {
-                    try {
-
-                        boolean isInstanceof = Utils.INSTANCE.isInstanceof(clsName,Utils.INSTANCE.slashToDotClassName(parentClsName));
-//                        logger.error("isInstanceof="+isInstanceof);
-                        if (isInstanceof){
-                            this.isDescendantClass = true;
+                    if (isImplementsInterface
+                            || (Utils.INSTANCE.slashToDotClassName(aopMatchCut.getBaseClassName()).equals(Utils.INSTANCE.slashToDotClassName(superName)))
+                    ) {
+                        isDirectExtends = true;
+//                        this.isDescendantClass = true;
+//                        AnnotationMethodScanner.this.aopMatchCuts.add(aopMatchCut);
+                    }
+                    //isDirectExtends 为true 说明是直接继承
+                    if (AopMatchCut.MatchType.DIRECT_EXTENDS.name().equals(aopMatchCut.getMatchType())){
+                        if (isDirectExtends){
                             AnnotationMethodScanner.this.aopMatchCuts.add(aopMatchCut);
                         }
+                    }else if (AopMatchCut.MatchType.LEAF_EXTENDS.name().equals(aopMatchCut.getMatchType())){
+                        boolean isExtends = false;
+                        if (isDirectExtends){
+                            isExtends = true;
 
-                    } catch (NotFoundException e) {
-                        e.printStackTrace();
+                        }else {
+                            String clsName = Utils.INSTANCE.slashToDotClassName(className);
+                            String parentClsName = aopMatchCut.getBaseClassName();
+                            if (!clsName.equals(Utils.INSTANCE.slashToDotClassName(parentClsName))) {
+                                try {
+
+                                    isExtends = Utils.INSTANCE.isInstanceof(clsName,Utils.INSTANCE.slashToDotClassName(parentClsName));
+//                        logger.error("isInstanceof="+isInstanceof);
+                                } catch (NotFoundException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        }
+                        if (isExtends && WovenInfoUtils.INSTANCE.isLeaf(className)){
+                            AnnotationMethodScanner.this.aopMatchCuts.add(aopMatchCut);
+                        }
+                    }else {
+                        if (isDirectExtends){
+                            AnnotationMethodScanner.this.aopMatchCuts.add(aopMatchCut);
+                        }else {
+                            String clsName = Utils.INSTANCE.slashToDotClassName(className);
+                            String parentClsName = aopMatchCut.getBaseClassName();
+                            if (!clsName.equals(Utils.INSTANCE.slashToDotClassName(parentClsName))) {
+                                try {
+
+                                    boolean isInstanceof = Utils.INSTANCE.isInstanceof(clsName,Utils.INSTANCE.slashToDotClassName(parentClsName));
+//                        logger.error("isInstanceof="+isInstanceof);
+                                    if (isInstanceof){
+                                        AnnotationMethodScanner.this.aopMatchCuts.add(aopMatchCut);
+                                    }
+
+                                } catch (NotFoundException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        }
                     }
+
 
                 }
             }
             if ((AopMatchCut.MatchType.SELF.name().equals(aopMatchCut.getMatchType()) && Utils.INSTANCE.slashToDotClassName(aopMatchCut.getBaseClassName()).equals(Utils.INSTANCE.slashToDotClassName(name)))) {
-                this.isDescendantClass = true;
                 AnnotationMethodScanner.this.aopMatchCuts.add(aopMatchCut);
             }
         });
@@ -173,7 +204,7 @@ public class AnnotationMethodScanner extends ClassNode {
     public MethodVisitor visitMethod(int access, String name, String descriptor,
                                      String signature, String[] exceptions) {
 
-        if (isDescendantClass) {
+        if (aopMatchCuts.size() > 0) {
             for (AopMatchCut aopMatchCut : aopMatchCuts) {
                 for (String methodName : aopMatchCut.getMethodNames()) {
                     MatchMethodInfo matchMethodInfo = Utils.INSTANCE.getMethodInfo(methodName);
@@ -273,27 +304,36 @@ public class AnnotationMethodScanner extends ClassNode {
 //                if (className.contains("MainActivity")){
 //                    logger.error("======aopMatchCut="+aopMatchCut+"=size"+WovenInfoUtils.INSTANCE.getAopMatchCuts().size());
 //                }
-                    if (AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getMethodNames().length == 1){
+                    if (!AopMatchCut.MatchType.SELF.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getMethodNames().length == 1){
                         for (LambdaMethod lambdaMethod : lambdaMethodList) {
-                            boolean subType = Utils.INSTANCE.slashToDotClassName(aopMatchCut.getBaseClassName()).equals(lambdaMethod.getThisClassName());
+                            boolean isDirectExtends = Utils.INSTANCE.slashToDotClassName(aopMatchCut.getBaseClassName()).equals(lambdaMethod.getThisClassName());
 //                            logger.error("lambdaMethod="+lambdaMethod+",parent="+parent);
-                            if (!subType){
-                                String clsName = lambdaMethod.getThisClassName();
-                                String parentClsName = aopMatchCut.getBaseClassName();
-                                try {
-                                    subType = Utils.INSTANCE.isInstanceof(clsName,Utils.INSTANCE.slashToDotClassName(parentClsName));
+                            boolean isMatch = false;
+
+                            if (AopMatchCut.MatchType.DIRECT_EXTENDS.name().equals(aopMatchCut.getMatchType())){
+                                isMatch = isDirectExtends;
+                            }else if (AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType())
+                                    ||AopMatchCut.MatchType.LEAF_EXTENDS.name().equals(aopMatchCut.getMatchType())){
+                                isMatch = isDirectExtends;
+                                if (!isMatch){
+                                    String clsName = lambdaMethod.getThisClassName();
+                                    String parentClsName = aopMatchCut.getBaseClassName();
+                                    try {
+                                        isMatch = Utils.INSTANCE.isInstanceof(clsName,Utils.INSTANCE.slashToDotClassName(parentClsName));
 //                                        logger.error("className="+className+"lambdaMethod="+lambdaMethod+",isInstanceof="+parent);
 
-                                } catch (NotFoundException e) {
-                                    e.printStackTrace();
+                                    } catch (NotFoundException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
+
                             String name = lambdaMethod.getSamMethodName();
                             String descriptor = lambdaMethod.getSamMethodDesc();
                             String aopMatchCutMethodName = aopMatchCut.getMethodNames()[0];
 
                             MatchMethodInfo matchMethodInfo = Utils.INSTANCE.getMethodInfo(aopMatchCutMethodName);
-                            if (subType && matchMethodInfo != null && name.equals(matchMethodInfo.getName())) {
+                            if (isMatch && matchMethodInfo != null && name.equals(matchMethodInfo.getName())) {
                                 boolean isBack = true;
                                 try {
                                     ClassPool classPool = ClassPoolUtils.INSTANCE.getClassPool();
@@ -347,7 +387,7 @@ public class AnnotationMethodScanner extends ClassNode {
         });
 
 
-        if (isDescendantClass) {
+        if (aopMatchCuts.size() > 0) {
             for (MethodRecord cacheMethodRecord : cacheMethodRecords) {
                 if (onCallBackMethod != null) {
                     onCallBackMethod.onBackName(cacheMethodRecord);

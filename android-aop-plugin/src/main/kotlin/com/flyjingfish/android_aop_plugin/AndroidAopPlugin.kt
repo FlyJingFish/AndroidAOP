@@ -30,6 +30,7 @@ class AndroidAopPlugin : Plugin<Project> {
             }
             AndroidAopConfig.excludes.add(Utils.annotationPackage)
             AndroidAopConfig.excludes.add(Utils.corePackage)
+            AndroidAopConfig.verifyLeafExtends = androidAopConfig.verifyLeafExtends
             if (androidAopConfig.enabled){
                 val task = project.tasks.register("${variant.name}AssembleAndroidAopTask", AssembleAndroidAopTask::class.java)
                 variant.artifacts

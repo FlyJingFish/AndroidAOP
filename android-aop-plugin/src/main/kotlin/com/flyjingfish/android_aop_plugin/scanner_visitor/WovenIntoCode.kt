@@ -32,12 +32,12 @@ object WovenIntoCode {
     ): ByteArray {
         val cr = ClassReader(inputStreamBytes)
         val cw = ClassWriter(cr, 0)
-        cr.accept(object : ClassVisitor(Opcodes.ASM8, cw) {}, 0)
+        cr.accept(object : ClassVisitor(Opcodes.ASM9, cw) {}, 0)
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
             val oldMethodName = value.methodName
 //            val targetMethodName = oldMethodName + METHOD_SUFFIX
             val oldDescriptor = value.descriptor
-            cr.accept(object : ClassVisitor(Opcodes.ASM8, cw) {
+            cr.accept(object : ClassVisitor(Opcodes.ASM9, cw) {
                 var classNameMd5:String ?= null
                 override fun visit(
                     version: Int,
@@ -55,7 +55,7 @@ object WovenIntoCode {
                     visible: Boolean
                 ): AnnotationVisitor {
                     return object :
-                        AnnotationVisitor(Opcodes.ASM8) {
+                        AnnotationVisitor(Opcodes.ASM9) {
                         override fun visitAnnotation(
                             name: String,
                             descriptor: String

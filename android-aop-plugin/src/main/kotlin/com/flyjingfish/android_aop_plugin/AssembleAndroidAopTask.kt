@@ -5,7 +5,7 @@ import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.scanner_visitor.AnnotationMethodScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.AnnotationScanner
-import com.flyjingfish.android_aop_plugin.scanner_visitor.ClassScanner
+import com.flyjingfish.android_aop_plugin.scanner_visitor.ClassSuperScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.RegisterMapWovenInfoCode
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import com.flyjingfish.android_aop_plugin.utils.AndroidConfig
@@ -19,6 +19,7 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.OutputDirectories
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.objectweb.asm.ClassReader
@@ -100,6 +101,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
         //第一遍找配置文件
         allDirectories.get().forEach { directory ->
+//            printLog("directory.asFile.absolutePath = ${directory.asFile.absolutePath}")
+            val directoryPath = directory.asFile.absolutePath
             WovenInfoUtils.addClassPath(directory.asFile.absolutePath)
             directory.asFile.walk().forEach { file ->
                 if (file.isFile) {
@@ -113,12 +116,14 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 ), ClassReader.EXPAND_FRAMES)
                         }
                     }else if (file.absolutePath.endsWith(_CLASS)){
-                        FileInputStream(file).use { inputs ->
-                            val classReader = ClassReader(inputs.readAllBytes())
-                            classReader.accept(
-                                ClassScanner(
-                                    logger
-                                ), ClassReader.EXPAND_FRAMES)
+                        val className = file.absolutePath.replace("$directoryPath/","")
+                        WovenInfoUtils.addClassName(className)
+                        if (AndroidAopConfig.verifyLeafExtends && !className.startsWith("kotlinx/") && !className.startsWith("kotlin/")){
+                            FileInputStream(file).use { inputs ->
+                                val classReader = ClassReader(inputs.readAllBytes())
+                                classReader.accept(
+                                    ClassSuperScanner(), ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+                            }
                         }
                     }
 
@@ -149,6 +154,14 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 AnnotationScanner(
                                     logger
                                 ), ClassReader.EXPAND_FRAMES)
+                        }
+                    }else if (entryName.endsWith(_CLASS)){
+                        if (AndroidAopConfig.verifyLeafExtends && !entryName.startsWith("kotlinx/") && !entryName.startsWith("kotlin/")){
+                            jarFile.getInputStream(jarEntry).use { inputs ->
+                                val classReader = ClassReader(inputs.readAllBytes())
+                                classReader.accept(
+                                    ClassSuperScanner(), ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+                            }
                         }
                     }
                 } catch (e: Exception) {

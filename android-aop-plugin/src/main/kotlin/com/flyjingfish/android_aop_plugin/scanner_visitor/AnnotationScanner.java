@@ -17,14 +17,14 @@ public class AnnotationScanner extends ClassVisitor {
     static final String MATCH_POINT = "Lcom/flyjingfish/android_aop_annotation/anno/AndroidAopMatch";
     boolean isAndroidAopClass;
     public AnnotationScanner(Logger logger) {
-        super(Opcodes.ASM8);
+        super(Opcodes.ASM9);
         this.logger = logger;
     }
-    @Override
-    public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-        super.visit(version, access, name, signature, superName, interfaces);
-        WovenInfoUtils.INSTANCE.addClassName(name);
-    }
+//    @Override
+//    public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+//        super.visit(version, access, name, signature, superName, interfaces);
+//        WovenInfoUtils.INSTANCE.addClassName(name);
+//    }
     @Override
     public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
         if (descriptor.contains(CLASS_POINT)){
@@ -42,7 +42,7 @@ public class AnnotationScanner extends ClassVisitor {
         String matchType = "EXTENDS";
         String excludeClasses;
         MethodAnnoVisitor() {
-            super(Opcodes.ASM8);
+            super(Opcodes.ASM9);
         }
         @Override
         public void visit(String name, Object value) {
@@ -93,7 +93,7 @@ public class AnnotationScanner extends ClassVisitor {
 
     class MyMethodVisitor extends MethodVisitor {
         MyMethodVisitor() {
-            super(Opcodes.ASM8);
+            super(Opcodes.ASM9);
         }
         @Override
         public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {

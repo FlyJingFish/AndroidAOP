@@ -10,6 +10,10 @@ open class AndroidAopConfig {
      */
     var debug = false
     /**
+     * 是否开启验证叶子继承，默认打开，如果没有设置 AndroidAopMatchClassMethod 的 type = MatchType.LEAF_EXTENDS，可以关闭
+     */
+    var verifyLeafExtends = true
+    /**
      * 包含规则
      */
     val includes = mutableListOf<String>()
@@ -32,5 +36,6 @@ open class AndroidAopConfig {
         var debug = false
         val includes = mutableListOf<String>()
         val excludes = mutableListOf<String>()
+        var verifyLeafExtends = true
     }
 }
