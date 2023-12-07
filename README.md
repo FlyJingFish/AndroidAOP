@@ -99,6 +99,9 @@ androidAopConfig {
     // exclude 是扫描时排除的包
     // 可排除 kotlin 相关，提高速度
     exclude 'kotlin.jvm', 'kotlin.internal','kotlinx.coroutines.internal', 'kotlinx.coroutines.android'
+    
+    // verifyLeafExtends 是否开启验证叶子继承，默认打开，如果没有设置 @AndroidAopMatchClassMethod 的 type = MatchType.LEAF_EXTENDS，可以关闭
+    verifyLeafExtends true
 }
 android {
     ...
