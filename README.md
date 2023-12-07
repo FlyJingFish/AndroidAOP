@@ -60,7 +60,8 @@ plugins {
 ```gradle
 //必须项 👇
 plugins {
-    id 'android.aop'
+    ...
+    id 'android.aop'//最好放在最后一行
 }
 ```
 
