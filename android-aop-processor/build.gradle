@@ -8,6 +8,6 @@ javadoc {
 apply from: "$rootDir/gradle/java_base.gradle"
 apply from: "$rootDir/gradle/java_publish.gradle"
 dependencies {
-    implementation 'com.squareup:javapoet:1.13.0'
+    implementation libs.javapoet
     implementation project(path: ':android-aop-annotation')
 }

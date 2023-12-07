@@ -13,9 +13,9 @@ apply from: "$rootDir/gradle/java_publish.gradle"
 dependencies {
     implementation gradleApi()
     implementation localGroovy()
-    implementation 'com.android.tools.build:gradle:8.0.0'
-    implementation 'org.ow2.asm:asm:9.6'
-    implementation 'org.ow2.asm:asm-commons:9.6'
-    implementation 'org.javassist:javassist:3.29.2-GA'
-    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation libs.gradle
+    implementation libs.asm.lib
+    implementation libs.asm.commons
+    implementation libs.javassist
+    implementation libs.gson
 }
