@@ -17,7 +17,7 @@ public enum MatchType {
      */
     DIRECT_EXTENDS,
     /**
-     * 表示的匹配的是 <em><strong>末端继承（就是没有子类了）</strong></em> 自 {@link AndroidAopMatchClassMethod#targetClassName()} 设置的类<br>
+     * 表示的匹配的是 <em><strong>末端继承（就是没有子类了，最终子类）</strong></em> 自 {@link AndroidAopMatchClassMethod#targetClassName()} 设置的类<br>
      * 默认不扫描 kotlin/ 和kotlinx/ 这两个包下的代码
      */
     LEAF_EXTENDS
