@@ -13,6 +13,7 @@ import com.flyjingfish.android_aop_core.annotations.IOThread
 import com.flyjingfish.android_aop_core.annotations.MainThread
 import com.flyjingfish.android_aop_core.annotations.OnLifecycle
 import com.flyjingfish.android_aop_core.annotations.Permission
+import com.flyjingfish.android_aop_core.annotations.Scheduled
 import com.flyjingfish.android_aop_core.annotations.SingleClick
 import com.flyjingfish.android_aop_core.annotations.TryCatch
 import com.flyjingfish.android_aop_core.enums.ThreadType

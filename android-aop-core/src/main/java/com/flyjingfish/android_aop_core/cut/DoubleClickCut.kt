@@ -4,7 +4,7 @@ import android.view.View
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
 import com.flyjingfish.android_aop_core.annotations.DoubleClick
 
-class DoubleClickCut : ClickCut<DoubleClick>() {
+internal class DoubleClickCut : ClickCut<DoubleClick>() {
     override fun invoke(joinPoint: ProceedJoinPoint, anno: DoubleClick): Any? {
         var view: View? = null
         joinPoint.args?.let {

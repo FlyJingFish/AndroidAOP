@@ -10,7 +10,7 @@ import com.flyjingfish.android_aop_annotation.base.BasePointCut
 import com.flyjingfish.android_aop_core.annotations.OnLifecycle
 import com.flyjingfish.android_aop_core.utils.AppExecutors
 
-class OnLifecycleCut : BasePointCut<OnLifecycle> {
+internal class OnLifecycleCut : BasePointCut<OnLifecycle> {
     override fun invoke(joinPoint: ProceedJoinPoint, anno: OnLifecycle): Any? {
         if (Looper.getMainLooper() == Looper.myLooper()) {
             invokeLifecycle(joinPoint, anno)

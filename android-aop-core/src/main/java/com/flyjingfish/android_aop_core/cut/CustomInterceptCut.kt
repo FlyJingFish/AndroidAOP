@@ -5,7 +5,7 @@ import com.flyjingfish.android_aop_annotation.base.BasePointCut
 import com.flyjingfish.android_aop_core.annotations.CustomIntercept
 import com.flyjingfish.android_aop_core.utils.AndroidAop
 
-class CustomInterceptCut : BasePointCut<CustomIntercept> {
+internal class CustomInterceptCut : BasePointCut<CustomIntercept> {
     override fun invoke(
         joinPoint: ProceedJoinPoint,
         anno: CustomIntercept

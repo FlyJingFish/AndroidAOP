@@ -6,7 +6,7 @@ import com.flyjingfish.android_aop_core.annotations.Permission
 import com.flyjingfish.android_aop_core.listeners.OnRequestPermissionListener
 import com.flyjingfish.android_aop_core.utils.AndroidAop
 
-class PermissionCut : BasePointCut<Permission> {
+internal class PermissionCut : BasePointCut<Permission> {
     override fun invoke(joinPoint: ProceedJoinPoint, anno: Permission): Any? {
         if (AndroidAop.getOnPermissionsInterceptListener() == null){
             return joinPoint.proceed()

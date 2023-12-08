@@ -7,7 +7,7 @@ import com.flyjingfish.android_aop_core.annotations.TryCatch
 import com.flyjingfish.android_aop_core.utils.AndroidAop
 import com.flyjingfish.android_aop_core.utils.Utils
 
-class TryCatchCut : BasePointCut<TryCatch> {
+internal class TryCatchCut : BasePointCut<TryCatch> {
     override fun invoke(joinPoint: ProceedJoinPoint, anno: TryCatch): Any? {
         var result: Any?
         try {

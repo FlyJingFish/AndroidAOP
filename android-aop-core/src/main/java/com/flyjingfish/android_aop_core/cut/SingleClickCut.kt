@@ -4,7 +4,7 @@ import android.view.View
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
 import com.flyjingfish.android_aop_core.annotations.SingleClick
 
-class SingleClickCut : ClickCut<SingleClick>() {
+internal class SingleClickCut : ClickCut<SingleClick>() {
     override fun invoke(joinPoint: ProceedJoinPoint, anno: SingleClick): Any? {
         var view: View? = null
         joinPoint.args?.let {

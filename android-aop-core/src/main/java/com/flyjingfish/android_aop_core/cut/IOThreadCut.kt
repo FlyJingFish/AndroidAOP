@@ -7,7 +7,7 @@ import com.flyjingfish.android_aop_core.annotations.IOThread
 import com.flyjingfish.android_aop_core.enums.ThreadType
 import com.flyjingfish.android_aop_core.utils.AppExecutors
 
-class IOThreadCut : BasePointCut<IOThread> {
+internal class IOThreadCut : BasePointCut<IOThread> {
     override fun invoke(joinPoint: ProceedJoinPoint, anno: IOThread): Any? {
         return if (Looper.getMainLooper() != Looper.myLooper()){
             joinPoint.proceed()
