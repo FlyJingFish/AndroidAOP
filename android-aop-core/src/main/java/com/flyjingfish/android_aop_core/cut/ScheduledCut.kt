@@ -7,12 +7,14 @@ import com.flyjingfish.android_aop_annotation.base.BasePointCut
 import com.flyjingfish.android_aop_core.annotations.Scheduled
 import com.flyjingfish.android_aop_core.utils.AppExecutors
 import com.flyjingfish.android_aop_core.utils.Utils
+import java.util.UUID
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 internal class ScheduledCut:BasePointCut<Scheduled> {
     override fun invoke(joinPoint: ProceedJoinPoint, anno: Scheduled): Any? {
         val stopRunnable : Runnable
+        val uuid = UUID.randomUUID().toString()
         if (anno.isOnMainThread){
             val handler = Handler(Looper.getMainLooper())
             if (anno.id.isNotEmpty()){
@@ -64,7 +66,7 @@ internal class ScheduledCut:BasePointCut<Scheduled> {
             },anno.initialDelay,anno.interval, TimeUnit.MILLISECONDS)
         }
         AppExecutors.mainThread().execute {
-            Utils.invokeLifecycle(joinPoint,stopRunnable)
+            Utils.invokeLifecycle(joinPoint,stopRunnable,uuid)
         }
         return null
     }

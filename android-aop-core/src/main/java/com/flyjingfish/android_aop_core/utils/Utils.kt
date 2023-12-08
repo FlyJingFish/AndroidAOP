@@ -27,7 +27,7 @@ internal object Utils {
         } else cls.simpleName
     }
 
-    fun invokeLifecycle(joinPoint: ProceedJoinPoint, stopRunnable : Runnable) {
+    fun invokeLifecycle(joinPoint: ProceedJoinPoint, stopRunnable : Runnable,key :String) {
         when (val target = joinPoint.target) {
             is LifecycleOwner -> {
                 addObserver(target, stopRunnable)
@@ -39,6 +39,8 @@ internal object Utils {
                     if (arg1 is LifecycleOwner){
                         addObserver(arg1, stopRunnable)
                     }
+                }else{
+                    ObserveTargetUtils.observeTarget(joinPoint,key)
                 }
             }
         }
