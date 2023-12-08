@@ -124,8 +124,8 @@ android {
 | @OnLifecycle     |                                 value = Lifecycle.Event                                 |            监听生命周期的操作，加入此注解可使你的方法内的代码在对应生命周期内才去执行            |
 | @TryCatch        |                                  value = 你自定义加的一个flag                                   |                加入此注解可为您的方法包裹一层 try catch 代码                 |
 | @Permission      |                                    value = 权限的字符串数组                                     |                申请权限的操作，加入此注解可使您的代码在获取权限后才执行                 |
-| @Scheduled       | initialDelay = 延迟开始时间，interval = 间隔，repeatCount = 重复次数，isOnMainThread = 是否主线程，id = 唯一标识 | 定时任务，加入此注解，可使你的方法每隔一段时间执行一次，调用AndroidAop.shutdownNow(id)可停止 |
-| @Delay           |                      delay = 延迟时间，isOnMainThread = 是否主线程，id = 唯一标识                      | 延迟任务，加入此注解，可使你的方法延迟一段时间执行，调用AndroidAop.shutdownNow(id)可立即停止 |
+| @Scheduled       | initialDelay = 延迟开始时间<br>interval = 间隔<br>repeatCount = 重复次数<br>isOnMainThread = 是否主线程<br>id = 唯一标识 | 定时任务，加入此注解，可使你的方法每隔一段时间执行一次，调用AndroidAop.shutdownNow(id)可停止 |
+| @Delay           |                      delay = 延迟时间<br>isOnMainThread = 是否主线程<br>id = 唯一标识                      | 延迟任务，加入此注解，可使你的方法延迟一段时间执行，调用AndroidAop.shutdownNow(id)可立即停止 |
 | @CustomIntercept |                               value = 你自定义加的一个字符串数组的flag                                |  自定义拦截，配合 AndroidAop.setOnCustomInterceptListener 使用，属于万金油  |
 
 [上述注解使用示例都在这](https://github.com/FlyJingFish/AndroidAOP/blob/master/app/src/main/java/com/flyjingfish/androidaop/MainActivity.kt#L128)
