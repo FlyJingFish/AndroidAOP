@@ -44,7 +44,7 @@
 buildscript {
     dependencies {
         //必须项 👇
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.1.7'
+        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.1.8'
     }
 }
 plugins {
@@ -76,12 +76,12 @@ plugins {
 
 dependencies {
     //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.1.7'
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.1.7'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.1.8'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.1.8'
     //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.1.7'
+    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.1.8'
     //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.1.7'
+    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.1.8'
     //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
 }
 ```
@@ -115,16 +115,18 @@ android {
 
 ### 本库内置了一些功能注解可供你直接使用
 
-| 注解名称             |            参数说明            |                           功能说明                            |
-|------------------|:--------------------------:|:---------------------------------------------------------:|
-| @SingleClick     |  value = 快速点击的间隔，默认1000ms  |                单击注解，加入此注解，可使你的方法只有单击时才可进入                 |
-| @DoubleClick     | value = 两次点击的最大用时，默认300ms  |                 双击注解，加入此注解，可使你的方法双击时才可进入                  |
-| @IOThread        |     ThreadType = 线程类型      |             切换到子线程的操作，加入此注解可使你的方法内的代码切换到子线程执行             |
-| @MainThread      |            无参数             |             切换到主线程的操作，加入此注解可使你的方法内的代码切换到主线程执行             |
-| @OnLifecycle     |  value = Lifecycle.Event   |           监听生命周期的操作，加入此注解可使你的方法内的代码在对应生命周期内才去执行           |
-| @TryCatch        |    value = 你自定义加的一个flag    |               加入此注解可为您的方法包裹一层 try catch 代码                |
-| @Permission      |      value = 权限的字符串数组      |               申请权限的操作，加入此注解可使您的代码在获取权限后才执行                |
-| @CustomIntercept | value = 你自定义加的一个字符串数组的flag | 自定义拦截，配合 AndroidAop.setOnCustomInterceptListener 使用，属于万金油 |
+| 注解名称             |                                          参数说明                                           |                            功能说明                             |
+|------------------|:---------------------------------------------------------------------------------------:|:-----------------------------------------------------------:|
+| @SingleClick     |                                value = 快速点击的间隔，默认1000ms                                 |                 单击注解，加入此注解，可使你的方法只有单击时才可进入                  |
+| @DoubleClick     |                                value = 两次点击的最大用时，默认300ms                                |                  双击注解，加入此注解，可使你的方法双击时才可进入                   |
+| @IOThread        |                                    ThreadType = 线程类型                                    |              切换到子线程的操作，加入此注解可使你的方法内的代码切换到子线程执行              |
+| @MainThread      |                                           无参数                                           |              切换到主线程的操作，加入此注解可使你的方法内的代码切换到主线程执行              |
+| @OnLifecycle     |                                 value = Lifecycle.Event                                 |            监听生命周期的操作，加入此注解可使你的方法内的代码在对应生命周期内才去执行            |
+| @TryCatch        |                                  value = 你自定义加的一个flag                                   |                加入此注解可为您的方法包裹一层 try catch 代码                 |
+| @Permission      |                                    value = 权限的字符串数组                                     |                申请权限的操作，加入此注解可使您的代码在获取权限后才执行                 |
+| @Scheduled       | initialDelay = 延迟开始时间，interval = 间隔，repeatCount = 重复次数，isOnMainThread = 是否主线程，id = 唯一标识 | 定时任务，加入此注解，可使你的方法每隔一段时间执行一次，调用AndroidAop.shutdownNow(id)可停止 |
+| @Delay           |                      delay = 延迟时间，isOnMainThread = 是否主线程，id = 唯一标识                      | 延迟任务，加入此注解，可使你的方法延迟一段时间执行，调用AndroidAop.shutdownNow(id)可立即停止 |
+| @CustomIntercept |                               value = 你自定义加的一个字符串数组的flag                                |  自定义拦截，配合 AndroidAop.setOnCustomInterceptListener 使用，属于万金油  |
 
 [上述注解使用示例都在这](https://github.com/FlyJingFish/AndroidAOP/blob/master/app/src/main/java/com/flyjingfish/androidaop/MainActivity.kt#L128)
 

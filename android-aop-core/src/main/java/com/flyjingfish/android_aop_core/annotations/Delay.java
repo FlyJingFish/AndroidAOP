@@ -25,7 +25,7 @@ public @interface Delay {
      *
      * @return 延迟多久开始执行方法，单位是毫秒
      */
-    long delay() default 0L;
+    long delay();
     /**
      *
      * @return 是否在主线程执行，默认主线程
