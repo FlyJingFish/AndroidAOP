@@ -8,14 +8,14 @@ import com.flyjingfish.android_aop_annotation.enums.MatchType
 import com.flyjingfish.test_lib.ToastUtils
 
 @AndroidAopMatchClassMethod(
-    targetClassName = "com.flyjingfish.androidaop.test.Base1",
-    methodName = ["getTest"],
-    type = MatchType.EXTENDS
+    targetClassName = "com.flyjingfish.androidaop.ThirdActivity.Companion",
+    methodName = ["start"],
+    type = MatchType.SELF
 )
-class MatchRound : MatchClassMethod {
+class MatchCompanionStart : MatchClassMethod {
     override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
-        Log.e("MatchRound", "======$methodName");
-        ToastUtils.makeText(ToastUtils.app,"MatchRound======$methodName")
+        Log.e("MatchStart", "======$methodName")
+//        ToastUtils.makeText(ToastUtils.app,"======$methodName")
         return joinPoint.proceed()
     }
 }

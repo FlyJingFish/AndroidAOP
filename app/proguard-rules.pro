@@ -21,17 +21,58 @@
 #-renamesourcefileattribute SourceFile
 
 # AndroidAop必备混淆规则 -----start-----
+#-keep class * {
+#    @androidx.annotation.Keep <fields>;
+#}
+#
+#-keep @com.flyjingfish.android_aop_core.annotations.* class * {*;}
+#-keep @com.flyjingfish.android_aop_annotation.anno.* class * {*;}
+#-keep class * {
+#    @com.flyjingfish.android_aop_core.annotations.* <fields>;
+#    @com.flyjingfish.android_aop_annotation.anno.* <fields>;
+#}
+#-keepclassmembers class * {
+#    @com.flyjingfish.android_aop_core.annotations.* <methods>;
+#    @com.flyjingfish.android_aop_annotation.anno.* <methods>;
+#}
+#
+#-keepnames class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut
+#-keepnames class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod
+#-keep class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut{
+#    public <init>();
+#}
+#-keepclassmembers class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut{
+#    <methods>;
+#}
+#
+#-keep class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod{
+#    public <init>();
+#}
+#-keepclassmembers class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod{
+#    <methods>;
+#}
+
+# AndroidAop必备混淆规则 -----end-----
 
 
--keep @com.flyjingfish.android_aop_core.annotations.* class * {*;}
--keep @com.flyjingfish.android_aop_annotation.anno.* class * {*;}
+# 你自定义的混淆规则 -----start-----
+#-keep @com.flyjingfish.test_lib.annotation.* class * {*;}
+#-keep class * {
+#    @com.flyjingfish.test_lib.annotation.* <fields>;
+#}
+#-keepclassmembers class * {
+#    @com.flyjingfish.test_lib.annotation.* <methods>;
+#}
+#-keepnames class * extends androidx.appcompat.app.AppCompatActivity{
+#    void startActivity(...);
+#}
+
+# 你自定义的混淆规则 -----end-----
+
+
+# AndroidAop必备混淆规则 -----start-----
 -keep class * {
-    @com.flyjingfish.android_aop_core.annotations.* <fields>;
-    @com.flyjingfish.android_aop_annotation.anno.* <fields>;
-}
--keepclassmembers class * {
-    @com.flyjingfish.android_aop_core.annotations.* <methods>;
-    @com.flyjingfish.android_aop_annotation.anno.* <methods>;
+    @androidx.annotation.Keep <fields>;
 }
 
 -keepnames class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut
@@ -39,30 +80,8 @@
 -keep class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut{
     public <init>();
 }
--keepclassmembers class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut{
-    <methods>;
-}
-
 -keep class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod{
     public <init>();
 }
--keepclassmembers class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod{
-    <methods>;
-}
 
 # AndroidAop必备混淆规则 -----end-----
-
-
-# 你自定义的混淆规则 -----start-----
--keep @com.flyjingfish.test_lib.annotation.* class * {*;}
--keep class * {
-    @com.flyjingfish.test_lib.annotation.* <fields>;
-}
--keepclassmembers class * {
-    @com.flyjingfish.test_lib.annotation.* <methods>;
-}
--keepnames class * extends androidx.appcompat.app.AppCompatActivity{
-    void startActivity(...);
-}
-
-# 你自定义的混淆规则 -----end-----

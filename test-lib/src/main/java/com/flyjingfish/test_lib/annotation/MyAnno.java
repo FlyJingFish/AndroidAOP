@@ -1,7 +1,5 @@
 package com.flyjingfish.test_lib.annotation;
 
-import androidx.annotation.Keep;
-
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopPointCut;
 import com.flyjingfish.test_lib.mycut.MyAnnoCut;
 
@@ -13,6 +11,5 @@ import java.lang.annotation.Target;
 @AndroidAopPointCut(MyAnnoCut.class)
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@Keep
 public @interface MyAnno {
 }

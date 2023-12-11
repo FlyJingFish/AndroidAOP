@@ -28,4 +28,8 @@ public class Round extends Base2{
     public int getNumber() {
         return 1;
     }
+
+    public Test getTest(Test test) {
+        return test;
+    }
 }

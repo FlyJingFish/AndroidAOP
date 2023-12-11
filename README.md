@@ -350,15 +350,8 @@ class MatchOnClick : MatchClassMethod {
 ```
 # AndroidAop必备混淆规则 -----start-----
 
--keep @com.flyjingfish.android_aop_core.annotations.* class * {*;}
--keep @com.flyjingfish.android_aop_annotation.anno.* class * {*;}
 -keep class * {
-    @com.flyjingfish.android_aop_core.annotations.* <fields>;
-    @com.flyjingfish.android_aop_annotation.anno.* <fields>;
-}
--keepclassmembers class * {
-    @com.flyjingfish.android_aop_core.annotations.* <methods>;
-    @com.flyjingfish.android_aop_annotation.anno.* <methods>;
+    @androidx.annotation.Keep <fields>;
 }
 
 -keepnames class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut
@@ -366,40 +359,12 @@ class MatchOnClick : MatchClassMethod {
 -keep class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut{
     public <init>();
 }
--keepclassmembers class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut{
-    <methods>;
-}
-
 -keep class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod{
     public <init>();
-}
--keepclassmembers class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod{
-    <methods>;
 }
 
 # AndroidAop必备混淆规则 -----end-----
 ```
-
-如果你自己写了新的切面代码，记得加上你的混淆规则
-
-如果你用到了 **@AndroidAopPointCut** 做切面，那你需要对你自己写的注解类做如下处理
-
-下边的 **com.flyjingfish.test_lib.annotation** 就是你自定义的注解存放包名，你可以将你的注解类统一放到一个包下
-
-```
-# 你自定义的混淆规则 -----start-----
--keep @com.flyjingfish.test_lib.annotation.* class * {*;}
--keep class * {
-    @com.flyjingfish.test_lib.annotation.* <fields>;
-}
--keepclassmembers class * {
-    @com.flyjingfish.test_lib.annotation.* <methods>;
-}
-# 你自定义的混淆规则 -----end-----
-```
-
-如果你用到了 **@AndroidAopMatchClassMethod** 做切面 无需多做处理
-
 
 
 ### 赞赏
