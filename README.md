@@ -106,7 +106,7 @@ androidAopConfig {
     
     // verifyLeafExtends 是否开启验证叶子继承，默认打开，如果没有设置 @AndroidAopMatchClassMethod 的 type = MatchType.LEAF_EXTENDS，可以关闭
     verifyLeafExtends true
-    //默认关闭，开启在 Build 或 打包后 将会生成切点信息json文件在 /build/tmp/cutInfo.json
+    //默认关闭，开启在 Build 或 打包后 将会生成切点信息json文件在 app/build/tmp/cutInfo.json
     cutInfoJson false
 }
 android {
