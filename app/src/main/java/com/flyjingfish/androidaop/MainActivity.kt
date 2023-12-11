@@ -46,6 +46,7 @@ class MainActivity: BaseActivity2() {
             }
 
         })
+
 //        binding.btnDoubleClick.setOnClickListener {
 //            onDoubleClick()
 //        }

@@ -8,7 +8,7 @@ import com.flyjingfish.android_aop_annotation.enums.MatchType
 
 @AndroidAopMatchClassMethod(
     targetClassName = "android.view.View.OnClickListener",
-    methodName = ["onClick"],
+    methodName = ["void onClick(android.view.View)"],
     type = MatchType.LEAF_EXTENDS
 )
 class MatchOnClick : MatchClassMethod {

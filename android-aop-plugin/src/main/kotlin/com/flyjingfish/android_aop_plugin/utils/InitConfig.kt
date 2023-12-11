@@ -2,6 +2,7 @@ package com.flyjingfish.android_aop_plugin.utils
 
 import com.android.build.gradle.internal.coverage.JacocoReportTask
 import com.flyjingfish.android_aop_plugin.beans.CutClassesJson
+import com.flyjingfish.android_aop_plugin.beans.CutClassesJsonMap
 import com.flyjingfish.android_aop_plugin.beans.CutJson
 import com.flyjingfish.android_aop_plugin.beans.CutJsonMap
 import com.flyjingfish.android_aop_plugin.beans.CutMethodJson
@@ -118,11 +119,11 @@ object InitConfig {
         val cutClasses = cutJson.cutClasses
         var cutClassesJsonMap = cutClasses[className]
         if (cutClassesJsonMap == null){
-            val cutClassesJson = CutClassesJson(className)
+            val cutClassesJson = CutClassesJsonMap(className)
             cutClasses[className] = cutClassesJson
             cutClassesJsonMap = cutClassesJson
         }
-        cutClassesJsonMap.method.add(cutMethodJson)
+        cutClassesJsonMap.method[cutMethodJson.toString()] = cutMethodJson
 
     }
 
@@ -132,9 +133,16 @@ object InitConfig {
             cutInfoMap.forEach{ (_,cutInfo) ->
                 if (cutInfo != null){
                     val cutJson = CutJson(cutInfo.type,cutInfo.className)
+                    var count = 0
                     cutInfo.cutClasses.forEach{(_,cutClasses) ->
-                        cutJson.cutClasses.add(cutClasses)
+                        val cutClassesJson = CutClassesJson(cutClasses.className,cutClasses.method.size)
+                        cutJson.cutClasses.add(cutClassesJson)
+                        cutClasses.method.forEach { (_, cutMethodJson) ->
+                            cutClassesJson.method.add(cutMethodJson)
+                            count++
+                        }
                     }
+                    cutJson.cutCount = count
                     cutJsons.add(cutJson)
                 }
             }
