@@ -31,7 +31,7 @@ public @interface Scheduled {
     long interval();
 
     /**
-     * 不限次数
+     * {@link Scheduled#repeatCount} 不限次数
      */
     int INFINITE = -1;
 

@@ -29,9 +29,7 @@ internal object Utils {
 
     fun invokeLifecycle(joinPoint: ProceedJoinPoint, stopRunnable : Runnable) {
         when (val target = joinPoint.target) {
-            is LifecycleOwner -> {
-                addObserver(target, stopRunnable)
-            }
+            is LifecycleOwner -> addObserver(target, stopRunnable)
             else -> {
                 val args = joinPoint.args
                 if (!args.isNullOrEmpty()) {
