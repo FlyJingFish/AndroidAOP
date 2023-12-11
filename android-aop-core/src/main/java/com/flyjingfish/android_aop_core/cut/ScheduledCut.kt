@@ -12,6 +12,9 @@ import java.util.concurrent.TimeUnit
 
 internal class ScheduledCut:BasePointCut<Scheduled> {
     override fun invoke(joinPoint: ProceedJoinPoint, anno: Scheduled): Any? {
+        if (anno.repeatCount == 0){
+            return null
+        }
         val stopRunnable : Runnable
         if (anno.isOnMainThread){
             val handler = Handler(Looper.getMainLooper())
