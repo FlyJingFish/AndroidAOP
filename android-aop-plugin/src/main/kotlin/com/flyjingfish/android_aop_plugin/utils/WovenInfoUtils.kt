@@ -25,7 +25,8 @@ object WovenInfoUtils {
         return aopMethodCuts.contains(anno)
     }
     fun getAnnoInfo(info: String): AopMethodCut? {
-        return aopMethodCuts[info]
+        val anno = "@" + info.substring(1, info.length).replace("/", ".").replace(";", "")
+        return aopMethodCuts[anno]
     }
 
     fun addMatchInfo(info: AopMatchCut) {

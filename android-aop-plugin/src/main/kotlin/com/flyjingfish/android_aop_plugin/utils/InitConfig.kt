@@ -92,6 +92,47 @@ object InitConfig {
         isInit = count == 3
         return isInit
     }
+/*
 
+[{
+		"type": "注解",
+		"className": "注解全名",
+		"cutClasses": [{
+			"className": "切入点类",
+			"method": [{
+					"name": "test",
+					"returnType": "",
+					"paramTypes": "int,double"
+				},
+				{
+					"name": "test",
+					"returnType": "",
+					"paramTypes": "int,double"
+				}
+			]
+		}]
+
+	},
+	{
+		"type": "匹配",
+		"className": "匹配全名",
+		"cutClasses": [{
+			"className": "切入点类",
+			"method": [{
+					"name": "test",
+					"returnType": "",
+					"paramTypes": "int,double"
+				},
+				{
+					"name": "test",
+					"returnType": "",
+					"paramTypes": "int,double"
+				}
+			]
+		}]
+
+	}
+]
+ */
 
 }

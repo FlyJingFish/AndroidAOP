@@ -178,6 +178,7 @@ public class AnnotationMethodScanner extends ClassNode {
 //            logger.error("AnnotationMethodScanner MyMethodVisitor type: " + descriptor);
             if (WovenInfoUtils.INSTANCE.isContainAnno(descriptor)) {
                 boolean isBack = true;
+                StringBuilder paramStr = new StringBuilder();
                 try {
                     ClassPool classPool = ClassPoolUtils.INSTANCE.getClassPool();
 //                    InputStream byteArrayInputStream = new ByteArrayInputStream(classByte);
@@ -189,11 +190,26 @@ public class AnnotationMethodScanner extends ClassNode {
                     CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
                     if (codeAttribute == null) {
                         isBack = false;
+                    }else {
+                        CtClass[] ctClasses = ctMethod.getParameterTypes();
+                        paramStr.append("(");
+                        int length = ctClasses.length;
+                        for (int i = 0; i < length; i++) {
+                            paramStr.append(ctClasses[i].getName());
+                            if (i != length - 1) {
+                                paramStr.append(",");
+                            }
+                        }
+                        paramStr.append(")");
+
+                        CtClass returnCtClass = ctMethod.getReturnType();
+                        String returnType = returnCtClass.getName();
                     }
                 } catch (Exception ignored) {
                 }
                 if (onCallBackMethod != null && isBack) {
                     onCallBackMethod.onBackName(methodName);
+
                 }
             }
             return super.visitAnnotation(descriptor, visible);
