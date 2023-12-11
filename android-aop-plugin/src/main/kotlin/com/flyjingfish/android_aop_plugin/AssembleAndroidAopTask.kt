@@ -10,6 +10,7 @@ import com.flyjingfish.android_aop_plugin.scanner_visitor.RegisterMapWovenInfoCo
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import com.flyjingfish.android_aop_plugin.utils.AndroidConfig
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
+import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.printLog
@@ -337,6 +338,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             }
             jarFile.close()
         }
+        InitConfig.exportCutInfo()
     }
 
 }

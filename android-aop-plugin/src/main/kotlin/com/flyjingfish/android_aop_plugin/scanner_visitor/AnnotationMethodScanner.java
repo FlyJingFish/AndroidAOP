@@ -1,10 +1,16 @@
 package com.flyjingfish.android_aop_plugin.scanner_visitor;
 
 import com.flyjingfish.android_aop_plugin.beans.AopMatchCut;
+import com.flyjingfish.android_aop_plugin.beans.AopMethodCut;
+import com.flyjingfish.android_aop_plugin.beans.CutClassesJson;
+import com.flyjingfish.android_aop_plugin.beans.CutJson;
+import com.flyjingfish.android_aop_plugin.beans.CutMethodJson;
 import com.flyjingfish.android_aop_plugin.beans.LambdaMethod;
 import com.flyjingfish.android_aop_plugin.beans.MatchMethodInfo;
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord;
+import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig;
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils;
+import com.flyjingfish.android_aop_plugin.utils.InitConfig;
 import com.flyjingfish.android_aop_plugin.utils.Utils;
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils;
 
@@ -24,6 +30,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -179,6 +186,7 @@ public class AnnotationMethodScanner extends ClassNode {
             if (WovenInfoUtils.INSTANCE.isContainAnno(descriptor)) {
                 boolean isBack = true;
                 StringBuilder paramStr = new StringBuilder();
+                String returnType = null;
                 try {
                     ClassPool classPool = ClassPoolUtils.INSTANCE.getClassPool();
 //                    InputStream byteArrayInputStream = new ByteArrayInputStream(classByte);
@@ -190,7 +198,7 @@ public class AnnotationMethodScanner extends ClassNode {
                     CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
                     if (codeAttribute == null) {
                         isBack = false;
-                    }else {
+                    }else if (AndroidAopConfig.Companion.getCutInfoJson()){
                         CtClass[] ctClasses = ctMethod.getParameterTypes();
                         paramStr.append("(");
                         int length = ctClasses.length;
@@ -203,13 +211,18 @@ public class AnnotationMethodScanner extends ClassNode {
                         paramStr.append(")");
 
                         CtClass returnCtClass = ctMethod.getReturnType();
-                        String returnType = returnCtClass.getName();
+                        returnType = returnCtClass.getName();
                     }
                 } catch (Exception ignored) {
                 }
-                if (onCallBackMethod != null && isBack) {
-                    onCallBackMethod.onBackName(methodName);
-
+                if (isBack) {
+                    if (onCallBackMethod != null){
+                        onCallBackMethod.onBackName(methodName);
+                    }
+                    AopMethodCut aopMethodCut = WovenInfoUtils.INSTANCE.getAnnoInfo(descriptor);
+                    if (aopMethodCut != null && AndroidAopConfig.Companion.getCutInfoJson()){
+                        InitConfig.INSTANCE.putCutInfo("注解切面",Utils.INSTANCE.slashToDotClassName(className),aopMethodCut.getAnno(),new CutMethodJson(methodName.getMethodName(),paramStr.toString(),returnType));
+                    }
                 }
             }
             return super.visitAnnotation(descriptor, visible);
@@ -226,6 +239,8 @@ public class AnnotationMethodScanner extends ClassNode {
                     MatchMethodInfo matchMethodInfo = Utils.INSTANCE.getMethodInfo(methodName);
                     if (matchMethodInfo != null && name.equals(matchMethodInfo.getName())) {
                         boolean isBack = true;
+                        StringBuilder paramStr = new StringBuilder();
+                        String returnType = null;
                         try {
                             ClassPool classPool = ClassPoolUtils.INSTANCE.getClassPool();
                             String clsName = Utils.INSTANCE.slashToDot(className);
@@ -233,26 +248,25 @@ public class AnnotationMethodScanner extends ClassNode {
 //                            InputStream byteArrayInputStream = new ByteArrayInputStream(classByte);
 //                            CtClass ctClass = classPool.makeClass(byteArrayInputStream);
                             CtMethod ctMethod = WovenIntoCode.INSTANCE.getCtMethod(ctClass, name, descriptor);
-                            if (matchMethodInfo.getParamTypes() != null) {
-                                CtClass[] ctClasses = ctMethod.getParameterTypes();
-                                StringBuilder paramStr = new StringBuilder();
-                                paramStr.append("(");
-                                int length = ctClasses.length;
-                                for (int i = 0; i < length; i++) {
-                                    paramStr.append(ctClasses[i].getName());
-                                    if (i != length - 1) {
-                                        paramStr.append(",");
-                                    }
+                            CtClass[] ctClasses = ctMethod.getParameterTypes();
+                            paramStr.append("(");
+                            int length = ctClasses.length;
+                            for (int i = 0; i < length; i++) {
+                                paramStr.append(ctClasses[i].getName());
+                                if (i != length - 1) {
+                                    paramStr.append(",");
                                 }
-                                paramStr.append(")");
+                            }
+                            paramStr.append(")");
+                            if (matchMethodInfo.getParamTypes() != null) {
                                 //有设置参数类型这一项
                                 if (!paramStr.toString().equals(matchMethodInfo.getParamTypes())) {
                                     isBack = false;
                                 }
                             }
+                            CtClass returnCtClass = ctMethod.getReturnType();
+                            returnType = returnCtClass.getName();
                             if (matchMethodInfo.getReturnType() != null) {
-                                CtClass returnCtClass = ctMethod.getReturnType();
-                                String returnType = returnCtClass.getName();
                                 //有设置返回类型这一项
                                 if (!returnType.equals(matchMethodInfo.getReturnType())) {
                                     isBack = false;
@@ -268,6 +282,9 @@ public class AnnotationMethodScanner extends ClassNode {
                         }
                         if (isBack) {
                             cacheMethodRecords.add(new MethodRecord(name, descriptor, aopMatchCut.getCutClassName()));
+                            if (AndroidAopConfig.Companion.getCutInfoJson()){
+                                InitConfig.INSTANCE.putCutInfo("匹配切面",Utils.INSTANCE.slashToDotClassName(className),aopMatchCut.getCutClassName(),new CutMethodJson(name,paramStr.toString(),returnType));
+                            }
                         }
                         break;
                     }
@@ -351,16 +368,18 @@ public class AnnotationMethodScanner extends ClassNode {
                             MatchMethodInfo matchMethodInfo = Utils.INSTANCE.getMethodInfo(aopMatchCutMethodName);
                             if (isMatch && matchMethodInfo != null && name.equals(matchMethodInfo.getName())) {
                                 boolean isBack = true;
+                                StringBuilder paramStr = new StringBuilder();
+                                String returnType = null;
                                 try {
                                     ClassPool classPool = ClassPoolUtils.INSTANCE.getClassPool();
                                     CtMethod ctMethod = null;
-                                    if (matchMethodInfo.getParamTypes() != null || matchMethodInfo.getReturnType() != null) {
+                                    if (matchMethodInfo.getParamTypes() != null || matchMethodInfo.getReturnType() != null || AndroidAopConfig.Companion.getCutInfoJson()) {
                                         CtClass ctClass = classPool.get(lambdaMethod.getOriginalClassName());
                                         ctMethod = WovenIntoCode.INSTANCE.getCtMethod(ctClass, name, descriptor);
                                     }
-                                    if (matchMethodInfo.getParamTypes() != null && ctMethod != null) {
+                                    if (ctMethod != null) {
                                         CtClass[] ctClasses = ctMethod.getParameterTypes();
-                                        StringBuilder paramStr = new StringBuilder();
+
                                         paramStr.append("(");
                                         int length = ctClasses.length;
                                         for (int i = 0; i < length; i++) {
@@ -371,15 +390,15 @@ public class AnnotationMethodScanner extends ClassNode {
                                         }
                                         paramStr.append(")");
                                         //有设置参数类型这一项
-                                        if (!paramStr.toString().equals(matchMethodInfo.getParamTypes())) {
+                                        if (matchMethodInfo.getParamTypes() != null && !paramStr.toString().equals(matchMethodInfo.getParamTypes())) {
                                             isBack = false;
                                         }
                                     }
-                                    if (matchMethodInfo.getReturnType() != null && ctMethod != null) {
+                                    if (ctMethod != null) {
                                         CtClass returnCtClass = ctMethod.getReturnType();
-                                        String returnType = returnCtClass.getName();
+                                        returnType = returnCtClass.getName();
                                         //有设置返回类型这一项
-                                        if (!returnType.equals(matchMethodInfo.getReturnType())) {
+                                        if (matchMethodInfo.getReturnType() != null && !returnType.equals(matchMethodInfo.getReturnType())) {
                                             isBack = false;
                                         }
                                     }
@@ -391,6 +410,9 @@ public class AnnotationMethodScanner extends ClassNode {
                                     MethodRecord methodRecord = new MethodRecord(lambdaMethod.getLambdaName(), lambdaMethod.getLambdaDesc(), aopMatchCut.getCutClassName());
                                     if (onCallBackMethod != null) {
                                         onCallBackMethod.onBackName(methodRecord);
+                                    }
+                                    if (AndroidAopConfig.Companion.getCutInfoJson()){
+                                        InitConfig.INSTANCE.putCutInfo("匹配切面",lambdaMethod.getThisClassName()+"$lambda$",aopMatchCut.getCutClassName(),new CutMethodJson(name,paramStr.toString(),returnType));
                                     }
                                 }
                             }

@@ -1,7 +1,13 @@
 package com.flyjingfish.android_aop_plugin.utils
 
 import com.android.build.gradle.internal.coverage.JacocoReportTask
+import com.flyjingfish.android_aop_plugin.beans.CutClassesJson
+import com.flyjingfish.android_aop_plugin.beans.CutJson
+import com.flyjingfish.android_aop_plugin.beans.CutJsonMap
+import com.flyjingfish.android_aop_plugin.beans.CutMethodJson
 import com.flyjingfish.android_aop_plugin.beans.WovenInfo
+import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
+import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig.Companion.cutInfoJson
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.gradle.api.Project
@@ -15,6 +21,8 @@ import java.nio.file.Paths
 object InitConfig {
     private lateinit var temporaryDir: File
     private lateinit var buildConfigCacheFile: File
+    private lateinit var cutInfoFile: File
+    private val cutInfoMap = mutableMapOf<String, CutJsonMap?>()
     var isInit: Boolean = false
     private val gson: Gson = GsonBuilder().create()
     fun <T> optFromJsonString(jsonString: String, clazz: Class<T>): T? {
@@ -91,6 +99,48 @@ object InitConfig {
         JacocoReportTask.JacocoReportWorkerAction.logger.error("buildConfig = $wovenInfo")
         isInit = count == 3
         return isInit
+    }
+
+    fun initCutInfo(project: Project):Boolean{
+        temporaryDir = File(project.buildDir.absolutePath+"/tmp")
+        cutInfoFile = File(temporaryDir, "cutInfo.json")
+
+        return isInit
+    }
+
+    fun putCutInfo(type :String,className: String,anno:String,cutMethodJson: CutMethodJson){
+        var cutJson = cutInfoMap[anno]
+        if (cutJson == null){
+            val cutJsonMap = CutJsonMap(type,anno)
+            cutInfoMap[anno] = cutJsonMap
+            cutJson = cutJsonMap
+        }
+        val cutClasses = cutJson.cutClasses
+        var cutClassesJsonMap = cutClasses[className]
+        if (cutClassesJsonMap == null){
+            val cutClassesJson = CutClassesJson(className)
+            cutClasses[className] = cutClassesJson
+            cutClassesJsonMap = cutClassesJson
+        }
+        cutClassesJsonMap.method.add(cutMethodJson)
+
+    }
+
+    fun exportCutInfo(){
+        if (cutInfoJson){
+            val cutJsons = mutableListOf<CutJson>()
+            cutInfoMap.forEach{ (_,cutInfo) ->
+                if (cutInfo != null){
+                    val cutJson = CutJson(cutInfo.type,cutInfo.className)
+                    cutInfo.cutClasses.forEach{(_,cutClasses) ->
+                        cutJson.cutClasses.add(cutClasses)
+                    }
+                    cutJsons.add(cutJson)
+                }
+            }
+//            saveFile(cutInfoFile,Gson().toJson(cutInfoMap))
+            saveFile(cutInfoFile,Gson().toJson(cutJsons))
+        }
     }
 /*
 

@@ -14,6 +14,10 @@ open class AndroidAopConfig {
      */
     var verifyLeafExtends = true
     /**
+     * 是否生成切点信息Json
+     */
+    var cutInfoJson = false
+    /**
      * 包含规则
      */
     val includes = mutableListOf<String>()
@@ -37,5 +41,6 @@ open class AndroidAopConfig {
         val includes = mutableListOf<String>()
         val excludes = mutableListOf<String>()
         var verifyLeafExtends = true
+        var cutInfoJson = false
     }
 }
