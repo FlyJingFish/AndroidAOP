@@ -20,7 +20,9 @@
 
 5、本库支持切点方法为 Lambda 表达式的情况
 
-**6、本库不是基于 AspectJ 实现的，织入代码量极少，侵入性极低**
+6、本库支持生成所有切点信息Json文件，方便一览所有切点位置
+
+**7、本库不是基于 AspectJ 实现的，织入代码量极少，侵入性极低**
 
 
 #### [点此下载apk,也可扫下边二维码下载](https://github.com/FlyJingFish/AndroidAOP/blob/master/apk/release/app-release.apk?raw=true)
@@ -44,7 +46,7 @@
 buildscript {
     dependencies {
         //必须项 👇
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.1.9'
+        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.2.0'
     }
 }
 plugins {
@@ -76,12 +78,12 @@ plugins {
 
 dependencies {
     //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.1.9'
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.1.9'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.2.0'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.2.0'
     //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.1.9'
+    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.2.0'
     //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.1.9'
+    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.2.0'
     //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
 }
 ```
@@ -104,6 +106,8 @@ androidAopConfig {
     
     // verifyLeafExtends 是否开启验证叶子继承，默认打开，如果没有设置 @AndroidAopMatchClassMethod 的 type = MatchType.LEAF_EXTENDS，可以关闭
     verifyLeafExtends true
+    //默认关闭，开启后将会生成切点信息json文件在 /build/tmp/cutInfo.json
+    cutInfoJson true
 }
 android {
     ...
