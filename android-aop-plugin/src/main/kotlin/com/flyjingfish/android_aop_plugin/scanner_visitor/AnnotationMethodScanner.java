@@ -38,7 +38,7 @@ public class AnnotationMethodScanner extends ClassNode {
     private final OnCallBackMethod onCallBackMethod;
 //    private final byte[] classByte;
     private final List<AopMatchCut> aopMatchCuts = new ArrayList<>();
-    private final List<MethodRecord> cacheMethodRecords = new ArrayList<>();
+//    private final List<MethodRecord> cacheMethodRecords = new ArrayList<>();
     private String className;
 
     public AnnotationMethodScanner(Logger logger,OnCallBackMethod onCallBackMethod) {
@@ -256,7 +256,10 @@ public class AnnotationMethodScanner extends ClassNode {
                         } catch (Exception ignored) {
                         }
                         if (isBack) {
-                            cacheMethodRecords.add(new MethodRecord(name, descriptor, aopMatchCut.getCutClassName()));
+                            if (onCallBackMethod != null) {
+                                onCallBackMethod.onBackName(new MethodRecord(name, descriptor, aopMatchCut.getCutClassName()));
+                            }
+//                            cacheMethodRecords.add(new MethodRecord(name, descriptor, aopMatchCut.getCutClassName()));
                             if (AndroidAopConfig.Companion.getCutInfoJson()){
                                 InitConfig.INSTANCE.putCutInfo("匹配切面",Utils.INSTANCE.slashToDot(className),aopMatchCut.getCutClassName(),new CutMethodJson(name,descriptor,false));
                             }
@@ -399,13 +402,13 @@ public class AnnotationMethodScanner extends ClassNode {
         });
 
 
-        if (aopMatchCuts.size() > 0) {
-            for (MethodRecord cacheMethodRecord : cacheMethodRecords) {
-                if (onCallBackMethod != null) {
-                    onCallBackMethod.onBackName(cacheMethodRecord);
-                }
-            }
-        }
+//        if (aopMatchCuts.size() > 0) {
+//            for (MethodRecord cacheMethodRecord : cacheMethodRecords) {
+//                if (onCallBackMethod != null) {
+//                    onCallBackMethod.onBackName(cacheMethodRecord);
+//                }
+//            }
+//        }
 
 
 

@@ -40,14 +40,18 @@ object WovenInfoUtils {
             methodsRecord = HashMap<String, MethodRecord>()
             classMethodRecords[classMethodRecord.classFile] = methodsRecord
         }
-        val key = classMethodRecord.methodName.methodName + classMethodRecord.methodName.descriptor;
-        methodsRecord[key] = classMethodRecord.methodName
+        val key = classMethodRecord.methodName.methodName + classMethodRecord.methodName.descriptor
+        if (methodsRecord.contains(key)){
+            if (!classMethodRecord.methodName.cutClassName.isNullOrEmpty()){
+                methodsRecord[key] = classMethodRecord.methodName
+            }
+        }else{
+            methodsRecord[key] = classMethodRecord.methodName
+        }
     }
 
     fun getClassMethodRecord(classFile:String):HashMap<String, MethodRecord>?{
-        val methodsRecord: HashMap<String, MethodRecord>? =
-            classMethodRecords[classFile]
-        return methodsRecord
+        return classMethodRecords[classFile]
     }
 
     fun getMatchInfo(classFile:String): AopMatchCut?{

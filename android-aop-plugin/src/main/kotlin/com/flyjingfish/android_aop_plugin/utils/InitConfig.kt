@@ -7,7 +7,6 @@ import com.flyjingfish.android_aop_plugin.beans.CutJson
 import com.flyjingfish.android_aop_plugin.beans.CutJsonMap
 import com.flyjingfish.android_aop_plugin.beans.CutMethodJson
 import com.flyjingfish.android_aop_plugin.beans.WovenInfo
-import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig.Companion.cutInfoJson
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -26,7 +25,7 @@ object InitConfig {
     private val cutInfoMap = mutableMapOf<String, CutJsonMap?>()
     var isInit: Boolean = false
     private val gson: Gson = GsonBuilder().create()
-    fun <T> optFromJsonString(jsonString: String, clazz: Class<T>): T? {
+    private fun <T> optFromJsonString(jsonString: String, clazz: Class<T>): T? {
         try {
             return gson.fromJson(jsonString, clazz)
         } catch (e: Throwable) {
@@ -35,7 +34,7 @@ object InitConfig {
         return null
     }
 
-    fun optToJsonString(any: Any): String {
+    private fun optToJsonString(any: Any): String {
         try {
             return gson.toJson(any)
         } catch (throwable: Throwable) {
@@ -44,7 +43,7 @@ object InitConfig {
         return ""
     }
 
-    fun loadBuildConfig(buildConfigCacheFile: File): WovenInfo {
+    private fun loadBuildConfig(buildConfigCacheFile: File): WovenInfo {
         return if (buildConfigCacheFile.exists()) {
             val jsonString = readAsString(buildConfigCacheFile.absolutePath)
             optFromJsonString(jsonString, WovenInfo::class.java) ?: WovenInfo()
@@ -59,7 +58,8 @@ object InitConfig {
         wovenInfo.classPaths = WovenInfoUtils.classPaths
         saveFile(buildConfigCacheFile, optToJsonString(wovenInfo))
     }
-    fun saveFile(file: File, data:String) {
+    private fun saveFile(file: File, data:String) {
+        temporaryDirMkdirs()
         val fos = FileOutputStream(file.absolutePath)
         try {
             fos.write(data.toByteArray())
@@ -69,7 +69,7 @@ object InitConfig {
             fos.close()
         }
     }
-    fun readAsString(path :String) :String {
+    private fun readAsString(path :String) :String {
         return try {
             val content = String(Files.readAllBytes(Paths.get(path)));
             content
@@ -146,9 +146,17 @@ object InitConfig {
                     cutJsons.add(cutJson)
                 }
             }
-//            saveFile(cutInfoFile,Gson().toJson(cutInfoMap))
-            saveFile(cutInfoFile,Gson().toJson(cutJsons))
+            val json = GsonBuilder().setPrettyPrinting().create().toJson(cutJsons)
+
+            saveFile(cutInfoFile,json)
         }
+    }
+
+    private fun temporaryDirMkdirs(){
+        if (!temporaryDir.exists()){
+            temporaryDir.mkdirs()
+        }
+
     }
 /*
 
