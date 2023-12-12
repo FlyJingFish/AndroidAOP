@@ -88,7 +88,7 @@ object WovenInfoUtils {
 
     fun isLeaf(className:String):Boolean{
         for (classSuperInfo in classSuperList) {
-            if (classSuperInfo.superName == className || (classSuperInfo.interfaces.contains(className))){
+            if (classSuperInfo.superName == className || (classSuperInfo.interfaces?.contains(className) == true)){
                 return false
             }
         }
