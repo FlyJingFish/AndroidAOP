@@ -46,7 +46,7 @@
 buildscript {
     dependencies {
         //必须项 👇
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.2.0'
+        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.2.1'
     }
 }
 plugins {
@@ -78,12 +78,12 @@ plugins {
 
 dependencies {
     //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.2.0'
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.2.0'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.2.1'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.2.1'
     //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.2.0'
+    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.2.1'
     //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.2.0'
+    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.2.1'
     //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
 }
 ```
