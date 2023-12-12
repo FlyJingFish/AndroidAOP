@@ -85,8 +85,6 @@ public class AnnotationMethodScanner extends ClassNode {
                             || (Utils.INSTANCE.slashToDotClassName(aopMatchCut.getBaseClassName()).equals(Utils.INSTANCE.slashToDotClassName(superName)))
                     ) {
                         isDirectExtends = true;
-//                        this.isDescendantClass = true;
-//                        AnnotationMethodScanner.this.aopMatchCuts.add(aopMatchCut);
                     }
                     //isDirectExtends 为true 说明是直接继承
                     if (AopMatchCut.MatchType.DIRECT_EXTENDS.name().equals(aopMatchCut.getMatchType())){
@@ -97,19 +95,11 @@ public class AnnotationMethodScanner extends ClassNode {
                         boolean isExtends = false;
                         if (isDirectExtends){
                             isExtends = true;
-
                         }else {
                             String clsName = Utils.INSTANCE.slashToDotClassName(className);
                             String parentClsName = aopMatchCut.getBaseClassName();
                             if (!clsName.equals(Utils.INSTANCE.slashToDotClassName(parentClsName))) {
-                                try {
-
-                                    isExtends = Utils.INSTANCE.isInstanceof(clsName,Utils.INSTANCE.slashToDotClassName(parentClsName));
-//                        logger.error("isInstanceof="+isInstanceof);
-                                } catch (NotFoundException e) {
-                                    e.printStackTrace();
-                                }
-
+                                isExtends = Utils.INSTANCE.isInstanceof(clsName,Utils.INSTANCE.slashToDotClassName(parentClsName));
                             }
                         }
                         if (isExtends && WovenInfoUtils.INSTANCE.isLeaf(className)){
@@ -122,16 +112,9 @@ public class AnnotationMethodScanner extends ClassNode {
                             String clsName = Utils.INSTANCE.slashToDotClassName(className);
                             String parentClsName = aopMatchCut.getBaseClassName();
                             if (!clsName.equals(Utils.INSTANCE.slashToDotClassName(parentClsName))) {
-                                try {
-
-                                    boolean isInstanceof = Utils.INSTANCE.isInstanceof(clsName,Utils.INSTANCE.slashToDotClassName(parentClsName));
-//                        logger.error("isInstanceof="+isInstanceof);
-                                    if (isInstanceof){
-                                        AnnotationMethodScanner.this.aopMatchCuts.add(aopMatchCut);
-                                    }
-
-                                } catch (NotFoundException e) {
-                                    e.printStackTrace();
+                                boolean isInstanceof = Utils.INSTANCE.isInstanceof(clsName,Utils.INSTANCE.slashToDotClassName(parentClsName));
+                                if (isInstanceof){
+                                    AnnotationMethodScanner.this.aopMatchCuts.add(aopMatchCut);
                                 }
 
                             }
@@ -279,7 +262,6 @@ public class AnnotationMethodScanner extends ClassNode {
         super.visitEnd();
 
         this.methods.forEach(methodNode -> {
-//            logger.error(className+"======methods.forEach=");
             for (AbstractInsnNode node : methodNode.instructions) {
                 if (node instanceof InvokeDynamicInsnNode tmpNode) {
                     String desc = tmpNode.desc;
@@ -293,10 +275,9 @@ public class AnnotationMethodScanner extends ClassNode {
                             Type samMethodType = (Type) bsmArgs[0];
                     Handle methodName = (Handle) bsmArgs[1];
                     //sam 实现方法实际参数描述符
-//                            Type implMethodType = (Type) bsmArgs[2];
+//                  Type implMethodType = (Type) bsmArgs[2];
 
                     String lambdaName = methodName.getName();
-//                    String bsmMethodNameAndDescriptor = samMethodName + samMethodType.getDescriptor();
                     String thisClassName = Utils.INSTANCE.slashToDot(samBase.substring(1).replaceAll(";","")).replaceAll("\\$", ".");
                     String originalClassName = Utils.INSTANCE.slashToDot(samBase.substring(1).replaceAll(";",""));
 //                    logger.error("className="+className+",tmpNode.name="+tmpNode.name+",desc=" + desc + ",samBase=" + samBase + ",samMethodName="
@@ -310,15 +291,10 @@ public class AnnotationMethodScanner extends ClassNode {
 
             }
             if (lambdaMethodList.size() > 0){
-//            logger.error(className+"======lambdaMethodList="+lambdaMethodList);
                 WovenInfoUtils.INSTANCE.getAopMatchCuts().forEach((key, aopMatchCut) -> {
-//                if (className.contains("MainActivity")){
-//                    logger.error("======aopMatchCut="+aopMatchCut+"=size"+WovenInfoUtils.INSTANCE.getAopMatchCuts().size());
-//                }
                     if (!AopMatchCut.MatchType.SELF.name().equals(aopMatchCut.getMatchType()) && aopMatchCut.getMethodNames().length == 1){
                         for (LambdaMethod lambdaMethod : lambdaMethodList) {
                             boolean isDirectExtends = Utils.INSTANCE.slashToDotClassName(aopMatchCut.getBaseClassName()).equals(lambdaMethod.getThisClassName());
-//                            logger.error("lambdaMethod="+lambdaMethod+",parent="+parent);
                             boolean isMatch = false;
 
                             if (AopMatchCut.MatchType.DIRECT_EXTENDS.name().equals(aopMatchCut.getMatchType())){
@@ -329,13 +305,7 @@ public class AnnotationMethodScanner extends ClassNode {
                                 if (!isMatch){
                                     String clsName = lambdaMethod.getThisClassName();
                                     String parentClsName = aopMatchCut.getBaseClassName();
-                                    try {
-                                        isMatch = Utils.INSTANCE.isInstanceof(clsName,Utils.INSTANCE.slashToDotClassName(parentClsName));
-//                                        logger.error("className="+className+"lambdaMethod="+lambdaMethod+",isInstanceof="+parent);
-
-                                    } catch (NotFoundException e) {
-                                        e.printStackTrace();
-                                    }
+                                    isMatch = Utils.INSTANCE.isInstanceof(clsName,Utils.INSTANCE.slashToDotClassName(parentClsName));
                                 }
                             }
 
@@ -378,9 +348,7 @@ public class AnnotationMethodScanner extends ClassNode {
                                             isBack = false;
                                         }
                                     }
-//                            logger.error("paramStr="+paramStr+",returnType="+returnType+",matchMethodInfo="+matchMethodInfo);
                                 } catch (Exception ignored) {
-//                                    ignored.printStackTrace();
                                 }
                                 if (isBack) {
                                     MethodRecord methodRecord = new MethodRecord(lambdaMethod.getLambdaName(), lambdaMethod.getLambdaDesc(), aopMatchCut.getCutClassName());

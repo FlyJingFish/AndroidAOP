@@ -124,17 +124,21 @@ object Utils {
         return matchMethodInfo
     }
 
-    @Throws(NotFoundException::class)
     fun isInstanceof(classNameKey: String, instanceofClassNameKey: String): Boolean {
         val className: String? = WovenInfoUtils.getClassString(classNameKey)
         val instanceofClassName: String? = WovenInfoUtils.getClassString(instanceofClassNameKey)
         if (className == null || instanceofClassName == null){
             return false
         }
-        val pool = ClassPoolUtils.classPool
-        val clazz = pool!!.get(className)
-        val instanceofClazz = pool.get(instanceofClassName)
-        return clazz.subtypeOf(instanceofClazz)
+        val subtypeOf = try {
+            val pool = ClassPoolUtils.classPool
+            val clazz = pool!!.get(className)
+            val instanceofClazz = pool.get(instanceofClassName)
+            clazz.subtypeOf(instanceofClazz)
+        } catch (e: Exception) {
+            false
+        }
+        return subtypeOf
     }
 
     fun computeMD5(string: String): String? {
