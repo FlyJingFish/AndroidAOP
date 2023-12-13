@@ -388,3 +388,13 @@ class MatchOnClick : MatchClassMethod {
 
 <img src="/screenshot/qq.png" width="220"/>
 
+### 最后推荐我写的另外一些库
+
+- [OpenImage 轻松实现在应用内点击小图查看大图的动画放大效果](https://github.com/FlyJingFish/OpenImage)
+
+- [ShapeImageView 支持显示任意图形，只有你想不到没有它做不到](https://github.com/FlyJingFish/ShapeImageView)
+
+- [FormatTextViewLib 支持部分文本设置加粗、斜体、大小、下划线、删除线，下划线支持自定义距离、颜色、线的宽度；支持添加网络或本地图片](https://github.com/FlyJingFish/FormatTextViewLib)
+
+- [主页查看更多开源库](https://github.com/FlyJingFish)
+
