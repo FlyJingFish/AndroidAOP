@@ -55,7 +55,6 @@ buildscript {
 }
 ```
 
-[Kotlin 和 KSP Github 的匹配版本号列表](https://github.com/google/ksp/releases)
 
 2、在 **app** 的 ```build.gradle``` 添加
 
@@ -89,6 +88,7 @@ plugins {
     id 'com.google.devtools.ksp' version '1.8.0-1.0.9' apply false
 }
 ```
+[Kotlin 和 KSP Github 的匹配版本号列表](https://github.com/google/ksp/releases)
 
 ### 三、引入依赖库(必须)
 
