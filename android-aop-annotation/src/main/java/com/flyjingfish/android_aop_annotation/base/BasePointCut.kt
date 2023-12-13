@@ -1,9 +1,10 @@
 package com.flyjingfish.android_aop_annotation.base
 
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopPointCut
 
 /**
- * 注解切面的回调接口与 [com.flyjingfish.android_aop_annotation.anno.AndroidAopPointCut] 配合使用
+ * 注解切面的回调接口与 [AndroidAopPointCut] 配合使用
  */
 interface BasePointCut<T : Annotation> {
     /**
