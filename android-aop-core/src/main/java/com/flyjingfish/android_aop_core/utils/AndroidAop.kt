@@ -52,9 +52,7 @@ object AndroidAop {
      */
     fun shutdownNow(key:String){
         AppExecutors.scheduledExecutorMap()[key]?.shutdownNow()
-        AppExecutors.scheduledHandlerMap()[key]?.removeCallbacksAndMessages(null)
-        AppExecutors.scheduledExecutorMap().remove(key)
-        AppExecutors.scheduledHandlerMap().remove(key)
+        stopTask(key)
     }
 
     /**
@@ -62,6 +60,10 @@ object AndroidAop {
      */
     fun shutdown(key:String){
         AppExecutors.scheduledExecutorMap()[key]?.shutdown()
+        stopTask(key)
+    }
+
+    private fun stopTask(key:String){
         AppExecutors.scheduledHandlerMap()[key]?.removeCallbacksAndMessages(null)
         AppExecutors.scheduledExecutorMap().remove(key)
         AppExecutors.scheduledHandlerMap().remove(key)
