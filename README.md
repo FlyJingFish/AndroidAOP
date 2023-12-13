@@ -40,9 +40,9 @@
 **在开始之前可以给项目一个Star吗？非常感谢，你的支持是我唯一的动力。欢迎Star和Issues!**
 
 
-### 一、引入插件，下边两种方式二选一（必须）
+#### 一、引入插件，下边两种方式二选一（必须）
 
-#### 方式一：```plugins``` 方式
+##### 方式一：```plugins``` 方式
 
 直接在 **app** 的 ```build.gradle``` 添加
 
@@ -54,7 +54,7 @@ plugins {
 }
 ```
 
-#### 方式二：```apply``` 方式
+##### 方式二：```apply``` 方式
 
 1、在 **项目根目录** 的 ```build.gradle``` 里依赖插件
 
@@ -88,7 +88,7 @@ plugins {
 
 
 
-### 二、如果你需要自定义切面，并且代码是 ```Kotlin``` (非必须)
+#### 二、如果你需要自定义切面，并且代码是 ```Kotlin``` (非必须)
 
 1、在 **项目根目录** 的 ```build.gradle``` 里依赖插件
 
@@ -100,7 +100,7 @@ plugins {
 ```
 [Kotlin 和 KSP Github 的匹配版本号列表](https://github.com/google/ksp/releases)
 
-### 三、引入依赖库(必须)
+#### 三、引入依赖库(必须)
 
 ```gradle
 plugins {
@@ -121,7 +121,7 @@ dependencies {
 ```
 **提示：ksp 或 annotationProcessor只是在当前 module 起作用，在哪个 module 中有自定义切面代码就加在哪个 module，必须依赖项可以通过 api 方式只加到公共 module 上**
 
-### 四、在 app 的build.gradle添加 androidAopConfig 配置项（此步为可选配置项）
+#### 四、在 app 的build.gradle添加 androidAopConfig 配置项（此步为可选配置项）
 
 ```gradle
 plugins {
