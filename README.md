@@ -42,7 +42,19 @@
 
 ### 一、引入插件，下边两种方式二选一（必须）
 
-#### 方式一：```apply``` 方式
+#### 方式一：```plugins``` 方式
+
+直接在 **app** 的 ```build.gradle``` 添加
+
+```gradle
+//必须项 👇
+plugins {
+    ...
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.2.3"
+}
+```
+
+#### 方式二：```apply``` 方式
 
 1、在 **项目根目录** 的 ```build.gradle``` 里依赖插件
 
@@ -54,7 +66,6 @@ buildscript {
     }
 }
 ```
-
 
 2、在 **app** 的 ```build.gradle``` 添加
 
@@ -75,17 +86,7 @@ plugins {
 }
 ```
 
-#### 方式二：```plugins``` 方式
 
-直接在 **app** 的 ```build.gradle``` 添加
-
-```gradle
-//必须项 👇
-plugins {
-    ...
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.2.3"
-}
-```
 
 ### 二、如果你需要自定义切面，并且代码是 ```Kotlin``` (非必须)
 
