@@ -7,6 +7,7 @@ import com.flyjingfish.android_aop_core.annotations.TryCatch
 import com.flyjingfish.android_aop_core.annotations.CustomIntercept
 import com.flyjingfish.android_aop_core.annotations.Permission
 import com.flyjingfish.android_aop_core.annotations.Scheduled
+import com.flyjingfish.android_aop_core.annotations.Delay
 
 object AndroidAop {
     private var onThrowableListener: OnThrowableListener? = null
@@ -47,7 +48,7 @@ object AndroidAop {
     }
 
     /**
-     * 与 [Scheduled.id] 配合使用，用于停止任务
+     * 与 [Scheduled.id] 或 [Delay.id] 配合使用，用于停止任务
      */
     fun shutdownNow(key:String){
         AppExecutors.scheduledExecutorMap()[key]?.shutdownNow()
@@ -57,7 +58,7 @@ object AndroidAop {
     }
 
     /**
-     * 与 [Scheduled.id] 配合使用，用于停止任务
+     * 与 [Scheduled.id] 或 [Delay.id] 配合使用，用于停止任务
      */
     fun shutdown(key:String){
         AppExecutors.scheduledExecutorMap()[key]?.shutdown()
