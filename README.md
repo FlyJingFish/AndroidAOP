@@ -58,6 +58,15 @@ buildscript {
 
 2、在 **app** 的 ```build.gradle``` 添加
 
+老版本
+
+```gradle
+//必须项 👇
+apply plugin: 'android.aop' //最好放在最后一行
+```
+
+或者新版本
+
 ```gradle
 //必须项 👇
 plugins {
