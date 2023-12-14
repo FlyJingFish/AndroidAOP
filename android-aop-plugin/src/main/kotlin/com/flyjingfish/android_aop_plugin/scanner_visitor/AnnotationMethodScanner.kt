@@ -64,14 +64,12 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
                 }
                 if (!exclude) {
                     var isImplementsInterface = false
-                    if (AopMatchCut.MatchType.EXTENDS.name == aopMatchCut.matchType) {
-                        if (interfaces != null) {
-                            for (anInterface in interfaces) {
-                                val inter = slashToDotClassName(anInterface)
-                                if (inter == slashToDotClassName(aopMatchCut.baseClassName)) {
-                                    isImplementsInterface = true
-                                    break
-                                }
+                    if (interfaces != null) {
+                        for (anInterface in interfaces) {
+                            val inter = slashToDotClassName(anInterface)
+                            if (inter == slashToDotClassName(aopMatchCut.baseClassName)) {
+                                isImplementsInterface = true
+                                break
                             }
                         }
                     }
