@@ -6,27 +6,14 @@ group = rootProject.group
 version = rootProject.version
 
 //def appVersionName = getAppVersionName()
-sourceSets {
-    main {
-        java {
-            srcDir 'src'
-        }
-        resources {
-            srcDir 'res'
-        }
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+javadoc {
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
     }
-}
-
-
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    archiveClassifier.set("javadoc")
-    from 'build/docs/javadoc'
-}
-
-task sourcesJar(type: Jar) {
-    archiveClassifier.set("sources")
-    from sourceSets.main.allSource
 }
 afterEvaluate {
     publishing {
@@ -34,8 +21,6 @@ afterEvaluate {
             mavenJava(MavenPublication) {
                 artifactId = PROJ_NAME
                 from(components.java)
-                artifact javadocJar
-                artifact sourcesJar
                 pom {
                     packaging = "jar"
                     name = PROJ_BASENAME
