@@ -75,7 +75,10 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
                             }
                         }
                     }
-                    if (isImplementsInterface || slashToDotClassName(aopMatchCut.baseClassName) == slashToDotClassName(superName!!)) {
+                    if (isImplementsInterface || slashToDotClassName(aopMatchCut.baseClassName) == slashToDotClassName(
+                            superName!!
+                        )
+                    ) {
                         isDirectExtends = true
                     }
                     //isDirectExtends 为true 说明是直接继承
@@ -91,7 +94,8 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
                             val clsName = slashToDotClassName(className)
                             val parentClsName = aopMatchCut.baseClassName
                             if (clsName != slashToDotClassName(parentClsName)) {
-                                isExtends = isInstanceof(clsName,slashToDotClassName(parentClsName))
+                                isExtends =
+                                    isInstanceof(clsName, slashToDotClassName(parentClsName))
                             }
                         }
                         if (isExtends && isLeaf(className)) {
@@ -104,7 +108,8 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
                             val clsName = slashToDotClassName(className)
                             val parentClsName = aopMatchCut.baseClassName
                             if (clsName != slashToDotClassName(parentClsName)) {
-                                val isInstanceof = isInstanceof(clsName,slashToDotClassName(parentClsName))
+                                val isInstanceof =
+                                    isInstanceof(clsName, slashToDotClassName(parentClsName))
                                 if (isInstanceof) {
                                     this@AnnotationMethodScanner.aopMatchCuts.add(aopMatchCut)
                                 }
@@ -113,7 +118,10 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
                     }
                 }
             }
-            if (AopMatchCut.MatchType.SELF.name == aopMatchCut.matchType && slashToDotClassName(aopMatchCut.baseClassName) == slashToDotClassName(name)) {
+            if (AopMatchCut.MatchType.SELF.name == aopMatchCut.matchType && slashToDotClassName(
+                    aopMatchCut.baseClassName
+                ) == slashToDotClassName(name)
+            ) {
                 this@AnnotationMethodScanner.aopMatchCuts.add(aopMatchCut)
             }
         }
@@ -163,9 +171,7 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
                     if (aopMethodCut != null && cutInfoJson) {
                         putCutInfo(
                             "注解切面", slashToDot(className), aopMethodCut.anno,
-                            CutMethodJson(
-                                methodName.methodName, methodName.descriptor, false
-                            )
+                            CutMethodJson(methodName.methodName, methodName.descriptor, false)
                         )
                     }
                 }
@@ -250,7 +256,7 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
             }
         }
         val myMethodVisitor = MyMethodVisitor(
-            access, name, descriptor, signature, exceptions, MethodRecord(name,descriptor, null)
+            access, name, descriptor, signature, exceptions, MethodRecord(name, descriptor, null)
         )
         methods.add(myMethodVisitor)
         return myMethodVisitor
@@ -314,7 +320,8 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
                                 isMatch = isDirectExtends
                                 if (!isMatch) {
                                     val parentClsName = aopMatchCut.baseClassName
-                                    isMatch = isInstanceof(clsName,slashToDotClassName(parentClsName))
+                                    isMatch =
+                                        isInstanceof(clsName, slashToDotClassName(parentClsName))
                                 }
                             }
                             val aopMatchCutMethodName = aopMatchCut.methodNames[0]
