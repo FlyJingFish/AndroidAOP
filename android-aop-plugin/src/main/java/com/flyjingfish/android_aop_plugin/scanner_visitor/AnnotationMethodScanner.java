@@ -29,7 +29,6 @@ import java.util.List;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
-import javassist.NotFoundException;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.MethodInfo;
 
