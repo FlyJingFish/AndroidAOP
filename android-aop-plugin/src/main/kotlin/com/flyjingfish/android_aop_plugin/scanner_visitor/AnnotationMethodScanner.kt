@@ -84,7 +84,7 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
                     //isDirectExtends 为true 说明是直接继承
                     if (AopMatchCut.MatchType.DIRECT_EXTENDS.name == aopMatchCut.matchType) {
                         if (isDirectExtends) {
-                            this@AnnotationMethodScanner.aopMatchCuts.add(aopMatchCut)
+                            aopMatchCuts.add(aopMatchCut)
                         }
                     } else if (AopMatchCut.MatchType.LEAF_EXTENDS.name == aopMatchCut.matchType) {
                         var isExtends = false
@@ -99,11 +99,11 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
                             }
                         }
                         if (isExtends && isLeaf(className)) {
-                            this@AnnotationMethodScanner.aopMatchCuts.add(aopMatchCut)
+                            aopMatchCuts.add(aopMatchCut)
                         }
                     } else {
                         if (isDirectExtends) {
-                            this@AnnotationMethodScanner.aopMatchCuts.add(aopMatchCut)
+                            aopMatchCuts.add(aopMatchCut)
                         } else {
                             val clsName = slashToDotClassName(className)
                             val parentClsName = aopMatchCut.baseClassName
@@ -111,7 +111,7 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
                                 val isInstanceof =
                                     isInstanceof(clsName, slashToDotClassName(parentClsName))
                                 if (isInstanceof) {
-                                    this@AnnotationMethodScanner.aopMatchCuts.add(aopMatchCut)
+                                    aopMatchCuts.add(aopMatchCut)
                                 }
                             }
                         }
@@ -122,7 +122,7 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
                     aopMatchCut.baseClassName
                 ) == slashToDotClassName(name)
             ) {
-                this@AnnotationMethodScanner.aopMatchCuts.add(aopMatchCut)
+                aopMatchCuts.add(aopMatchCut)
             }
         }
         super.visit(version, access, name, signature, superName, interfaces)
@@ -139,8 +139,8 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
         descriptor: String?,
         signature: String?,
         exceptions: Array<String?>?, var methodName: MethodRecord
-    ) : MethodNode( /* latest api = */Opcodes.ASM9,
-        access,
+    ) : MethodNode(
+        Opcodes.ASM9, access,
         name,
         descriptor,
         signature,
