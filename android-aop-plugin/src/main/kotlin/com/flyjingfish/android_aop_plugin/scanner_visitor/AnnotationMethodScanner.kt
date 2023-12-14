@@ -94,8 +94,7 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
                             val clsName = slashToDotClassName(className)
                             val parentClsName = aopMatchCut.baseClassName
                             if (clsName != slashToDotClassName(parentClsName)) {
-                                isExtends =
-                                    isInstanceof(clsName, slashToDotClassName(parentClsName))
+                                isExtends = isInstanceof(clsName, slashToDotClassName(parentClsName))
                             }
                         }
                         if (isExtends && isLeaf(className)) {
@@ -108,8 +107,7 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
                             val clsName = slashToDotClassName(className)
                             val parentClsName = aopMatchCut.baseClassName
                             if (clsName != slashToDotClassName(parentClsName)) {
-                                val isInstanceof =
-                                    isInstanceof(clsName, slashToDotClassName(parentClsName))
+                                val isInstanceof = isInstanceof(clsName, slashToDotClassName(parentClsName))
                                 if (isInstanceof) {
                                     aopMatchCuts.add(aopMatchCut)
                                 }
@@ -156,8 +154,7 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
 //                    CtClass ctClass = classPool.makeClass(byteArrayInputStream);
                     val clsName = slashToDot(className)
                     val ctClass = classPool!![clsName]
-                    val ctMethod =
-                        getCtMethod(ctClass, methodName.methodName, methodName.descriptor)
+                    val ctMethod = getCtMethod(ctClass, methodName.methodName, methodName.descriptor)
                     val methodInfo = ctMethod!!.methodInfo
                     val codeAttribute = methodInfo.codeAttribute
                     if (codeAttribute == null) {
@@ -320,8 +317,7 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
                                 isMatch = isDirectExtends
                                 if (!isMatch) {
                                     val parentClsName = aopMatchCut.baseClassName
-                                    isMatch =
-                                        isInstanceof(clsName, slashToDotClassName(parentClsName))
+                                    isMatch = isInstanceof(clsName, slashToDotClassName(parentClsName))
                                 }
                             }
                             val aopMatchCutMethodName = aopMatchCut.methodNames[0]
