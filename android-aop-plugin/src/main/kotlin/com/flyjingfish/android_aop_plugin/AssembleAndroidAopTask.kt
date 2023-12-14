@@ -20,12 +20,9 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.OutputDirectories
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.objectweb.asm.ClassReader
-import org.objectweb.asm.ClassVisitor
-import org.objectweb.asm.Opcodes
 import java.io.BufferedOutputStream
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -199,12 +196,13 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 try {
                                     val classReader = ClassReader(bytes)
                                     classReader.accept(AnnotationMethodScanner(
-                                        logger
-                                    ) {
-                                        val record = ClassMethodRecord(file.absolutePath, it)
-                                        WovenInfoUtils.addClassMethodRecords(record)
-//                                        logger.error("Scanned method:[${file.absolutePath}][${it}]")
-                                    }, ClassReader.EXPAND_FRAMES)
+                                        logger,object :AnnotationMethodScanner.OnCallBackMethod{
+                                            override fun onBackName(methodRecord: MethodRecord) {
+                                                val record = ClassMethodRecord(file.absolutePath, methodRecord)
+                                                WovenInfoUtils.addClassMethodRecords(record)
+                                            }
+                                        }
+                                    ), ClassReader.EXPAND_FRAMES)
                                 } catch (e: Exception) {
                                 }
                             }
@@ -240,11 +238,13 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 try {
                                     val classReader = ClassReader(bytes)
                                     classReader.accept(AnnotationMethodScanner(
-                                        logger
-                                    ) {
-                                        val record = ClassMethodRecord(entryName, it)
-                                        WovenInfoUtils.addClassMethodRecords(record)
-                                    }, ClassReader.EXPAND_FRAMES)
+                                        logger,object :AnnotationMethodScanner.OnCallBackMethod{
+                                            override fun onBackName(methodRecord: MethodRecord) {
+                                                val record = ClassMethodRecord(entryName, methodRecord)
+                                                WovenInfoUtils.addClassMethodRecords(record)
+                                            }
+                                        }
+                                    ), ClassReader.EXPAND_FRAMES)
                                 } catch (e: Exception) {
                                 }
                             }
