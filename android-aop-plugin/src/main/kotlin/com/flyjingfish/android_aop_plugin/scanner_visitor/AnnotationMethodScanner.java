@@ -69,14 +69,12 @@ public class AnnotationMethodScanner extends ClassNode {
 
                 if (!exclude){
                     boolean isImplementsInterface = false;
-                    if (AopMatchCut.MatchType.EXTENDS.name().equals(aopMatchCut.getMatchType())){
-                        if (interfaces != null) {
-                            for (String anInterface : interfaces) {
-                                String inter = Utils.INSTANCE.slashToDotClassName(anInterface);
-                                if (inter.equals(Utils.INSTANCE.slashToDotClassName(aopMatchCut.getBaseClassName()))) {
-                                    isImplementsInterface = true;
-                                    break;
-                                }
+                    if (interfaces != null) {
+                        for (String anInterface : interfaces) {
+                            String inter = Utils.INSTANCE.slashToDotClassName(anInterface);
+                            if (inter.equals(Utils.INSTANCE.slashToDotClassName(aopMatchCut.getBaseClassName()))) {
+                                isImplementsInterface = true;
+                                break;
                             }
                         }
                     }
