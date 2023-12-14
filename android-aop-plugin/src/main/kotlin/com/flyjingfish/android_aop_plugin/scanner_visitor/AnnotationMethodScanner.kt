@@ -282,11 +282,8 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
                     //sam 实现方法实际参数描述符
 //                  Type implMethodType = (Type) bsmArgs[2];
                     val lambdaName = methodName.name
-                    val thisClassName = slashToDot(
-                        samBase.substring(1).replace(";".toRegex(), "")
-                    ).replace("$", ".")
-                    val originalClassName =
-                        slashToDot(samBase.substring(1).replace(";".toRegex(), ""))
+                    val originalClassName = slashToDot(samBase.substring(1).replace(";", ""))
+                    val thisClassName = originalClassName.replace("$", ".")
                     //                    logger.error("className="+className+",tmpNode.name="+tmpNode.name+",desc=" + desc + ",samBase=" + samBase + ",samMethodName="
 //                            + samMethodName + ",methodName=" + lambdaName+ ",methodDesc=" + methodName.getDesc()+",thisClassName="+thisClassName+
 //                            ",getDescriptor"+samMethodType.getDescriptor());
@@ -307,7 +304,7 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
             if (lambdaMethodList.size > 0) {
                 WovenInfoUtils.aopMatchCuts.forEach { (_: String?, aopMatchCut: AopMatchCut) ->
                     if (AopMatchCut.MatchType.SELF.name != aopMatchCut.matchType && aopMatchCut.methodNames.size == 1) {
-                        for ((_, descriptor, clsName, originalClassName, lambdaName, lambdaDesc) in lambdaMethodList) {
+                        for ((name, descriptor, clsName, originalClassName, lambdaName, lambdaDesc) in lambdaMethodList) {
                             val isDirectExtends =
                                 slashToDotClassName(aopMatchCut.baseClassName) == clsName
                             var isMatch = false
