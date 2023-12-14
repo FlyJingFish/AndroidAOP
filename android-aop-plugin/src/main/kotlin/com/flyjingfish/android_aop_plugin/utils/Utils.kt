@@ -121,6 +121,18 @@ object Utils {
             }
             matchMethodInfo.paramTypes = params
         }
+
+        if (matchMethodInfo?.returnType == "suspend"){
+            //说明是协程函数
+            matchMethodInfo.returnType = "java.lang.Object"
+            if (matchMethodInfo.paramTypes == "()"){
+                matchMethodInfo.paramTypes = matchMethodInfo.paramTypes?.replace(")","kotlin.coroutines.Continuation)")
+            }else if (!matchMethodInfo.paramTypes.isNullOrEmpty()){
+                matchMethodInfo.paramTypes = matchMethodInfo.paramTypes?.replace(")",",kotlin.coroutines.Continuation)")
+            }
+
+        }
+
         return matchMethodInfo
     }
 
