@@ -27,6 +27,11 @@ import com.flyjingfish.test_lib.BaseActivity
 import com.flyjingfish.test_lib.LocaleTransform
 import com.flyjingfish.test_lib.TestMatch
 import com.flyjingfish.test_lib.annotation.MyAnno2
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.lang.Thread.sleep
 
 class MainActivity: BaseActivity2() {
 
@@ -122,6 +127,12 @@ class MainActivity: BaseActivity2() {
             testMatch.test2(1,"2")
 
             LocaleTransform.getLanguage(1)
+
+            GlobalScope.launch {
+                getData2(1)
+                val arg1 = getData(1)
+                setLogcat("GlobalScope---arg1=$arg1")
+            }
         }
 
         binding.tvLogcat.setOnClickListener { binding.tvLogcat.text = "日志:（点此清除）\n" }
@@ -185,4 +196,23 @@ class MainActivity: BaseActivity2() {
         setLogcat("自定义Kotlin 注解切面进入方法")
     }
 
+    suspend fun getData2(num:Int){
+        return withContext(Dispatchers.IO) {
+            getDelayResult2()
+        }
+    }
+    suspend fun getData(num:Int) :Int{
+        return withContext(Dispatchers.IO) {
+            getDelayResult()
+        }
+    }
+
+    fun getDelayResult():Int{
+        sleep(5000)
+        return 200
+    }
+
+    fun getDelayResult2(){
+        sleep(5000)
+    }
 }
