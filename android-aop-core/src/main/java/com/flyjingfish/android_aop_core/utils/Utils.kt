@@ -1,10 +1,13 @@
 package com.flyjingfish.android_aop_core.utils
 
+import android.content.Context
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
+import com.flyjingfish.android_aop_core.AndroidAopContentProvider
 
 internal object Utils {
     /**
@@ -70,6 +73,14 @@ internal object Utils {
                     }
                 })
             }
+        }
+    }
+
+    fun toast(text: CharSequence, duration: Int){
+        if (AndroidAop.getOnToastListener() != null){
+            AndroidAop.getOnToastListener()?.onToast(AndroidAopContentProvider.appContext, text, duration)
+        }else{
+            Toast.makeText(AndroidAopContentProvider.appContext,text, duration).show()
         }
     }
 }
