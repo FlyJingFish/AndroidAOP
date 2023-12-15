@@ -7,6 +7,7 @@ import android.os.Looper
 import android.view.View
 import android.view.View.OnClickListener
 import androidx.lifecycle.Lifecycle
+import com.flyjingfish.android_aop_core.annotations.CheckNetwork
 import com.flyjingfish.android_aop_core.annotations.CustomIntercept
 import com.flyjingfish.android_aop_core.annotations.DoubleClick
 import com.flyjingfish.android_aop_core.annotations.IOThread
@@ -87,7 +88,7 @@ class MainActivity: BaseActivity2() {
         }
         binding.btnMatchClassMethod.setOnClickListener {
             setLogcat("匹配类-方法切面 继承自的 androidx.appcompat.app.AppCompatActivity 的 startActivity 方法")
-            startActivity(Intent(this,SecondActivity::class.java))
+            toSecondActivity()
         }
         binding.btnTopFun.setOnClickListener {
             testTopFun()
@@ -136,6 +137,11 @@ class MainActivity: BaseActivity2() {
         }
 
         binding.tvLogcat.setOnClickListener { binding.tvLogcat.text = "日志:（点此清除）\n" }
+    }
+
+    @CheckNetwork(toastText = "没有网络呀～～～")
+    fun toSecondActivity(){
+        startActivity(Intent(this,SecondActivity::class.java))
     }
 
     @SingleClick(5000)

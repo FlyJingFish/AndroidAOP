@@ -48,7 +48,7 @@
 buildscript {
     dependencies {
         //必须项 👇
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.2.5'
+        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.2.6'
     }
 }
 plugins {
@@ -80,12 +80,12 @@ plugins {
 
 dependencies {
     //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.2.5'
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.2.5'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.2.6'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.2.6'
     //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.2.5'
+    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.2.6'
     //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.2.5'
+    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.2.6'
     //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
 }
 ```
@@ -132,6 +132,7 @@ android {
 | @Permission      |                                          value = 权限的字符串数组                                           |                            申请权限的操作，加入此注解可使您的代码在获取权限后才执行                             |
 | @Scheduled       | initialDelay = 延迟开始时间<br>interval = 间隔<br>repeatCount = 重复次数<br>isOnMainThread = 是否主线程<br>id = 唯一标识 | 定时任务，加入此注解，可使你的方法每隔一段时间执行一次，调用AndroidAop.shutdownNow(id)或AndroidAop.shutdown(id)可停止 |
 | @Delay           |                         delay = 延迟时间<br>isOnMainThread = 是否主线程<br>id = 唯一标识                         |  延迟任务，加入此注解，可使你的方法延迟一段时间执行，调用AndroidAop.shutdownNow(id)或AndroidAop.shutdown(id)可取消  |
+| @CheckNetwork    |                         tag = 自定义标记<br>toastText = 无网络时toast提示<br>invokeListener = 是否接管检查网络逻辑   |  检查网络是否可用，加入此注解可使你的方法在有网络才可进去  |
 | @CustomIntercept |                                     value = 你自定义加的一个字符串数组的flag                                      |              自定义拦截，配合 AndroidAop.setOnCustomInterceptListener 使用，属于万金油              |
 
 [上述注解使用示例都在这](https://github.com/FlyJingFish/AndroidAOP/blob/master/app/src/main/java/com/flyjingfish/androidaop/MainActivity.kt#L128),[还有这](https://github.com/FlyJingFish/AndroidAOP/blob/master/app/src/main/java/com/flyjingfish/androidaop/SecondActivity.java#L64)
@@ -153,7 +154,7 @@ public class StaticClass {
 ```
 
 
-### 下面再着重介绍下 @TryCatch @Permission @CustomIntercept
+### 下面再着重介绍下 @TryCatch @Permission @CustomIntercept @CheckNetwork
 
 - @TryCatch 使用此注解你可以设置以下设置（非必须）
 ```java
@@ -198,6 +199,33 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
         //  joinPoint.proceed(args)可以修改方法传入的参数，如果需要改写返回值，则在 return 处返回即可
 
         return null;
+    }
+});
+```
+
+- @CheckNetwork 使用此注解你可以配合以下设置（非必须）
+```java
+AndroidAop.INSTANCE.setOnCheckNetworkListener(new OnCheckNetworkListener() {
+    @Nullable
+    @Override
+    public Object invoke(@NonNull ProceedJoinPoint joinPoint, @NonNull CheckNetwork checkNetwork, boolean availableNetwork) {
+        return null;
+    }
+});
+```
+在使用时 invokeListener 设置为true，即可进入上边回调
+```kotlin
+@CheckNetwork(invokeListener = true)
+fun toSecondActivity(){
+    startActivity(Intent(this,SecondActivity::class.java))
+}
+```
+另外内置 Toast 可以让你接管
+```java
+AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
+    @Override
+    public void onToast(@NonNull Context context, @NonNull CharSequence text, int duration) {
+        
     }
 });
 ```

@@ -14,8 +14,12 @@ android {
     }
 }
 dependencies {
-    compileOnly 'androidx.core:core-ktx:1.8.0'
-    compileOnly 'androidx.appcompat:appcompat:1.6.1'
+//    compileOnly 'androidx.core:core-ktx:1.8.0'
+    implementation ('androidx.appcompat:appcompat'){
+        version {
+            strictly '1.6.1' // Will make sure that library uses that version in your build
+        }
+    }
 }
 
 
