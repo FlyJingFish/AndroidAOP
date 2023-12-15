@@ -33,7 +33,7 @@ public class SecondActivity extends BaseActivity2 {
             onScheduled2();
         });
         binding.btnOnScheduled1Stop.setOnClickListener(v -> AndroidAop.INSTANCE.shutdownNow("onScheduled1"));
-        binding.btnOnScheduled2Stop.setOnClickListener(v -> AndroidAop.INSTANCE.shutdown("onScheduled2"));
+        binding.btnOnScheduled2Stop.setOnClickListener(v -> AndroidAop.INSTANCE.shutdownNow("onScheduled2"));
 
         binding.btnOnDelay1.setOnClickListener(v -> {
             setLogcat("延迟5秒开始onDelay1,time= "+UtilsKt.getCurrentTime());
@@ -44,7 +44,7 @@ public class SecondActivity extends BaseActivity2 {
             onDelay2();
         });
         binding.btnOnDelay1Stop.setOnClickListener(v -> AndroidAop.INSTANCE.shutdownNow("onDelay1"));
-        binding.btnOnDelay2Stop.setOnClickListener(v -> AndroidAop.INSTANCE.shutdown("onDelay2"));
+        binding.btnOnDelay2Stop.setOnClickListener(v -> AndroidAop.INSTANCE.shutdownNow("onDelay2"));
         binding.tvLogcat.setOnClickListener(v -> binding.tvLogcat.setText("日志:（点此清除）\n") );
     }
 

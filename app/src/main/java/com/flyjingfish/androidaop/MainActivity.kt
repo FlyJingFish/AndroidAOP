@@ -148,7 +148,7 @@ class MainActivity: BaseActivity2() {
         setLogcat("@DoubleClick 300毫秒内点击两次才可进入")
     }
 
-    @IOThread(ThreadType.SingleIO)
+    @IOThread(ThreadType.MultipleIO)
     fun onIOThread(){
         setLogcat("@IOThread 是否主线程="+(Looper.getMainLooper() == Looper.myLooper())+",开始睡5秒，然后进入调用主线程方法")
         Thread.sleep(5000)
