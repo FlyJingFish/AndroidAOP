@@ -72,6 +72,11 @@ android {
         }
     }
 
+
+    packagingOptions {
+        exclude 'META-INF/kotlinx_coroutines_core.version'
+    }
+
 }
 
 dependencies {

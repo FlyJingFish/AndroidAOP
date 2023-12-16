@@ -133,7 +133,8 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
 
       typeBuilder.addFunction(whatsMyName1.build())
 
-      writeToFile(typeBuilder,fileName)
+      val dependencies = Dependencies(false, symbol.containingFile!!)
+      writeToFile(typeBuilder,fileName, dependencies)
     }
     return symbols.filter { !it.validate() }.toList()
   }
@@ -221,19 +222,37 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         )
 
       typeBuilder.addFunction(whatsMyName1.build())
-
-      writeToFile(typeBuilder,fileName)
+      val dependencies = Dependencies(false, symbol.containingFile!!)
+      writeToFile(typeBuilder, fileName, dependencies)
     }
     return symbols.filter { !it.validate() }.toList()
   }
 
-  private fun writeToFile(typeBuilder: TypeSpec.Builder,fileName:String){
+  /*private fun writeToFile(typeBuilder: TypeSpec.Builder,fileName:String){
     val typeSpec = typeBuilder.build()
     val kotlinFile = FileSpec.builder(packageName, fileName).addType(typeSpec)
       .build()
     codeGenerator
       .createNewFile(
         Dependencies.ALL_FILES,
+        packageName,
+        fileName
+      )
+      .writer()
+      .use { kotlinFile.writeTo(it) }
+  }*/
+
+  private fun writeToFile(
+    typeBuilder: TypeSpec.Builder,
+    fileName: String,
+    dependencies: Dependencies
+  ) {
+    val typeSpec = typeBuilder.build()
+    val kotlinFile = FileSpec.builder(packageName, fileName).addType(typeSpec)
+      .build()
+    codeGenerator
+      .createNewFile(
+        dependencies,
         packageName,
         fileName
       )
