@@ -22,7 +22,7 @@
 
 6. This library supports coroutine functions whose pointcut methods are suspend-modified.
 
-7. This library supports generating Json files of all cut-point information to facilitate an overview of all cut-point locations [Configure here](https://github.com/FlyJingFish/AndroidAOP#%E5%9B%9B%E5%9C%A8- app-%E7%9A%84buildgradle%E6%B7%BB%E5%8A%A0-androidaopconfig-%E9%85%8D%E7%BD%AE%E9%A1%B9%E6%AD%A4%E6% AD%A5%E4%B8%BA%E5%8F%AF%E9%80%89%E9%85%8D%E7%BD%AE%E9%A1%B9)
+7. This library supports generating Json files of all cut-point information to facilitate an overview of all cut-point locations [Configure here](https://github.com/FlyJingFish/AndroidAOP#%E5%9B%9B%E5%9C%A8-app-%E7%9A%84buildgradle%E6%B7%BB%E5%8A%A0-androidaopconfig-%E9%85%8D%E7%BD%AE%E9%A1%B9%E6%AD%A4%E6%AD%A5%E4%B8%BA%E5%8F%AF%E9%80%89%E9%85%8D%E7%BD%AE%E9%A1%B9)
 
 **8. This library is not implemented based on AspectJ. The amount of woven code is very small and the intrusion is extremely low**
 
@@ -121,7 +121,7 @@ android {
 ### This library has some built-in functional annotations for you to use directly.
 
 | Annotation name | Parameter description | Function description |
-|------------------|:----------------------------- -------------------------------------------------- --------------------------:|:-------------------------- -------------------------------------------------- ------:|
+|------------------|:---------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------:|
 | @SingleClick | value = interval of quick clicks, default 1000ms | Click the annotation and add this annotation to make your method accessible only when clicked |
 | @DoubleClick | value = maximum time between two clicks, default 300ms | Double-click annotation, add this annotation to make your method enterable only when double-clicked |
 | @IOThread | ThreadType = thread type | Switch to the sub-thread operation. Adding this annotation can switch the code in your method to the sub-thread for execution |
@@ -234,7 +234,7 @@ AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
 
 ### This library implements custom aspects through two annotations: @AndroidAopPointCut and @AndroidAopMatchClassMethod.
 
-#### 1. **@AndroidAopPointCut** is used to make aspects in the form of annotations on the method. The above annotations are all made through this. [Please see the wiki document for detailed usage] (https://github.com /FlyJingFish/AndroidAOP/wiki/@AndroidAopPointCut)
+#### 1. **@AndroidAopPointCut** is used to make aspects in the form of annotations on the method. The above annotations are all made through this. [Please see the wiki document for detailed usage](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopPointCut)
 
 
 ⚠️Note: For custom annotations (that is, annotation classes annotated by @AndroidAopPointCut), if it is Kotlin code, please use the android-aop-ksp library
@@ -346,7 +346,7 @@ class MatchOnClick : MatchClassMethod {
 }
 ```
 
-You can see that the type set by AndroidAopMatchClassMethod above is MatchType.EXTENDS, which means matching all subclasses inherited from OnClickListener. For more inheritance methods, [please refer to the Wiki document](https://github.com/FlyJingFish/AndroidAOP/wiki/@ AndroidAopMatchClassMethod#excludeclasses-%E6%98%AF%E6%8E%92%E9%99%A4%E6%8E%89%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3 %BB%E4%B8%AD%E7%9A%84%E4%B8%AD%E9%97%B4%E7%B1%BB%E6%95%B0%E7%BB%84)
+You can see that the type set by AndroidAopMatchClassMethod above is MatchType.EXTENDS, which means matching all subclasses inherited from OnClickListener. For more inheritance methods, [please refer to the Wiki document](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#excludeclasses-%E6%98%AF%E6%8E%92%E9%99%A4%E6%8E%89%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB%E4%B8%AD%E7%9A%84%E4%B8%AD%E9%97%B4%E7%B1%BB%E6%95%B0%E7%BB%84)
 
 **⚠️Note: If the subclass does not have this method, the aspect will be invalid. In addition, do not match the same method multiple times in the same class, otherwise only one will take effect**
 
@@ -368,7 +368,7 @@ You can see that the type set by AndroidAopMatchClassMethod above is MatchType.E
 2. How to deal with multiple annotations or matching aspects for the same method?
 
 - When multiple aspects are superimposed on a method, annotations take precedence over matching aspects (the matching aspects above), and the annotation aspects are executed sequentially from top to bottom.
-- Call **[proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)** to execute the next aspect, and the last aspect among multiple aspects will be executed **[proceed](https:/ /github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)** will call the code in the cut-in method
+- Call **[proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)** to execute the next aspect, and the last aspect among multiple aspects will be executed **[proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)** will call the code in the cut-in method
 - Call **[proceed(args)](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)** in the previous aspect to pass in the parameters that can be updated, and the previous aspect will also be obtained in the next aspect One layer of updated parameters
 - When there is an asynchronous call [proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint), the first asynchronous call [proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint) ) The return value of the aspect (that is, the return value of invoke) is the return value of the cut-in method;
 
@@ -409,7 +409,7 @@ If you feel that AndroidAOP has saved you a lot of development time and added lu
 
 ### Contact information
 
-* If you have any questions, you can join the group to communicate [QQ: 641697838](https://qm.qq.com/cgi-bin/qm/qr?k=w2qDbv_5bpLl0lO0qjXxijl3JHCQgtXx&jump_from=webapi&authKey=Q6/YB+7q9BvOGbYv1qXZGAZLigsfwaBxDC8kz03/ 5Pwy7018XunUcHoC11kVLqCb)
+* If you have any questions, you can join the group to communicate [QQ: 641697838](https://qm.qq.com/cgi-bin/qm/qr?k=w2qDbv_5bpLl0lO0qjXxijl3JHCQgtXx&jump_from=webapi&authKey=Q6/YB+7q9BvOGbYv1qXZGAZLigsfwaBxDC8kz03/5Pwy7018XunUcHoC11kVLqCb)
 
 <img src="/screenshot/qq.png" width="220"/>
 
