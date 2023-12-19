@@ -103,7 +103,7 @@ plugins {
 ```
 [Kotlin 和 KSP Github 的匹配版本号列表](https://github.com/google/ksp/releases)
 
-#### 三、引入依赖库
+#### 三、引入依赖库(必须)
 
 ```gradle
 plugins {
