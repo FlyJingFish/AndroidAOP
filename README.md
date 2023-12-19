@@ -236,7 +236,12 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
 });
 ```
 
-- @CheckNetwork 使用此注解你可以配合以下设置（非必须）
+- @CheckNetwork 使用此注解你可以配合以下设置
+权限是必须加的
+```xml
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+```
+以下设置为可选设置项
 ```java
 AndroidAop.INSTANCE.setOnCheckNetworkListener(new OnCheckNetworkListener() {
     @Nullable
