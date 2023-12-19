@@ -9,7 +9,7 @@ import com.flyjingfish.android_aop_core.utils.AndroidAop
 import com.flyjingfish.android_aop_core.utils.NetworkUtils
 import com.flyjingfish.android_aop_core.utils.Utils
 
-class CheckNetworkCut : BasePointCut<CheckNetwork> {
+internal class CheckNetworkCut : BasePointCut<CheckNetwork> {
     override fun invoke(joinPoint: ProceedJoinPoint, anno: CheckNetwork): Any? {
         return when (anno.invokeListener) {
             true -> {
