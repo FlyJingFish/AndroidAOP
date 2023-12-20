@@ -20,6 +20,6 @@ final class JoinAnnoCutUtils {
     }
 
     public static boolean isInit(){
-        return mAnnoCutMap.size() > 0;
+        return !mAnnoCutMap.isEmpty();
     }
 }
