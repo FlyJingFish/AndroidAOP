@@ -12,6 +12,7 @@ import java.util.jar.JarFile
 object WovenInfoUtils {
     var aopMethodCuts: HashMap<String, AopMethodCut> = HashMap()
     var aopMatchCuts: HashMap<String, AopMatchCut> = HashMap()
+    var lastAopMatchCuts: HashMap<String, AopMatchCut> = HashMap()
     var classPaths : HashSet<String> = HashSet()
     private var baseClassPaths : HashSet<String> = HashSet()
     private var classNameMap: HashMap<String, String> = HashMap()
@@ -40,7 +41,7 @@ object WovenInfoUtils {
         var methodsRecord: HashMap<String, MethodRecord>? =
             classMethodRecords[classMethodRecord.classFile]
         if (methodsRecord == null) {
-            methodsRecord = HashMap<String, MethodRecord>()
+            methodsRecord = HashMap()
             classMethodRecords[classMethodRecord.classFile] = methodsRecord
         }
         val key = classMethodRecord.methodName.methodName + classMethodRecord.methodName.descriptor
@@ -51,6 +52,10 @@ object WovenInfoUtils {
         }else{
             methodsRecord[key] = classMethodRecord.methodName
         }
+    }
+
+    fun deleteClassMethodRecord(key: String){
+        classMethodRecords.remove(key)
     }
 
     fun getClassMethodRecord(classFile:String):HashMap<String, MethodRecord>?{
@@ -67,12 +72,14 @@ object WovenInfoUtils {
     }
 
     fun clear(){
+        lastAopMatchCuts.clear()
+        lastAopMatchCuts.putAll(aopMatchCuts)
         aopMethodCuts.clear()
         aopMatchCuts.clear()
         classPaths.clear()
-        classMethodRecords.clear()
+//        classMethodRecords.clear()
         classNameMap.clear()
-        classSuperList.clear()
+//        classSuperList.clear()
     }
 
     fun addClassName(classPath:String){
@@ -151,5 +158,9 @@ object WovenInfoUtils {
                 e.printStackTrace()
             }
         }
+    }
+
+    fun aopMatchsChanged():Boolean{
+        return lastAopMatchCuts != aopMatchCuts
     }
 }

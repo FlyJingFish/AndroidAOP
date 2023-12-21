@@ -10,6 +10,7 @@ import com.flyjingfish.android_aop_plugin.scanner_visitor.RegisterMapWovenInfoCo
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import com.flyjingfish.android_aop_plugin.utils.AndroidConfig
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
+import com.flyjingfish.android_aop_plugin.utils.FileHashUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
@@ -92,9 +93,13 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                         WovenInfoUtils.addClassName(className)
                         if (AndroidAopConfig.verifyLeafExtends && !className.startsWith("kotlinx/") && !className.startsWith("kotlin/")){
                             FileInputStream(file).use { inputs ->
-                                val classReader = ClassReader(inputs.readAllBytes())
-                                classReader.accept(
-                                    ClassSuperScanner(), ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+                                val bytes = inputs.readAllBytes()
+                                val inAsm = FileHashUtils.isAsmScan(file.absolutePath,bytes,1)
+                                if (inAsm){
+                                    val classReader = ClassReader(bytes)
+                                    classReader.accept(
+                                        ClassSuperScanner(), ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+                                }
                             }
                         }
                     }
@@ -130,9 +135,13 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     }else if (entryName.endsWith(_CLASS)){
                         if (AndroidAopConfig.verifyLeafExtends && !entryName.startsWith("kotlinx/") && !entryName.startsWith("kotlin/")){
                             jarFile.getInputStream(jarEntry).use { inputs ->
-                                val classReader = ClassReader(inputs.readAllBytes())
-                                classReader.accept(
-                                    ClassSuperScanner(), ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+                                val bytes = inputs.readAllBytes()
+                                val inAsm = FileHashUtils.isAsmScan(entryName,bytes,1)
+                                if (inAsm){
+                                    val classReader = ClassReader(inputs.readAllBytes())
+                                    classReader.accept(
+                                        ClassSuperScanner(), ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+                                }
                             }
                         }
                     }
@@ -147,6 +156,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 //        logger.error(""+WovenInfoUtils.aopMatchCuts)
 //        InitConfig.saveBuildConfig()
         ClassPoolUtils.initClassPool()
+        FileHashUtils.isChangeAopMatch = WovenInfoUtils.aopMatchsChanged()
     }
 
     private fun searchJoinPointLocation(){
@@ -165,19 +175,24 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 //                    }
                     if (isClassFile && Utils.isIncludeFilterMatched(tranEntryName, includes) && !Utils.isExcludeFilterMatched(tranEntryName, excludes)) {
                         FileInputStream(file).use { inputs ->
-                            val bytes = inputs.readAllBytes();
+                            val bytes = inputs.readAllBytes()
                             if (bytes.isNotEmpty()){
-                                try {
-                                    val classReader = ClassReader(bytes)
-                                    classReader.accept(AnnotationMethodScanner(
-                                        logger,object :AnnotationMethodScanner.OnCallBackMethod{
-                                            override fun onBackName(methodRecord: MethodRecord) {
-                                                val record = ClassMethodRecord(file.absolutePath, methodRecord)
-                                                WovenInfoUtils.addClassMethodRecords(record)
+                                val inAsm = FileHashUtils.isAsmScan(file.absolutePath,bytes,2)
+                                if (inAsm){
+
+                                    WovenInfoUtils.deleteClassMethodRecord(file.absolutePath)
+                                    try {
+                                        val classReader = ClassReader(bytes)
+                                        classReader.accept(AnnotationMethodScanner(
+                                            logger,object :AnnotationMethodScanner.OnCallBackMethod{
+                                                override fun onBackName(methodRecord: MethodRecord) {
+                                                    val record = ClassMethodRecord(file.absolutePath, methodRecord)
+                                                    WovenInfoUtils.addClassMethodRecords(record)
+                                                }
                                             }
-                                        }
-                                    ), ClassReader.EXPAND_FRAMES)
-                                } catch (e: Exception) {
+                                        ), ClassReader.EXPAND_FRAMES)
+                                    } catch (e: Exception) {
+                                    }
                                 }
                             }
                         }
@@ -209,17 +224,21 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                         jarFile.getInputStream(jarEntry).use { inputs ->
                             val bytes = inputs.readAllBytes();
                             if (bytes.isNotEmpty()){
-                                try {
-                                    val classReader = ClassReader(bytes)
-                                    classReader.accept(AnnotationMethodScanner(
-                                        logger,object :AnnotationMethodScanner.OnCallBackMethod{
-                                            override fun onBackName(methodRecord: MethodRecord) {
-                                                val record = ClassMethodRecord(entryName, methodRecord)
-                                                WovenInfoUtils.addClassMethodRecords(record)
+                                val inAsm = FileHashUtils.isAsmScan(entryName,bytes,2)
+                                if (inAsm){
+                                    WovenInfoUtils.deleteClassMethodRecord(entryName)
+                                    try {
+                                        val classReader = ClassReader(bytes)
+                                        classReader.accept(AnnotationMethodScanner(
+                                            logger,object :AnnotationMethodScanner.OnCallBackMethod{
+                                                override fun onBackName(methodRecord: MethodRecord) {
+                                                    val record = ClassMethodRecord(entryName, methodRecord)
+                                                    WovenInfoUtils.addClassMethodRecords(record)
+                                                }
                                             }
-                                        }
-                                    ), ClassReader.EXPAND_FRAMES)
-                                } catch (e: Exception) {
+                                        ), ClassReader.EXPAND_FRAMES)
+                                    } catch (e: Exception) {
+                                    }
                                 }
                             }
                         }

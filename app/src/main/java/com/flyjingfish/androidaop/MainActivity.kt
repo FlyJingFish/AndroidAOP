@@ -199,7 +199,7 @@ class MainActivity: BaseActivity2() {
 
     @MyAnno2
     fun onMyAnno2(){
-        setLogcat("自定义Kotlin 注解切面进入方法12222")
+        setLogcat("自定义Kotlin 注解切面进入方法")
     }
 
     suspend fun getData2(num:Int){
