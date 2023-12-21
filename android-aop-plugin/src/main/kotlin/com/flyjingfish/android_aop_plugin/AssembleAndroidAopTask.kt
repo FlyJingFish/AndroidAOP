@@ -94,11 +94,13 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                         if (AndroidAopConfig.verifyLeafExtends && !className.startsWith("kotlinx/") && !className.startsWith("kotlin/")){
                             FileInputStream(file).use { inputs ->
                                 val bytes = inputs.readAllBytes()
-                                val inAsm = FileHashUtils.isAsmScan(file.absolutePath,bytes,1)
-                                if (inAsm){
-                                    val classReader = ClassReader(bytes)
-                                    classReader.accept(
-                                        ClassSuperScanner(), ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+                                if (bytes.isNotEmpty()){
+                                    val inAsm = FileHashUtils.isAsmScan(file.absolutePath,bytes,1)
+                                    if (inAsm){
+                                        val classReader = ClassReader(bytes)
+                                        classReader.accept(
+                                            ClassSuperScanner(), ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+                                    }
                                 }
                             }
                         }
@@ -136,19 +138,22 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                         if (AndroidAopConfig.verifyLeafExtends && !entryName.startsWith("kotlinx/") && !entryName.startsWith("kotlin/")){
                             jarFile.getInputStream(jarEntry).use { inputs ->
                                 val bytes = inputs.readAllBytes()
-                                val inAsm = FileHashUtils.isAsmScan(entryName,bytes,1)
-                                if (inAsm){
-                                    val classReader = ClassReader(inputs.readAllBytes())
-                                    classReader.accept(
-                                        ClassSuperScanner(), ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+                                if (bytes.isNotEmpty()){
+                                    val inAsm = FileHashUtils.isAsmScan(entryName,bytes,1)
+                                    if (inAsm){
+                                        val classReader = ClassReader(bytes)
+                                        classReader.accept(
+                                            ClassSuperScanner(), ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+                                    }
                                 }
                             }
                         }
                     }
                 } catch (e: Exception) {
-                    if (!(e is ZipException && e.message?.startsWith("duplicate entry:") == true)) {
-                        logger.warn("Merge jar error entry:[${jarEntry.name}], error message:$e")
-                    }
+                    e.printStackTrace()
+//                    if (!(e is ZipException && e.message?.startsWith("duplicate entry:") == true)) {
+//                        logger.warn("Merge jar error entry:[${jarEntry.name}], error message:$e")
+//                    }
                 }
             }
             jarFile.close()
@@ -169,10 +174,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     val tranEntryName = file.absolutePath.replace("/", ".")
                         .replace("\\", ".")
 //                    printLog("tranEntryName="+tranEntryName)
-//                    if (tranEntryName.contains("com.flyjingfish")){
-//                        printLog("isIncludeFilterMatched="+Utils.isIncludeFilterMatched(tranEntryName, includes) )
-//                        printLog("isExcludeFilterMatched="+Utils.isExcludeFilterMatched(tranEntryName, excludes) )
-//                    }
                     if (isClassFile && Utils.isIncludeFilterMatched(tranEntryName, includes) && !Utils.isExcludeFilterMatched(tranEntryName, excludes)) {
                         FileInputStream(file).use { inputs ->
                             val bytes = inputs.readAllBytes()
@@ -215,10 +216,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     val tranEntryName = entryName.replace("/", ".")
                         .replace("\\", ".")
 //                    printLog("tranEntryName="+tranEntryName)
-//                    if (tranEntryName.contains("com.flyjingfish")){
-//                        printLog("isIncludeFilterMatched="+Utils.isIncludeFilterMatched(tranEntryName, includes) )
-//                        printLog("isExcludeFilterMatched="+Utils.isExcludeFilterMatched(tranEntryName, excludes) )
-//                    }
                     if (isClassFile && Utils.isIncludeFilterMatched(tranEntryName, includes) && !Utils.isExcludeFilterMatched(tranEntryName, excludes)) {
 
                         jarFile.getInputStream(jarEntry).use { inputs ->
