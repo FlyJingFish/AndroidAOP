@@ -48,7 +48,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     private lateinit var jarOutput: JarOutputStream
     private companion object {
         private const val END_NAME = "\$\$AndroidAopClass.class"
-        private const val _CLASS = ".class"
+        private const val _CLASS = Utils._CLASS
     }
 
     @TaskAction
@@ -69,33 +69,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     }
 
     private fun loadJoinPointConfig(){
-        val androidConfig = AndroidConfig(project)
-        val list: List<File> = androidConfig.getBootClasspath()
-        printLog("Scan to classPath [${list}]")
-        WovenInfoUtils.clear()
-        for (file in list) {
-            WovenInfoUtils.addClassPath(file.absolutePath)
-            try {
-                val jarFile = JarFile(file)
-                val enumeration = jarFile.entries()
-//                logger.error("jarFile=$jarFile,enumeration=$enumeration")
-                while (enumeration.hasMoreElements()) {
-                    val jarEntry = enumeration.nextElement()
-                    try {
-                        val entryName = jarEntry.name
-//                        logger.error("entryName="+entryName)
-                        if (entryName.endsWith(_CLASS)){
-                            WovenInfoUtils.addClassName(entryName)
-                        }
-                    } catch (_: Exception) {
-
-                    }
-                }
-                jarFile.close()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
+        WovenInfoUtils.addBaseClassInfo(project)
 
         //第一遍找配置文件
         allDirectories.get().forEach { directory ->

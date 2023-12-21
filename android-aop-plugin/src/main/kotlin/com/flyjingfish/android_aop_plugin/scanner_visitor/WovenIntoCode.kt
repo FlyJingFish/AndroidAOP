@@ -194,10 +194,10 @@ object WovenIntoCode {
                             (if (isHasArgs) "        Object[] args = new Object[]{$argsBuffer};\n" else "") +
                             (if (isHasArgs) "        pointCut.setArgs(args);\n" else "        pointCut.setArgs(null);\n") +
                             "        "+returnStr+";}"
-                val allSignature = ctMethod.signature
-                printLog("returnType = ${returnType.name}")
-                printLog("allSignature = $allSignature")
-                printLog(body)
+//                val allSignature = ctMethod.signature
+//                printLog("returnType = ${returnType.name}")
+//                printLog("allSignature = $allSignature")
+//                printLog(body)
                 ctMethod.setBody(body)
             } catch (e: NotFoundException) {
                 throw RuntimeException(e)

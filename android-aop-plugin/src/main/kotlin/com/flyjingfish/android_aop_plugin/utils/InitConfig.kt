@@ -43,21 +43,6 @@ object InitConfig {
         return ""
     }
 
-    private fun loadBuildConfig(buildConfigCacheFile: File): WovenInfo {
-        return if (buildConfigCacheFile.exists()) {
-            val jsonString = readAsString(buildConfigCacheFile.absolutePath)
-            optFromJsonString(jsonString, WovenInfo::class.java) ?: WovenInfo()
-        } else {
-            WovenInfo()
-        }
-    }
-    fun saveBuildConfig() {
-        val wovenInfo = WovenInfo()
-        wovenInfo.aopMatchCuts = WovenInfoUtils.aopMatchCuts
-        wovenInfo.aopMethodCuts = WovenInfoUtils.aopMethodCuts
-        wovenInfo.classPaths = WovenInfoUtils.classPaths
-        saveFile(buildConfigCacheFile, optToJsonString(wovenInfo))
-    }
     private fun saveFile(file: File, data:String) {
         temporaryDirMkdirs()
         val fos = FileOutputStream(file.absolutePath)
@@ -78,29 +63,6 @@ object InitConfig {
         }
     }
 
-    fun init(project: Project):Boolean{
-        temporaryDir = File(project.buildDir.absolutePath+"/tmp")
-        buildConfigCacheFile = File(temporaryDir, "buildAndroidAopConfigCache.json")
-        val wovenInfo = loadBuildConfig(buildConfigCacheFile)
-        var count =0
-        if(wovenInfo.aopMatchCuts != null){
-            WovenInfoUtils.aopMatchCuts = wovenInfo.aopMatchCuts!!
-            count++
-        }
-        if(wovenInfo.aopMethodCuts != null){
-            WovenInfoUtils.aopMethodCuts = wovenInfo.aopMethodCuts!!
-            count++
-        }
-        if(wovenInfo.classPaths != null){
-            WovenInfoUtils.classPaths = wovenInfo.classPaths!!
-            count++
-        }
-
-        JacocoReportTask.JacocoReportWorkerAction.logger.error("buildConfigCacheFile = ${buildConfigCacheFile.absolutePath}")
-        JacocoReportTask.JacocoReportWorkerAction.logger.error("buildConfig = $wovenInfo")
-        isInit = count == 3
-        return isInit
-    }
 
     fun initCutInfo(project: Project):Boolean{
         temporaryDir = File(project.buildDir.absolutePath+"/tmp")
