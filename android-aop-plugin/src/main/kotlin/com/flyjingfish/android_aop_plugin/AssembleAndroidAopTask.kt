@@ -347,11 +347,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                         FileInputStream(file).use { inputs ->
                             val byteArray = inputs.readAllBytes()
                             if (byteArray.isNotEmpty()){
-                                try {
-                                    val classReader = ClassReader(byteArray)
-                                    classReader.accept(AnnotationMethodScanner(null,true), ClassReader.EXPAND_FRAMES)
-                                } catch (e: Exception) {
-                                }
+                                val classReader = ClassReader(byteArray)
+                                classReader.accept(AnnotationMethodScanner(null,true), ClassReader.EXPAND_FRAMES)
                             }
                         }
                     }
@@ -375,11 +372,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                         jarFile.getInputStream(jarEntry).use { inputs ->
                             val byteArray = inputs.readAllBytes()
                             if (byteArray.isNotEmpty()){
-                                try {
-                                    val classReader = ClassReader(byteArray)
-                                    classReader.accept(AnnotationMethodScanner(null,true), ClassReader.EXPAND_FRAMES)
-                                } catch (e: Exception) {
-                                }
+                                val classReader = ClassReader(byteArray)
+                                classReader.accept(AnnotationMethodScanner(null,true), ClassReader.EXPAND_FRAMES)
                             }
                         }
                     }
