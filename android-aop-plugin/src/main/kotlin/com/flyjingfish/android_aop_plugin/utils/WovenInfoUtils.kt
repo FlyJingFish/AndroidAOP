@@ -137,7 +137,7 @@ object WovenInfoUtils {
     fun addBaseClassInfo(project: Project){
         val androidConfig = AndroidConfig(project)
         val list: List<File> = androidConfig.getBootClasspath()
-        printLog("Scan to classPath [${list}]")
+//        printLog("Scan to classPath [${list}]")
 //        printLog("Scan to classPath [${classPaths}]")
         clear()
 
