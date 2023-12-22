@@ -1,5 +1,6 @@
 package com.flyjingfish.android_aop_plugin.utils
 
+import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import java.security.MessageDigest
 
 
@@ -8,6 +9,9 @@ object FileHashUtils {
     private var fileHashMap2: HashMap<String, String> = HashMap()
     var isChangeAopMatch = true
     fun isAsmScan(file: String, fileBytes: ByteArray,step: Int): Boolean {
+        if (!AndroidAopConfig.increment){
+            return true
+        }
         WovenInfoUtils.removeClassCache(file)
         if (step == 2 && isChangeAopMatch){
 //            printLog("isAsmScan1 = $file")

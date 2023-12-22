@@ -5,6 +5,7 @@ import com.flyjingfish.android_aop_plugin.beans.AopMethodCut
 import com.flyjingfish.android_aop_plugin.beans.ClassMethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ClassSuperInfo
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
+import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import org.gradle.api.Project
 import java.io.File
 import java.util.jar.JarFile
@@ -13,14 +14,16 @@ object WovenInfoUtils {
     var aopMethodCuts: HashMap<String, AopMethodCut> = HashMap()
     var aopMatchCuts: HashMap<String, AopMatchCut> = HashMap()
     private var lastAopMatchCuts: HashMap<String, AopMatchCut> = HashMap()
-    var classPaths : HashSet<String> = HashSet()
-    private var baseClassPaths : HashSet<String> = HashSet()
+    var classPaths: HashSet<String> = HashSet()
+    private var baseClassPaths: HashSet<String> = HashSet()
     private var classNameMap: HashMap<String, String> = HashMap()
     private var baseClassNameMap: HashMap<String, String> = HashMap()
-    private var classSuperListMap = HashMap<String,ClassSuperInfo>()
-    private var classSuperMap = HashMap<String,String>()
-    private val classSuperCacheMap = HashMap<String,String>()
-    private val classMethodRecords: HashMap<String, HashMap<String, MethodRecord>> = HashMap()//类名为key，value为方法map集合
+    private var classSuperListMap = HashMap<String, ClassSuperInfo>()
+    private var classSuperMap = HashMap<String, String>()
+    private val classSuperCacheMap = HashMap<String, String>()
+    private val classMethodRecords: HashMap<String, HashMap<String, MethodRecord>> =
+        HashMap()//类名为key，value为方法map集合
+
     fun addAnnoInfo(info: AopMethodCut) {
         aopMethodCuts[info.anno] = info
     }
@@ -29,6 +32,7 @@ object WovenInfoUtils {
         val anno = "@" + info.substring(1, info.length).replace("/", ".").replace(";", "")
         return aopMethodCuts.contains(anno)
     }
+
     fun getAnnoInfo(info: String): AopMethodCut? {
         val anno = "@" + info.substring(1, info.length).replace("/", ".").replace(";", "")
         return aopMethodCuts[anno]
@@ -46,121 +50,141 @@ object WovenInfoUtils {
             classMethodRecords[classMethodRecord.classFile] = methodsRecord
         }
         val key = classMethodRecord.methodName.methodName + classMethodRecord.methodName.descriptor
-        if (methodsRecord.contains(key)){
-            if (!classMethodRecord.methodName.cutClassName.isNullOrEmpty()){
+        if (methodsRecord.contains(key)) {
+            if (!classMethodRecord.methodName.cutClassName.isNullOrEmpty()) {
                 methodsRecord[key] = classMethodRecord.methodName
             }
-        }else{
+        } else {
             methodsRecord[key] = classMethodRecord.methodName
         }
     }
 
-    fun deleteClassMethodRecord(key: String){
+    fun deleteClassMethodRecord(key: String) {
         classMethodRecords.remove(key)
     }
 
-    fun getClassMethodRecord(classFile:String):HashMap<String, MethodRecord>?{
+    fun getClassMethodRecord(classFile: String): HashMap<String, MethodRecord>? {
         return classMethodRecords[classFile]
     }
 
-    fun getMatchInfo(classFile:String): AopMatchCut?{
+    fun getMatchInfo(classFile: String): AopMatchCut? {
         val key = Utils.slashToDot(classFile.substring(0, classFile.lastIndexOf(".")))
         return aopMatchCuts[key]
     }
 
-    fun addClassPath(classPath:String){
+    fun addClassPath(classPath: String) {
         classPaths.add(classPath)
     }
+    private fun clear() {
+        if (!AndroidAopConfig.increment) {
+            aopMethodCuts.clear()
+            aopMatchCuts.clear()
+            lastAopMatchCuts.clear()
+            classPaths.clear()
+            baseClassPaths.clear()
+            classNameMap.clear()
+            baseClassNameMap.clear()
+            classSuperListMap.clear()
+            classSuperMap.clear()
+            classSuperCacheMap.clear()
+            classMethodRecords.clear()
+        } else {
 
-    fun clear(){
-        classSuperCacheMap.clear()
-        classSuperCacheMap.putAll(classSuperMap)
+            classSuperCacheMap.clear()
+            classSuperCacheMap.putAll(classSuperMap)
 
-        lastAopMatchCuts.clear()
-        lastAopMatchCuts.putAll(aopMatchCuts)
-        aopMethodCuts.clear()
-        aopMatchCuts.clear()
-        classPaths.clear()
+            lastAopMatchCuts.clear()
+            lastAopMatchCuts.putAll(aopMatchCuts)
+            aopMethodCuts.clear()
+            aopMatchCuts.clear()
+            classPaths.clear()
 //        classMethodRecords.clear()
-        classNameMap.clear()
+            classNameMap.clear()
 //        classSuperList.clear()
-        classSuperMap.clear()
+            classSuperMap.clear()
+        }
     }
 
-    fun addClassName(classPath:String){
-        val key = Utils.slashToDot(classPath).replace(".class","").replace("$",".")
-        val value = Utils.slashToDot(classPath).replace(".class","")
+    fun addClassName(classPath: String) {
+        val key = Utils.slashToDot(classPath).replace(".class", "").replace("$", ".")
+        val value = Utils.slashToDot(classPath).replace(".class", "")
         classNameMap[key] = value
     }
 
-    fun addBaseClassName(classPath:String){
-        val key = Utils.slashToDot(classPath).replace(".class","").replace("$",".")
-        val value = Utils.slashToDot(classPath).replace(".class","")
+    private fun addBaseClassName(classPath: String) {
+        val key = Utils.slashToDot(classPath).replace(".class", "").replace("$", ".")
+        val value = Utils.slashToDot(classPath).replace(".class", "")
         baseClassNameMap[key] = value
     }
 
-    fun getClassString(key:String):String?{
+    fun getClassString(key: String): String? {
         return classNameMap[key]
     }
 
-    fun addClassSuper(file:String,classSuper :ClassSuperInfo){
+    fun addClassSuper(file: String, classSuper: ClassSuperInfo) {
         classSuperListMap[classSuper.className] = classSuper
         classSuperMap[file] = classSuper.className
     }
 
-    fun isLeaf(className:String):Boolean{
+    fun isLeaf(className: String): Boolean {
         val set = classSuperListMap.entries
         for (classSuperInfo in set) {
-            if (classSuperInfo.value.superName == className || (classSuperInfo.value.interfaces?.contains(className) == true)){
+            if (classSuperInfo.value.superName == className || (classSuperInfo.value.interfaces?.contains(
+                    className
+                ) == true)
+            ) {
                 return false
             }
         }
         return true
     }
 
-    fun removeDeletedClass(key: String){
+    private fun removeDeletedClass(key: String) {
 //        printLog("removeDeletedClass= key =$key,value=${classSuperListMap[key]}")
         classSuperListMap.remove(key)
     }
 
-    fun removeClassCache(key: String){
+    fun removeClassCache(key: String) {
         classSuperCacheMap.remove(key)
     }
 
-    fun removeDeletedClass(){
+    fun removeDeletedClass() {
+        if (!AndroidAopConfig.increment){
+            return
+        }
         val set = classSuperCacheMap.entries
         for (mutableEntry in set) {
             removeDeletedClass(mutableEntry.value)
         }
     }
 
-    fun addBaseClassInfo(project: Project){
+    fun addBaseClassInfo(project: Project) {
         val androidConfig = AndroidConfig(project)
         val list: List<File> = androidConfig.getBootClasspath()
 //        printLog("Scan to classPath [${list}]")
 //        printLog("Scan to classPath [${classPaths}]")
         clear()
 
-        val classPaths : HashSet<String> = HashSet()
+        val classPaths: HashSet<String> = HashSet()
         for (file in list) {
             classPaths.add(file.absolutePath)
         }
 
-        if (classPaths != baseClassPaths){
+        if (classPaths != baseClassPaths) {
             baseClassPaths.clear()
             baseClassPaths.addAll(classPaths)
 
             baseClassNameMap.clear()
             fillClassNameMap(list)
         }
-        if (baseClassNameMap.isEmpty()){
+        if (baseClassNameMap.isEmpty()) {
             fillClassNameMap(list)
         }
         WovenInfoUtils.classPaths.addAll(classPaths)
         classNameMap.putAll(baseClassNameMap)
     }
 
-    private fun fillClassNameMap(list: List<File>){
+    private fun fillClassNameMap(list: List<File>) {
         for (file in list) {
             try {
                 val jarFile = JarFile(file)
@@ -169,7 +193,7 @@ object WovenInfoUtils {
                     val jarEntry = enumeration.nextElement()
                     try {
                         val entryName = jarEntry.name
-                        if (entryName.endsWith(Utils._CLASS)){
+                        if (entryName.endsWith(Utils._CLASS)) {
                             addBaseClassName(entryName)
                         }
                     } catch (_: Exception) {
@@ -183,7 +207,7 @@ object WovenInfoUtils {
         }
     }
 
-    fun aopMatchsChanged():Boolean{
+    fun aopMatchsChanged(): Boolean {
         return lastAopMatchCuts != aopMatchCuts
     }
 }
