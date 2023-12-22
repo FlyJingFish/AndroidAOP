@@ -7,6 +7,7 @@ import com.flyjingfish.android_aop_plugin.beans.CutJson
 import com.flyjingfish.android_aop_plugin.beans.CutJsonMap
 import com.flyjingfish.android_aop_plugin.beans.CutMethodJson
 import com.flyjingfish.android_aop_plugin.beans.WovenInfo
+import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig.Companion.cutInfoJson
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -67,7 +68,7 @@ object InitConfig {
     fun initCutInfo(project: Project):Boolean{
         temporaryDir = File(project.buildDir.absolutePath+"/tmp")
         cutInfoFile = File(temporaryDir, "cutInfo.json")
-
+        cutInfoMap.clear()
         return isInit
     }
 

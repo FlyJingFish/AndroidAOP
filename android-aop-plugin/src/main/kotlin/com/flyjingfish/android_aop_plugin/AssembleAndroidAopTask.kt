@@ -254,6 +254,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     }
 
     private fun wovenIntoCode(){
+        exportCutInfo()
 //        logger.error("getClassMethodRecord="+WovenInfoUtils.classMethodRecords)
         allDirectories.get().forEach { directory ->
             directory.asFile.walk().forEach { file ->
@@ -322,6 +323,77 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             it.copyTo(jarOutput)
                         }
                         jarOutput.closeEntry()
+                    }
+
+
+                } catch (e: Exception) {
+//                    throw RuntimeException("Merge jar error entry:[${jarEntry.name}], error message:$e,通常情况下你需要先重启Android Studio,然后clean一下项目即可，如果还有问题请到Github联系作者")
+                    logger.error("Merge jar error entry:[${jarEntry.name}], error message:$e,通常情况下你需要先重启Android Studio,然后clean一下项目即可，如果还有问题请到Github联系作者")
+                }
+            }
+            jarFile.close()
+        }
+    }
+
+    private fun exportCutInfo(){
+        if (!AndroidAopConfig.cutInfoJson){
+            return
+        }
+        allDirectories.get().forEach { directory ->
+            directory.asFile.walk().forEach { file ->
+                if (file.isFile) {
+                    val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(file.absolutePath)
+                    if (methodsRecord != null){
+                        FileInputStream(file).use { inputs ->
+                            val byteArray = inputs.readAllBytes()
+                            if (byteArray.isNotEmpty()){
+                                try {
+                                    val classReader = ClassReader(byteArray)
+                                    classReader.accept(AnnotationMethodScanner(
+                                        logger,object :AnnotationMethodScanner.OnCallBackMethod{
+                                            override fun onBackName(methodRecord: MethodRecord) {
+
+                                            }
+                                        }
+                                    ,true), ClassReader.EXPAND_FRAMES)
+                                } catch (e: Exception) {
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        allJars.get().forEach { file ->
+            val jarFile = JarFile(file.asFile)
+            val enumeration = jarFile.entries()
+            while (enumeration.hasMoreElements()) {
+                val jarEntry = enumeration.nextElement()
+                try {
+                    val entryName = jarEntry.name
+                    if (jarEntry.isDirectory || entryName.isEmpty() || entryName.startsWith("META-INF/") || "module-info.class" == entryName) {
+                        continue
+                    }
+
+                    val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(entryName)
+
+                    if (methodsRecord != null){
+                        jarFile.getInputStream(jarEntry).use { inputs ->
+                            val byteArray = inputs.readAllBytes()
+                            if (byteArray.isNotEmpty()){
+                                try {
+                                    val classReader = ClassReader(byteArray)
+                                    classReader.accept(AnnotationMethodScanner(
+                                        logger,object :AnnotationMethodScanner.OnCallBackMethod{
+                                            override fun onBackName(methodRecord: MethodRecord) {
+
+                                            }
+                                        }
+                                        ,true), ClassReader.EXPAND_FRAMES)
+                                } catch (e: Exception) {
+                                }
+                            }
+                        }
                     }
 
 

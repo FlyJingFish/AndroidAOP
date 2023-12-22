@@ -5,7 +5,6 @@ import com.flyjingfish.android_aop_plugin.beans.AopMatchCut
 import com.flyjingfish.android_aop_plugin.beans.CutMethodJson
 import com.flyjingfish.android_aop_plugin.beans.LambdaMethod
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
-import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig.Companion.cutInfoJson
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode.getCtMethod
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils.classPool
 import com.flyjingfish.android_aop_plugin.utils.InitConfig.putCutInfo
@@ -29,7 +28,7 @@ import org.objectweb.asm.tree.MethodNode
 import org.slf4j.Logger
 
 
-class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBackMethod) :
+class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBackMethod,val recordCutInfo:Boolean = false) :
     ClassNode(Opcodes.ASM9) {
     //    private final byte[] classByte;
     private val aopMatchCuts = mutableListOf<AopMatchCut>();
@@ -163,7 +162,7 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
                 if (isBack) {
                     onCallBackMethod.onBackName(methodName)
                     val aopMethodCut = getAnnoInfo(descriptor)
-                    if (aopMethodCut != null && cutInfoJson) {
+                    if (aopMethodCut != null && recordCutInfo) {
                         putCutInfo(
                             "注解切面", slashToDot(className), aopMethodCut.anno,
                             CutMethodJson(methodName.methodName, methodName.descriptor, false)
@@ -234,7 +233,7 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
                                 )
                             )
                             //                            cacheMethodRecords.add(new MethodRecord(name, descriptor, aopMatchCut.getCutClassName()));
-                            if (cutInfoJson) {
+                            if (recordCutInfo) {
                                 putCutInfo(
                                     "匹配切面",
                                     slashToDot(
@@ -360,7 +359,7 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
                                         aopMatchCut.cutClassName
                                     )
                                     onCallBackMethod.onBackName(methodRecord)
-                                    if (cutInfoJson) {
+                                    if (recordCutInfo) {
 //                                        InitConfig.INSTANCE.putCutInfo("匹配切面",lambdaMethod.getOriginalClassName()+"_"+lambdaMethod.getLambdaName(),aopMatchCut.getCutClassName(),new CutMethodJson(name,returnType == null?(descriptor.substring(0,descriptor.lastIndexOf(")")+1)):paramStr.toString(),returnType == null?(descriptor.substring(descriptor.lastIndexOf(")")+1)):returnType,true));
                                         putCutInfo(
                                             "匹配切面",
