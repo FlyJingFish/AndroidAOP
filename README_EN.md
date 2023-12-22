@@ -111,12 +111,12 @@ plugins {
 
 dependencies {
      //Required items 👇
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.2.6'
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.2.6'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.2.8'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.2.8'
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️supports aspects written in Java and Kotlin code
-     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.2.6'
+     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.2.8'
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️only applies to aspects written in Java code
-     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.2.6'
+     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.2.8'
      //⚠️Choose one of the above android-aop-ksp and android-aop-processor
 }
 ```

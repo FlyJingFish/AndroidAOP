@@ -76,25 +76,32 @@ task bumpVersion() {
         versionProps['PROJ_VERSION'] = newVersionName
         versionProps.store(versionPropsFile.newWriter(), null)
 
-        File configFile = new File("README.md")
-        String exportText = configFile.text
-        String text = exportText.replaceAll("io.github.FlyJingFish.AndroidAop:android-aop-plugin:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-plugin:"+newVersionName)
-        text = text.replaceAll("io.github.FlyJingFish.AndroidAop:android-aop-core:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-core:"+newVersionName)
-        text = text.replaceAll("io.github.FlyJingFish.AndroidAop:android-aop-annotation:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-annotation:"+newVersionName)
-        text = text.replaceAll("io.github.FlyJingFish.AndroidAop:android-aop-processor:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-processor:"+newVersionName)
-        text = text.replaceAll("io.github.FlyJingFish.AndroidAop:android-aop-ksp:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-ksp:"+newVersionName)
-        text = text.replaceAll("id \"io.github.FlyJingFish.AndroidAop.android-aop\" version \""+oldVersionName+"\"","id \"io.github.FlyJingFish.AndroidAop.android-aop\" version \""+newVersionName+"\"")
+        updateREADME("README.md",oldVersionName,newVersionName)
+        updateREADME("README_EN.md",oldVersionName,newVersionName)
 
         File gradleFile = new File("gradle.properties")
         String gradleText = gradleFile.text
         String text2 = gradleText.replaceAll("TestVersion = "+oldVersionName,"TestVersion = "+newVersionName)
 
 
-        configFile.write(text)
         gradleFile.write(text2)
         println("升级版本号完成，versionName = "+newVersionName)
     }
 }
+
+
+def updateREADME(readme,oldVersionName,newVersionName) {
+    File configFile = new File(readme)
+    String exportText = configFile.text
+    String text = exportText.replaceAll("io.github.FlyJingFish.AndroidAop:android-aop-plugin:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-plugin:"+newVersionName)
+    text = text.replaceAll("io.github.FlyJingFish.AndroidAop:android-aop-core:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-core:"+newVersionName)
+    text = text.replaceAll("io.github.FlyJingFish.AndroidAop:android-aop-annotation:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-annotation:"+newVersionName)
+    text = text.replaceAll("io.github.FlyJingFish.AndroidAop:android-aop-processor:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-processor:"+newVersionName)
+    text = text.replaceAll("io.github.FlyJingFish.AndroidAop:android-aop-ksp:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-ksp:"+newVersionName)
+    text = text.replaceAll("id \"io.github.FlyJingFish.AndroidAop.android-aop\" version \""+oldVersionName+"\"","id \"io.github.FlyJingFish.AndroidAop.android-aop\" version \""+newVersionName+"\"")
+    configFile.write(text)
+}
+
 def appVersionName = getAppVersionName()
 group = PROJ_GROUP
 version = appVersionName
