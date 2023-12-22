@@ -54,13 +54,13 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
     @TaskAction
     fun taskAction() {
-        printLog("Woven info code start")
+        println("AndroidAOP woven info code start")
         jarOutput = JarOutputStream(BufferedOutputStream(FileOutputStream(output.get().asFile)))
         val scanTimeCost = measureTimeMillis {
             scanFile()
         }
         jarOutput.close()
-        printLog("Woven info code finish, current cost time ${scanTimeCost}ms")
+        println("AndroidAOP woven info code finish, current cost time ${scanTimeCost}ms")
 
     }
 
