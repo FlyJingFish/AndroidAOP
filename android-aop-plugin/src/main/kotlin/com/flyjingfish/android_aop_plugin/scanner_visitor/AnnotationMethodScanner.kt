@@ -28,7 +28,7 @@ import org.objectweb.asm.tree.MethodNode
 import org.slf4j.Logger
 
 
-class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBackMethod,val recordCutInfo:Boolean = false) :
+class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?,val recordCutInfo:Boolean = false) :
     ClassNode(Opcodes.ASM9) {
     //    private final byte[] classByte;
     private val aopMatchCuts = mutableListOf<AopMatchCut>();
@@ -160,7 +160,7 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
                 } catch (ignored: Exception) {
                 }
                 if (isBack) {
-                    onCallBackMethod.onBackName(methodName)
+                    onCallBackMethod?.onBackName(methodName)
                     val aopMethodCut = getAnnoInfo(descriptor)
                     if (aopMethodCut != null && recordCutInfo) {
                         putCutInfo(
@@ -225,7 +225,7 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
                         } catch (ignored: java.lang.Exception) {
                         }
                         if (isBack) {
-                            onCallBackMethod.onBackName(
+                            onCallBackMethod?.onBackName(
                                 MethodRecord(
                                     name,
                                     descriptor,
@@ -358,7 +358,7 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
                                         lambdaDesc,
                                         aopMatchCut.cutClassName
                                     )
-                                    onCallBackMethod.onBackName(methodRecord)
+                                    onCallBackMethod?.onBackName(methodRecord)
                                     if (recordCutInfo) {
 //                                        InitConfig.INSTANCE.putCutInfo("匹配切面",lambdaMethod.getOriginalClassName()+"_"+lambdaMethod.getLambdaName(),aopMatchCut.getCutClassName(),new CutMethodJson(name,returnType == null?(descriptor.substring(0,descriptor.lastIndexOf(")")+1)):paramStr.toString(),returnType == null?(descriptor.substring(descriptor.lastIndexOf(")")+1)):returnType,true));
                                         putCutInfo(

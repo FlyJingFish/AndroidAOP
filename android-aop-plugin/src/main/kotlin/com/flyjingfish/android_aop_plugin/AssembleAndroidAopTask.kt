@@ -187,7 +187,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     try {
                                         val classReader = ClassReader(bytes)
                                         classReader.accept(AnnotationMethodScanner(
-                                            logger,object :AnnotationMethodScanner.OnCallBackMethod{
+                                            object :AnnotationMethodScanner.OnCallBackMethod{
                                                 override fun onBackName(methodRecord: MethodRecord) {
                                                     val record = ClassMethodRecord(file.absolutePath, methodRecord)
                                                     WovenInfoUtils.addClassMethodRecords(record)
@@ -229,7 +229,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     try {
                                         val classReader = ClassReader(bytes)
                                         classReader.accept(AnnotationMethodScanner(
-                                            logger,object :AnnotationMethodScanner.OnCallBackMethod{
+                                            object :AnnotationMethodScanner.OnCallBackMethod{
                                                 override fun onBackName(methodRecord: MethodRecord) {
                                                     val record = ClassMethodRecord(entryName, methodRecord)
                                                     WovenInfoUtils.addClassMethodRecords(record)
@@ -349,13 +349,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             if (byteArray.isNotEmpty()){
                                 try {
                                     val classReader = ClassReader(byteArray)
-                                    classReader.accept(AnnotationMethodScanner(
-                                        logger,object :AnnotationMethodScanner.OnCallBackMethod{
-                                            override fun onBackName(methodRecord: MethodRecord) {
-
-                                            }
-                                        }
-                                    ,true), ClassReader.EXPAND_FRAMES)
+                                    classReader.accept(AnnotationMethodScanner(null,true), ClassReader.EXPAND_FRAMES)
                                 } catch (e: Exception) {
                                 }
                             }
@@ -383,13 +377,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             if (byteArray.isNotEmpty()){
                                 try {
                                     val classReader = ClassReader(byteArray)
-                                    classReader.accept(AnnotationMethodScanner(
-                                        logger,object :AnnotationMethodScanner.OnCallBackMethod{
-                                            override fun onBackName(methodRecord: MethodRecord) {
-
-                                            }
-                                        }
-                                        ,true), ClassReader.EXPAND_FRAMES)
+                                    classReader.accept(AnnotationMethodScanner(null,true), ClassReader.EXPAND_FRAMES)
                                 } catch (e: Exception) {
                                 }
                             }
