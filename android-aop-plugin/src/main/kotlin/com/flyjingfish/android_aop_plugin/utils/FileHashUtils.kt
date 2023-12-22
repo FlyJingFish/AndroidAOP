@@ -10,12 +10,13 @@ object FileHashUtils {
     fun isAsmScan(file: String, fileBytes: ByteArray,step: Int): Boolean {
         WovenInfoUtils.removeClassCache(file)
         if (step == 2 && isChangeAopMatch){
+//            printLog("isAsmScan1 = $file")
             return true
         }
         val oldHash = getFileHash(file,step)
         val hash = getSHA256Hash(fileBytes)
         return if (oldHash != hash){
-//            printLog("isAsmScan = $file")
+//            printLog("isAsmScan2 = $file")
             putFileHash(file, fileBytes,step)
             true
         }else{
