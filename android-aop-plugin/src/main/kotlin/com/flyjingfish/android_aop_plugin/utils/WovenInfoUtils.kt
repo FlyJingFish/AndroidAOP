@@ -12,14 +12,15 @@ import java.util.jar.JarFile
 object WovenInfoUtils {
     var aopMethodCuts: HashMap<String, AopMethodCut> = HashMap()
     var aopMatchCuts: HashMap<String, AopMatchCut> = HashMap()
-    var lastAopMatchCuts: HashMap<String, AopMatchCut> = HashMap()
+    private var lastAopMatchCuts: HashMap<String, AopMatchCut> = HashMap()
     var classPaths : HashSet<String> = HashSet()
     private var baseClassPaths : HashSet<String> = HashSet()
     private var classNameMap: HashMap<String, String> = HashMap()
     private var baseClassNameMap: HashMap<String, String> = HashMap()
-    private var classSuperList = arrayListOf<ClassSuperInfo>()
+    private var classSuperListMap = HashMap<String,ClassSuperInfo>()
+    private var classSuperMap = HashMap<String,String>()
+    private val classSuperCacheMap = HashMap<String,String>()
     private val classMethodRecords: HashMap<String, HashMap<String, MethodRecord>> = HashMap()//类名为key，value为方法map集合
-
     fun addAnnoInfo(info: AopMethodCut) {
         aopMethodCuts[info.anno] = info
     }
@@ -72,6 +73,9 @@ object WovenInfoUtils {
     }
 
     fun clear(){
+        classSuperCacheMap.clear()
+        classSuperCacheMap.putAll(classSuperMap)
+
         lastAopMatchCuts.clear()
         lastAopMatchCuts.putAll(aopMatchCuts)
         aopMethodCuts.clear()
@@ -80,6 +84,7 @@ object WovenInfoUtils {
 //        classMethodRecords.clear()
         classNameMap.clear()
 //        classSuperList.clear()
+        classSuperMap.clear()
     }
 
     fun addClassName(classPath:String){
@@ -98,17 +103,35 @@ object WovenInfoUtils {
         return classNameMap[key]
     }
 
-    fun addClassSuper(classSuper :ClassSuperInfo){
-        classSuperList.add(classSuper)
+    fun addClassSuper(file:String,classSuper :ClassSuperInfo){
+        classSuperListMap[classSuper.className] = classSuper
+        classSuperMap[file] = classSuper.className
     }
 
     fun isLeaf(className:String):Boolean{
-        for (classSuperInfo in classSuperList) {
-            if (classSuperInfo.superName == className || (classSuperInfo.interfaces?.contains(className) == true)){
+        val set = classSuperListMap.entries
+        for (classSuperInfo in set) {
+            if (classSuperInfo.value.superName == className || (classSuperInfo.value.interfaces?.contains(className) == true)){
                 return false
             }
         }
         return true
+    }
+
+    fun removeDeletedClass(key: String){
+//        printLog("removeDeletedClass= key =$key,value=${classSuperListMap[key]}")
+        classSuperListMap.remove(key)
+    }
+
+    fun removeClassCache(key: String){
+        classSuperCacheMap.remove(key)
+    }
+
+    fun removeDeletedClass(){
+        val set = classSuperCacheMap.entries
+        for (mutableEntry in set) {
+            removeDeletedClass(mutableEntry.value)
+        }
     }
 
     fun addBaseClassInfo(project: Project){

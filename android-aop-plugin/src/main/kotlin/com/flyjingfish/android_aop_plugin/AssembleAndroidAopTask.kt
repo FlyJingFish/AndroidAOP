@@ -99,7 +99,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     if (inAsm){
                                         val classReader = ClassReader(bytes)
                                         classReader.accept(
-                                            ClassSuperScanner(), ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+                                            ClassSuperScanner(file.absolutePath), ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
                                     }
                                 }
                             }
@@ -143,7 +143,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     if (inAsm){
                                         val classReader = ClassReader(bytes)
                                         classReader.accept(
-                                            ClassSuperScanner(), ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+                                            ClassSuperScanner(entryName), ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
                                     }
                                 }
                             }
@@ -158,6 +158,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             }
             jarFile.close()
         }
+        WovenInfoUtils.removeDeletedClass()
 //        logger.error(""+WovenInfoUtils.aopMatchCuts)
 //        InitConfig.saveBuildConfig()
         ClassPoolUtils.initClassPool()
