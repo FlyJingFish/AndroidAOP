@@ -158,6 +158,16 @@ object WovenInfoUtils {
         }
     }
 
+    fun removeDeletedClassMethodRecord() {
+        if (!AndroidAopConfig.increment){
+            return
+        }
+        val set = classSuperCacheMap.entries
+        for (mutableEntry in set) {
+            classMethodRecords.remove(mutableEntry.key)
+        }
+    }
+
     fun addBaseClassInfo(project: Project) {
         val androidConfig = AndroidConfig(project)
         val list: List<File> = androidConfig.getBootClasspath()

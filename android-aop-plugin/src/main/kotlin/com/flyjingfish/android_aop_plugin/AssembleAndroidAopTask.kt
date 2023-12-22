@@ -250,6 +250,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             }
             jarFile.close()
         }
+        WovenInfoUtils.removeDeletedClassMethodRecord()
     }
 
     private fun wovenIntoCode(){
