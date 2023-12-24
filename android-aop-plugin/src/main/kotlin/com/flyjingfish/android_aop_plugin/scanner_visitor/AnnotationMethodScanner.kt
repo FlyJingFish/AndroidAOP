@@ -2,13 +2,12 @@ package com.flyjingfish.android_aop_plugin.scanner_visitor
 
 
 import com.flyjingfish.android_aop_plugin.beans.AopMatchCut
+import com.flyjingfish.android_aop_plugin.beans.CutInfo
 import com.flyjingfish.android_aop_plugin.beans.CutMethodJson
 import com.flyjingfish.android_aop_plugin.beans.LambdaMethod
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
-import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig.Companion.cutInfoJson
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode.getCtMethod
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils.classPool
-import com.flyjingfish.android_aop_plugin.utils.InitConfig.putCutInfo
 import com.flyjingfish.android_aop_plugin.utils.Utils.getMethodInfo
 import com.flyjingfish.android_aop_plugin.utils.Utils.isInstanceof
 import com.flyjingfish.android_aop_plugin.utils.Utils.slashToDot
@@ -26,10 +25,10 @@ import org.objectweb.asm.Type
 import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.InvokeDynamicInsnNode
 import org.objectweb.asm.tree.MethodNode
-import org.slf4j.Logger
+import java.util.UUID
 
 
-class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBackMethod) :
+class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?) :
     ClassNode(Opcodes.ASM9) {
     //    private final byte[] classByte;
     private val aopMatchCuts = mutableListOf<AopMatchCut>();
@@ -161,14 +160,15 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
                 } catch (ignored: Exception) {
                 }
                 if (isBack) {
-                    onCallBackMethod.onBackName(methodName)
                     val aopMethodCut = getAnnoInfo(descriptor)
-                    if (aopMethodCut != null && cutInfoJson) {
-                        putCutInfo(
+                    if (aopMethodCut != null){
+                        val cutInfo = CutInfo(
                             "注解切面", slashToDot(className), aopMethodCut.anno,
                             CutMethodJson(methodName.methodName, methodName.descriptor, false)
-                        )
+                        );
+                        methodName.cutInfo[UUID.randomUUID().toString()] = cutInfo
                     }
+                    onCallBackMethod?.onBackName(methodName)
                 }
             }
             return super.visitAnnotation(descriptor, visible)
@@ -226,24 +226,22 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
                         } catch (ignored: java.lang.Exception) {
                         }
                         if (isBack) {
-                            onCallBackMethod.onBackName(
-                                MethodRecord(
-                                    name,
-                                    descriptor,
-                                    aopMatchCut.cutClassName
-                                )
+                            val methodRecord = MethodRecord(
+                                name,
+                                descriptor,
+                                aopMatchCut.cutClassName
                             )
+                            val cutInfo = CutInfo(
+                                "匹配切面",
+                                slashToDot(
+                                    className
+                                ),
+                                aopMatchCut.cutClassName,
+                                CutMethodJson(name, descriptor, false)
+                            )
+                            methodRecord.cutInfo[UUID.randomUUID().toString()] = cutInfo
+                            onCallBackMethod?.onBackName(methodRecord)
                             //                            cacheMethodRecords.add(new MethodRecord(name, descriptor, aopMatchCut.getCutClassName()));
-                            if (cutInfoJson) {
-                                putCutInfo(
-                                    "匹配切面",
-                                    slashToDot(
-                                        className
-                                    ),
-                                    aopMatchCut.cutClassName,
-                                    CutMethodJson(name, descriptor, false)
-                                )
-                            }
                         }
                         break
                     }
@@ -354,21 +352,19 @@ class AnnotationMethodScanner(val logger: Logger, val onCallBackMethod: OnCallBa
                                 } catch (ignored: java.lang.Exception) {
                                 }
                                 if (isBack) {
+                                    val cutInfo = CutInfo(
+                                        "匹配切面",
+                                        originalClassName + "_" + lambdaName,
+                                        aopMatchCut.cutClassName,
+                                        CutMethodJson(name, descriptor, true)
+                                    )
                                     val methodRecord = MethodRecord(
                                         lambdaName,
                                         lambdaDesc,
                                         aopMatchCut.cutClassName
                                     )
-                                    onCallBackMethod.onBackName(methodRecord)
-                                    if (cutInfoJson) {
-//                                        InitConfig.INSTANCE.putCutInfo("匹配切面",lambdaMethod.getOriginalClassName()+"_"+lambdaMethod.getLambdaName(),aopMatchCut.getCutClassName(),new CutMethodJson(name,returnType == null?(descriptor.substring(0,descriptor.lastIndexOf(")")+1)):paramStr.toString(),returnType == null?(descriptor.substring(descriptor.lastIndexOf(")")+1)):returnType,true));
-                                        putCutInfo(
-                                            "匹配切面",
-                                            originalClassName + "_" + lambdaName,
-                                            aopMatchCut.cutClassName,
-                                            CutMethodJson(name, descriptor, true)
-                                        )
-                                    }
+                                    methodRecord.cutInfo[UUID.randomUUID().toString()] = cutInfo
+                                    onCallBackMethod?.onBackName(methodRecord)
                                 }
                             }
                         }

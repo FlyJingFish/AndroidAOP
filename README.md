@@ -53,7 +53,7 @@
 //必须项 👇
 plugins {
     ...
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.2.8"
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.3.0"
 }
 ```
 
@@ -65,7 +65,7 @@ plugins {
 buildscript {
     dependencies {
         //必须项 👇
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.2.8'
+        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.3.0'
     }
 }
 ```
@@ -113,12 +113,12 @@ plugins {
 
 dependencies {
     //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.2.8'
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.2.8'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.3.0'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.3.0'
     //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.2.8'
+    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.3.0'
     //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.2.8'
+    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.3.0'
     //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
 }
 ```
@@ -143,6 +143,8 @@ androidAopConfig {
     verifyLeafExtends true
     //默认关闭，开启在 Build 或 打包后 将会生成切点信息json文件在 app/build/tmp/cutInfo.json
     cutInfoJson false
+    //默认开启，设置 false 后会没有增量编译效果 筛选（关键字： AndroidAOP woven info code） build 输出日志可看时间 
+    increment = true//修改、增加、删除匹配切面的话，就会走全量编译
 }
 android {
     ...
@@ -162,10 +164,10 @@ android {
 | @MainThread      |                                                 无参数                                                 |                          切换到主线程的操作，加入此注解可使你的方法内的代码切换到主线程执行                          |
 | @OnLifecycle     |                                       value = Lifecycle.Event                                       |                        监听生命周期的操作，加入此注解可使你的方法内的代码在对应生命周期内才去执行                        |
 | @TryCatch        |                                        value = 你自定义加的一个flag                                         |                            加入此注解可为您的方法包裹一层 try catch 代码                             |
-| @Permission      |                                          value = 权限的字符串数组                                           |                            申请权限的操作，加入此注解可使您的代码在获取权限后才执行                             |
+| @Permission      |                                          tag = 自定义标记<br>value = 权限的字符串数组                                 |                            申请权限的操作，加入此注解可使您的代码在获取权限后才执行                             |
 | @Scheduled       | initialDelay = 延迟开始时间<br>interval = 间隔<br>repeatCount = 重复次数<br>isOnMainThread = 是否主线程<br>id = 唯一标识 | 定时任务，加入此注解，可使你的方法每隔一段时间执行一次，调用AndroidAop.shutdownNow(id)或AndroidAop.shutdown(id)可停止 |
 | @Delay           |                         delay = 延迟时间<br>isOnMainThread = 是否主线程<br>id = 唯一标识                         |  延迟任务，加入此注解，可使你的方法延迟一段时间执行，调用AndroidAop.shutdownNow(id)或AndroidAop.shutdown(id)可取消  |
-| @CheckNetwork    |                         tag = 自定义标记<br>toastText = 无网络时toast提示<br>invokeListener = 是否接管检查网络逻辑   |  检查网络是否可用，加入此注解可使你的方法在有网络才可进去  |
+| @CheckNetwork    |                tag = 自定义标记<br>toastText = 无网络时toast提示<br>invokeListener = 是否接管检查网络逻辑                |                            检查网络是否可用，加入此注解可使你的方法在有网络才可进去                             |
 | @CustomIntercept |                                     value = 你自定义加的一个字符串数组的flag                                      |              自定义拦截，配合 AndroidAop.setOnCustomInterceptListener 使用，属于万金油              |
 
 [上述注解使用示例都在这](https://github.com/FlyJingFish/AndroidAOP/blob/master/app/src/main/java/com/flyjingfish/androidaop/MainActivity.kt#L128),[还有这](https://github.com/FlyJingFish/AndroidAOP/blob/master/app/src/main/java/com/flyjingfish/androidaop/SecondActivity.java#L64)

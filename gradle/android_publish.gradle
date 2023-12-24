@@ -32,10 +32,7 @@ afterEvaluate {
         publications {
             mavenJava(MavenPublication) {
                 artifactId = PROJ_NAME
-                afterEvaluate {
-                    from components.release
-                }
-                artifact androidSourcesJar
+                from components.release
                 pom {
                     packaging = "aar"
                     name = PROJ_BASENAME

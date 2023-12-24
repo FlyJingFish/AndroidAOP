@@ -17,6 +17,11 @@ open class AndroidAopConfig {
      * 是否生成切点信息Json
      */
     var cutInfoJson = false
+
+    /**
+     * 增量加速，有一定增速效果，默认开启，如遇问题，可选择关闭调试
+     */
+    var increment = true
     /**
      * 包含规则
      */
@@ -42,5 +47,6 @@ open class AndroidAopConfig {
         val excludes = mutableListOf<String>()
         var verifyLeafExtends = true
         var cutInfoJson = false
+        var increment = true
     }
 }

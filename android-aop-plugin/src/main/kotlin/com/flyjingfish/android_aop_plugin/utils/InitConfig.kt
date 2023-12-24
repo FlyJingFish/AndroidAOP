@@ -6,7 +6,7 @@ import com.flyjingfish.android_aop_plugin.beans.CutClassesJsonMap
 import com.flyjingfish.android_aop_plugin.beans.CutJson
 import com.flyjingfish.android_aop_plugin.beans.CutJsonMap
 import com.flyjingfish.android_aop_plugin.beans.CutMethodJson
-import com.flyjingfish.android_aop_plugin.beans.WovenInfo
+import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig.Companion.cutInfoJson
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -43,21 +43,6 @@ object InitConfig {
         return ""
     }
 
-    private fun loadBuildConfig(buildConfigCacheFile: File): WovenInfo {
-        return if (buildConfigCacheFile.exists()) {
-            val jsonString = readAsString(buildConfigCacheFile.absolutePath)
-            optFromJsonString(jsonString, WovenInfo::class.java) ?: WovenInfo()
-        } else {
-            WovenInfo()
-        }
-    }
-    fun saveBuildConfig() {
-        val wovenInfo = WovenInfo()
-        wovenInfo.aopMatchCuts = WovenInfoUtils.aopMatchCuts
-        wovenInfo.aopMethodCuts = WovenInfoUtils.aopMethodCuts
-        wovenInfo.classPaths = WovenInfoUtils.classPaths
-        saveFile(buildConfigCacheFile, optToJsonString(wovenInfo))
-    }
     private fun saveFile(file: File, data:String) {
         temporaryDirMkdirs()
         val fos = FileOutputStream(file.absolutePath)
@@ -78,37 +63,24 @@ object InitConfig {
         }
     }
 
-    fun init(project: Project):Boolean{
-        temporaryDir = File(project.buildDir.absolutePath+"/tmp")
-        buildConfigCacheFile = File(temporaryDir, "buildAndroidAopConfigCache.json")
-        val wovenInfo = loadBuildConfig(buildConfigCacheFile)
-        var count =0
-        if(wovenInfo.aopMatchCuts != null){
-            WovenInfoUtils.aopMatchCuts = wovenInfo.aopMatchCuts!!
-            count++
-        }
-        if(wovenInfo.aopMethodCuts != null){
-            WovenInfoUtils.aopMethodCuts = wovenInfo.aopMethodCuts!!
-            count++
-        }
-        if(wovenInfo.classPaths != null){
-            WovenInfoUtils.classPaths = wovenInfo.classPaths!!
-            count++
-        }
-
-        JacocoReportTask.JacocoReportWorkerAction.logger.error("buildConfigCacheFile = ${buildConfigCacheFile.absolutePath}")
-        JacocoReportTask.JacocoReportWorkerAction.logger.error("buildConfig = $wovenInfo")
-        isInit = count == 3
-        return isInit
-    }
 
     fun initCutInfo(project: Project):Boolean{
         temporaryDir = File(project.buildDir.absolutePath+"/tmp")
         cutInfoFile = File(temporaryDir, "cutInfo.json")
-
+        cutInfoMap.clear()
         return isInit
     }
 
+    fun putCutInfo(value: MethodRecord?){
+        val cutInfoMap = value?.cutInfo
+        if (cutInfoMap != null){
+            val set = cutInfoMap.entries
+            for (mutableEntry in set) {
+                val cutInfo = mutableEntry.value
+                putCutInfo(cutInfo.type,cutInfo.className,cutInfo.anno,cutInfo.cutMethodJson)
+            }
+        }
+    }
     fun putCutInfo(type :String,className: String,anno:String,cutMethodJson: CutMethodJson){
         var cutJson = cutInfoMap[anno]
         if (cutJson == null){

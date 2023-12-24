@@ -33,6 +33,7 @@ class AndroidAopPlugin : Plugin<Project> {
             AndroidAopConfig.excludes.add(Utils.corePackage)
             AndroidAopConfig.verifyLeafExtends = androidAopConfig.verifyLeafExtends
             AndroidAopConfig.cutInfoJson = androidAopConfig.cutInfoJson
+            AndroidAopConfig.increment = androidAopConfig.increment
             if (androidAopConfig.cutInfoJson){
                 InitConfig.initCutInfo(project)
             }

@@ -7,7 +7,7 @@ public class StaticClass2 {
     @SingleClick(5000)
     public static void onStaticPermission(){
 
-        ToastUtils.INSTANCE.makeText(ToastUtils.INSTANCE.getApp(), "StaticClass-onStaticPermission");
+        ToastUtils.INSTANCE.makeText(ToastUtils.INSTANCE.getApp(), "StaticClass-onStaticPermission1");
     }
 
 }

@@ -41,26 +41,43 @@ Minimum SDK version: minSdkVersion >= 21
 
 **Can I give the project a Star before starting? Thank you very much, your support is my only motivation. Welcome Stars and Issues!**
 
+#### 1. Introduce the plug-in, choose one of the two methods below (required)
 
-#### 1. Add build.gradle in the project root directory (required)
+##### Method 1: ```plugins``` method
+
+Add directly to ```build.gradle``` of **app**
+
+```gradle
+//Required items 👇
+plugins {
+     ...
+     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.3.0"
+}
+```
+
+##### Method 2: ```apply``` method
+
+1. Depend on the plug-in in ```build.gradle``` in the **project root directory**
 
 ```gradle
 buildscript {
      dependencies {
          //Required items 👇
-         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.2.6'
+         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.3.0'
      }
 }
-plugins {
-     //Optional 👇, if you need to customize aspects and use the android-aop-ksp library, you need to configure it. The version number below is determined according to the Kotlin version of your project
-     id 'com.google.devtools.ksp' version '1.8.0-1.0.9' apply false
-}
 ```
-[List of matching version numbers for Kotlin and KSP Github](https://github.com/google/ksp/releases)
 
-#### 2. Add in app’s build.gradle (this step is required)
+2. Add in ```build.gradle``` of **app**
 
-#### ⚠️Note: 👆This step is required👇
+old version
+
+```gradle
+//Required items 👇
+apply plugin: 'android.aop' //It's best to put it on the last line
+```
+
+or new version
 
 ```gradle
 //Required items 👇
@@ -70,7 +87,21 @@ plugins {
 }
 ```
 
-#### 3. Introduce dependent libraries
+
+
+#### 2. If you need to customize aspects, and the code is ```Kotlin``` (optional)
+
+1. Depend on the plug-in in ```build.gradle``` in the **project root directory**
+
+```gradle
+plugins {
+     //Optional 👇, if you need to customize aspects and use the android-aop-ksp library, you need to configure it. The version number below is determined according to the Kotlin version of your project
+     id 'com.google.devtools.ksp' version '1.8.0-1.0.9' apply false
+}
+```
+[List of matching version numbers for Kotlin and KSP Github](https://github.com/google/ksp/releases)
+
+#### 3. Introduce dependent libraries (required)
 
 ```gradle
 plugins {
@@ -80,12 +111,12 @@ plugins {
 
 dependencies {
      //Required items 👇
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.2.6'
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.2.6'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.3.0'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.3.0'
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️supports aspects written in Java and Kotlin code
-     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.2.6'
+     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.3.0'
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️only applies to aspects written in Java code
-     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.2.6'
+     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.3.0'
      //⚠️Choose one of the above android-aop-ksp and android-aop-processor
 }
 ```
@@ -110,6 +141,8 @@ androidAopConfig {
      verifyLeafExtends true
      //Off by default, if enabled in Build or after packaging, the point cut information json file will be generated in app/build/tmp/cutInfo.json
      cutInfoJson false
+     //It is enabled by default. After setting false, there will be no incremental compilation effect. Filter (keyword: AndroidAOP woven info code) build output log viewable time
+    increment = true
 }
 android {
      ...

@@ -3,6 +3,7 @@ package com.flyjingfish.android_aop_plugin.scanner_visitor
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.utils.ClassNameToConversions
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
+import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.printLog
 import javassist.CannotCompileException
@@ -194,11 +195,12 @@ object WovenIntoCode {
                             (if (isHasArgs) "        Object[] args = new Object[]{$argsBuffer};\n" else "") +
                             (if (isHasArgs) "        pointCut.setArgs(args);\n" else "        pointCut.setArgs(null);\n") +
                             "        "+returnStr+";}"
-                val allSignature = ctMethod.signature
-                printLog("returnType = ${returnType.name}")
-                printLog("allSignature = $allSignature")
-                printLog(body)
+//                val allSignature = ctMethod.signature
+//                printLog("returnType = ${returnType.name}")
+//                printLog("allSignature = $allSignature")
+//                printLog(body)
                 ctMethod.setBody(body)
+                InitConfig.putCutInfo(value)
             } catch (e: NotFoundException) {
                 throw RuntimeException(e)
             } catch (e: CannotCompileException) {

@@ -25,7 +25,7 @@ dependencyResolutionManagement {
 
     versionCatalogs {
         libs {
-            version('ksp', '1.8.0-1.0.9')
+            version('ksp', '1.9.0-1.0.13')
             library('kotlinpoet', 'com.squareup:kotlinpoet:1.15.3')
             library('javapoet', 'com.squareup:javapoet:1.13.0')
             library('ksp-api', 'com.google.devtools.ksp', 'symbol-processing-api').versionRef('ksp')
