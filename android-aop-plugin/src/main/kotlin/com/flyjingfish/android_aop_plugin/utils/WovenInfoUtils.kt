@@ -58,7 +58,6 @@ object WovenInfoUtils {
         } else {
             methodsRecord[key] = classMethodRecord.methodName
         }
-        methodsRecord[key] = classMethodRecord.methodName
         oldRecord?.cutInfo?.let { methodsRecord[key]?.cutInfo?.putAll(it) }
     }
 
