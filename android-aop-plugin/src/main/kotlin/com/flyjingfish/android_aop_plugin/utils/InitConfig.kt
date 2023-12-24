@@ -73,8 +73,8 @@ object InitConfig {
         return isInit
     }
 
-    fun putCutInfo(value: MethodRecord){
-        val cutInfo = value.cutInfo
+    fun putCutInfo(value: MethodRecord?){
+        val cutInfo = value?.cutInfo
         if (cutInfo != null){
             putCutInfo(cutInfo.type,cutInfo.className,cutInfo.anno,cutInfo.cutMethodJson)
         }

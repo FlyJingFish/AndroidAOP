@@ -110,7 +110,6 @@ object WovenIntoCode {
             val targetMethodName = "$oldMethodName$$${Utils.computeMD5(targetClassName)}$METHOD_SUFFIX"
             val oldDescriptor = value.descriptor
             val cutClassName = value.cutClassName
-            InitConfig.putCutInfo(value)
             try {
                 val ctMethod =
                     getCtMethod(ctClass, oldMethodName, oldDescriptor)
@@ -201,6 +200,7 @@ object WovenIntoCode {
 //                printLog("allSignature = $allSignature")
 //                printLog(body)
                 ctMethod.setBody(body)
+                InitConfig.putCutInfo(value)
             } catch (e: NotFoundException) {
                 throw RuntimeException(e)
             } catch (e: CannotCompileException) {
