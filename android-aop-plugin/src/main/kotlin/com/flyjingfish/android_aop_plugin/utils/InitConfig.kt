@@ -6,6 +6,7 @@ import com.flyjingfish.android_aop_plugin.beans.CutClassesJsonMap
 import com.flyjingfish.android_aop_plugin.beans.CutJson
 import com.flyjingfish.android_aop_plugin.beans.CutJsonMap
 import com.flyjingfish.android_aop_plugin.beans.CutMethodJson
+import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.WovenInfo
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig.Companion.cutInfoJson
@@ -72,6 +73,12 @@ object InitConfig {
         return isInit
     }
 
+    fun putCutInfo(value: MethodRecord){
+        val cutInfo = value.cutInfo
+        if (cutInfo != null){
+            putCutInfo(cutInfo.type,cutInfo.className,cutInfo.anno,cutInfo.cutMethodJson)
+        }
+    }
     fun putCutInfo(type :String,className: String,anno:String,cutMethodJson: CutMethodJson){
         var cutJson = cutInfoMap[anno]
         if (cutJson == null){

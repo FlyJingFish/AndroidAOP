@@ -3,6 +3,7 @@ package com.flyjingfish.android_aop_plugin.scanner_visitor
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.utils.ClassNameToConversions
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
+import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.printLog
 import javassist.CannotCompileException
@@ -109,6 +110,7 @@ object WovenIntoCode {
             val targetMethodName = "$oldMethodName$$${Utils.computeMD5(targetClassName)}$METHOD_SUFFIX"
             val oldDescriptor = value.descriptor
             val cutClassName = value.cutClassName
+            InitConfig.putCutInfo(value)
             try {
                 val ctMethod =
                     getCtMethod(ctClass, oldMethodName, oldDescriptor)
