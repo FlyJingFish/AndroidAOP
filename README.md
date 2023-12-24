@@ -53,7 +53,7 @@
 //必须项 👇
 plugins {
     ...
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.2.8"
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.3.0"
 }
 ```
 
@@ -65,7 +65,7 @@ plugins {
 buildscript {
     dependencies {
         //必须项 👇
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.2.8'
+        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.3.0'
     }
 }
 ```
@@ -113,12 +113,12 @@ plugins {
 
 dependencies {
     //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.2.8'
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.2.8'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.3.0'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.3.0'
     //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.2.8'
+    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.3.0'
     //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.2.8'
+    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.3.0'
     //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
 }
 ```
@@ -144,7 +144,7 @@ androidAopConfig {
     //默认关闭，开启在 Build 或 打包后 将会生成切点信息json文件在 app/build/tmp/cutInfo.json
     cutInfoJson false
     //默认开启，设置 false 后会没有增量编译效果 筛选（关键字： AndroidAOP woven info code） build 输出日志可看时间 
-    increment = true
+    increment = true//修改、增加、删除匹配切面的话，就会走全量编译
 }
 android {
     ...
