@@ -25,6 +25,7 @@ import org.objectweb.asm.Type
 import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.InvokeDynamicInsnNode
 import org.objectweb.asm.tree.MethodNode
+import java.util.UUID
 
 
 class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?) :
@@ -161,10 +162,11 @@ class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?) :
                 if (isBack) {
                     val aopMethodCut = getAnnoInfo(descriptor)
                     if (aopMethodCut != null){
-                        methodName.cutInfo = CutInfo(
+                        val cutInfo = CutInfo(
                             "注解切面", slashToDot(className), aopMethodCut.anno,
                             CutMethodJson(methodName.methodName, methodName.descriptor, false)
-                        )
+                        );
+                        methodName.cutInfo[UUID.randomUUID().toString()] = cutInfo
                     }
                     onCallBackMethod?.onBackName(methodName)
                 }
@@ -224,21 +226,21 @@ class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?) :
                         } catch (ignored: java.lang.Exception) {
                         }
                         if (isBack) {
-                            onCallBackMethod?.onBackName(
-                                MethodRecord(
-                                    name,
-                                    descriptor,
-                                    aopMatchCut.cutClassName,
-                                    CutInfo(
-                                        "匹配切面",
-                                        slashToDot(
-                                            className
-                                        ),
-                                        aopMatchCut.cutClassName,
-                                        CutMethodJson(name, descriptor, false)
-                                    )
-                                )
+                            val methodRecord = MethodRecord(
+                                name,
+                                descriptor,
+                                aopMatchCut.cutClassName
                             )
+                            val cutInfo = CutInfo(
+                                "匹配切面",
+                                slashToDot(
+                                    className
+                                ),
+                                aopMatchCut.cutClassName,
+                                CutMethodJson(name, descriptor, false)
+                            )
+                            methodRecord.cutInfo[UUID.randomUUID().toString()] = cutInfo
+                            onCallBackMethod?.onBackName(methodRecord)
                             //                            cacheMethodRecords.add(new MethodRecord(name, descriptor, aopMatchCut.getCutClassName()));
                         }
                         break
@@ -350,17 +352,18 @@ class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?) :
                                 } catch (ignored: java.lang.Exception) {
                                 }
                                 if (isBack) {
+                                    val cutInfo = CutInfo(
+                                        "匹配切面",
+                                        originalClassName + "_" + lambdaName,
+                                        aopMatchCut.cutClassName,
+                                        CutMethodJson(name, descriptor, true)
+                                    )
                                     val methodRecord = MethodRecord(
                                         lambdaName,
                                         lambdaDesc,
-                                        aopMatchCut.cutClassName,
-                                        CutInfo(
-                                            "匹配切面",
-                                            originalClassName + "_" + lambdaName,
-                                            aopMatchCut.cutClassName,
-                                            CutMethodJson(name, descriptor, true)
-                                        )
+                                        aopMatchCut.cutClassName
                                     )
+                                    methodRecord.cutInfo[UUID.randomUUID().toString()] = cutInfo
                                     onCallBackMethod?.onBackName(methodRecord)
                                 }
                             }

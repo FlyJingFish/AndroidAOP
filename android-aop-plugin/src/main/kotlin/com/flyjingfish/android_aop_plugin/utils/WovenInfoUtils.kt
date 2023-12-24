@@ -50,6 +50,7 @@ object WovenInfoUtils {
             classMethodRecords[classMethodRecord.classFile] = methodsRecord
         }
         val key = classMethodRecord.methodName.methodName + classMethodRecord.methodName.descriptor
+        val oldRecord = methodsRecord[key]
         if (methodsRecord.contains(key)) {
             if (!classMethodRecord.methodName.cutClassName.isNullOrEmpty()) {
                 methodsRecord[key] = classMethodRecord.methodName
@@ -57,6 +58,8 @@ object WovenInfoUtils {
         } else {
             methodsRecord[key] = classMethodRecord.methodName
         }
+        methodsRecord[key] = classMethodRecord.methodName
+        oldRecord?.cutInfo?.let { methodsRecord[key]?.cutInfo?.putAll(it) }
     }
 
     fun deleteClassMethodRecord(key: String) {
