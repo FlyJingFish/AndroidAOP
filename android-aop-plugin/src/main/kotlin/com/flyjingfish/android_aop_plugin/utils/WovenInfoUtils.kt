@@ -144,6 +144,9 @@ object WovenInfoUtils {
         classSuperListMap.remove(key)
     }
 
+    /**
+     * 删除访问到的文件，最后剩下就是真正删除了的文件
+     */
     fun removeClassCache(key: String) {
         classSuperCacheMap.remove(key)
     }
