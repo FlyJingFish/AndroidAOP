@@ -8,7 +8,7 @@ import android.net.NetworkInfo
 import android.os.Build
 
 @SuppressLint("MissingPermission")
-object NetworkUtils {
+internal object NetworkUtils {
 
     /**
      * >= Android 10（Q版本）推荐

@@ -11,6 +11,5 @@ android {
 
 dependencies {
     implementation project(path: ':android-aop-annotation')
-    implementation 'com.google.android.gms:play-services-pal:20.2.0'
     ksp project(':android-aop-ksp')
 }
