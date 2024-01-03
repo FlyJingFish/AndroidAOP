@@ -33,7 +33,7 @@
 
 ### Version restrictions
 
-Minimum Gradle version: 7.4
+Minimum Gradle version: 7.5
 
 Minimum SDK version: minSdkVersion >= 21
 

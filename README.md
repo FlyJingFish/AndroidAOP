@@ -35,7 +35,7 @@
 
 ### 版本限制
 
-最低Gradle版本：7.4
+最低Gradle版本：7.5
 
 最低SDK版本：minSdkVersion >= 21
 

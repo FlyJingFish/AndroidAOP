@@ -25,7 +25,7 @@ dependencyResolutionManagement {
 
     versionCatalogs {
         libs {
-            version('ksp', '1.9.0-1.0.13')
+            version('ksp', '1.8.0-1.0.9')
             library('kotlinpoet', 'com.squareup:kotlinpoet:1.15.3')
             library('javapoet', 'com.squareup:javapoet:1.13.0')
             library('ksp-api', 'com.google.devtools.ksp', 'symbol-processing-api').versionRef('ksp')
@@ -34,8 +34,11 @@ dependencyResolutionManagement {
             library('javassist', 'org.javassist:javassist:3.29.2-GA')
             library('asm-lib', 'org.ow2.asm:asm:9.6')
             library('asm-commons', 'org.ow2.asm:asm-commons:9.6')
-            library('gradle', 'com.android.tools.build:gradle:7.4.0')
+            library('gradle', 'com.android.tools.build:gradle:7.4.1')
             library('gson', 'com.google.code.gson:gson:2.10.1')
+            library('core-ktx', 'androidx.core:core-ktx:1.6.1')
+            library('appcompat', 'androidx.appcompat:appcompat:1.6.1')
+            library('material', 'com.google.android.material:material:1.6.0')
         }
     }
 }
