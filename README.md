@@ -35,7 +35,9 @@
 
 ### 版本限制
 
-最低Gradle版本：7.5
+最低Gradle版本：7.5👇
+
+<img src="/screenshot/gradle_version.png" alt="show" height="220px" />
 
 最低SDK版本：minSdkVersion >= 21
 

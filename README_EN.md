@@ -33,7 +33,10 @@
 
 ### Version restrictions
 
-Minimum Gradle version: 7.5
+Minimum Gradle version: 7.5👇
+
+<img src="/screenshot/gradle_version.png" alt="show" height="220px" />
+
 
 Minimum SDK version: minSdkVersion >= 21
 
