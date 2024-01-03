@@ -6,20 +6,16 @@ android {
         targetSdk rootProject.ext.sdkVersion
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '17'
+        jvmTarget = '11'
     }
 }
 dependencies {
 //    compileOnly 'androidx.core:core-ktx:1.8.0'
-    implementation ('androidx.appcompat:appcompat'){
-        version {
-            strictly '1.6.1' // Will make sure that library uses that version in your build
-        }
-    }
+    compileOnly ('androidx.appcompat:appcompat:1.6.1')
 }
 
 

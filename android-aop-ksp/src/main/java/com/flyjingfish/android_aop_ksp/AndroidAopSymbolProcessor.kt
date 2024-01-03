@@ -4,6 +4,7 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatch
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopMethod
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopPointCut
+import com.flyjingfish.android_aop_annotation.base.MatchClassMethod
 import com.google.devtools.ksp.containingFile
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.Dependencies
@@ -148,13 +149,14 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         val typeList = symbol.superTypes.toList()
 
         for (ksTypeReference in typeList) {
-          if (ksTypeReference.toString() == "MatchClassMethod") {
+          val superClassName = ksTypeReference.resolve().declaration.packageName.asString() + "." + ksTypeReference
+          if (superClassName == MatchClassMethod::class.java.name) {
             isMatchClassMethod = true
           }
         }
       }
       if (!isMatchClassMethod) {
-        throw IllegalArgumentException("注意：$symbol 必须实现 MatchClassMethod 接口")
+        throw IllegalArgumentException("注意：$symbol 必须实现 ${MatchClassMethod::class.java.name} 接口")
       }
 
       val annotationMap = getAnnotation(symbol)

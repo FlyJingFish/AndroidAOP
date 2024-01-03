@@ -29,11 +29,14 @@
 
 #### [Click here to download apk, or scan the QR code below to download](https://github.com/FlyJingFish/AndroidAOP/blob/master/apk/release/app-release.apk?raw=true)
 
-<img src="/screenshot/qrcode.png" alt="show" width="200px" />
+<img src="/screenshot/qrcode.png" alt="show" />
 
 ### Version restrictions
 
-Minimum Gradle version: 8.0
+Minimum Gradle version: 7.5👇
+
+<img src="/screenshot/gradle_version.png" alt="show" height="220px" />
+
 
 Minimum SDK version: minSdkVersion >= 21
 
@@ -51,7 +54,7 @@ Add directly to ```build.gradle``` of **app**
 //Required items 👇
 plugins {
      ...
-     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.3.0"
+     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.3.1"
 }
 ```
 
@@ -63,7 +66,7 @@ plugins {
 buildscript {
      dependencies {
          //Required items 👇
-         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.3.0'
+         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.3.1'
      }
 }
 ```
@@ -111,12 +114,12 @@ plugins {
 
 dependencies {
      //Required items 👇
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.3.0'
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.3.0'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.3.1'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.3.1'
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️supports aspects written in Java and Kotlin code
-     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.3.0'
+     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.3.1'
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️only applies to aspects written in Java code
-     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.3.0'
+     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.3.1'
      //⚠️Choose one of the above android-aop-ksp and android-aop-processor
 }
 ```

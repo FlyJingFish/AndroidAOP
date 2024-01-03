@@ -4,24 +4,13 @@ plugins {
     id 'com.google.devtools.ksp'
 }
 
+apply from: "$rootDir/gradle/android_base.gradle"
 android {
     namespace 'com.flyjingfish.test_lib'
     compileSdk 33
-
     defaultConfig {
-        minSdk 21
         targetSdk 33
-
     }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = '17'
-    }
-
 //    kotlin {
 //        sourceSets {
 //            // 让IDE识别KSP生成的代码
@@ -31,13 +20,9 @@ android {
 }
 
 dependencies {
-
-    implementation 'androidx.core:core-ktx:1.8.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.10.0'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation libs.core.ktx
+    implementation libs.appcompat
+    implementation libs.material
 
     if (TestType == "0"){
         //本地
