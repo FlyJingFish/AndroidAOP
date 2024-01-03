@@ -29,7 +29,7 @@
 
 #### [Click here to download apk, or scan the QR code below to download](https://github.com/FlyJingFish/AndroidAOP/blob/master/apk/release/app-release.apk?raw=true)
 
-<img src="/screenshot/qrcode.png" alt="show" width="200px" />
+<img src="/screenshot/qrcode.png" alt="show" />
 
 ### Version restrictions
 
