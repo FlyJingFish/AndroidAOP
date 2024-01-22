@@ -26,9 +26,6 @@ import java.lang.annotation.ElementType
 class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
                                 private val logger: KSPLogger
 ) : SymbolProcessor {
-  companion object{
-    const val packageName = "com.flyjingfish.android_aop_core.aop"
-  }
   override fun process(resolver: Resolver): List<KSAnnotated> {
 //    logger.error("---------AndroidAopSymbolProcessor---------")
     val ret1 = processPointCut(resolver)
@@ -135,7 +132,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
 
       typeBuilder.addFunction(whatsMyName1.build())
 
-      writeToFile(typeBuilder,fileName, symbol)
+      writeToFile(typeBuilder,symbol.packageName.asString(),fileName, symbol)
     }
     return symbols.filter { !it.validate() }.toList()
   }
@@ -224,13 +221,14 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         )
 
       typeBuilder.addFunction(whatsMyName1.build())
-      writeToFile(typeBuilder, fileName, symbol)
+      writeToFile(typeBuilder,symbol.packageName.asString(), fileName, symbol)
     }
     return symbols.filter { !it.validate() }.toList()
   }
 
   private fun writeToFile(
     typeBuilder: TypeSpec.Builder,
+    packageName:String,
     fileName: String,
     symbol: KSAnnotated
   ) {
