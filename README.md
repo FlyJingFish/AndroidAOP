@@ -378,7 +378,7 @@ class MatchTestMatchMethod : MatchClassMethod {
 
 可以看到上方 AndroidAopMatchClassMethod 设置的 type 是 MatchType.SELF 表示只匹配 TestMatch 这个类自身，不考虑其子类
 
-⚠️⚠️⚠️ 不是所有类都可以Hook进去，```type``` 类型为 ```SELF``` 时，```targetClassName``` 所设置的类必须是安装包里的代码。例如：如果这个类在 **android.jar** 里边是不行的
+⚠️⚠️⚠️ 不是所有类都可以Hook进去，```type``` 类型为 ```SELF``` 时，```targetClassName``` 所设置的类必须是安装包里的代码。例如：Toast 这个类在 **android.jar** 里边是不行的
 
 - 例子二
 
