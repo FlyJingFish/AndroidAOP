@@ -6,6 +6,7 @@ import com.flyjingfish.android_aop_plugin.beans.CutInfo
 import com.flyjingfish.android_aop_plugin.beans.CutMethodJson
 import com.flyjingfish.android_aop_plugin.beans.LambdaMethod
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
+import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode.getCtMethod
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils.classPool
 import com.flyjingfish.android_aop_plugin.utils.Utils.getMethodInfo
@@ -35,6 +36,8 @@ class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?) :
 
     //    private final List<MethodRecord> cacheMethodRecords = new ArrayList<>();
     lateinit var className: String
+    private var replaceInvokeClassName: String?=null
+    private var replaceTargetClassName: String?=null
 
 
     override fun visit(
@@ -46,6 +49,12 @@ class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?) :
         interfaces: Array<String>?
     ) {
         className = name
+        val seeClsName = slashToDotClassName(className)
+        val isReplaceClass = WovenInfoUtils.containInvoke(seeClsName)
+        if (isReplaceClass){
+            replaceInvokeClassName = seeClsName
+            replaceTargetClassName = WovenInfoUtils.getTargetClassName(seeClsName)
+        }
         //        logger.error("className="+className+",superName="+superName+",interfaces="+ Arrays.asList(interfaces));
         WovenInfoUtils.aopMatchCuts.forEach { (_: String?, aopMatchCut: AopMatchCut) ->
             if (AopMatchCut.MatchType.SELF.name != aopMatchCut.matchType) {
@@ -126,18 +135,21 @@ class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?) :
     override fun visitAnnotation(descriptor: String?, visible: Boolean): AnnotationVisitor? {
         return super.visitAnnotation(descriptor, visible)
     }
-
+    companion object {
+        const val REPLACE_POINT =
+            "Lcom/flyjingfish/android_aop_annotation/anno/AndroidAopReplaceMethod"
+    }
     open inner class MyMethodVisitor
         (
-        access: Int,
-        name: String,
-        descriptor: String?,
-        signature: String?,
-        exceptions: Array<String?>?, var methodName: MethodRecord
+        val access: Int,
+        val methodname: String,
+        val methoddescriptor: String,
+        val signature: String?,
+        val exceptions: Array<String?>?, var methodName: MethodRecord
     ) : MethodNode(
         Opcodes.ASM9, access,
-        name,
-        descriptor,
+        methodname,
+        methoddescriptor,
         signature,
         exceptions
     ) {
@@ -171,7 +183,34 @@ class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?) :
                     onCallBackMethod?.onBackName(methodName)
                 }
             }
+            if (descriptor.contains(REPLACE_POINT) && replaceTargetClassName != null){
+
+                val replaceMethodInfo = ReplaceMethodInfo(
+                    replaceTargetClassName!!,methodname,methoddescriptor,
+                    className,methodname,methoddescriptor
+                )
+                return ReplaceMethodVisitor(replaceMethodInfo)
+            }
             return super.visitAnnotation(descriptor, visible)
+        }
+
+
+        internal inner class ReplaceMethodVisitor(val replaceMethodInfo: ReplaceMethodInfo) : AnnotationVisitor(Opcodes.ASM9) {
+            var methodname: String? = null
+            override fun visit(name: String, value: Any) {
+                if (name == "value") {
+                    methodname = value.toString()
+                }
+                super.visit(name, value)
+            }
+
+            override fun visitEnd() {
+                super.visitEnd()
+                val name = methodname
+                if (!name.isNullOrEmpty()){
+                    replaceMethodInfo.oldMethodName = name
+                }
+            }
         }
     }
 

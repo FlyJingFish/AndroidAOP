@@ -4,6 +4,7 @@ import com.flyjingfish.android_aop_plugin.beans.AopMatchCut
 import com.flyjingfish.android_aop_plugin.beans.AopMethodCut
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addAnnoInfo
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addMatchInfo
+import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addReplaceInfo
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
@@ -71,8 +72,32 @@ class AnnotationScanner(val logger: Logger) : ClassVisitor(Opcodes.ASM9) {
                     methodNames!!.split("-").toTypedArray(),
                     pointCutClassName!!,
                     matchType,
-                    strings)
+                    strings
+                )
                 addMatchInfo(cut)
+            }
+        }
+    }
+
+    internal inner class ReplaceMethodVisitor : AnnotationVisitor(Opcodes.ASM9) {
+        var targetClassName: String? = null
+        var invokeClassName: String? = null
+        override fun visit(name: String, value: Any) {
+            if (isAndroidAopClass) {
+                if (name == "targetClassName") {
+                    targetClassName = value.toString()
+                }
+                if (name == "invokeClassName") {
+                    invokeClassName = value.toString()
+                }
+            }
+            super.visit(name, value)
+        }
+
+        override fun visitEnd() {
+            super.visitEnd()
+            if (targetClassName != null && invokeClassName != null) {
+                addReplaceInfo(targetClassName!!, invokeClassName!!)
             }
         }
     }
@@ -82,6 +107,8 @@ class AnnotationScanner(val logger: Logger) : ClassVisitor(Opcodes.ASM9) {
             return if (isAndroidAopClass) {
                 if (descriptor.contains(METHOD_POINT) || descriptor.contains(MATCH_POINT)) {
                     MethodAnnoVisitor()
+                } else if (descriptor.contains(REPLACE_POINT)) {
+                    ReplaceMethodVisitor()
                 } else {
                     super.visitAnnotation(descriptor, visible)
                 }
@@ -106,5 +133,7 @@ class AnnotationScanner(val logger: Logger) : ClassVisitor(Opcodes.ASM9) {
         const val CLASS_POINT = "Lcom/flyjingfish/android_aop_annotation/anno/AndroidAopClass"
         const val METHOD_POINT = "Lcom/flyjingfish/android_aop_annotation/anno/AndroidAopMethod"
         const val MATCH_POINT = "Lcom/flyjingfish/android_aop_annotation/anno/AndroidAopMatch"
+        const val REPLACE_POINT =
+            "Lcom/flyjingfish/android_aop_annotation/anno/AndroidAopReplaceMethodInvoke"
     }
 }

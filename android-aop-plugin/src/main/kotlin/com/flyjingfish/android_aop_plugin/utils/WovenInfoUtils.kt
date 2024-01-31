@@ -23,7 +23,30 @@ object WovenInfoUtils {
     private val classSuperCacheMap = HashMap<String, String>()
     private val classMethodRecords: HashMap<String, HashMap<String, MethodRecord>> =
         HashMap()//类名为key，value为方法map集合
+    private val invokeMethodMap = HashMap<String, String>()
+    private val replaceMethodMap = HashMap<String, String>()
 
+    fun hasReplace():Boolean{
+        return replaceMethodMap.isNotEmpty()
+    }
+
+    fun addReplaceInfo(targetClassName: String,invokeClassName: String) {
+        invokeMethodMap[invokeClassName] = targetClassName
+        replaceMethodMap[targetClassName] = invokeClassName
+    }
+    fun containInvoke(className: String):Boolean{
+        return invokeMethodMap.containsKey(className)
+    }
+    fun getTargetClassName(className: String):String?{
+        return invokeMethodMap[className]
+    }
+
+    fun containReplace(className: String):Boolean{
+        return replaceMethodMap.containsKey(className)
+    }
+    fun getReplaceClassName(className: String):String?{
+        return replaceMethodMap[className]
+    }
     fun addAnnoInfo(info: AopMethodCut) {
         aopMethodCuts[info.anno] = info
     }
@@ -79,6 +102,7 @@ object WovenInfoUtils {
     }
     private fun clear() {
         if (!AndroidAopConfig.increment) {
+            invokeMethodMap.clear()
             aopMethodCuts.clear()
             aopMatchCuts.clear()
             lastAopMatchCuts.clear()
@@ -91,7 +115,7 @@ object WovenInfoUtils {
             classSuperCacheMap.clear()
             classMethodRecords.clear()
         } else {
-
+            invokeMethodMap.clear()
             classSuperCacheMap.clear()
             classSuperCacheMap.putAll(classSuperMap)
 

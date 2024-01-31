@@ -7,7 +7,9 @@ import com.flyjingfish.android_aop_plugin.scanner_visitor.AnnotationMethodScanne
 import com.flyjingfish.android_aop_plugin.scanner_visitor.AnnotationScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ClassSuperScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.RegisterMapWovenInfoCode
+import com.flyjingfish.android_aop_plugin.scanner_visitor.ReplaceMethodScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
+import com.flyjingfish.android_aop_plugin.utils.AndroidConfig
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
 import com.flyjingfish.android_aop_plugin.utils.FileHashUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
@@ -167,6 +169,42 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     private fun searchJoinPointLocation(){
         val includes = AndroidAopConfig.includes
         val excludes = AndroidAopConfig.excludes
+        if (WovenInfoUtils.hasReplace()){
+            val androidConfig = AndroidConfig(project)
+            val list: List<File> = androidConfig.getBootClasspath()
+
+            for (file in list) {
+                try {
+                    val jarFile = JarFile(file)
+                    val enumeration = jarFile.entries()
+                    while (enumeration.hasMoreElements()) {
+                        val jarEntry = enumeration.nextElement()
+                        try {
+                            val entryName = jarEntry.name
+                            val key = Utils.slashToDot(entryName).replace(".class", "").replace("$", ".")
+                            if (entryName.endsWith(Utils._CLASS) && WovenInfoUtils.containReplace(key)) {
+                                FileInputStream(file).use { inputs ->
+                                    val bytes = inputs.readAllBytes()
+                                    if (bytes.isNotEmpty()){
+                                        try {
+                                            val classReader = ClassReader(bytes)
+                                            classReader.accept(ReplaceMethodScanner(), ClassReader.EXPAND_FRAMES)
+                                        } catch (e: Exception) {
+                                        }
+                                    }
+                                }
+                            }
+                        } catch (_: Exception) {
+
+                        }
+                    }
+                    jarFile.close()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+
         allDirectories.get().forEach { directory ->
             directory.asFile.walk().forEach { file ->
                 if (file.isFile) {
