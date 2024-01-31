@@ -35,7 +35,7 @@
 
 ### 版本限制
 
-最低Gradle版本：7.5👇
+最低Gradle版本：7.5👇（支持8.0以上）
 
 <img src="/screenshot/gradle_version.png" alt="show" />
 
