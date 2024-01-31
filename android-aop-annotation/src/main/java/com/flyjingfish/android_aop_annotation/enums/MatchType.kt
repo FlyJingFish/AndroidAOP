@@ -2,6 +2,9 @@ package com.flyjingfish.android_aop_annotation.enums
 
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod
 
+/**
+ * [wiki 文档匹配类型说明](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#%E7%AE%80%E8%BF%B0)
+ */
 enum class MatchType {
     /**
      * 表示匹配的是继承自 [AndroidAopMatchClassMethod.targetClassName] 设置的类<br></br>
