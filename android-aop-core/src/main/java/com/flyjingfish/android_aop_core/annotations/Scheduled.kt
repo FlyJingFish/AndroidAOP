@@ -4,7 +4,9 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopPointCut
 import com.flyjingfish.android_aop_core.cut.ScheduledCut
 import com.flyjingfish.android_aop_core.utils.AndroidAop
 
-
+/**
+ * 定时任务
+ */
 @AndroidAopPointCut(ScheduledCut::class)
 @Retention(AnnotationRetention.RUNTIME)
 @Target(

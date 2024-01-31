@@ -5,7 +5,9 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopPointCut
 import com.flyjingfish.android_aop_core.cut.DelayCut
 import com.flyjingfish.android_aop_core.utils.AndroidAop
 
-
+/**
+ * 延迟任务
+ */
 @AndroidAopPointCut(DelayCut::class)
 @Retention(AnnotationRetention.RUNTIME)
 @Target(
