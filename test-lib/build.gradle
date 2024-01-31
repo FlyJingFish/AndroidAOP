@@ -37,7 +37,8 @@ dependencies {
         ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:'+TestVersion
         api 'io.github.FlyJingFish.AndroidAop:android-aop-core:'+TestVersion
     }
-
+    api 'com.github.tbruyelle:rxpermissions:0.12'
+    api 'io.reactivex.rxjava3:rxjava:3.0.4'
 
 
 

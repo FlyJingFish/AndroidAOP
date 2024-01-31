@@ -79,8 +79,6 @@ dependencies {
     implementation libs.core.ktx
     implementation libs.appcompat
     implementation libs.material
-    implementation 'com.github.tbruyelle:rxpermissions:0.12'
-    implementation 'io.reactivex.rxjava3:rxjava:3.0.4'
     implementation project(path: ":test-lib")
     if (TestType == "0"){
         //本地

@@ -26,6 +26,7 @@ import com.flyjingfish.androidaop.test2.StaticClass
 import com.flyjingfish.androidaop.test.TestBean
 import com.flyjingfish.test_lib.BaseActivity
 import com.flyjingfish.test_lib.LocaleTransform
+import com.flyjingfish.test_lib.PermissionRejectListener
 import com.flyjingfish.test_lib.TestMatch
 import com.flyjingfish.test_lib.annotation.MyAnno2
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +35,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.lang.Thread.sleep
 
-class MainActivity: BaseActivity2() {
+class MainActivity: BaseActivity2(), PermissionRejectListener{
 
     lateinit var binding:ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -189,6 +190,10 @@ class MainActivity: BaseActivity2() {
         setLogcat("@Permission 获得权限了进入了方法 activity$activity,maxSelect=$maxSelect")
     }
 
+    override fun onReject(permission:Permission,permissionResult: com.tbruyelle.rxpermissions3.Permission) {
+        setLogcat("@Permission 没有获得权限，tag=${permission.tag},permissionResult=${permissionResult}")
+    }
+
     @CustomIntercept("我是自定义数据")
     fun onCustomIntercept(val1 : Int,short: Short,
                           byte: Byte,char: Char,
@@ -221,4 +226,6 @@ class MainActivity: BaseActivity2() {
     fun getDelayResult2(){
         sleep(5000)
     }
+
+
 }
