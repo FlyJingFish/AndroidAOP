@@ -199,7 +199,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
                                                 override fun onBackReplaceMethodInfo(replaceMethodInfo: ReplaceMethodInfo) {
                                                     WovenInfoUtils.addReplaceMethodInfo(file.absolutePath, replaceMethodInfo)
-                                                    printLog("replaceMethodInfo=$replaceMethodInfo")
                                                 }
                                             }
                                         ), ClassReader.EXPAND_FRAMES)
@@ -247,7 +246,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
                                                 override fun onBackReplaceMethodInfo(replaceMethodInfo: ReplaceMethodInfo) {
                                                     WovenInfoUtils.addReplaceMethodInfo(entryName, replaceMethodInfo)
-                                                    printLog("replaceMethodInfo=$replaceMethodInfo")
                                                 }
                                             }
                                         ), ClassReader.EXPAND_FRAMES)
