@@ -5,6 +5,9 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatch;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopMethod;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopPointCut;
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceClass;
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethod;
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethodInvoke;
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
 import com.flyjingfish.android_aop_annotation.enums.MatchType;
 import com.squareup.javapoet.AnnotationSpec;
@@ -46,6 +49,8 @@ public class AndroidAopProcessor extends AbstractProcessor {
         Set<String> set = new LinkedHashSet<>();
         set.add(AndroidAopPointCut.class.getCanonicalName());
         set.add(AndroidAopMatchClassMethod.class.getCanonicalName());
+        set.add(AndroidAopReplaceClass.class.getCanonicalName());
+        set.add(AndroidAopReplaceMethod.class.getCanonicalName());
         return set;
     }
     @Override
@@ -78,6 +83,8 @@ public class AndroidAopProcessor extends AbstractProcessor {
 
         processPointCut(set, roundEnvironment);
         processMatch(set, roundEnvironment);
+        processReplaceMethod(set, roundEnvironment);
+        processReplace(set, roundEnvironment);
         return false;
     }
 
@@ -196,7 +203,55 @@ public class AndroidAopProcessor extends AbstractProcessor {
         }
     }
 
+    private void processReplace(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
 
+        Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(AndroidAopReplaceClass.class);
+        for (Element element : elements) {
+            Name name1 = element.getSimpleName();
+//                System.out.println("======"+element);
+            AndroidAopReplaceClass cut = element.getAnnotation(AndroidAopReplaceClass.class);
+            String className = cut.value();
+
+            TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(name1+"$$AndroidAopClass")
+                    .addAnnotation(AndroidAopClass.class)
+                    .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
+            MethodSpec.Builder whatsMyName1 = whatsMyName("withinAnnotatedClass")
+                    .addAnnotation(AnnotationSpec.builder(AndroidAopReplaceMethodInvoke.class)
+                            .addMember("targetClassName", "$S", className)
+                            .addMember("invokeClassName", "$S", element)
+                            .build());
+
+            typeBuilder.addMethod(whatsMyName1.build());
+
+            TypeSpec typeSpec = typeBuilder.build();
+            String elementClassName = element.toString();
+            String packageName = elementClassName.substring(0, elementClassName.lastIndexOf("."));
+            JavaFile javaFile = JavaFile.builder(packageName, typeSpec)
+                    .build();
+            try {
+                javaFile.writeTo(mFiler);
+            } catch (IOException e) {
+//                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private void processReplaceMethod(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
+        Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(AndroidAopReplaceMethod.class);
+        for (Element element : elements) {
+            Name name1 = element.getSimpleName();
+            boolean isStatic = false;
+            Set<Modifier> modifiers = element.getModifiers();
+            for (Modifier modifier : modifiers) {
+                if ("static".equals(modifier.toString())){
+                    isStatic = true;
+                }
+            }
+            if (!isStatic){
+                throw new IllegalArgumentException("注意：" + "方法 "+element.getEnclosingElement()+"."+name1+" 必须是静态方法 ");
+            }
+        }
+    }
     private static MethodSpec.Builder whatsMyName(String name) {
         return MethodSpec.methodBuilder(name)
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
