@@ -63,6 +63,18 @@ object WovenInfoUtils {
         return invokeMethodMap[className]
     }
 
+    fun isReplaceMethod(className: String):Boolean{
+        if (containReplace(className)){
+            return false
+        }
+        for (mutableEntry in invokeMethodMap) {
+            if (className.contains(mutableEntry.key)){
+                return false
+            }
+        }
+        return true
+    }
+
     fun containReplace(className: String):Boolean{
         return replaceMethodMap.containsKey(className)
     }

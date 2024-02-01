@@ -1,5 +1,6 @@
 package com.flyjingfish.test_lib.replace;
 
+import android.content.Context;
 import android.widget.Toast;
 
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceClass;
@@ -13,7 +14,12 @@ public class ReplaceToast {
             "void show()"
     )
     public static void show(Toast toast) {
-        toast.setText("文本已替换");
         toast.show();
+    }
+    @AndroidAopReplaceMethod(
+            "android.widget.Toast makeText(android.content.Context, java.lang.CharSequence, int)"
+    )
+    public static Toast makeText(Context context, CharSequence text, int duration) {
+        return Toast.makeText(context, "ReplaceToast-"+text, duration);
     }
 }

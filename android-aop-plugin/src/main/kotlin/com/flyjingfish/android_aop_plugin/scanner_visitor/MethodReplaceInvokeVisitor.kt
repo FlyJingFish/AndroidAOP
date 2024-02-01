@@ -31,7 +31,9 @@ class MethodReplaceInvokeVisitor(
         exceptions: Array<String?>?
     ): MethodVisitor? {
         var mv: MethodVisitor? = super.visitMethod(access, name, descriptor, signature, exceptions)
-        if (mv != null && "<init>" != name && "<clinit>" != name && !WovenInfoUtils.containInvoke(className)) {
+        val isReplaceMethod = WovenInfoUtils.isReplaceMethod(className)
+
+        if (mv != null && "<init>" != name && "<clinit>" != name && isReplaceMethod) {
             val isAbstractMethod = access and ACC_ABSTRACT != 0
             val isNativeMethod = access and ACC_NATIVE != 0
             if (!isAbstractMethod && !isNativeMethod) {

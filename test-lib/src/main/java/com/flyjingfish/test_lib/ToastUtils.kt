@@ -15,8 +15,7 @@ object ToastUtils {
     private fun makeText(context: Context, text: CharSequence, duration: Int): Toast? {
         mToast?.cancel()
         try {
-            mToast = Toast.makeText(context, null, duration)
-            mToast?.setText(text)
+            mToast = Toast.makeText(context, text, duration)
         } catch (e: NullPointerException) {
             e.printStackTrace()
             mToast = Toast.makeText(context, text, duration)
