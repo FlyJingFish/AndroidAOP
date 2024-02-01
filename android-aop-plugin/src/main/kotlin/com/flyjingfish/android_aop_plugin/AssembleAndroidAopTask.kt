@@ -2,19 +2,20 @@ package com.flyjingfish.android_aop_plugin
 
 import com.flyjingfish.android_aop_plugin.beans.ClassMethodRecord
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
+import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.scanner_visitor.AnnotationMethodScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.AnnotationScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ClassSuperScanner
+import com.flyjingfish.android_aop_plugin.scanner_visitor.MethodReplaceInvokeVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.RegisterMapWovenInfoCode
-import com.flyjingfish.android_aop_plugin.scanner_visitor.ReplaceMethodScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
-import com.flyjingfish.android_aop_plugin.utils.AndroidConfig
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
 import com.flyjingfish.android_aop_plugin.utils.FileHashUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
+import com.flyjingfish.android_aop_plugin.utils.printLog
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
@@ -24,6 +25,7 @@ import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.objectweb.asm.ClassReader
+import org.objectweb.asm.ClassWriter
 import java.io.BufferedOutputStream
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -169,41 +171,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     private fun searchJoinPointLocation(){
         val includes = AndroidAopConfig.includes
         val excludes = AndroidAopConfig.excludes
-        if (WovenInfoUtils.hasReplace()){
-            val androidConfig = AndroidConfig(project)
-            val list: List<File> = androidConfig.getBootClasspath()
-
-            for (file in list) {
-                try {
-                    val jarFile = JarFile(file)
-                    val enumeration = jarFile.entries()
-                    while (enumeration.hasMoreElements()) {
-                        val jarEntry = enumeration.nextElement()
-                        try {
-                            val entryName = jarEntry.name
-                            val key = Utils.slashToDot(entryName).replace(".class", "").replace("$", ".")
-                            if (entryName.endsWith(Utils._CLASS) && WovenInfoUtils.containReplace(key)) {
-                                FileInputStream(file).use { inputs ->
-                                    val bytes = inputs.readAllBytes()
-                                    if (bytes.isNotEmpty()){
-                                        try {
-                                            val classReader = ClassReader(bytes)
-                                            classReader.accept(ReplaceMethodScanner(), ClassReader.EXPAND_FRAMES)
-                                        } catch (e: Exception) {
-                                        }
-                                    }
-                                }
-                            }
-                        } catch (_: Exception) {
-
-                        }
-                    }
-                    jarFile.close()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-        }
 
         allDirectories.get().forEach { directory ->
             directory.asFile.walk().forEach { file ->
@@ -220,13 +187,18 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 if (inAsm){
 
                                     WovenInfoUtils.deleteClassMethodRecord(file.absolutePath)
+                                    WovenInfoUtils.deleteReplaceMethodInfo(file.absolutePath)
                                     try {
                                         val classReader = ClassReader(bytes)
                                         classReader.accept(AnnotationMethodScanner(
                                             object :AnnotationMethodScanner.OnCallBackMethod{
-                                                override fun onBackName(methodRecord: MethodRecord) {
+                                                override fun onBackMethodRecord(methodRecord: MethodRecord) {
                                                     val record = ClassMethodRecord(file.absolutePath, methodRecord)
                                                     WovenInfoUtils.addClassMethodRecords(record)
+                                                }
+
+                                                override fun onBackReplaceMethodInfo(replaceMethodInfo: ReplaceMethodInfo) {
+                                                    WovenInfoUtils.addReplaceMethodInfo(file.absolutePath, replaceMethodInfo)
                                                 }
                                             }
                                         ), ClassReader.EXPAND_FRAMES)
@@ -262,13 +234,18 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 val inAsm = FileHashUtils.isAsmScan(entryName,bytes,2)
                                 if (inAsm){
                                     WovenInfoUtils.deleteClassMethodRecord(entryName)
+                                    WovenInfoUtils.deleteReplaceMethodInfo(entryName)
                                     try {
                                         val classReader = ClassReader(bytes)
                                         classReader.accept(AnnotationMethodScanner(
                                             object :AnnotationMethodScanner.OnCallBackMethod{
-                                                override fun onBackName(methodRecord: MethodRecord) {
+                                                override fun onBackMethodRecord(methodRecord: MethodRecord) {
                                                     val record = ClassMethodRecord(entryName, methodRecord)
                                                     WovenInfoUtils.addClassMethodRecords(record)
+                                                }
+
+                                                override fun onBackReplaceMethodInfo(replaceMethodInfo: ReplaceMethodInfo) {
+                                                    WovenInfoUtils.addReplaceMethodInfo(entryName, replaceMethodInfo)
                                                 }
                                             }
                                         ), ClassReader.EXPAND_FRAMES)
@@ -290,8 +267,11 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     }
 
     private fun wovenIntoCode(){
+        WovenInfoUtils.makeReplaceMethodInfoUse()
 //        logger.error("getClassMethodRecord="+WovenInfoUtils.classMethodRecords)
+        val hasReplace = WovenInfoUtils.hasReplace()
         allDirectories.get().forEach { directory ->
+            val directoryPath = directory.asFile.absolutePath
             directory.asFile.walk().forEach { file ->
                 if (file.isFile) {
                     val relativePath = directory.asFile.toURI().relativize(file.toURI()).path
@@ -308,11 +288,39 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             jarOutput.closeEntry()
                         }
                     }else{
-                        jarOutput.putNextEntry(JarEntry(relativePath.replace(File.separatorChar, '/')))
-                        file.inputStream().use { inputStream ->
-                            inputStream.copyTo(jarOutput)
+                        fun copy(){
+                            jarOutput.putNextEntry(JarEntry(relativePath.replace(File.separatorChar, '/')))
+                            file.inputStream().use { inputStream ->
+                                inputStream.copyTo(jarOutput)
+                            }
+                            jarOutput.closeEntry()
                         }
-                        jarOutput.closeEntry()
+                        val className = file.absolutePath.replace("$directoryPath/","")
+                        if (hasReplace && !className.startsWith("kotlinx/") && !className.startsWith("kotlin/")){
+                            FileInputStream(file).use { inputs ->
+                                val byteArray = inputs.readAllBytes()
+                                if (byteArray.isNotEmpty()){
+                                    try {
+                                        val cr = ClassReader(byteArray)
+                                        val cw = ClassWriter(ClassWriter.COMPUTE_FRAMES)
+                                        val cv = MethodReplaceInvokeVisitor(cw)
+                                        cr.accept(cv, ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+                                        val newByteArray = cw.toByteArray()
+                                        jarOutput.putNextEntry(JarEntry(relativePath.replace(File.separatorChar, '/')))
+                                        ByteArrayInputStream(newByteArray).use {
+                                            it.copyTo(jarOutput)
+                                        }
+                                        jarOutput.closeEntry()
+                                    } catch (e: Exception) {
+                                        copy()
+                                    }
+                                }else{
+                                    copy()
+                                }
+                            }
+                        }else{
+                            copy()
+                        }
                     }
                 }
             }
@@ -353,11 +361,40 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             jarOutput.closeEntry()
                         }
                     } else{
-                        jarOutput.putNextEntry(JarEntry(entryName))
-                        jarFile.getInputStream(jarEntry).use {
-                            it.copyTo(jarOutput)
+                        fun copy(){
+                            jarOutput.putNextEntry(JarEntry(entryName))
+                            jarFile.getInputStream(jarEntry).use {
+                                it.copyTo(jarOutput)
+                            }
+                            jarOutput.closeEntry()
                         }
-                        jarOutput.closeEntry()
+                        if (hasReplace && !entryName.startsWith("kotlinx/") && !entryName.startsWith("kotlin/")){
+                            jarFile.getInputStream(jarEntry).use { inputs ->
+                                val byteArray = inputs.readAllBytes()
+                                if (byteArray.isNotEmpty()){
+                                    try {
+                                        val cr = ClassReader(byteArray)
+                                        val cw = ClassWriter(cr, 0)
+                                        val cv = MethodReplaceInvokeVisitor(cw)
+                                        cr.accept(cv, 0)
+                                        val newByteArray = cw.toByteArray()
+                                        jarOutput.putNextEntry(JarEntry(entryName))
+                                        ByteArrayInputStream(newByteArray).use {
+                                            it.copyTo(jarOutput)
+                                        }
+                                        jarOutput.closeEntry()
+                                    } catch (e: Exception) {
+                                        copy()
+                                    }
+                                }else{
+                                    copy()
+                                }
+                            }
+                        }else{
+                            copy()
+                        }
+
+
                     }
 
 

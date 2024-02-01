@@ -7,4 +7,12 @@ data class ReplaceMethodInfo(
     var newOwner: String,
     var newMethodName: String,
     var newMethodDesc: String
-)
+){
+    fun getReplaceKey():String{
+        return oldOwner + oldMethodName + oldMethodDesc
+    }
+    fun checkAvailable():Boolean{
+        return oldOwner.isNotEmpty() && oldMethodName.isNotEmpty() && oldMethodDesc.isNotEmpty() 
+                && newOwner.isNotEmpty() && newMethodName.isNotEmpty() && newMethodDesc.isNotEmpty()
+    }
+}

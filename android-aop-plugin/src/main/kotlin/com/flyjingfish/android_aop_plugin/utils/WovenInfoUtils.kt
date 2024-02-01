@@ -5,6 +5,7 @@ import com.flyjingfish.android_aop_plugin.beans.AopMethodCut
 import com.flyjingfish.android_aop_plugin.beans.ClassMethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ClassSuperInfo
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
+import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import org.gradle.api.Project
 import java.io.File
@@ -25,9 +26,30 @@ object WovenInfoUtils {
         HashMap()//类名为key，value为方法map集合
     private val invokeMethodMap = HashMap<String, String>()
     private val replaceMethodMap = HashMap<String, String>()
-
+    private val replaceMethodInfoMap = HashMap<String, HashMap<String, ReplaceMethodInfo>>()
+    private val replaceMethodInfoMapUse = HashMap<String, ReplaceMethodInfo>()
+    fun addReplaceMethodInfo(filePath: String, replaceMethodInfo: ReplaceMethodInfo) {
+        var infoMap = replaceMethodInfoMap[filePath]
+        if (infoMap == null){
+            infoMap = HashMap()
+            replaceMethodInfoMap[filePath] = infoMap
+        }
+        infoMap[replaceMethodInfo.getReplaceKey()] = replaceMethodInfo
+    }
+    fun deleteReplaceMethodInfo(filePath: String) {
+        replaceMethodInfoMap.remove(filePath)
+    }
+    fun makeReplaceMethodInfoUse() {
+        replaceMethodInfoMapUse.clear()
+        for (mutableEntry in replaceMethodInfoMap) {
+            replaceMethodInfoMapUse.putAll(mutableEntry.value)
+        }
+    }
+    fun getReplaceMethodInfoUse(key: String):ReplaceMethodInfo? {
+        return replaceMethodInfoMapUse[key]
+    }
     fun hasReplace():Boolean{
-        return replaceMethodMap.isNotEmpty()
+        return replaceMethodInfoMapUse.isNotEmpty()
     }
 
     fun addReplaceInfo(targetClassName: String,invokeClassName: String) {
@@ -101,8 +123,10 @@ object WovenInfoUtils {
         classPaths.add(classPath)
     }
     private fun clear() {
+        invokeMethodMap.clear()
+        replaceMethodMap.clear()
+        replaceMethodInfoMapUse.clear()
         if (!AndroidAopConfig.increment) {
-            invokeMethodMap.clear()
             aopMethodCuts.clear()
             aopMatchCuts.clear()
             lastAopMatchCuts.clear()
@@ -115,7 +139,7 @@ object WovenInfoUtils {
             classSuperCacheMap.clear()
             classMethodRecords.clear()
         } else {
-            invokeMethodMap.clear()
+
             classSuperCacheMap.clear()
             classSuperCacheMap.putAll(classSuperMap)
 

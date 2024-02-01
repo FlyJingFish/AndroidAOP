@@ -9,7 +9,7 @@ package com.flyjingfish.android_aop_annotation.anno
     AnnotationTarget.PROPERTY_GETTER,
     AnnotationTarget.PROPERTY_SETTER
 )
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.BINARY)
 annotation class AndroidAopReplaceMethod(
     val value: String
 )

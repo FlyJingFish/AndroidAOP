@@ -9,6 +9,7 @@ import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode.getCtMethod
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils.classPool
+import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils.getMethodInfo
 import com.flyjingfish.android_aop_plugin.utils.Utils.isInstanceof
 import com.flyjingfish.android_aop_plugin.utils.Utils.slashToDot
@@ -23,6 +24,7 @@ import org.objectweb.asm.Handle
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.Type
+import org.objectweb.asm.commons.Method
 import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.InvokeDynamicInsnNode
 import org.objectweb.asm.tree.MethodNode
@@ -52,8 +54,15 @@ class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?) :
         val seeClsName = slashToDotClassName(className)
         val isReplaceClass = WovenInfoUtils.containInvoke(seeClsName)
         if (isReplaceClass){
-            replaceInvokeClassName = seeClsName
+            replaceInvokeClassName = className
+
             replaceTargetClassName = WovenInfoUtils.getTargetClassName(seeClsName)
+            if (replaceTargetClassName != null){
+                val classString = WovenInfoUtils.getClassString(replaceTargetClassName!!)
+                if (classString != null){
+                    replaceTargetClassName = Utils.dotToSlash(classString)
+                }
+            }
         }
         //        logger.error("className="+className+",superName="+superName+",interfaces="+ Arrays.asList(interfaces));
         WovenInfoUtils.aopMatchCuts.forEach { (_: String?, aopMatchCut: AopMatchCut) ->
@@ -180,13 +189,13 @@ class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?) :
                         );
                         methodName.cutInfo[UUID.randomUUID().toString()] = cutInfo
                     }
-                    onCallBackMethod?.onBackName(methodName)
+                    onCallBackMethod?.onBackMethodRecord(methodName)
                 }
             }
             if (descriptor.contains(REPLACE_POINT) && replaceTargetClassName != null){
 
                 val replaceMethodInfo = ReplaceMethodInfo(
-                    replaceTargetClassName!!,methodname,methoddescriptor,
+                    replaceTargetClassName!!,"","",
                     className,methodname,methoddescriptor
                 )
                 return ReplaceMethodVisitor(replaceMethodInfo)
@@ -195,7 +204,7 @@ class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?) :
         }
 
 
-        internal inner class ReplaceMethodVisitor(val replaceMethodInfo: ReplaceMethodInfo) : AnnotationVisitor(Opcodes.ASM9) {
+        internal inner class ReplaceMethodVisitor(private val replaceMethodInfo: ReplaceMethodInfo) : AnnotationVisitor(Opcodes.ASM9) {
             var methodname: String? = null
             override fun visit(name: String, value: Any) {
                 if (name == "value") {
@@ -208,7 +217,16 @@ class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?) :
                 super.visitEnd()
                 val name = methodname
                 if (!name.isNullOrEmpty()){
-                    replaceMethodInfo.oldMethodName = name
+                    try {
+                        val method = Method.getMethod(name)
+                        replaceMethodInfo.oldMethodName = method.name
+                        replaceMethodInfo.oldMethodDesc = method.descriptor
+                        if (replaceMethodInfo.checkAvailable()){
+                            onCallBackMethod?.onBackReplaceMethodInfo(replaceMethodInfo)
+                        }
+                    } catch (_: Exception) {
+
+                    }
                 }
             }
         }
@@ -279,7 +297,7 @@ class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?) :
                                 CutMethodJson(name, descriptor, false)
                             )
                             methodRecord.cutInfo[UUID.randomUUID().toString()] = cutInfo
-                            onCallBackMethod?.onBackName(methodRecord)
+                            onCallBackMethod?.onBackMethodRecord(methodRecord)
                             //                            cacheMethodRecords.add(new MethodRecord(name, descriptor, aopMatchCut.getCutClassName()));
                         }
                         break
@@ -403,7 +421,7 @@ class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?) :
                                         aopMatchCut.cutClassName
                                     )
                                     methodRecord.cutInfo[UUID.randomUUID().toString()] = cutInfo
-                                    onCallBackMethod?.onBackName(methodRecord)
+                                    onCallBackMethod?.onBackMethodRecord(methodRecord)
                                 }
                             }
                         }
@@ -415,6 +433,7 @@ class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?) :
 
 
     interface OnCallBackMethod {
-        fun onBackName(methodRecord: MethodRecord)
+        fun onBackMethodRecord(methodRecord: MethodRecord)
+        fun onBackReplaceMethodInfo(replaceMethodInfo: ReplaceMethodInfo)
     }
 }
