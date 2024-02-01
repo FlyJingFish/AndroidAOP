@@ -55,7 +55,7 @@
 //必须项 👇
 plugins {
     ...
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.3.3"
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.3.4"
 }
 ```
 
@@ -67,7 +67,7 @@ plugins {
 buildscript {
     dependencies {
         //必须项 👇
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.3.3'
+        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.3.4'
     }
 }
 ```
@@ -115,17 +115,17 @@ plugins {
 
 dependencies {
     //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.3.3'
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.3.3'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.3.4'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.3.4'
     
     //必须项 👇如果您项目内已经有了这项不用加也可以
     implementation 'androidx.appcompat:appcompat:1.3.0' // 至少在1.3.0及以上
     
     //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.3.3'
+    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.3.4'
     
     //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.3.3'
+    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.3.4'
     //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
 }
 ```
@@ -281,7 +281,7 @@ AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
 
 ## 此外本库也同样支持让你自己做切面，实现起来非常简单！
 
-### 本库通过 @AndroidAopPointCut 和 @AndroidAopMatchClassMethod 两种注解，实现自定义切面
+### 本库通过 @AndroidAopPointCut、 @AndroidAopMatchClassMethod 和 @AndroidAopReplaceClass 三种注解，实现自定义切面
 
 #### 一、**@AndroidAopPointCut** 是在方法上通过注解的形式做切面的，上述中注解都是通过这个做的，[详细使用请看wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopPointCut)
 
@@ -408,6 +408,47 @@ class MatchOnClick : MatchClassMethod {
 - 例如你想做退出登陆逻辑时可以使用上边这个，只要在页面内跳转就可以检测是否需要退出登陆
 
 - 又或者你想在三方库某个方法上设置切面，可以直接设置对应类名，对应方法，然后 type = MatchType.SELF，这样可以侵入三方库的代码，当然这么做记得修改上文提到的 androidAopConfig 的配置
+
+
+#### 三、**@AndroidAopReplaceClass** 是做替换方法调用的
+
+@AndroidAopReplaceClass 和 @AndroidAopReplaceMethod 配合使用
+
+**替换方法调用详细使用方法，[点此看wiki详细使用文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopReplaceClass)**
+
+- Java写法
+```java
+@AndroidAopReplaceClass(
+        "android.widget.Toast"
+)
+public class ReplaceToast {
+    @AndroidAopReplaceMethod(
+            "void show()"
+    )
+    public static void show(Toast toast) {
+        toast.show();
+    }
+    @AndroidAopReplaceMethod(
+            "android.widget.Toast makeText(android.content.Context, java.lang.CharSequence, int)"
+    )
+    public static Toast makeText(Context context, CharSequence text, int duration) {
+        return Toast.makeText(context, "ReplaceToast-"+text, duration);
+    }
+}
+```
+- Kotlin写法
+```kotlin
+@AndroidAopReplaceClass("android.util.Log")
+class ReplaceLog {
+    companion object{
+        @AndroidAopReplaceMethod("int e(java.lang.String,java.lang.String)")
+        @JvmStatic
+        fun e( tag:String, msg:String) :Int{
+            return Log.e(tag, "ReplaceLog-$msg")
+        }
+    }
+}
+```
 
 ### [详细使用请看wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki)
 

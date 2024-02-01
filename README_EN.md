@@ -54,7 +54,7 @@ Add directly to ```build.gradle``` of **app**
 //Required items 👇
 plugins {
      ...
-     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.3.3"
+     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.3.4"
 }
 ```
 
@@ -66,7 +66,7 @@ plugins {
 buildscript {
      dependencies {
          //Required items 👇
-         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.3.3'
+         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.3.4'
      }
 }
 ```
@@ -114,12 +114,12 @@ plugins {
 
 dependencies {
      //Required items 👇
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.3.3'
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.3.3'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.3.4'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.3.4'
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️supports aspects written in Java and Kotlin code
-     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.3.3'
+     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.3.4'
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️only applies to aspects written in Java code
-     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.3.3'
+     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.3.4'
      //⚠️Choose one of the above android-aop-ksp and android-aop-processor
 }
 ```
@@ -268,7 +268,7 @@ AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
 
 ## In addition, this library also supports you to make aspects by yourself, which is very simple to implement!
 
-### This library implements custom aspects through two annotations: @AndroidAopPointCut and @AndroidAopMatchClassMethod.
+### This library implements custom aspects through two annotations: @AndroidAopPointCut、 @AndroidAopMatchClassMethod and @AndroidAopReplaceClass
 
 #### 1. **@AndroidAopPointCut** is used to make aspects in the form of annotations on the method. The above annotations are all made through this. [Please see the wiki document for detailed usage](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopPointCut)
 
@@ -391,6 +391,46 @@ You can see that the type set by AndroidAopMatchClassMethod above is MatchType.E
 - For example, if you want to log out of the login logic, you can use the above method. Just jump within the page to detect whether you need to log out.
 
 - Or if you want to set an aspect on a method of a third-party library, you can directly set the corresponding class name, corresponding method, and then type = MatchType.SELF. This can invade the code of the third-party library. Of course, remember to modify the above mentioned Configuration of androidAopConfig
+
+#### 3. **@AndroidAopReplaceClass** is used for replacement method calls
+
+@AndroidAopReplaceClass and @AndroidAopReplaceMethod are used together
+
+**Detailed usage of replacement method call, [click here to see detailed usage documentation in wiki](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopReplaceClass)**
+
+- Java writing method
+```java
+@AndroidAopReplaceClass(
+         "android.widget.Toast"
+)
+public class ReplaceToast {
+     @AndroidAopReplaceMethod(
+             "void show()"
+     )
+     public static void show(Toast toast) {
+         toast.show();
+     }
+     @AndroidAopReplaceMethod(
+             "android.widget.Toast makeText(android.content.Context, java.lang.CharSequence, int)"
+     )
+     public static Toast makeText(Context context, CharSequence text, int duration) {
+         return Toast.makeText(context, "ReplaceToast-"+text, duration);
+     }
+}
+```
+- Kotlin writing method
+```kotlin
+@AndroidAopReplaceClass("android.util.Log")
+class ReplaceLog {
+     companion object{
+         @AndroidAopReplaceMethod("int e(java.lang.String,java.lang.String)")
+         @JvmStatic
+         fun e( tag:String, msg:String) :Int{
+             return Log.e(tag, "ReplaceLog-$msg")
+         }
+     }
+}
+```
 
 ### [Please see the wiki documentation for detailed usage](https://github.com/FlyJingFish/AndroidAOP/wiki)
 
