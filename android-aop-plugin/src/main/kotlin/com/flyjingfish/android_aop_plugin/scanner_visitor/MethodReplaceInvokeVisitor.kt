@@ -37,29 +37,10 @@ class MethodReplaceInvokeVisitor(
             val isAbstractMethod = access and ACC_ABSTRACT != 0
             val isNativeMethod = access and ACC_NATIVE != 0
             if (!isAbstractMethod && !isNativeMethod) {
-                mv = MethodReplaceInvokeAdapter(api, mv)
+                mv = MethodReplaceInvokeAdapter(mv)
             }
         }
         return mv
     }
 
-    private inner class MethodReplaceInvokeAdapter(api: Int, methodVisitor: MethodVisitor?) :
-        MethodVisitor(api, methodVisitor) {
-        override fun visitMethodInsn(
-            opcode: Int,
-            owner: String,
-            name: String,
-            descriptor: String,
-            isInterface: Boolean
-        ) {
-            val key = owner + name + descriptor
-            val replaceMethodInfo = WovenInfoUtils.getReplaceMethodInfoUse(key)
-            if (replaceMethodInfo != null && replaceMethodInfo.oldOwner == owner && replaceMethodInfo.oldMethodName == name && replaceMethodInfo.oldMethodDesc == descriptor) {
-                // 注意，最后一个参数是false，会不会太武断呢？
-                super.visitMethodInsn(Opcodes.INVOKESTATIC, replaceMethodInfo.newOwner, replaceMethodInfo.newMethodName, replaceMethodInfo.newMethodDesc, false)
-            } else {
-                super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
-            }
-        }
-    }
 }

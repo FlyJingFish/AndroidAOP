@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.view.View.OnClickListener
 import androidx.lifecycle.Lifecycle
@@ -42,7 +43,7 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        Log.e("MainActivity","onCreate")
 //        binding.btnSingleClick.setOnClickListener{
 //            onSingleClick()
 //        }
@@ -147,6 +148,7 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
 
     @SingleClick(5000)
     fun onSingleClick(){
+        Log.e("MainActivity","onSingleClick")
         setLogcat("@SingleClick 5000毫秒内只能点击一次")
     }
 

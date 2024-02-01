@@ -5,6 +5,7 @@ import com.flyjingfish.android_aop_plugin.utils.ClassNameToConversions
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
+import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.printLog
 import javassist.CannotCompileException
 import javassist.CtClass
@@ -33,13 +34,14 @@ object WovenIntoCode {
     ): ByteArray {
         val cr = ClassReader(inputStreamBytes)
         val cw = ClassWriter(cr, 0)
-        cr.accept(object : ClassVisitor(Opcodes.ASM9, cw) {}, 0)
+        cr.accept(MethodReplaceInvokeVisitor(cw), 0)
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
             val oldMethodName = value.methodName
 //            val targetMethodName = oldMethodName + METHOD_SUFFIX
             val oldDescriptor = value.descriptor
             cr.accept(object : ClassVisitor(Opcodes.ASM9, cw) {
                 var classNameMd5:String ?= null
+                lateinit var className: String
                 override fun visit(
                     version: Int,
                     access: Int,
@@ -50,6 +52,7 @@ object WovenIntoCode {
                 ) {
                     super.visit(version, access, name, signature, superName, interfaces)
                     classNameMd5 = Utils.computeMD5(Utils.slashToDot(name))
+                    className = Utils.slashToDotClassName(name)
                 }
                 override fun visitAnnotation(
                     descriptor: String,
@@ -65,7 +68,6 @@ object WovenIntoCode {
                         }
                     }
                 }
-
                 override fun visitMethod(
                     access: Int,
                     name: String,
@@ -79,20 +81,30 @@ object WovenIntoCode {
                         }else{
                             Opcodes.ACC_PUBLIC + Opcodes.ACC_FINAL
                         }
-                        super.visitMethod(
+                        var mv: MethodVisitor? = super.visitMethod(
                             newAccess,
                             "$oldMethodName$$$classNameMd5$METHOD_SUFFIX",
                             descriptor,
                             signature,
                             exceptions
                         )
+                        val isReplaceMethod = WovenInfoUtils.isReplaceMethod(className)
+
+                        if (mv != null && "<init>" != name && "<clinit>" != name && isReplaceMethod) {
+                            val isAbstractMethod = access and Opcodes.ACC_ABSTRACT != 0
+                            val isNativeMethod = access and Opcodes.ACC_NATIVE != 0
+                            if (!isAbstractMethod && !isNativeMethod) {
+                                mv = MethodReplaceInvokeAdapter(mv)
+                            }
+                        }
+                        mv
                     } else {
                         null
                     }
                 }
 
                 override fun visitEnd() {
-                    super.visitEnd() //注意原本的visiEnd不能少
+                    super.visitEnd()
                 }
             }, 0)
         }
