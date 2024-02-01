@@ -436,6 +436,9 @@ public class ReplaceToast {
     }
 }
 ```
+
+上边这个例子是把所有调用 Toast.makeText 和 Toast.show 的位置全部替换为 ReplaceToast 调用
+
 - Kotlin写法
 ```kotlin
 @AndroidAopReplaceClass("android.util.Log")
@@ -449,6 +452,7 @@ class ReplaceLog {
     }
 }
 ```
+上边这个例子是把所有调用 Log.e 的位置全部替换为 ReplaceLog 调用
 
 ### [详细使用请看wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki)
 
