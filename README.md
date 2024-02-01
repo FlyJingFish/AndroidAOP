@@ -437,7 +437,7 @@ public class ReplaceToast {
 }
 ```
 
-上边这个例子是把所有调用 Toast.makeText 和 Toast.show 的位置全部替换为 ReplaceToast 调用
+该例意思就是凡是代码中写```Toast.makeText```和```Toast.show```的地方都被替换成```ReplaceToast.makeText```和```ReplaceToast.show```
 
 - Kotlin写法
 ```kotlin
@@ -452,7 +452,7 @@ class ReplaceLog {
     }
 }
 ```
-上边这个例子是把所有调用 Log.e 的位置全部替换为 ReplaceLog 调用
+该例意思就是凡是代码中写```Log.e```的地方都被替换成```ReplaceLog.e```
 
 ### [详细使用请看wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki)
 
