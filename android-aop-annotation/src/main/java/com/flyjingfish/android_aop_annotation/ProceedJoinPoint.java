@@ -7,7 +7,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+/**
+ * 切点相关信息类，<a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint">wiki 文档使用说明</a>
+ */
 public final class ProceedJoinPoint {
+    /**
+     *  <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#args">wiki 文档使用说明</a>
+     */
     @Nullable
     public Object[] args;
     @Nullable
@@ -34,7 +40,7 @@ public final class ProceedJoinPoint {
 
     /**
      * 调用切点方法内代码
-     * @return 返回切点方法返回值
+     * @return 返回切点方法返回值 <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#proceed">wiki 文档使用说明</a>
      */
     @Nullable
     public Object proceed(){
@@ -44,7 +50,7 @@ public final class ProceedJoinPoint {
     /**
      * 调用切点方法内代码
      * @param args 切点方法参数数组
-     * @return 返回切点方法返回值
+     * @return 返回切点方法返回值 <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#proceed">wiki 文档使用说明</a>
      */
     @Nullable
     public Object proceed(Object... args){
@@ -121,10 +127,9 @@ public final class ProceedJoinPoint {
     void setHasNext(boolean hasNext) {
         this.hasNext = hasNext;
     }
-
     /**
      * 和 {@link ProceedJoinPoint#args} 相比，返回的引用地址不同，但数组里边的对象一致
-     * @return 最开始进入方法时的参数
+     * @return 最开始进入方法时的参数  <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#args">wiki 文档使用说明</a>
      */
     @Nullable
     public Object[] getOriginalArgs() {

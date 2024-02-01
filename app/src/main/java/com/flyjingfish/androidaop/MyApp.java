@@ -5,11 +5,13 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.os.Build;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Lifecycle;
 
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint;
 import com.flyjingfish.android_aop_core.annotations.CustomIntercept;
@@ -20,6 +22,7 @@ import com.flyjingfish.android_aop_core.listeners.OnPermissionsInterceptListener
 import com.flyjingfish.android_aop_core.listeners.OnRequestPermissionListener;
 import com.flyjingfish.android_aop_core.listeners.OnThrowableListener;
 import com.flyjingfish.android_aop_core.utils.AndroidAop;
+import com.flyjingfish.test_lib.PermissionRejectListener;
 import com.flyjingfish.test_lib.ToastUtils;
 import com.tbruyelle.rxpermissions3.RxPermissions;
 
@@ -44,10 +47,22 @@ public class MyApp extends Application {
                 Log.e("requestPermission",""+permissions);
                 if (target instanceof FragmentActivity){
                     RxPermissions rxPermissions = new RxPermissions((FragmentActivity) target);
-                    rxPermissions.request(permissions).subscribe(call::onCall);
+                    rxPermissions.requestEach(permissions)
+                            .subscribe(permissionResult -> {
+                                call.onCall(permissionResult.granted);
+                                if (!permissionResult.granted && target instanceof PermissionRejectListener) {
+                                    ((PermissionRejectListener) target).onReject(permission,permissionResult);
+                                }
+                            });
                 }else if (target instanceof Fragment){
                     RxPermissions rxPermissions = new RxPermissions((Fragment) target);
-                    rxPermissions.request(permissions).subscribe(call::onCall);
+                    rxPermissions.requestEach(permissions)
+                            .subscribe(permissionResult -> {
+                                call.onCall(permissionResult.granted);
+                                if (!permissionResult.granted && target instanceof PermissionRejectListener) {
+                                    ((PermissionRejectListener) target).onReject(permission,permissionResult);
+                                }
+                            });
                 }else {
                     joinPoint.proceed();
                 }
