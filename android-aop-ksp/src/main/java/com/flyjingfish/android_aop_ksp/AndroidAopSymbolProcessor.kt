@@ -17,6 +17,7 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.FunctionKind
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.Origin
@@ -26,6 +27,7 @@ import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.TypeSpec
+import java.io.File
 import java.lang.annotation.ElementType
 
 class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
@@ -281,16 +283,26 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       val annotationMap = getAnnotation(symbol)
 
       if (symbol.origin == Origin.KOTLIN){
-        if (symbol.parent.toString() != "Companion"){
-          throw IllegalArgumentException("注意：函数${(symbol as KSFunctionDeclaration).packageName.asString()}.${symbol.parent}.${symbol} 必须在${symbol.parent}的伴生对象 Companion 中")
-        }
         if (!annotationMap.containsKey("@JvmStatic")){
-          throw IllegalArgumentException("注意：函数${(symbol as KSFunctionDeclaration).packageName.asString()}.${symbol.parent?.parent}.${symbol.parent}.${symbol} 必须添加 @JvmStatic 注解")
+          var className = "${(symbol as KSFunctionDeclaration).packageName.asString()}."
+          var parent = symbol.parent
+          while (parent !is KSFile){
+            className = "$className$parent."
+            parent = parent?.parent
+          }
+          throw IllegalArgumentException("注意：函数$className${symbol} 必须添加 @JvmStatic 注解")
         }
+
       }else if (symbol.origin == Origin.JAVA){
         if (symbol is KSFunctionDeclaration){
           if (symbol.functionKind != FunctionKind.STATIC){
-            throw IllegalArgumentException("注意：方法${symbol.packageName.asString()}.${symbol.parent}.${symbol} 必须是静态方法")
+            var className = "${symbol.packageName.asString()}."
+            var parent = symbol.parent
+            while (parent !is KSFile){
+              className = "$className$parent."
+              parent = parent?.parent
+            }
+            throw IllegalArgumentException("注意：方法$className${symbol} 必须是静态方法")
           }
         }
       }
