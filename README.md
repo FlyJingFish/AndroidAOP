@@ -441,6 +441,21 @@ public class ReplaceToast {
 
 - Kotlin写法
 ```kotlin
+
+@AndroidAopReplaceClass("android.util.Log")
+object ReplaceLog {
+    @AndroidAopReplaceMethod("int e(java.lang.String,java.lang.String)")
+    @JvmStatic
+    fun e( tag:String, msg:String) :Int{
+        return Log.e(tag, "ReplaceLog-$msg")
+    }
+}
+
+
+```
+或
+```kotlin
+
 @AndroidAopReplaceClass("android.util.Log")
 class ReplaceLog {
     companion object{
@@ -449,18 +464,6 @@ class ReplaceLog {
         fun e( tag:String, msg:String) :Int{
             return Log.e(tag, "ReplaceLog-$msg")
         }
-    }
-}
-
-```
-或
-```kotlin
-@AndroidAopReplaceClass("android.util.Log")
-object ReplaceLog {
-    @AndroidAopReplaceMethod("int e(java.lang.String,java.lang.String)")
-    @JvmStatic
-    fun e( tag:String, msg:String) :Int{
-        return Log.e(tag, "ReplaceLog-$msg")
     }
 }
 
