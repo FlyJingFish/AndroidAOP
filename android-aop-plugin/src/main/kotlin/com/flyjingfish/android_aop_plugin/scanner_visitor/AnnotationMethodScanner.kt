@@ -261,7 +261,7 @@ class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?) :
         return myMethodVisitor
     }
 
-    var lambdaMethodList = mutableListOf<LambdaMethod>()
+    private val lambdaMethodList = mutableListOf<LambdaMethod>()
 
 
     override fun visitEnd() {

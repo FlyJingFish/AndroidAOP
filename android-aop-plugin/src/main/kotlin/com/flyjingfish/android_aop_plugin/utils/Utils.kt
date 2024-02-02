@@ -91,18 +91,36 @@ object Utils {
             val paramStr: String = matcher.group()
             val nameStr: String = matcher.replaceAll("")
             val names = nameStr.split(" ")
-            if (names.size == 2) {
-                returnType = names[0]
-                name = names[1]
+            if (names.size > 1) {
+                for (value in names) {
+                    if (value.isNotEmpty() && returnType == null){
+                        returnType = value
+                    }else if (value.isNotEmpty() && returnType != null){
+                        name = value
+                    }
+                }
+                if (name == null && returnType != null){
+                    name = returnType
+                    returnType = null
+                }
             } else {
                 name = nameStr
             }
             params = paramStr
         } else if (methodName.contains(" ")) {
             val names = methodName.split(" ").toTypedArray()
-            if (names.size == 2) {
-                name = names[1]
-                returnType = names[0]
+            if (names.size > 1) {
+                for (value in names) {
+                    if (value.isNotEmpty() && returnType == null){
+                        returnType = value
+                    }else if (value.isNotEmpty() && returnType != null){
+                        name = value
+                    }
+                }
+                if (name == null && returnType != null){
+                    name = returnType
+                    returnType = null
+                }
             } else {
                 for (s in names) {
                     if ("" != s) {
