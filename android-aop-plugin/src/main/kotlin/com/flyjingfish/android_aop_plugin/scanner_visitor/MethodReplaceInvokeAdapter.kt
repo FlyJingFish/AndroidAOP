@@ -1,5 +1,6 @@
 package com.flyjingfish.android_aop_plugin.scanner_visitor
 
+import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
@@ -16,6 +17,7 @@ class MethodReplaceInvokeAdapter(methodVisitor: MethodVisitor?) :
         val key = owner + name + descriptor
         val replaceMethodInfo = WovenInfoUtils.getReplaceMethodInfoUse(key)
         if (replaceMethodInfo != null && replaceMethodInfo.oldOwner == owner && replaceMethodInfo.oldMethodName == name && replaceMethodInfo.oldMethodDesc == descriptor) {
+            InitConfig.addReplaceMethodInfo(replaceMethodInfo)
             // 注意，最后一个参数是false，会不会太武断呢？
             super.visitMethodInsn(
                 Opcodes.INVOKESTATIC,

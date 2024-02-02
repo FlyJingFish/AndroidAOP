@@ -11,6 +11,9 @@ data class ReplaceMethodInfo(
     fun getReplaceKey():String{
         return oldOwner + oldMethodName + oldMethodDesc
     }
+    fun getReplaceJsonKey():String{
+        return oldOwner + newOwner
+    }
     fun checkAvailable():Boolean{
         return oldOwner.isNotEmpty() && oldMethodName.isNotEmpty() && oldMethodDesc.isNotEmpty() 
                 && newOwner.isNotEmpty() && newMethodName.isNotEmpty() && newMethodDesc.isNotEmpty()

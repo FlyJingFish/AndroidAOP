@@ -27,7 +27,7 @@ object WovenInfoUtils {
     private val invokeMethodMap = HashMap<String, String>()
     private val replaceMethodMap = HashMap<String, String>()
     private val replaceMethodInfoMap = HashMap<String, HashMap<String, ReplaceMethodInfo>>()
-    private val replaceMethodInfoMapUse = HashMap<String, ReplaceMethodInfo>()
+    val replaceMethodInfoMapUse = HashMap<String, ReplaceMethodInfo>()
     fun addReplaceMethodInfo(filePath: String, replaceMethodInfo: ReplaceMethodInfo) {
         var infoMap = replaceMethodInfoMap[filePath]
         if (infoMap == null){
@@ -51,7 +51,6 @@ object WovenInfoUtils {
     fun hasReplace():Boolean{
         return replaceMethodInfoMapUse.isNotEmpty()
     }
-
     fun addReplaceInfo(targetClassName: String,invokeClassName: String) {
         invokeMethodMap[invokeClassName] = targetClassName
         replaceMethodMap[targetClassName] = invokeClassName
