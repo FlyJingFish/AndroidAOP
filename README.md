@@ -453,21 +453,6 @@ object ReplaceLog {
 
 
 ```
-或
-```kotlin
-
-@AndroidAopReplaceClass("android.util.Log")
-class ReplaceLog {
-    companion object{
-        @AndroidAopReplaceMethod("int e(java.lang.String,java.lang.String)")
-        @JvmStatic
-        fun e( tag:String, msg:String) :Int{
-            return Log.e(tag, "ReplaceLog-$msg")
-        }
-    }
-}
-
-```
 
 该例意思就是凡是代码中写```Log.e```的地方都被替换成```ReplaceLog.e```
 
