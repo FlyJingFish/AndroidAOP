@@ -429,12 +429,14 @@ public class ReplaceToast {
     @AndroidAopReplaceMethod(
             "void show()"
     )
+//  第一个参数是Toast是因为被替换方法不是静态方法，如果被替换方法是有参数的，也要一一按顺序填上
     public static void show(Toast toast) {
         toast.show();
     }
     @AndroidAopReplaceMethod(
             "android.widget.Toast makeText(android.content.Context, java.lang.CharSequence, int)"
     )
+//  因为被替换方法是静态的，所以参数类型及顺序和被替换方法保持一致
     public static Toast makeText(Context context, CharSequence text, int duration) {
         return Toast.makeText(context, "ReplaceToast-"+text, duration);
     }
