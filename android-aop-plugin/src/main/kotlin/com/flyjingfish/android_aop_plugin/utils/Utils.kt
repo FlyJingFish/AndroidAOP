@@ -2,7 +2,8 @@ package com.flyjingfish.android_aop_plugin.utils
 
 import com.flyjingfish.android_aop_plugin.beans.MatchMethodInfo
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
-import javassist.NotFoundException
+import org.objectweb.asm.Opcodes
+import org.objectweb.asm.commons.Method
 import java.io.File
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -132,8 +133,53 @@ object Utils {
             }
 
         }
-
         return matchMethodInfo
+    }
+
+    fun verifyMatchCut(descriptor: String?, info: MatchMethodInfo): Boolean {
+        val descriptorPattern = Pattern.compile("\\(.*?\\)")
+        val descriptorMatcher = descriptorPattern.matcher(descriptor)
+        val descriptorParamType = if (descriptorMatcher.find()) {
+            descriptorMatcher.group()
+        }else{
+            null
+        }
+        val descriptorMatcher1 = descriptorPattern.matcher(descriptor)
+        val descriptorReturnType = if (descriptorMatcher1.find()) {
+            descriptorMatcher1.replaceAll("")
+        }else{
+            null
+        }
+
+        var back = true
+        if (info.paramTypes != null) {//验证参数类型
+            val paramMethodName = "void " + info.name + info.paramTypes
+            val paramMethod = Method.getMethod(paramMethodName)
+            val paramPattern = Pattern.compile("\\(.*?\\)")
+            val paramMatcher = paramPattern.matcher(paramMethod.descriptor)
+            val paramType = if (paramMatcher.find()) {
+                paramMatcher.group()
+            }else{
+                null
+            }
+
+            back = paramType == descriptorParamType
+        }
+
+        if (info.returnType != null && back) {//验证返回类型
+            val returnMethodName = info.returnType + " " + info.name + "()"
+            val returnMethod = Method.getMethod(returnMethodName)
+            val returnPattern = Pattern.compile("\\(.*?\\)")
+            val returnMatcher = returnPattern.matcher(returnMethod.descriptor)
+            val returnType = if (returnMatcher.find()) {
+                returnMatcher.replaceAll("")
+            }else{
+                null
+            }
+            back = returnType == descriptorReturnType
+        }
+
+        return back
     }
 
     fun isInstanceof(classNameKey: String, instanceofClassNameKey: String): Boolean {
@@ -173,6 +219,12 @@ object Utils {
             hexString.append(hex)
         }
         return hexString.toString()
+    }
+
+    fun isHasMethodBody(access: Int):Boolean{
+        val isAbstractMethod = access and Opcodes.ACC_ABSTRACT != 0
+        val isNativeMethod = access and Opcodes.ACC_NATIVE != 0
+        return !isAbstractMethod && !isNativeMethod
     }
 }
 

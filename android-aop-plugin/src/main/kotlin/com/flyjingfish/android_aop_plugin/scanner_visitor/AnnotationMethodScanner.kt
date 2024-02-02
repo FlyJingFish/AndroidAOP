@@ -7,10 +7,9 @@ import com.flyjingfish.android_aop_plugin.beans.CutMethodJson
 import com.flyjingfish.android_aop_plugin.beans.LambdaMethod
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
-import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode.getCtMethod
-import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils.classPool
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils.getMethodInfo
+import com.flyjingfish.android_aop_plugin.utils.Utils.isHasMethodBody
 import com.flyjingfish.android_aop_plugin.utils.Utils.isInstanceof
 import com.flyjingfish.android_aop_plugin.utils.Utils.slashToDot
 import com.flyjingfish.android_aop_plugin.utils.Utils.slashToDotClassName
@@ -18,7 +17,6 @@ import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.getAnnoInfo
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.isContainAnno
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.isLeaf
-import javassist.CtMethod
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.Handle
 import org.objectweb.asm.MethodVisitor
@@ -165,22 +163,7 @@ class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?) :
         override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor? {
 //            logger.error("AnnotationMethodScanner MyMethodVisitor type: " + descriptor);
             if (isContainAnno(descriptor)) {
-                var isBack = true
-                try {
-                    val classPool = classPool
-                    //                    InputStream byteArrayInputStream = new ByteArrayInputStream(classByte);
-//                    CtClass ctClass = classPool.makeClass(byteArrayInputStream);
-                    val clsName = slashToDot(className)
-                    val ctClass = classPool!![clsName]
-                    val ctMethod = getCtMethod(ctClass, methodName.methodName, methodName.descriptor)
-                    val methodInfo = ctMethod!!.methodInfo
-                    val codeAttribute = methodInfo.codeAttribute
-                    if (codeAttribute == null) {
-                        isBack = false
-                    }
-                } catch (ignored: Exception) {
-                }
-                if (isBack) {
+                if (isBackMethod(access)) {
                     val aopMethodCut = getAnnoInfo(descriptor)
                     if (aopMethodCut != null){
                         val cutInfo = CutInfo(
@@ -205,7 +188,7 @@ class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?) :
 
 
         internal inner class ReplaceMethodVisitor(private val replaceMethodInfo: ReplaceMethodInfo) : AnnotationVisitor(Opcodes.ASM9) {
-            var methodname: String? = null
+            private var methodname: String? = null
             override fun visit(name: String, value: Any) {
                 if (name == "value") {
                     methodname = value.toString()
@@ -231,56 +214,22 @@ class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?) :
             }
         }
     }
-
+    private fun isBackMethod(access: Int):Boolean{
+        return isHasMethodBody(access)
+    }
     override fun visitMethod(
         access: Int, name: String, descriptor: String,
         signature: String?, exceptions: Array<String?>?
     ): MethodVisitor {
-        if (aopMatchCuts.size > 0) {
+        if (aopMatchCuts.size > 0 && isBackMethod(access)) {
             for (aopMatchCut in aopMatchCuts) {
                 for (methodName in aopMatchCut.methodNames) {
                     val matchMethodInfo = getMethodInfo(methodName)
                     if (matchMethodInfo != null && name == matchMethodInfo.name) {
-                        var isBack = true
-                        try {
-                            val classPool = classPool
-                            val clsName = slashToDot(className)
-                            val ctClass = classPool!![clsName]
-                            //                            InputStream byteArrayInputStream = new ByteArrayInputStream(classByte);
-//                            CtClass ctClass = classPool.makeClass(byteArrayInputStream);
-                            val ctMethod = getCtMethod(ctClass, name, descriptor)
-                            if (matchMethodInfo.paramTypes != null) {
-                                val ctClasses = ctMethod!!.parameterTypes
-                                val paramStr = java.lang.StringBuilder()
-                                paramStr.append("(")
-                                val length = ctClasses.size
-                                for (i in 0 until length) {
-                                    paramStr.append(ctClasses[i].name)
-                                    if (i != length - 1) {
-                                        paramStr.append(",")
-                                    }
-                                }
-                                paramStr.append(")")
-                                //有设置参数类型这一项
-                                if (paramStr.toString() != matchMethodInfo.paramTypes) {
-                                    isBack = false
-                                }
-                            }
-                            if (matchMethodInfo.returnType != null) {
-                                val returnCtClass = ctMethod!!.returnType
-                                val returnType = returnCtClass.name
-                                //有设置返回类型这一项
-                                if (returnType != matchMethodInfo.returnType) {
-                                    isBack = false
-                                }
-                            }
-                            //                            logger.error("paramStr="+paramStr+",returnType="+returnType+",matchMethodInfo="+matchMethodInfo);
-                            val methodInfo = ctMethod!!.methodInfo
-                            val codeAttribute = methodInfo.codeAttribute
-                            if (codeAttribute == null) {
-                                isBack = false
-                            }
-                        } catch (ignored: java.lang.Exception) {
+                        val isBack = try {
+                            Utils.verifyMatchCut(descriptor,matchMethodInfo)
+                        } catch (e: Exception) {
+                            true
                         }
                         if (isBack) {
                             val methodRecord = MethodRecord(
@@ -373,40 +322,10 @@ class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?) :
                             val aopMatchCutMethodName = aopMatchCut.methodNames[0]
                             val matchMethodInfo = getMethodInfo(aopMatchCutMethodName)
                             if (isMatch && matchMethodInfo != null && name == matchMethodInfo.name) {
-                                var isBack = true
-                                try {
-                                    val classPool = classPool
-                                    var ctMethod: CtMethod? = null
-                                    if (matchMethodInfo.paramTypes != null || matchMethodInfo.returnType != null) {
-                                        val ctClass = classPool!![originalClassName]
-                                        ctMethod = getCtMethod(ctClass, name, descriptor)
-                                    }
-                                    if (matchMethodInfo.paramTypes != null && ctMethod != null) {
-                                        val ctClasses = ctMethod.parameterTypes
-                                        val paramStr = StringBuilder()
-                                        paramStr.append("(")
-                                        val length = ctClasses.size
-                                        for (i in 0 until length) {
-                                            paramStr.append(ctClasses[i].name)
-                                            if (i != length - 1) {
-                                                paramStr.append(",")
-                                            }
-                                        }
-                                        paramStr.append(")")
-                                        //有设置参数类型这一项
-                                        if (paramStr.toString() != matchMethodInfo.paramTypes) {
-                                            isBack = false
-                                        }
-                                    }
-                                    if (matchMethodInfo.returnType != null && ctMethod != null) {
-                                        val returnCtClass = ctMethod.returnType
-                                        val returnType = returnCtClass.name
-                                        //有设置返回类型这一项
-                                        if (returnType != matchMethodInfo.returnType) {
-                                            isBack = false
-                                        }
-                                    }
-                                } catch (ignored: java.lang.Exception) {
+                                val isBack = try {
+                                    Utils.verifyMatchCut(descriptor,matchMethodInfo)
+                                } catch (e: Exception) {
+                                    true
                                 }
                                 if (isBack) {
                                     val cutInfo = CutInfo(

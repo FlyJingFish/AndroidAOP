@@ -13,6 +13,9 @@ public class TestMatch{
     public void test2(){
 
     }
+    public void test1(int value1){
+
+    }
     @SingleClick(5000)
     public void test1(int value1,String value2){
 

@@ -12,7 +12,7 @@ import com.flyjingfish.android_aop_annotation.enums.MatchType;
 
 @AndroidAopMatchClassMethod(
         targetClassName = "com.flyjingfish.test_lib.TestMatch",
-        methodName = {"void test1(int,java.lang.String)","java.lang.String test2(int,java.lang.String)"},
+        methodName = {"void test1(int, java.lang.String)","java.lang.String test2(int,java.lang.String)"},
         type = MatchType.SELF
 )
 public class MatchActivityMethod2 implements MatchClassMethod {
