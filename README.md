@@ -129,7 +129,7 @@ dependencies {
     //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
 }
 ```
-**提示：ksp 或 annotationProcessor只是在当前 module 起作用，在哪个 module 中有自定义切面代码就加在哪个 module，必须依赖项可以通过 api 方式只加到公共 module 上**
+提示：ksp 或 annotationProcessor只能扫描当前 module ，在哪个 module 中有自定义切面代码就加在哪个 module，**但是自定义的切面代码是全局生效的**；必须依赖项可以通过 api 方式只加到公共 module 上
 
 #### 四、在 app 的build.gradle添加 androidAopConfig 配置项（此步为可选配置项）
 
