@@ -30,11 +30,16 @@ object WovenIntoCode {
     @Throws(Exception::class)
     fun modifyClass(
         inputStreamBytes: ByteArray?,
-        methodRecordHashMap: HashMap<String, MethodRecord>
+        methodRecordHashMap: HashMap<String, MethodRecord>,
+        hasReplace:Boolean
     ): ByteArray {
         val cr = ClassReader(inputStreamBytes)
         val cw = ClassWriter(cr, 0)
-        cr.accept(MethodReplaceInvokeVisitor(cw), 0)
+        if (hasReplace){
+            cr.accept(MethodReplaceInvokeVisitor(cw), 0)
+        }else{
+            cr.accept(object : ClassVisitor(Opcodes.ASM9, cw) {}, 0)
+        }
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
             val oldMethodName = value.methodName
 //            val targetMethodName = oldMethodName + METHOD_SUFFIX
@@ -88,9 +93,8 @@ object WovenIntoCode {
                             signature,
                             exceptions
                         )
-                        val isReplaceMethod = WovenInfoUtils.isReplaceMethod(className)
 
-                        if (mv != null && "<init>" != name && "<clinit>" != name && isReplaceMethod) {
+                        if (hasReplace && mv != null && "<init>" != name && "<clinit>" != name && WovenInfoUtils.isReplaceMethod(className)) {
                             val isAbstractMethod = access and Opcodes.ACC_ABSTRACT != 0
                             val isNativeMethod = access and Opcodes.ACC_NATIVE != 0
                             if (!isAbstractMethod && !isNativeMethod) {

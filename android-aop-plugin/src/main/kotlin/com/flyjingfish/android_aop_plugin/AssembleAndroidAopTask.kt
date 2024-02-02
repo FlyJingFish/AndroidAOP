@@ -280,7 +280,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(file.absolutePath)
                     if (methodsRecord != null){
                         FileInputStream(file).use { inputs ->
-                            val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),methodsRecord)
+                            val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),methodsRecord,hasReplace)
                             jarOutput.putNextEntry(JarEntry(relativePath.replace(File.separatorChar, '/')))
                             ByteArrayInputStream(byteArray).use {
                                 it.copyTo(jarOutput)
@@ -343,7 +343,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
                     if (methodsRecord != null){
                         jarFile.getInputStream(jarEntry).use { inputs ->
-                            val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),methodsRecord)
+                            val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),methodsRecord,hasReplace)
                             jarOutput.putNextEntry(JarEntry(entryName))
                             ByteArrayInputStream(byteArray).use {
                                 it.copyTo(jarOutput)
