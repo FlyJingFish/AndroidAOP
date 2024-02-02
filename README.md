@@ -414,6 +414,10 @@ class MatchOnClick : MatchClassMethod {
 
 @AndroidAopReplaceClass 和 @AndroidAopReplaceMethod 配合使用
 
+- **注意这种方式和前两种的有着本质的区别，前两种关注的是方法的执行，并且会自动保留可以执行原有逻辑的方法（即[ProceedJoinPoint](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)）；**
+- **这个关注的是方法的调用，是将所有调用的地方替换为您设置的类的静态方法，并且不会自动保留执行原有逻辑的方法**
+- **这个方式的优点在于“相当于”可以监测到某些系统方法（android.jar里的代码）的调用，前两者不具备这个特点**
+
 **替换方法调用详细使用方法，[点此看wiki详细使用文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopReplaceClass)**
 
 - Java写法
