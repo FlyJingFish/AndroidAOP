@@ -94,12 +94,8 @@ object WovenIntoCode {
                             exceptions
                         )
 
-                        if (hasReplace && mv != null && "<init>" != name && "<clinit>" != name && WovenInfoUtils.isReplaceMethod(className)) {
-                            val isAbstractMethod = access and Opcodes.ACC_ABSTRACT != 0
-                            val isNativeMethod = access and Opcodes.ACC_NATIVE != 0
-                            if (!isAbstractMethod && !isNativeMethod) {
-                                mv = MethodReplaceInvokeAdapter(mv)
-                            }
+                        if (hasReplace && mv != null && "<init>" != name && "<clinit>" != name && WovenInfoUtils.isReplaceMethod(className) && Utils.isHasMethodBody(access)) {
+                            mv = MethodReplaceInvokeAdapter(mv)
                         }
                         mv
                     } else {

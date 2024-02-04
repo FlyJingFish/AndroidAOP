@@ -5,8 +5,6 @@ import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
-import org.objectweb.asm.Opcodes.ACC_ABSTRACT
-import org.objectweb.asm.Opcodes.ACC_NATIVE
 
 class MethodReplaceInvokeVisitor(
     classVisitor: ClassVisitor
@@ -32,12 +30,8 @@ class MethodReplaceInvokeVisitor(
     ): MethodVisitor? {
         var mv: MethodVisitor? = super.visitMethod(access, name, descriptor, signature, exceptions)
 
-        if (mv != null && "<init>" != name && "<clinit>" != name && WovenInfoUtils.isReplaceMethod(className)) {
-            val isAbstractMethod = access and ACC_ABSTRACT != 0
-            val isNativeMethod = access and ACC_NATIVE != 0
-            if (!isAbstractMethod && !isNativeMethod) {
-                mv = MethodReplaceInvokeAdapter(mv)
-            }
+        if (mv != null && "<init>" != name && "<clinit>" != name && WovenInfoUtils.isReplaceMethod(className) && Utils.isHasMethodBody(access)) {
+            mv = MethodReplaceInvokeAdapter(mv)
         }
         return mv
     }
