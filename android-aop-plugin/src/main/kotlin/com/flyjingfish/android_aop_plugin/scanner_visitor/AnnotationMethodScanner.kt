@@ -5,7 +5,6 @@ import com.flyjingfish.android_aop_plugin.beans.AopMatchCut
 import com.flyjingfish.android_aop_plugin.beans.CutInfo
 import com.flyjingfish.android_aop_plugin.beans.CutMethodJson
 import com.flyjingfish.android_aop_plugin.beans.LambdaMethod
-import com.flyjingfish.android_aop_plugin.beans.MatchMethodInfo
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.utils.Utils
@@ -155,7 +154,8 @@ class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?) :
         val signature: String?,
         val exceptions: Array<String?>?, var methodName: MethodRecord
     ) : MethodNode(
-        Opcodes.ASM9, access,
+        Opcodes.ASM9,
+        access,
         methodname,
         methoddescriptor,
         signature,
@@ -176,7 +176,8 @@ class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?) :
                     onCallBackMethod?.onBackMethodRecord(methodName)
                 }
             }
-            if (descriptor.contains(REPLACE_POINT) && replaceTargetClassName != null){
+
+            if (descriptor.contains(REPLACE_POINT) && replaceTargetClassName != null && Utils.isStaticMethod(access)){
 
                 val replaceMethodInfo = ReplaceMethodInfo(
                     replaceTargetClassName!!,"","",

@@ -81,7 +81,7 @@ object WovenIntoCode {
                     exceptions: Array<String>?
                 ): MethodVisitor? {
                     return if (oldMethodName == name && oldDescriptor == descriptor) {
-                        val newAccess = if (access and Opcodes.ACC_STATIC != 0){
+                        val newAccess = if (Utils.isStaticMethod(access)){
                             Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC + Opcodes.ACC_FINAL
                         }else{
                             Opcodes.ACC_PUBLIC + Opcodes.ACC_FINAL

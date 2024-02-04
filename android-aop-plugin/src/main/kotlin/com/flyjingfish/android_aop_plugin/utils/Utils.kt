@@ -244,6 +244,9 @@ object Utils {
         val isNativeMethod = access and Opcodes.ACC_NATIVE != 0
         return !isAbstractMethod && !isNativeMethod
     }
+    fun isStaticMethod(access: Int):Boolean{
+        return access and Opcodes.ACC_STATIC != 0
+    }
 }
 
 fun printLog(text: String) {
