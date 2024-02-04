@@ -55,7 +55,7 @@
 //必须项 👇
 plugins {
     ...
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.3.7"
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.3.8"
 }
 ```
 
@@ -67,7 +67,7 @@ plugins {
 buildscript {
     dependencies {
         //必须项 👇
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.3.7'
+        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.3.8'
     }
 }
 ```
@@ -115,17 +115,17 @@ plugins {
 
 dependencies {
     //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.3.7'
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.3.7'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.3.8'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.3.8'
     
     //必须项 👇如果您项目内已经有了这项不用加也可以
     implementation 'androidx.appcompat:appcompat:1.3.0' // 至少在1.3.0及以上
     
     //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.3.7'
+    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.3.8'
     
     //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.3.7'
+    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.3.8'
     //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
 }
 ```
@@ -468,6 +468,8 @@ object ReplaceLog {
 ```
 
 该例意思就是凡是代码中写```Log.e```的地方都被替换成```ReplaceLog.e```
+
+[如果函数是 suspend 修饰的，点此看详细说明](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopReplaceClass#%E5%A6%82%E6%9E%9C%E8%A2%AB%E6%9B%BF%E6%8D%A2%E5%87%BD%E6%95%B0%E6%98%AF-suspend-%E4%BF%AE%E9%A5%B0%E7%9A%84%E9%82%A3%E4%B9%88%E4%BD%A0%E5%8F%AA%E8%83%BD%E7%94%A8kotlin%E4%BB%A3%E7%A0%81%E6%9D%A5%E5%86%99%E5%B9%B6%E4%B8%94%E6%9B%BF%E6%8D%A2%E5%87%BD%E6%95%B0%E4%B9%9F%E8%A6%81%E8%A2%AB-suspend-%E4%BF%AE%E9%A5%B0)
 
 ### [详细使用请看wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki)
 
