@@ -404,18 +404,27 @@ You can see that the type set by AndroidAopMatchClassMethod above is MatchType.E
          "android.widget.Toast"
 )
 public class ReplaceToast {
-     @AndroidAopReplaceMethod(
-             "void show()"
-     )
-     public static void show(Toast toast) {
-         toast.show();
-     }
-     @AndroidAopReplaceMethod(
-             "android.widget.Toast makeText(android.content.Context, java.lang.CharSequence, int)"
-     )
-     public static Toast makeText(Context context, CharSequence text, int duration) {
-         return Toast.makeText(context, "ReplaceToast-"+text, duration);
-     }
+    @AndroidAopReplaceMethod(
+            "android.widget.Toast makeText(android.content.Context, java.lang.CharSequence, int)"
+    )
+    //  Because the replaced method is static, the parameter type and order correspond to the replaced method one-to-one.
+    public static Toast makeText(Context context, CharSequence text, int duration) {
+        return Toast.makeText(context, "ReplaceToast-"+text, duration);
+    }
+    @AndroidAopReplaceMethod(
+            "void setGravity(int , int , int )"
+    )
+    //  Because the replaced method is not a static method, the first parameter is the replaced class, and the subsequent parameters correspond to the replaced method one-to-one.
+    public static void setGravity(Toast toast,int gravity, int xOffset, int yOffset) {
+        toast.setGravity(Gravity.CENTER, xOffset, yOffset);
+    }
+    @AndroidAopReplaceMethod(
+            "void show()"
+    )
+    //  Although the replaced method has no parameters, it is considered not a static method, so the first parameter is still the replaced class.
+    public static void show(Toast toast) {
+        toast.show();
+    }
 }
 ```
 - Kotlin writing method
