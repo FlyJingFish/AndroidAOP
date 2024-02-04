@@ -19,7 +19,7 @@ class MethodReplaceInvokeVisitor(
         interfaces: Array<out String>?
     ) {
         super.visit(version, access, name, signature, superName, interfaces)
-        className = Utils.slashToDotClassName(name)
+        className = name
     }
     override fun visitMethod(
         access: Int,
@@ -30,8 +30,8 @@ class MethodReplaceInvokeVisitor(
     ): MethodVisitor? {
         var mv: MethodVisitor? = super.visitMethod(access, name, descriptor, signature, exceptions)
 
-        if (mv != null && WovenInfoUtils.isReplaceMethod(className) && Utils.isHasMethodBody(access)) {
-            mv = MethodReplaceInvokeAdapter(mv)
+        if (mv != null && Utils.isHasMethodBody(access)) {
+            mv = MethodReplaceInvokeAdapter(className,"$name$descriptor",mv)
         }
         return mv
     }
