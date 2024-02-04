@@ -2,6 +2,7 @@ package com.flyjingfish.test_lib
 
 import android.app.Application
 import android.content.Context
+import android.view.Gravity
 import android.widget.Toast
 
 object ToastUtils {
@@ -16,6 +17,7 @@ object ToastUtils {
         mToast?.cancel()
         try {
             mToast = Toast.makeText(context, text, duration)
+            mToast?.setGravity(Gravity.BOTTOM,0,0)
         } catch (e: NullPointerException) {
             e.printStackTrace()
             mToast = Toast.makeText(context, text, duration)
