@@ -6,9 +6,10 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethod
 
 @AndroidAopReplaceClass("com.flyjingfish.androidaop.MainActivity")
 object ReplaceGetData {
+    //注解参数唯一变化的返回类型 改为 suspend， 其他不变
     @AndroidAopReplaceMethod("suspend getData(int)")
     @JvmStatic
-    //  因为被替换方法是静态的，所以参数类型及顺序和被替换方法一一对应
+    //  这里函数定义写法规则依旧不变，只是多加一个 suspend 修饰
     suspend fun getData(mainActivity: MainActivity, num: Int): Int {
         Log.e("ReplaceGetData","getData")
         return mainActivity.getData(num + 1)
