@@ -30,7 +30,7 @@ class MethodReplaceInvokeVisitor(
     ): MethodVisitor? {
         var mv: MethodVisitor? = super.visitMethod(access, name, descriptor, signature, exceptions)
 
-        if (mv != null && "<init>" != name && "<clinit>" != name && WovenInfoUtils.isReplaceMethod(className) && Utils.isHasMethodBody(access)) {
+        if (mv != null && WovenInfoUtils.isReplaceMethod(className) && Utils.isHasMethodBody(access)) {
             mv = MethodReplaceInvokeAdapter(mv)
         }
         return mv

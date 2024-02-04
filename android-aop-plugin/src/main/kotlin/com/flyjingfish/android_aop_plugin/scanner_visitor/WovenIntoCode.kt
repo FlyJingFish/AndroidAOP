@@ -94,7 +94,7 @@ object WovenIntoCode {
                             exceptions
                         )
 
-                        if (hasReplace && mv != null && "<init>" != name && "<clinit>" != name && WovenInfoUtils.isReplaceMethod(className) && Utils.isHasMethodBody(access)) {
+                        if (hasReplace && mv != null && WovenInfoUtils.isReplaceMethod(className) && Utils.isHasMethodBody(access)) {
                             mv = MethodReplaceInvokeAdapter(mv)
                         }
                         mv
