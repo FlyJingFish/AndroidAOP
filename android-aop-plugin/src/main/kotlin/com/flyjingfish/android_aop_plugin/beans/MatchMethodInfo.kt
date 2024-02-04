@@ -7,5 +7,7 @@ class MatchMethodInfo {
     override fun toString(): String {
         return "MatchMethodInfo(name='$name', returnType=$returnType, paramTypes=$paramTypes)"
     }
-
+    fun checkAvailable():Boolean{
+        return name.isNotEmpty() && !returnType.isNullOrEmpty() && !paramTypes.isNullOrEmpty()
+    }
 }
