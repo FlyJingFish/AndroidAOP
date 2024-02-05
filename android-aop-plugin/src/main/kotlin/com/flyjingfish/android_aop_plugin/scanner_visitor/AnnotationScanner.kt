@@ -9,9 +9,8 @@ import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
-import org.slf4j.Logger
 
-class AnnotationScanner(val logger: Logger) : ClassVisitor(Opcodes.ASM9) {
+class AnnotationScanner(val onBackAopConfig: () -> Unit) : ClassVisitor(Opcodes.ASM9) {
     var isAndroidAopClass = false
     override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor? {
         if (descriptor.contains(CLASS_POINT)) {
@@ -61,6 +60,7 @@ class AnnotationScanner(val logger: Logger) : ClassVisitor(Opcodes.ASM9) {
             if (anno != null && cutClassName != null) {
                 val cut = AopMethodCut(anno!!, cutClassName!!)
                 addAnnoInfo(cut)
+                onBackAopConfig()
             }
             if (baseClassName != null && methodNames != null) {
                 var strings: Array<String>? = null
@@ -75,6 +75,7 @@ class AnnotationScanner(val logger: Logger) : ClassVisitor(Opcodes.ASM9) {
                     strings
                 )
                 addMatchInfo(cut)
+                onBackAopConfig()
             }
         }
     }
@@ -98,6 +99,7 @@ class AnnotationScanner(val logger: Logger) : ClassVisitor(Opcodes.ASM9) {
             super.visitEnd()
             if (targetClassName != null && invokeClassName != null) {
                 addReplaceInfo(targetClassName!!, invokeClassName!!)
+                onBackAopConfig()
             }
         }
     }

@@ -54,9 +54,12 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         private const val _CLASS = Utils._CLASS
     }
 
+    private val aopConfigFiles = mutableSetOf<String>()
+
     @TaskAction
     fun taskAction() {
         println("AndroidAOP woven info code start")
+        aopConfigFiles.clear()
         jarOutput = JarOutputStream(BufferedOutputStream(FileOutputStream(output.get().asFile)))
         val scanTimeCost = measureTimeMillis {
             scanFile()
@@ -87,9 +90,9 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                         FileInputStream(file).use { inputs ->
                             val classReader = ClassReader(inputs.readAllBytes())
                             classReader.accept(
-                                AnnotationScanner(
-                                    logger
-                                ), ClassReader.EXPAND_FRAMES)
+                                AnnotationScanner {
+                                    aopConfigFiles.add(file.absolutePath)
+                                }, ClassReader.EXPAND_FRAMES)
                         }
                     }else if (file.absolutePath.endsWith(_CLASS)){
                         val className = file.absolutePath.replace("$directoryPath/","")
@@ -133,9 +136,9 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                         jarFile.getInputStream(jarEntry).use { inputs ->
                             val classReader = ClassReader(inputs.readAllBytes())
                             classReader.accept(
-                                AnnotationScanner(
-                                    logger
-                                ), ClassReader.EXPAND_FRAMES)
+                                AnnotationScanner{
+                                    aopConfigFiles.add(entryName)
+                                }, ClassReader.EXPAND_FRAMES)
                         }
                     }else if (entryName.endsWith(_CLASS)){
                         if (AndroidAopConfig.verifyLeafExtends && !entryName.startsWith("kotlinx/") && !entryName.startsWith("kotlin/")){
@@ -274,6 +277,9 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             val directoryPath = directory.asFile.absolutePath
             directory.asFile.walk().forEach { file ->
                 if (file.isFile) {
+                    if (aopConfigFiles.contains(file.absolutePath)) {
+                        return@forEach
+                    }
                     val relativePath = directory.asFile.toURI().relativize(file.toURI()).path
 
 
@@ -335,7 +341,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 //                    if (jarEntry.isDirectory || entryName.isEmpty() || !entryName.endsWith(_CLASS) || entryName.startsWith("META-INF/")) {
 //                        continue
 //                    }
-                    if (jarEntry.isDirectory || entryName.isEmpty() || entryName.startsWith("META-INF/") || "module-info.class" == entryName) {
+                    if (jarEntry.isDirectory || entryName.isEmpty() || entryName.startsWith("META-INF/") || "module-info.class" == entryName || aopConfigFiles.contains(entryName)) {
                         continue
                     }
 
