@@ -6,7 +6,8 @@ import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 
 
-class MethodReplaceInvokeAdapter(val className:String,val methodNameDesc:String, methodVisitor: MethodVisitor?) :
+class MethodReplaceInvokeAdapter(private val className:String,
+                                 private val methodNameDesc:String, methodVisitor: MethodVisitor?) :
     MethodVisitor(Opcodes.ASM9, methodVisitor) {
     override fun visitMethodInsn(
         opcode: Int,
