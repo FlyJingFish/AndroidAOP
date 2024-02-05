@@ -421,7 +421,7 @@ public class ReplaceToast {
     @AndroidAopReplaceMethod(
             "void show()"
     )
-    //  Although the replaced method has no parameters, it is considered not a static method, so the first parameter is still the replaced class.
+    //  Although the replaced method has no parameters, because it is not a static method, the first parameter is still the replaced class.
     public static void show(Toast toast) {
         toast.show();
     }

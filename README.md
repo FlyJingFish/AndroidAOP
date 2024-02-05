@@ -443,7 +443,7 @@ public class ReplaceToast {
     @AndroidAopReplaceMethod(
             "void show()"
     )
-    //  虽然被替换方法没有参数，但以为它不是静态方法，所以第一个参数仍然是被替换类
+    //  虽然被替换方法没有参数，但因为它不是静态方法，所以第一个参数仍然是被替换类
     public static void show(Toast toast) {
         toast.show();
     }
