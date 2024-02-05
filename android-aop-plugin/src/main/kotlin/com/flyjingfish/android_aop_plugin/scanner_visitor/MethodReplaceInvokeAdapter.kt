@@ -6,7 +6,7 @@ import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 
 
-class MethodReplaceInvokeAdapter(methodVisitor: MethodVisitor?) :
+class MethodReplaceInvokeAdapter(val className:String,val methodNameDesc:String, methodVisitor: MethodVisitor?) :
     MethodVisitor(Opcodes.ASM9, methodVisitor) {
     override fun visitMethodInsn(
         opcode: Int,
@@ -17,7 +17,9 @@ class MethodReplaceInvokeAdapter(methodVisitor: MethodVisitor?) :
     ) {
         val key = owner + name + descriptor
         val replaceMethodInfo = WovenInfoUtils.getReplaceMethodInfoUse(key)
-        if (replaceMethodInfo != null && replaceMethodInfo.oldOwner == owner && replaceMethodInfo.oldMethodName == name && replaceMethodInfo.oldMethodDesc == descriptor) {
+        if (replaceMethodInfo != null
+            && replaceMethodInfo.oldOwner == owner && replaceMethodInfo.oldMethodName == name && replaceMethodInfo.oldMethodDesc == descriptor
+            && (!className.contains(replaceMethodInfo.newOwner) || methodNameDesc != "${replaceMethodInfo.newMethodName}${replaceMethodInfo.newMethodDesc}")) {
             val shouldReplaceDesc: String = if (opcode == Opcodes.INVOKESTATIC) {
                 descriptor
             } else {

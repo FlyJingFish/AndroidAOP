@@ -57,7 +57,7 @@ object WovenIntoCode {
                 ) {
                     super.visit(version, access, name, signature, superName, interfaces)
                     classNameMd5 = Utils.computeMD5(Utils.slashToDot(name))
-                    className = Utils.slashToDotClassName(name)
+                    className = name
                 }
                 override fun visitAnnotation(
                     descriptor: String,
@@ -94,8 +94,8 @@ object WovenIntoCode {
                             exceptions
                         )
 
-                        if (hasReplace && mv != null && WovenInfoUtils.isReplaceMethod(className) && Utils.isHasMethodBody(access)) {
-                            mv = MethodReplaceInvokeAdapter(mv)
+                        if (hasReplace && mv != null && Utils.isHasMethodBody(access)) {
+                            mv = MethodReplaceInvokeAdapter(className,"$name$descriptor",mv)
                         }
                         mv
                     } else {
