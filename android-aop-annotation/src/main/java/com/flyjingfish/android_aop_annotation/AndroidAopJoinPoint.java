@@ -170,7 +170,15 @@ public final class AndroidAopJoinPoint {
                 try {
                     originalMethod = tClass.getMethod(originalMethodName, classes);
                 } catch (NoSuchMethodException ex) {
-                    originalMethod = targetClass.getDeclaredMethod(originalMethodName, classes);
+                    try {
+                        originalMethod = targetClass.getDeclaredMethod(originalMethodName, classes);
+                    } catch (NoSuchMethodException exc) {
+                        String realMethodName = getRealName(originalMethodName);
+                        if (realMethodName == null){
+                            throw new RuntimeException(exc);
+                        }
+                        originalMethod = targetClass.getDeclaredMethod(realMethodName, classes);
+                    }
                 }
             }
             targetMethod.setAccessible(true);
@@ -180,5 +188,14 @@ public final class AndroidAopJoinPoint {
         }
     }
 
-
+    public static String getRealName(String staticMethodName) {
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        for (StackTraceElement element : stackTrace) {
+            String methodName = element.getMethodName();
+            if (methodName.contains(staticMethodName)){
+                return methodName;
+            }
+        }
+        return null;
+    }
 }
