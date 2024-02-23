@@ -173,7 +173,7 @@ public final class AndroidAopJoinPoint {
                     try {
                         originalMethod = targetClass.getDeclaredMethod(originalMethodName, classes);
                     } catch (NoSuchMethodException exc) {
-                        String realMethodName = getRealName(originalMethodName);
+                        String realMethodName = getRealMethodName(originalMethodName);
                         if (realMethodName == null){
                             throw new RuntimeException(exc);
                         }
@@ -188,7 +188,7 @@ public final class AndroidAopJoinPoint {
         }
     }
 
-    public static String getRealName(String staticMethodName) {
+    private static String getRealMethodName(String staticMethodName) {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         for (StackTraceElement element : stackTrace) {
             String methodName = element.getMethodName();
