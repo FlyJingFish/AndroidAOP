@@ -29,7 +29,7 @@ import org.objectweb.asm.tree.MethodNode
 import java.util.UUID
 
 
-class AnnotationMethodScanner(val onCallBackMethod: OnCallBackMethod?) :
+class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
     ClassNode(Opcodes.ASM9) {
     //    private final byte[] classByte;
     private val aopMatchCuts = mutableListOf<AopMatchCut>();

@@ -11,7 +11,7 @@ import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import org.slf4j.Logger
 
-class AnnotationScanner(val logger: Logger) : ClassVisitor(Opcodes.ASM9) {
+class SearchAOPConfigVisitor(val logger: Logger) : ClassVisitor(Opcodes.ASM9) {
     var isAndroidAopClass = false
     override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor? {
         if (descriptor.contains(CLASS_POINT)) {
