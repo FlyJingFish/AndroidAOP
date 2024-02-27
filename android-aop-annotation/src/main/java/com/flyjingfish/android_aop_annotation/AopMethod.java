@@ -6,7 +6,7 @@ import java.lang.reflect.Type;
 public final class AopMethod {
     private final Method targetMethod;
 
-    public AopMethod(Method targetMethod) {
+    AopMethod(Method targetMethod) {
         this.targetMethod = targetMethod;
     }
 
