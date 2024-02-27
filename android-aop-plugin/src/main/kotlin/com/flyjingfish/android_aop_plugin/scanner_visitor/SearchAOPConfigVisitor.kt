@@ -10,7 +10,7 @@ import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 
-class AnnotationScanner(val onBackAopConfig: () -> Unit) : ClassVisitor(Opcodes.ASM9) {
+class SearchAOPConfigVisitor(val onBackAopConfig: () -> Unit) : ClassVisitor(Opcodes.ASM9) {
     var isAndroidAopClass = false
     override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor? {
         if (descriptor.contains(CLASS_POINT)) {

@@ -29,7 +29,7 @@ public final class ProceedJoinPoint {
     private boolean hasNext;
     private final int argCount;
 
-    public ProceedJoinPoint(@NotNull Class<?> targetClass,Object[] args) {
+    ProceedJoinPoint(@NotNull Class<?> targetClass,Object[] args) {
         this.targetClass = targetClass;
         this.args = args;
         if (args != null){

@@ -13,69 +13,6 @@ internal object NetworkUtils {
     /**
      * >= Android 10（Q版本）推荐
      *
-     * 当前使用MOBILE流量上网
-     */
-    fun isMobileNetwork(context: Context): Boolean {
-        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val network = cm.activeNetwork ?: return false
-            val capabilities = cm.getNetworkCapabilities(network) ?: return false
-            return (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
-                    && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED))
-        } else {
-            val networkInfo = cm.activeNetworkInfo
-            if (networkInfo != null) {
-                return networkInfo.type == ConnectivityManager.TYPE_MOBILE
-            }
-            return false
-        }
-    }
-
-    /**
-     * >= Android 10（Q版本）推荐
-     *
-     * 当前使用WIFI上网
-     */
-    fun isWifiNetwork(context: Context): Boolean {
-        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val network = cm.activeNetwork ?: return false
-            val capabilities = cm.getNetworkCapabilities(network) ?: return false
-            return (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-                    && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED))
-        } else {
-            val networkInfo = cm.activeNetworkInfo
-            if (networkInfo != null) {
-                return networkInfo.type == ConnectivityManager.TYPE_WIFI
-            }
-            return false
-        }
-    }
-
-    /**
-     * >= Android 10（Q版本）推荐
-     *
-     * 当前使用以太网上网
-     */
-    fun isEthernetNetwork(context: Context): Boolean {
-        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val network = cm.activeNetwork ?: return false
-            val capabilities = cm.getNetworkCapabilities(network) ?: return false
-            return (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
-                    && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED))
-        } else {
-            val networkInfo = cm.activeNetworkInfo
-            if (networkInfo != null) {
-                return networkInfo.type == ConnectivityManager.TYPE_ETHERNET
-            }
-            return false
-        }
-    }
-
-    /**
-     * >= Android 10（Q版本）推荐
-     *
      * [NetworkCapabilities.NET_CAPABILITY_INTERNET]，表示此网络应该(maybe)能够访问internet
      *
      * 判断当前网络可以正常上网

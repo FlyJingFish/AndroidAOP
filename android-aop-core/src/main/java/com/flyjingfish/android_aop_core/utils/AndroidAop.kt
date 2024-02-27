@@ -26,7 +26,7 @@ object AndroidAop {
         onThrowableListener = listener
     }
 
-    fun getOnThrowableListener(): OnThrowableListener? {
+    internal fun getOnThrowableListener(): OnThrowableListener? {
         return onThrowableListener
     }
 
@@ -37,7 +37,7 @@ object AndroidAop {
         onCustomInterceptListener = listener
     }
 
-    fun getOnCustomInterceptListener(): OnCustomInterceptListener? {
+    internal fun getOnCustomInterceptListener(): OnCustomInterceptListener? {
         return onCustomInterceptListener
     }
 
@@ -48,7 +48,7 @@ object AndroidAop {
         onPermissionsInterceptListener = listener
     }
 
-    fun getOnPermissionsInterceptListener(): OnPermissionsInterceptListener? {
+    internal fun getOnPermissionsInterceptListener(): OnPermissionsInterceptListener? {
         return onPermissionsInterceptListener
     }
 
@@ -59,7 +59,7 @@ object AndroidAop {
         onCheckNetworkListener = listener
     }
 
-    fun getOnCheckNetworkListener(): OnCheckNetworkListener? {
+    internal fun getOnCheckNetworkListener(): OnCheckNetworkListener? {
         return onCheckNetworkListener
     }
 
@@ -70,7 +70,7 @@ object AndroidAop {
         onToastListener = listener
     }
 
-    fun getOnToastListener(): OnToastListener? {
+    internal fun getOnToastListener(): OnToastListener? {
         return onToastListener
     }
 

@@ -12,13 +12,14 @@ object FileHashUtils {
         if (!AndroidAopConfig.increment){
             return true
         }
+        val oldHash = getFileHash(file,step)
+        val hash = getSHA256Hash(fileBytes)
         WovenInfoUtils.removeClassCache(file)
         if (step == 2 && isChangeAopMatch){
 //            printLog("isAsmScan1 = $file")
+            putFileHash(file, fileBytes,step)
             return true
         }
-        val oldHash = getFileHash(file,step)
-        val hash = getSHA256Hash(fileBytes)
         return if (oldHash != hash){
 //            printLog("isAsmScan2 = $file")
             putFileHash(file, fileBytes,step)

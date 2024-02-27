@@ -8,6 +8,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
 import com.flyjingfish.android_aop_core.AndroidAopContentProvider
+import com.flyjingfish.android_aop_core.listeners.OnToastListener
 
 internal object Utils {
     /**
@@ -77,8 +78,9 @@ internal object Utils {
     }
 
     fun toast(text: CharSequence, duration: Int){
-        if (AndroidAop.getOnToastListener() != null){
-            AndroidAop.getOnToastListener()?.onToast(AndroidAopContentProvider.appContext, text, duration)
+        val onToastListener = AndroidAop.getOnToastListener()
+        if (onToastListener != null){
+            onToastListener.onToast(AndroidAopContentProvider.appContext, text, duration)
         }else{
             Toast.makeText(AndroidAopContentProvider.appContext,text, duration).show()
         }

@@ -4,8 +4,8 @@ import com.flyjingfish.android_aop_plugin.beans.ClassMethodRecord
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
-import com.flyjingfish.android_aop_plugin.scanner_visitor.AnnotationMethodScanner
-import com.flyjingfish.android_aop_plugin.scanner_visitor.AnnotationScanner
+import com.flyjingfish.android_aop_plugin.scanner_visitor.SearchAopMethodVisitor
+import com.flyjingfish.android_aop_plugin.scanner_visitor.SearchAOPConfigVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ClassSuperScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.MethodReplaceInvokeVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.RegisterMapWovenInfoCode
@@ -15,7 +15,6 @@ import com.flyjingfish.android_aop_plugin.utils.FileHashUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
-import com.flyjingfish.android_aop_plugin.utils.printLog
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
@@ -90,7 +89,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                         FileInputStream(file).use { inputs ->
                             val classReader = ClassReader(inputs.readAllBytes())
                             classReader.accept(
-                                AnnotationScanner {
+                                SearchAOPConfigVisitor {
                                     aopConfigFiles.add(file.absolutePath)
                                 }, ClassReader.EXPAND_FRAMES)
                         }
@@ -136,7 +135,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                         jarFile.getInputStream(jarEntry).use { inputs ->
                             val classReader = ClassReader(inputs.readAllBytes())
                             classReader.accept(
-                                AnnotationScanner{
+                                SearchAOPConfigVisitor{
                                     aopConfigFiles.add(entryName)
                                 }, ClassReader.EXPAND_FRAMES)
                         }
@@ -193,8 +192,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     WovenInfoUtils.deleteReplaceMethodInfo(file.absolutePath)
                                     try {
                                         val classReader = ClassReader(bytes)
-                                        classReader.accept(AnnotationMethodScanner(
-                                            object :AnnotationMethodScanner.OnCallBackMethod{
+                                        classReader.accept(SearchAopMethodVisitor(
+                                            object :SearchAopMethodVisitor.OnCallBackMethod{
                                                 override fun onBackMethodRecord(methodRecord: MethodRecord) {
                                                     val record = ClassMethodRecord(file.absolutePath, methodRecord)
                                                     WovenInfoUtils.addClassMethodRecords(record)
@@ -240,8 +239,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     WovenInfoUtils.deleteReplaceMethodInfo(entryName)
                                     try {
                                         val classReader = ClassReader(bytes)
-                                        classReader.accept(AnnotationMethodScanner(
-                                            object :AnnotationMethodScanner.OnCallBackMethod{
+                                        classReader.accept(SearchAopMethodVisitor(
+                                            object :SearchAopMethodVisitor.OnCallBackMethod{
                                                 override fun onBackMethodRecord(methodRecord: MethodRecord) {
                                                     val record = ClassMethodRecord(entryName, methodRecord)
                                                     WovenInfoUtils.addClassMethodRecords(record)
