@@ -461,7 +461,7 @@ object ReplaceLog {
 The following are some necessary obfuscation rules related to this library
 
 > The library comes with `proguard-rules.pro` rules and is automatically imported. Normally no manual import is required.
-> You can also go here to view [proguard-rules](https://github.com/CymChad/BaseRecyclerViewAdapterHelper/blob/master/library/proguard-rules.pro)
+> You can also go here to view [proguard-rules](https://github.com/FlyJingFish/AndroidAOP/blob/master/android-aop-core/proguard-rules.pro)
 
 
 
