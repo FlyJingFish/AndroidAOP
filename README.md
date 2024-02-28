@@ -493,8 +493,6 @@ object ReplaceLog {
 
 #### 混淆规则
 
-下边是涉及到本库的一些必须混淆规则
-
 > 此资源库自带[混淆规则](https://github.com/FlyJingFish/AndroidAOP/blob/master/android-aop-core/proguard-rules.pro)，并且会自动导入，正常情况下无需手动导入。
 
 
