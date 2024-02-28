@@ -54,7 +54,7 @@ Add directly to ```build.gradle``` of **app**
 //Required items 👇
 plugins {
      ...
-     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.4.2"
+     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.4.3"
 }
 ```
 
@@ -66,7 +66,7 @@ plugins {
 buildscript {
      dependencies {
          //Required items 👇
-         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.4.2'
+         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.4.3'
      }
 }
 ```
@@ -114,12 +114,12 @@ plugins {
 
 dependencies {
      //Required items 👇
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.4.2'
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.4.2'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.4.3'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.4.3'
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️supports aspects written in Java and Kotlin code
-     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.4.2'
+     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.4.3'
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️only applies to aspects written in Java code
-     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.4.2'
+     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.4.3'
      //⚠️Choose one of the above android-aop-ksp and android-aop-processor
 }
 ```
@@ -459,24 +459,10 @@ object ReplaceLog {
 #### Obfuscation rules
 
 The following are some necessary obfuscation rules related to this library
-```
-# AndroidAop necessary confusion rules -----start-----
 
--keep class * {
-     @androidx.annotation.Keep <fields>;
-}
+> The library comes with `proguard-rules.pro` rules and is automatically imported. Normally no manual import is required.
+> You can also go here to view [proguard-rules](https://github.com/CymChad/BaseRecyclerViewAdapterHelper/blob/master/library/proguard-rules.pro)
 
--keepnames class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut
--keepnames class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod
--keep class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut{
-     public <init>();
-}
--keep class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod{
-     public <init>();
-}
-
-# AndroidAop necessary confusion rules -----end-----
-```
 
 
 ### Appreciation

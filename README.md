@@ -55,7 +55,7 @@
 //必须项 👇
 plugins {
     ...
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.4.2"
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.4.3"
 }
 ```
 
@@ -67,7 +67,7 @@ plugins {
 buildscript {
     dependencies {
         //必须项 👇
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.4.2'
+        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.4.3'
     }
 }
 ```
@@ -115,17 +115,17 @@ plugins {
 
 dependencies {
     //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.4.2'
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.4.2'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.4.3'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.4.3'
     
     //必须项 👇如果您项目内已经有了这项不用加也可以
     implementation 'androidx.appcompat:appcompat:1.3.0' // 至少在1.3.0及以上
     
     //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.4.2'
+    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.4.3'
     
     //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.4.2'
+    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.4.3'
     //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
 }
 ```
@@ -495,24 +495,8 @@ object ReplaceLog {
 
 下边是涉及到本库的一些必须混淆规则
 
-```
-# AndroidAop必备混淆规则 -----start-----
+> 此资源库自带[混淆规则](https://github.com/FlyJingFish/AndroidAOP/blob/master/android-aop-core/proguard-rules.pro)，并且会自动导入，正常情况下无需手动导入。
 
--keep class * {
-    @androidx.annotation.Keep <fields>;
-}
-
--keepnames class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut
--keepnames class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod
--keep class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut{
-    public <init>();
-}
--keep class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod{
-    public <init>();
-}
-
-# AndroidAop必备混淆规则 -----end-----
-```
 
 
 ### 赞赏

@@ -1,6 +1,5 @@
 package com.flyjingfish.android_aop_core.utils
 
-import android.content.Context
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -8,7 +7,6 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
 import com.flyjingfish.android_aop_core.AndroidAopContentProvider
-import com.flyjingfish.android_aop_core.listeners.OnToastListener
 
 internal object Utils {
     /**

@@ -71,17 +71,17 @@
 
 
 # AndroidAop必备混淆规则 -----start-----
--keep class * {
-    @androidx.annotation.Keep <fields>;
-}
-
--keepnames class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut
--keepnames class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod
--keep class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut{
-    public <init>();
-}
--keep class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod{
-    public <init>();
-}
+#-keep class * {
+#    @androidx.annotation.Keep <fields>;
+#}
+#
+#-keepnames class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut
+#-keepnames class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod
+#-keep class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut{
+#    public <init>();
+#}
+#-keep class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod{
+#    public <init>();
+#}
 
 # AndroidAop必备混淆规则 -----end-----
