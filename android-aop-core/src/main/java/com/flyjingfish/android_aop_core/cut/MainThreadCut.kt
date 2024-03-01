@@ -16,11 +16,7 @@ internal class MainThreadCut : BasePointCut<MainThread> {
         }else{
             AppExecutors.mainThread().execute {
                 val target = joinPoint.target
-                if (target is Fragment){
-                    if (target.viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.DESTROYED){
-                        return@execute
-                    }
-                }else if (target is LifecycleOwner){
+                if (target is LifecycleOwner){
                     if (target.lifecycle.currentState == Lifecycle.State.DESTROYED){
                         return@execute
                     }

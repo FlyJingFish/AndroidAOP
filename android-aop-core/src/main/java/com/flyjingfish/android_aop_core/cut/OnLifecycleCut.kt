@@ -49,29 +49,13 @@ internal class OnLifecycleCut : BasePointCut<OnLifecycle> {
         joinPoint: ProceedJoinPoint,
         annotation: OnLifecycle
     ) {
-        when (lifecycleOwner) {
-            is Fragment -> {
-                lifecycleOwner.viewLifecycleOwner.lifecycle.addObserver(object :
-                    LifecycleEventObserver {
-                    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                        if (event == annotation.value) {
-                            source.lifecycle.removeObserver(this)
-                            joinPoint.proceed()
-                        }
-                    }
-                })
+        lifecycleOwner.lifecycle.addObserver(object : LifecycleEventObserver {
+            override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+                if (event == annotation.value) {
+                    source.lifecycle.removeObserver(this)
+                    joinPoint.proceed()
+                }
             }
-
-            else -> {
-                lifecycleOwner.lifecycle.addObserver(object : LifecycleEventObserver {
-                    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                        if (event == annotation.value) {
-                            source.lifecycle.removeObserver(this)
-                            joinPoint.proceed()
-                        }
-                    }
-                })
-            }
-        }
+        })
     }
 }

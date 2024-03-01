@@ -1,7 +1,6 @@
 package com.flyjingfish.android_aop_core.utils
 
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -49,30 +48,14 @@ internal object Utils {
         lifecycleOwner: LifecycleOwner,
         stopRunnable : Runnable
     ) {
-        when (lifecycleOwner) {
-            is Fragment -> {
-                lifecycleOwner.viewLifecycleOwner.lifecycle.addObserver(object :
-                    LifecycleEventObserver {
-                    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                        if (event == Lifecycle.Event.ON_DESTROY) {
-                            source.lifecycle.removeObserver(this)
-                            stopRunnable.run()
-                        }
-                    }
-                })
+        lifecycleOwner.lifecycle.addObserver(object : LifecycleEventObserver {
+            override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+                if (event == Lifecycle.Event.ON_DESTROY) {
+                    source.lifecycle.removeObserver(this)
+                    stopRunnable.run()
+                }
             }
-
-            else -> {
-                lifecycleOwner.lifecycle.addObserver(object : LifecycleEventObserver {
-                    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                        if (event == Lifecycle.Event.ON_DESTROY) {
-                            source.lifecycle.removeObserver(this)
-                            stopRunnable.run()
-                        }
-                    }
-                })
-            }
-        }
+        })
     }
 
     fun toast(text: CharSequence, duration: Int){

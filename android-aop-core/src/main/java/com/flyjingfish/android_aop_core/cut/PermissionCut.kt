@@ -1,5 +1,7 @@
 package com.flyjingfish.android_aop_core.cut
 
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
 import com.flyjingfish.android_aop_annotation.base.BasePointCut
 import com.flyjingfish.android_aop_core.annotations.Permission
@@ -14,6 +16,12 @@ internal class PermissionCut : BasePointCut<Permission> {
         AndroidAop.getOnPermissionsInterceptListener()?.requestPermission(joinPoint,anno,object : OnRequestPermissionListener{
             override fun onCall(isResult: Boolean) {
                 if (isResult){
+                    val target = joinPoint.target
+                    if (target is LifecycleOwner){
+                        if (target.lifecycle.currentState == Lifecycle.State.DESTROYED){
+                            return
+                        }
+                    }
                     joinPoint.proceed()
                 }
             }
