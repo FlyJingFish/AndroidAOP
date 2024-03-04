@@ -156,19 +156,19 @@ android {
 **In addition, since Android Studio may have cache after setting this, it is recommended to restart AS and clean the project before continuing development**
 ### This library has some built-in functional annotations for you to use directly.
 
-| Annotation name | Parameter description | Function description |
-|------------------|:---------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------:|
-| @SingleClick | value = interval of quick clicks, default 1000ms | Click the annotation and add this annotation to make your method accessible only when clicked |
-| @DoubleClick | value = maximum time between two clicks, default 300ms | Double-click annotation, add this annotation to make your method enterable only when double-clicked |
-| @IOThread | ThreadType = thread type | Switch to the sub-thread operation. Adding this annotation can switch the code in your method to the sub-thread for execution |
-| @MainThread | No parameters | The operation of switching to the main thread. Adding this annotation can switch the code in your method to the main thread for execution |
-| @OnLifecycle | value = Lifecycle.Event | Monitor life cycle operations. Adding this annotation allows the code in your method to be executed only during the corresponding life cycle |
-| @TryCatch | value = a flag you customized | Adding this annotation can wrap a layer of try catch code for your method |
-| @Permission | value = String array of permissions | The operation of applying for permissions. Adding this annotation will enable your code to be executed only after obtaining permissions |
-| @Scheduled | initialDelay = delayed start time<br>interval = interval<br>repeatCount = number of repetitions<br>isOnMainThread = whether to be the main thread<br>id = unique identifier | Scheduled tasks, add this annotation to make your method Executed every once in a while, call AndroidAop.shutdownNow(id) or AndroidAop.shutdown(id) to stop |
-| @Delay | delay = delay time<br>isOnMainThread = whether the main thread<br>id = unique identifier | Delay task, add this annotation to delay the execution of your method for a period of time, call AndroidAop.shutdownNow(id) or AndroidAop .shutdown(id) can be canceled |
-| @CheckNetwork | tag = custom tag<br>toastText = toast prompt when there is no network<br>invokeListener = whether to take over the check network logic | Check whether the network is available, adding this annotation will allow your method to enter only when there is a network |
-| @CustomIntercept | value = a flag of a string array that you customized | Custom interception, used with AndroidAop.setOnCustomInterceptListener, is a panacea |
+| Annotation name  |                                                                            Parameter description                                                                            |                                                                          Function description                                                                           |
+|------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| @SingleClick     |                                                              value = interval of quick clicks, default 1000ms                                                               |                                      Click the annotation and add this annotation to make your method accessible only when clicked                                      |
+| @DoubleClick     |                                                           value = maximum time between two clicks, default 300ms                                                            |                                   Double-click annotation, add this annotation to make your method enterable only when double-clicked                                   |
+| @IOThread        |                                                                          ThreadType = thread type                                                                           |                      Switch to the sub-thread operation. Adding this annotation can switch the code in your method to the sub-thread for execution                      |
+| @MainThread      |                                                                                No parameters                                                                                |                The operation of switching to the main thread. Adding this annotation can switch the code in your method to the main thread for execution                |
+| @OnLifecycle     |                                                                           value = Lifecycle.Event                                                                           |              Monitor life cycle operations. Adding this annotation allows the code in your method to be executed only during the corresponding life cycle               |
+| @TryCatch        |                                                                        value = a flag you customized                                                                        |                                                Adding this annotation can wrap a layer of try catch code for your method                                                |
+| @Permission      |                                                                     value = String array of permissions                                                                     |                 The operation of applying for permissions. Adding this annotation will enable your code to be executed only after obtaining permissions                 |
+| @Scheduled       | initialDelay = delayed start time<br>interval = interval<br>repeatCount = number of repetitions<br>isOnMainThread = whether to be the main thread<br>id = unique identifier |       Scheduled tasks, add this annotation to make your method Executed every once in a while, call AndroidAop.shutdownNow(id) or AndroidAop.shutdown(id) to stop       |
+| @Delay           |                                          delay = delay time<br>isOnMainThread = whether the main thread<br>id = unique identifier                                           | Delay task, add this annotation to delay the execution of your method for a period of time, call AndroidAop.shutdownNow(id) or AndroidAop .shutdown(id) can be canceled |
+| @CheckNetwork    |                   tag = custom tag<br>toastText = toast prompt when there is no network<br>invokeListener = whether to take over the check network logic                    |                       Check whether the network is available, adding this annotation will allow your method to enter only when there is a network                       |
+| @CustomIntercept |                                                            value = a flag of a string array that you customized                                                             |                                          Custom interception, used with AndroidAop.setOnCustomInterceptListener, is a panacea                                           |
 
 [All examples of the above annotations are here](https://github.com/FlyJingFish/AndroidAOP/blob/master/app/src/main/java/com/flyjingfish/androidaop/MainActivity.kt#L128),[Also This](https://github.com/FlyJingFish/AndroidAOP/blob/master/app/src/main/java/com/flyjingfish/androidaop/SecondActivity.java#L64)
 
@@ -277,7 +277,7 @@ AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
 
 The following uses @CustomIntercept as an example to introduce how to use it.
 
-- Create annotations
+- Create annotations(You need to implement the BasePointCut interface, and fill in the annotations above for its generic type)
 
 ```java
 @AndroidAopPointCut(CustomInterceptCut.class)

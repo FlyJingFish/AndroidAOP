@@ -171,7 +171,7 @@ android {
 | @MainThread      |                                                 无参数                                                 |                          切换到主线程的操作，加入此注解可使你的方法内的代码切换到主线程执行                          |
 | @OnLifecycle     |                                       value = Lifecycle.Event                                       |                        监听生命周期的操作，加入此注解可使你的方法内的代码在对应生命周期内才去执行                        |
 | @TryCatch        |                                        value = 你自定义加的一个flag                                         |                            加入此注解可为您的方法包裹一层 try catch 代码                             |
-| @Permission      |                                          tag = 自定义标记<br>value = 权限的字符串数组                                 |                            申请权限的操作，加入此注解可使您的代码在获取权限后才执行                             |
+| @Permission      |                                   tag = 自定义标记<br>value = 权限的字符串数组                                   |                            申请权限的操作，加入此注解可使您的代码在获取权限后才执行                             |
 | @Scheduled       | initialDelay = 延迟开始时间<br>interval = 间隔<br>repeatCount = 重复次数<br>isOnMainThread = 是否主线程<br>id = 唯一标识 | 定时任务，加入此注解，可使你的方法每隔一段时间执行一次，调用AndroidAop.shutdownNow(id)或AndroidAop.shutdown(id)可停止 |
 | @Delay           |                         delay = 延迟时间<br>isOnMainThread = 是否主线程<br>id = 唯一标识                         |  延迟任务，加入此注解，可使你的方法延迟一段时间执行，调用AndroidAop.shutdownNow(id)或AndroidAop.shutdown(id)可取消  |
 | @CheckNetwork    |                tag = 自定义标记<br>toastText = 无网络时toast提示<br>invokeListener = 是否接管检查网络逻辑                |                            检查网络是否可用，加入此注解可使你的方法在有网络才可进去                             |
@@ -290,7 +290,7 @@ AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
 
 下面以 @CustomIntercept 为例介绍下该如何使用
 
-- 创建注解
+- 创建注解(将 @AndroidAopPointCut 加到你的注解上)
 
 ```java
 @AndroidAopPointCut(CustomInterceptCut.class)
