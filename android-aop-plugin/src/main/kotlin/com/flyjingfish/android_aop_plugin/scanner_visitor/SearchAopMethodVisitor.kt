@@ -338,15 +338,9 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                                     isMatch = isInstanceof(clsName, slashToDotClassName(parentClsName))
                                 }
                             }
-                            val aopMatchCutMethodName = aopMatchCut.methodNames[0]
-                            val matchMethodInfo = getMethodInfo(aopMatchCutMethodName)
-                            if (isMatch && matchMethodInfo != null && name == matchMethodInfo.name) {
-                                val isBack = try {
-                                    Utils.verifyMatchCut(descriptor,matchMethodInfo)
-                                } catch (e: Exception) {
-                                    true
-                                }
-                                if (isBack) {
+
+                            if (isMatch){
+                                fun addMatchMethodCut(){
                                     val cutInfo = CutInfo(
                                         "匹配切面",
                                         originalClassName + "_" + lambdaName,
@@ -361,7 +355,25 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                                     methodRecord.cutInfo[UUID.randomUUID().toString()] = cutInfo
                                     onCallBackMethod?.onBackMethodRecord(methodRecord)
                                 }
+                                if (aopMatchCut.isMatchAllMethod()){
+                                    addMatchMethodCut()
+                                }else{
+                                    val aopMatchCutMethodName = aopMatchCut.methodNames[0]
+                                    val matchMethodInfo = getMethodInfo(aopMatchCutMethodName)
+                                    if (matchMethodInfo != null && name == matchMethodInfo.name) {
+                                        val isBack = try {
+                                            Utils.verifyMatchCut(descriptor,matchMethodInfo)
+                                        } catch (e: Exception) {
+                                            true
+                                        }
+                                        if (isBack) {
+                                            addMatchMethodCut()
+                                        }
+                                    }
+                                }
                             }
+
+
                         }
                     }
                 }
