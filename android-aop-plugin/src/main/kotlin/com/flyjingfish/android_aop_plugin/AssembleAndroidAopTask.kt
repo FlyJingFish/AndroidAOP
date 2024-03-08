@@ -171,7 +171,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         val includes = AndroidAopConfig.includes
         val excludes = AndroidAopConfig.excludes
         val addClassMethodRecords = mutableMapOf<String,ClassMethodRecord>()
-        val deleteClassMethodRecords = mutableListOf<String>()
+        val deleteClassMethodRecords = mutableSetOf<String>()
         allDirectories.get().forEach { directory ->
             directory.asFile.walk().forEach { file ->
                 if (file.isFile) {
