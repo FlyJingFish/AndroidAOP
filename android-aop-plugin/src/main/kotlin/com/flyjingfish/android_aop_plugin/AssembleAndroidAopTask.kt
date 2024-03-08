@@ -170,7 +170,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     private fun searchJoinPointLocation(){
         val includes = AndroidAopConfig.includes
         val excludes = AndroidAopConfig.excludes
-
+        val addClassMethodRecords = mutableMapOf<String,ClassMethodRecord>()
+        val deleteClassMethodRecords = mutableListOf<String>()
         allDirectories.get().forEach { directory ->
             directory.asFile.walk().forEach { file ->
                 if (file.isFile) {
@@ -193,7 +194,12 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                             object :SearchAopMethodVisitor.OnCallBackMethod{
                                                 override fun onBackMethodRecord(methodRecord: MethodRecord) {
                                                     val record = ClassMethodRecord(file.absolutePath, methodRecord)
-                                                    WovenInfoUtils.addClassMethodRecords(record)
+//                                                    WovenInfoUtils.addClassMethodRecords(record)
+                                                    addClassMethodRecords[file.absolutePath+methodRecord.getKey()]  = record
+                                                }
+
+                                                override fun onDeleteMethodRecord(methodRecord: MethodRecord) {
+                                                    deleteClassMethodRecords.add(file.absolutePath+methodRecord.getKey())
                                                 }
 
                                                 override fun onBackReplaceMethodInfo(replaceMethodInfo: ReplaceMethodInfo) {
@@ -240,7 +246,12 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                             object :SearchAopMethodVisitor.OnCallBackMethod{
                                                 override fun onBackMethodRecord(methodRecord: MethodRecord) {
                                                     val record = ClassMethodRecord(entryName, methodRecord)
-                                                    WovenInfoUtils.addClassMethodRecords(record)
+//                                                    WovenInfoUtils.addClassMethodRecords(record)
+                                                    addClassMethodRecords[entryName+methodRecord.getKey()]  = record
+                                                }
+
+                                                override fun onDeleteMethodRecord(methodRecord: MethodRecord) {
+                                                    deleteClassMethodRecords.add(entryName+methodRecord.getKey())
                                                 }
 
                                                 override fun onBackReplaceMethodInfo(replaceMethodInfo: ReplaceMethodInfo) {
@@ -261,6 +272,12 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 }
             }
             jarFile.close()
+        }
+        for (deleteClassMethodRecordKey in deleteClassMethodRecords) {
+            addClassMethodRecords.remove(deleteClassMethodRecordKey)
+        }
+        for (addClassMethodRecord in addClassMethodRecords) {
+            WovenInfoUtils.addClassMethodRecords(addClassMethodRecord.value)
         }
         WovenInfoUtils.removeDeletedClassMethodRecord()
     }

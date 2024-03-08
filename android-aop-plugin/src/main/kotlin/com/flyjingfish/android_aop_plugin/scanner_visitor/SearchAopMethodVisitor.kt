@@ -250,7 +250,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                     methodRecord.cutInfo[UUID.randomUUID().toString()] = cutInfo
                     onCallBackMethod?.onBackMethodRecord(methodRecord)
                 }
-                printLog("$aopMatchCut === ${aopMatchCut.isMatchAllMethod()}")
+//                printLog("$aopMatchCut === ${aopMatchCut.isMatchAllMethod()}")
                 if ("<init>" != name && "<clinit>" != name && aopMatchCut.isMatchAllMethod() ){
                     addMatchMethodCut()
                 }else{
@@ -323,6 +323,19 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
             }
 
             if (lambdaMethodList.size > 0) {
+                for ((_, _, _, _, lambdaName, lambdaDesc) in lambdaMethodList) {
+                    for (aopMatchCut in aopMatchCuts) {
+                        if (aopMatchCut.isMatchAllMethod()){
+                            val methodRecord = MethodRecord(
+                                lambdaName,
+                                lambdaDesc,
+                                aopMatchCut.cutClassName
+                            )
+                            onCallBackMethod?.onDeleteMethodRecord(methodRecord)
+                        }
+                    }
+                }
+
                 WovenInfoUtils.aopMatchCuts.forEach { (_: String?, aopMatchCut: AopMatchCut) ->
                     if (AopMatchCut.MatchType.SELF.name != aopMatchCut.matchType && aopMatchCut.methodNames.size == 1) {
                         for ((name, descriptor, clsName, originalClassName, lambdaName, lambdaDesc) in lambdaMethodList) {
@@ -384,7 +397,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
 
     interface OnCallBackMethod {
         fun onBackMethodRecord(methodRecord: MethodRecord)
-//        fun onDeleteMethodRecord(methodRecord: MethodRecord)
+        fun onDeleteMethodRecord(methodRecord: MethodRecord)
         fun onBackReplaceMethodInfo(replaceMethodInfo: ReplaceMethodInfo)
     }
 }
