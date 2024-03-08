@@ -363,7 +363,8 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                                     val methodRecord = MethodRecord(
                                         lambdaName,
                                         lambdaDesc,
-                                        aopMatchCut.cutClassName
+                                        aopMatchCut.cutClassName,
+                                        true
                                     )
                                     methodRecord.cutInfo[UUID.randomUUID().toString()] = cutInfo
                                     onCallBackMethod?.onBackMethodRecord(methodRecord)
