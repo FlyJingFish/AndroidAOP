@@ -4,7 +4,9 @@ data class AopMatchCut(val baseClassName:String, val methodNames:Array<String>,v
     enum class MatchType{
         EXTENDS,SELF,DIRECT_EXTENDS,LEAF_EXTENDS
     }
-
+    fun isMatchAllMethod():Boolean{
+        return methodNames.size == 1 && methodNames[0] == "*"
+    }
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

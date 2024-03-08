@@ -95,7 +95,8 @@ object WovenInfoUtils {
     }
 
     fun addMatchInfo(info: AopMatchCut) {
-        aopMatchCuts[info.baseClassName] = info
+        //baseClassName -> cutClassName 防止被覆盖
+        aopMatchCuts[info.cutClassName] = info
     }
 
     fun addClassMethodRecords(classMethodRecord: ClassMethodRecord) {
@@ -125,10 +126,6 @@ object WovenInfoUtils {
         return classMethodRecords[classFile]
     }
 
-    fun getMatchInfo(classFile: String): AopMatchCut? {
-        val key = Utils.slashToDot(classFile.substring(0, classFile.lastIndexOf(".")))
-        return aopMatchCuts[key]
-    }
 
     fun addClassPath(classPath: String) {
         classPaths.add(classPath)

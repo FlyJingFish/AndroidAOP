@@ -17,6 +17,7 @@ import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.getAnnoInfo
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.isContainAnno
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.isLeaf
+import com.flyjingfish.android_aop_plugin.utils.printLog
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.Handle
 import org.objectweb.asm.MethodVisitor
@@ -232,35 +233,44 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
     ): MethodVisitor {
         if (aopMatchCuts.size > 0 && isBackMethod(access)) {
             for (aopMatchCut in aopMatchCuts) {
-                for (methodName in aopMatchCut.methodNames) {
-                    val matchMethodInfo = getMethodInfo(methodName)
-                    if (matchMethodInfo != null && name == matchMethodInfo.name) {
-                        val isBack = try {
-                            Utils.verifyMatchCut(descriptor,matchMethodInfo)
-                        } catch (e: Exception) {
-                            true
+                fun addMatchMethodCut(){
+                    val methodRecord = MethodRecord(
+                        name,
+                        descriptor,
+                        aopMatchCut.cutClassName
+                    )
+                    val cutInfo = CutInfo(
+                        "匹配切面",
+                        slashToDot(
+                            className
+                        ),
+                        aopMatchCut.cutClassName,
+                        CutMethodJson(name, descriptor, false)
+                    )
+                    methodRecord.cutInfo[UUID.randomUUID().toString()] = cutInfo
+                    onCallBackMethod?.onBackMethodRecord(methodRecord)
+                }
+                printLog("$aopMatchCut === ${aopMatchCut.isMatchAllMethod()}")
+                if ("<init>" != name && "<clinit>" != name && aopMatchCut.isMatchAllMethod() ){
+                    addMatchMethodCut()
+                }else{
+                    for (methodName in aopMatchCut.methodNames) {
+                        val matchMethodInfo = getMethodInfo(methodName)
+                        if (matchMethodInfo != null && name == matchMethodInfo.name) {
+                            val isBack = try {
+                                Utils.verifyMatchCut(descriptor,matchMethodInfo)
+                            } catch (e: Exception) {
+                                true
+                            }
+                            if (isBack) {
+                                addMatchMethodCut()
+                                //                            cacheMethodRecords.add(new MethodRecord(name, descriptor, aopMatchCut.getCutClassName()));
+                            }
                         }
-                        if (isBack) {
-                            val methodRecord = MethodRecord(
-                                name,
-                                descriptor,
-                                aopMatchCut.cutClassName
-                            )
-                            val cutInfo = CutInfo(
-                                "匹配切面",
-                                slashToDot(
-                                    className
-                                ),
-                                aopMatchCut.cutClassName,
-                                CutMethodJson(name, descriptor, false)
-                            )
-                            methodRecord.cutInfo[UUID.randomUUID().toString()] = cutInfo
-                            onCallBackMethod?.onBackMethodRecord(methodRecord)
-                            //                            cacheMethodRecords.add(new MethodRecord(name, descriptor, aopMatchCut.getCutClassName()));
-                        }
-                        break
                     }
                 }
+
+
             }
         }
         val myMethodVisitor = MyMethodVisitor(
@@ -362,6 +372,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
 
     interface OnCallBackMethod {
         fun onBackMethodRecord(methodRecord: MethodRecord)
+//        fun onDeleteMethodRecord(methodRecord: MethodRecord)
         fun onBackReplaceMethodInfo(replaceMethodInfo: ReplaceMethodInfo)
     }
 }
