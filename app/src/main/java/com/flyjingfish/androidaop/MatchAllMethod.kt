@@ -11,7 +11,7 @@ import com.flyjingfish.android_aop_annotation.enums.MatchType
     methodName = ["*"],
     type = MatchType.SELF
 )
-class MatchMainActivityAllMethod : MatchClassMethod {
+class MatchAllMethod : MatchClassMethod {
     override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
         Log.e("MatchMainAllMethod", "AllMethod======" + methodName);
         return joinPoint.proceed()
