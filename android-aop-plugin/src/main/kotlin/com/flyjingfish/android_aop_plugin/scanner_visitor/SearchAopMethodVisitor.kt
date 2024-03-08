@@ -231,7 +231,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
         access: Int, name: String, descriptor: String,
         signature: String?, exceptions: Array<String?>?
     ): MethodVisitor {
-        if (aopMatchCuts.size > 0 && isBackMethod(access)) {
+        if ("<init>" != name && "<clinit>" != name && aopMatchCuts.size > 0 && isBackMethod(access)) {
             for (aopMatchCut in aopMatchCuts) {
                 fun addMatchMethodCut(){
                     val methodRecord = MethodRecord(
@@ -251,7 +251,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                     onCallBackMethod?.onBackMethodRecord(methodRecord)
                 }
 //                printLog("$aopMatchCut === ${aopMatchCut.isMatchAllMethod()}")
-                if ("<init>" != name && "<clinit>" != name && aopMatchCut.isMatchAllMethod() ){
+                if (aopMatchCut.isMatchAllMethod() ){
                     addMatchMethodCut()
                 }else{
                     for (methodName in aopMatchCut.methodNames) {
@@ -339,53 +339,56 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                 WovenInfoUtils.aopMatchCuts.forEach { (_: String?, aopMatchCut: AopMatchCut) ->
                     if (AopMatchCut.MatchType.SELF.name != aopMatchCut.matchType && aopMatchCut.methodNames.size == 1) {
                         for ((name, descriptor, clsName, originalClassName, lambdaName, lambdaDesc) in lambdaMethodList) {
-                            val isDirectExtends =
-                                slashToDotClassName(aopMatchCut.baseClassName) == clsName
-                            var isMatch = false
-                            if (AopMatchCut.MatchType.DIRECT_EXTENDS.name == aopMatchCut.matchType) {
-                                isMatch = isDirectExtends
-                            } else if (AopMatchCut.MatchType.EXTENDS.name == aopMatchCut.matchType || AopMatchCut.MatchType.LEAF_EXTENDS.name == aopMatchCut.matchType) {
-                                isMatch = isDirectExtends
-                                if (!isMatch) {
-                                    val parentClsName = aopMatchCut.baseClassName
-                                    isMatch = isInstanceof(clsName, slashToDotClassName(parentClsName))
+                            if ("<init>" != name && "<clinit>" != name && "<init>" != lambdaName && "<clinit>" != lambdaName){
+                                val isDirectExtends =
+                                    slashToDotClassName(aopMatchCut.baseClassName) == clsName
+                                var isMatch = false
+                                if (AopMatchCut.MatchType.DIRECT_EXTENDS.name == aopMatchCut.matchType) {
+                                    isMatch = isDirectExtends
+                                } else if (AopMatchCut.MatchType.EXTENDS.name == aopMatchCut.matchType || AopMatchCut.MatchType.LEAF_EXTENDS.name == aopMatchCut.matchType) {
+                                    isMatch = isDirectExtends
+                                    if (!isMatch) {
+                                        val parentClsName = aopMatchCut.baseClassName
+                                        isMatch = isInstanceof(clsName, slashToDotClassName(parentClsName))
+                                    }
                                 }
-                            }
 
-                            if (isMatch){
-                                fun addMatchMethodCut(){
-                                    val cutInfo = CutInfo(
-                                        "匹配切面",
-                                        originalClassName + "_" + lambdaName,
-                                        aopMatchCut.cutClassName,
-                                        CutMethodJson(name, descriptor, true)
-                                    )
-                                    val methodRecord = MethodRecord(
-                                        lambdaName,
-                                        lambdaDesc,
-                                        aopMatchCut.cutClassName,
-                                        true
-                                    )
-                                    methodRecord.cutInfo[UUID.randomUUID().toString()] = cutInfo
-                                    onCallBackMethod?.onBackMethodRecord(methodRecord)
-                                }
-                                if (aopMatchCut.isMatchAllMethod()){
-                                    addMatchMethodCut()
-                                }else{
-                                    val aopMatchCutMethodName = aopMatchCut.methodNames[0]
-                                    val matchMethodInfo = getMethodInfo(aopMatchCutMethodName)
-                                    if (matchMethodInfo != null && name == matchMethodInfo.name) {
-                                        val isBack = try {
-                                            Utils.verifyMatchCut(descriptor,matchMethodInfo)
-                                        } catch (e: Exception) {
+                                if (isMatch){
+                                    fun addMatchMethodCut(){
+                                        val cutInfo = CutInfo(
+                                            "匹配切面",
+                                            originalClassName + "_" + lambdaName,
+                                            aopMatchCut.cutClassName,
+                                            CutMethodJson(name, descriptor, true)
+                                        )
+                                        val methodRecord = MethodRecord(
+                                            lambdaName,
+                                            lambdaDesc,
+                                            aopMatchCut.cutClassName,
                                             true
-                                        }
-                                        if (isBack) {
-                                            addMatchMethodCut()
+                                        )
+                                        methodRecord.cutInfo[UUID.randomUUID().toString()] = cutInfo
+                                        onCallBackMethod?.onBackMethodRecord(methodRecord)
+                                    }
+                                    if (aopMatchCut.isMatchAllMethod()){
+                                        addMatchMethodCut()
+                                    }else{
+                                        val aopMatchCutMethodName = aopMatchCut.methodNames[0]
+                                        val matchMethodInfo = getMethodInfo(aopMatchCutMethodName)
+                                        if (matchMethodInfo != null && name == matchMethodInfo.name) {
+                                            val isBack = try {
+                                                Utils.verifyMatchCut(descriptor,matchMethodInfo)
+                                            } catch (e: Exception) {
+                                                true
+                                            }
+                                            if (isBack) {
+                                                addMatchMethodCut()
+                                            }
                                         }
                                     }
                                 }
                             }
+
 
 
                         }
