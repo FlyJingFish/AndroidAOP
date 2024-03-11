@@ -9,6 +9,7 @@ import com.flyjingfish.android_aop_plugin.scanner_visitor.SearchAOPConfigVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ClassSuperScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.MethodReplaceInvokeVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.RegisterMapWovenInfoCode
+import com.flyjingfish.android_aop_plugin.scanner_visitor.ReplaceBaseClassVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
 import com.flyjingfish.android_aop_plugin.utils.FileHashUtils
@@ -335,7 +336,33 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 }
                             }
                         }else{
-                            copy()
+                            val clazzName = className.replace(_CLASS,"")
+                            val replaceExtendsClassName = WovenInfoUtils.getReplaceExtendsClass(Utils.slashToDotClassName(clazzName))
+                            if (replaceExtendsClassName !=null){
+                                FileInputStream(file).use { inputs ->
+                                    val byteArray = inputs.readAllBytes()
+                                    if (byteArray.isNotEmpty()){
+                                        try {
+                                            val cr = ClassReader(byteArray)
+                                            val cw = ClassWriter(ClassWriter.COMPUTE_FRAMES)
+                                            val cv = ReplaceBaseClassVisitor(cw)
+                                            cr.accept(cv, ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+                                            val newByteArray = cw.toByteArray()
+                                            jarOutput.putNextEntry(JarEntry(relativePath.replace(File.separatorChar, '/')))
+                                            ByteArrayInputStream(newByteArray).use {
+                                                it.copyTo(jarOutput)
+                                            }
+                                            jarOutput.closeEntry()
+                                        } catch (e: Exception) {
+                                            copy()
+                                        }
+                                    }else{
+                                        copy()
+                                    }
+                                }
+                            }else{
+                                copy()
+                            }
                         }
                     }
                 }
@@ -407,7 +434,33 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 }
                             }
                         }else{
-                            copy()
+                            val clazzName = entryName.replace(_CLASS,"")
+                            val replaceExtendsClassName = WovenInfoUtils.getReplaceExtendsClass(Utils.slashToDotClassName(clazzName))
+                            if (replaceExtendsClassName !=null){
+                                jarFile.getInputStream(jarEntry).use { inputs ->
+                                    val byteArray = inputs.readAllBytes()
+                                    if (byteArray.isNotEmpty()){
+                                        try {
+                                            val cr = ClassReader(byteArray)
+                                            val cw = ClassWriter(cr, 0)
+                                            val cv = ReplaceBaseClassVisitor(cw)
+                                            cr.accept(cv, 0)
+                                            val newByteArray = cw.toByteArray()
+                                            jarOutput.putNextEntry(JarEntry(entryName))
+                                            ByteArrayInputStream(newByteArray).use {
+                                                it.copyTo(jarOutput)
+                                            }
+                                            jarOutput.closeEntry()
+                                        } catch (e: Exception) {
+                                            copy()
+                                        }
+                                    }else{
+                                        copy()
+                                    }
+                                }
+                            }else{
+                                copy()
+                            }
                         }
 
 

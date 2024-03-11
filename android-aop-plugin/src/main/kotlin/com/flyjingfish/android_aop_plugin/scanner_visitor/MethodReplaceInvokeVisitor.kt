@@ -7,7 +7,7 @@ import org.objectweb.asm.Opcodes
 
 class MethodReplaceInvokeVisitor(
     classVisitor: ClassVisitor
-) : ClassVisitor(Opcodes.ASM9, classVisitor) {
+) : ReplaceBaseClassVisitor(classVisitor) {
     lateinit var className: String
     override fun visit(
         version: Int,

@@ -28,6 +28,13 @@ object WovenInfoUtils {
     private val replaceMethodMap = HashMap<String, String>()
     private val replaceMethodInfoMap = HashMap<String, HashMap<String, ReplaceMethodInfo>>()
     val replaceMethodInfoMapUse = HashMap<String, ReplaceMethodInfo>()
+    private val replaceExtendsClassMap = HashMap<String, String>()
+    fun addReplaceExtendsClassInfo(targetClassName: String, replaceClassName: String) {
+        replaceExtendsClassMap[targetClassName] = replaceClassName
+    }
+    fun getReplaceExtendsClass(targetClassName: String) :String?{
+        return replaceExtendsClassMap[targetClassName]
+    }
     fun addReplaceMethodInfo(filePath: String, replaceMethodInfo: ReplaceMethodInfo) {
         var infoMap = replaceMethodInfoMap[filePath]
         if (infoMap == null){
@@ -134,6 +141,7 @@ object WovenInfoUtils {
         invokeMethodMap.clear()
         replaceMethodMap.clear()
         replaceMethodInfoMapUse.clear()
+        replaceExtendsClassMap.clear()
         if (!AndroidAopConfig.increment) {
             aopMethodCuts.clear()
             aopMatchCuts.clear()

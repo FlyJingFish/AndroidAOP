@@ -6,8 +6,10 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopMethod;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopPointCut;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceClass;
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceExtendsClass;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethod;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethodInvoke;
+import com.flyjingfish.android_aop_annotation.anno.ReplaceExtendsClass;
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
 import com.flyjingfish.android_aop_annotation.enums.MatchType;
 import com.squareup.javapoet.AnnotationSpec;
@@ -51,6 +53,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
         set.add(AndroidAopMatchClassMethod.class.getCanonicalName());
         set.add(AndroidAopReplaceClass.class.getCanonicalName());
         set.add(AndroidAopReplaceMethod.class.getCanonicalName());
+        set.add(AndroidAopReplaceExtendsClass.class.getCanonicalName());
         return set;
     }
     @Override
@@ -85,8 +88,11 @@ public class AndroidAopProcessor extends AbstractProcessor {
         processMatch(set, roundEnvironment);
         processReplaceMethod(set, roundEnvironment);
         processReplace(set, roundEnvironment);
+        processReplaceExtendsClass(set, roundEnvironment);
         return false;
     }
+
+
 
     public void processPointCut(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
         Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(AndroidAopPointCut.class);
@@ -203,6 +209,8 @@ public class AndroidAopProcessor extends AbstractProcessor {
         }
     }
 
+
+
     private void processReplace(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
 
         Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(AndroidAopReplaceClass.class);
@@ -219,6 +227,38 @@ public class AndroidAopProcessor extends AbstractProcessor {
                     .addAnnotation(AnnotationSpec.builder(AndroidAopReplaceMethodInvoke.class)
                             .addMember("targetClassName", "$S", className)
                             .addMember("invokeClassName", "$S", element)
+                            .build());
+
+            typeBuilder.addMethod(whatsMyName1.build());
+
+            TypeSpec typeSpec = typeBuilder.build();
+            String elementClassName = element.toString();
+            String packageName = elementClassName.substring(0, elementClassName.lastIndexOf("."));
+            JavaFile javaFile = JavaFile.builder(packageName, typeSpec)
+                    .build();
+            try {
+                javaFile.writeTo(mFiler);
+            } catch (IOException e) {
+//                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private void processReplaceExtendsClass(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
+        Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(AndroidAopReplaceExtendsClass.class);
+        for (Element element : elements) {
+            Name name1 = element.getSimpleName();
+//                System.out.println("======"+element);
+            AndroidAopReplaceExtendsClass cut = element.getAnnotation(AndroidAopReplaceExtendsClass.class);
+            String className = cut.value();
+
+            TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(name1+"$$AndroidAopClass")
+                    .addAnnotation(AndroidAopClass.class)
+                    .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
+            MethodSpec.Builder whatsMyName1 = whatsMyName("withinAnnotatedClass")
+                    .addAnnotation(AnnotationSpec.builder(ReplaceExtendsClass.class)
+                            .addMember("targetClassName", "$S", className)
+                            .addMember("replaceClassName", "$S", element)
                             .build());
 
             typeBuilder.addMethod(whatsMyName1.build());

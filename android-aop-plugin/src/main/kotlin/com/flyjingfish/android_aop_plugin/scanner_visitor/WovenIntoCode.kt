@@ -37,13 +37,13 @@ object WovenIntoCode {
         if (hasReplace){
             cr.accept(MethodReplaceInvokeVisitor(cw), 0)
         }else{
-            cr.accept(object : ClassVisitor(Opcodes.ASM9, cw) {}, 0)
+            cr.accept(object : ReplaceBaseClassVisitor(cw) {}, 0)
         }
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
             val oldMethodName = value.methodName
 //            val targetMethodName = oldMethodName + METHOD_SUFFIX
             val oldDescriptor = value.descriptor
-            cr.accept(object : ClassVisitor(Opcodes.ASM9, cw) {
+            cr.accept(object : ReplaceBaseClassVisitor(cw) {
                 var classNameMd5:String ?= null
                 lateinit var className: String
                 override fun visit(

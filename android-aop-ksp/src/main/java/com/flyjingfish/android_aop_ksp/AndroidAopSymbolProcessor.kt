@@ -5,8 +5,10 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopMethod
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopPointCut
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceClass
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceExtendsClass
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethod
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethodInvoke
+import com.flyjingfish.android_aop_annotation.anno.ReplaceExtendsClass
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod
 import com.google.devtools.ksp.containingFile
 import com.google.devtools.ksp.processing.CodeGenerator
@@ -27,7 +29,6 @@ import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.TypeSpec
-import java.io.File
 import java.lang.annotation.ElementType
 
 class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
@@ -39,10 +40,12 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
     val ret2 = processMatch(resolver)
     processReplaceMethod(resolver)
     val ret3 = processReplace(resolver)
+    val ret4 = processReplaceExtendsClass(resolver)
     val ret = arrayListOf<KSAnnotated>()
     ret.addAll(ret1)
     ret.addAll(ret2)
     ret.addAll(ret3)
+    ret.addAll(ret4)
     return ret
   }
 
@@ -306,6 +309,46 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
           }
         }
       }
+    }
+    return symbols.filter { !it.validate() }.toList()
+  }
+
+  private fun processReplaceExtendsClass(resolver: Resolver): List<KSAnnotated> {
+    val symbols :Sequence<KSAnnotated> =
+      resolver.getSymbolsWithAnnotation(AndroidAopReplaceExtendsClass::class.qualifiedName!!)
+    for (symbol in symbols) {
+      val annotationMap = getAnnotation(symbol)
+      val classMethodMap: MutableMap<String, Any?> =
+        annotationMap["@AndroidAopReplaceExtendsClass"] ?: continue
+
+      val targetClassName: String? = classMethodMap["value"]?.toString()
+
+
+      val className = (symbol as KSClassDeclaration).packageName.asString() + "." + symbol
+      if (targetClassName == null) {
+        continue
+      }
+      val fileName = "${symbol}\$\$AndroidAopClass";
+      val typeBuilder = TypeSpec.classBuilder(
+        fileName
+      ).addModifiers(KModifier.FINAL)
+        .addAnnotation(AndroidAopClass::class)
+      val whatsMyName1 = whatsMyName("withinAnnotatedClass")
+        .addAnnotation(
+          AnnotationSpec.builder(ReplaceExtendsClass::class)
+            .addMember(
+              "targetClassName = %S",
+              targetClassName
+            )
+            .addMember(
+              "replaceClassName = %S",
+              className
+            )
+            .build()
+        )
+
+      typeBuilder.addFunction(whatsMyName1.build())
+      writeToFile(typeBuilder,symbol.packageName.asString(), fileName, symbol)
     }
     return symbols.filter { !it.validate() }.toList()
   }
