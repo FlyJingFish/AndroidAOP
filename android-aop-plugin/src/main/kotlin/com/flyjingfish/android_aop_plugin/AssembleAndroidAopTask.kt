@@ -281,12 +281,14 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             WovenInfoUtils.addClassMethodRecords(addClassMethodRecord.value)
         }
         WovenInfoUtils.removeDeletedClassMethodRecord()
+        WovenInfoUtils.verifyReplaceExtendsClassInfo()
     }
 
     private fun wovenIntoCode(){
         WovenInfoUtils.makeReplaceMethodInfoUse()
 //        logger.error("getClassMethodRecord="+WovenInfoUtils.classMethodRecords)
         val hasReplace = WovenInfoUtils.hasReplace()
+        val hasReplaceExtendsClass = WovenInfoUtils.hasReplaceExtendsClass()
         allDirectories.get().forEach { directory ->
             val directoryPath = directory.asFile.absolutePath
             directory.asFile.walk().forEach { file ->
@@ -335,7 +337,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     copy()
                                 }
                             }
-                        }else{
+                        }else if (hasReplaceExtendsClass && !className.startsWith("kotlinx/") && !className.startsWith("kotlin/")){
                             val clazzName = className.replace(_CLASS,"")
                             val replaceExtendsClassName = WovenInfoUtils.getReplaceExtendsClass(Utils.slashToDotClassName(clazzName))
                             if (replaceExtendsClassName !=null){
@@ -363,6 +365,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             }else{
                                 copy()
                             }
+                        }else{
+                            copy()
                         }
                     }
                 }
@@ -433,7 +437,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     copy()
                                 }
                             }
-                        }else{
+                        }else if(hasReplaceExtendsClass && !entryName.startsWith("kotlinx/") && !entryName.startsWith("kotlin/")){
                             val clazzName = entryName.replace(_CLASS,"")
                             val replaceExtendsClassName = WovenInfoUtils.getReplaceExtendsClass(Utils.slashToDotClassName(clazzName))
                             if (replaceExtendsClassName !=null){
@@ -461,6 +465,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             }else{
                                 copy()
                             }
+                        }else{
+                            copy()
                         }
 
 

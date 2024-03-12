@@ -35,6 +35,16 @@ object WovenInfoUtils {
     fun getReplaceExtendsClass(targetClassName: String) :String?{
         return replaceExtendsClassMap[targetClassName]
     }
+    fun verifyReplaceExtendsClassInfo() {
+        for (mutableEntry in replaceExtendsClassMap) {
+            if (Utils.isInstanceof(mutableEntry.value,mutableEntry.key)){
+                throw IllegalArgumentException("${mutableEntry.value} 不能继承 ${mutableEntry.key}")
+            }
+        }
+    }
+    fun hasReplaceExtendsClass():Boolean{
+        return replaceExtendsClassMap.isNotEmpty()
+    }
     fun addReplaceMethodInfo(filePath: String, replaceMethodInfo: ReplaceMethodInfo) {
         var infoMap = replaceMethodInfoMap[filePath]
         if (infoMap == null){
