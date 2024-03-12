@@ -54,7 +54,7 @@ Add directly to ```build.gradle``` of **app**
 //Required items 👇
 plugins {
      ...
-     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.4.4"
+     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.4.5"
 }
 ```
 
@@ -66,7 +66,7 @@ plugins {
 buildscript {
      dependencies {
          //Required items 👇
-         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.4.4'
+         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.4.5'
      }
 }
 ```
@@ -114,12 +114,12 @@ plugins {
 
 dependencies {
      //Required items 👇
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.4.4'
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.4.4'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.4.5'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.4.5'
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️supports aspects written in Java and Kotlin code
-     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.4.4'
+     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.4.5'
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️only applies to aspects written in Java code
-     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.4.4'
+     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.4.5'
      //⚠️Choose one of the above android-aop-ksp and android-aop-processor
 }
 ```
@@ -438,6 +438,12 @@ object ReplaceLog {
     }
 }
 ```
+
+#### 4. **@AndroidAopModifyExtendsClass** is an inherited class that modifies the target class
+
+As shown in the following example, you need to replace the inherited class of ```BaseActivity``` with ```ReplaceBaseActivity```
+
+[Detailed usage](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopModifyExtendsClass)
 
 ### [Please see the wiki documentation for detailed usage](https://github.com/FlyJingFish/AndroidAOP/wiki)
 
