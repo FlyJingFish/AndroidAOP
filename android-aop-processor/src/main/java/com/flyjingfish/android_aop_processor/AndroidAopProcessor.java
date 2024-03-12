@@ -6,7 +6,7 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod;
 import com.flyjingfish.android_aop_annotation.aop_anno.AopPointCut;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopPointCut;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceClass;
-import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceExtendsClass;
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopModifyExtendsClass;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethod;
 import com.flyjingfish.android_aop_annotation.aop_anno.AopReplaceMethod;
 import com.flyjingfish.android_aop_annotation.aop_anno.AopReplaceExtendsClass;
@@ -53,7 +53,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
         set.add(AndroidAopMatchClassMethod.class.getCanonicalName());
         set.add(AndroidAopReplaceClass.class.getCanonicalName());
         set.add(AndroidAopReplaceMethod.class.getCanonicalName());
-        set.add(AndroidAopReplaceExtendsClass.class.getCanonicalName());
+        set.add(AndroidAopModifyExtendsClass.class.getCanonicalName());
         return set;
     }
     @Override
@@ -245,11 +245,11 @@ public class AndroidAopProcessor extends AbstractProcessor {
     }
 
     private void processReplaceExtendsClass(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
-        Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(AndroidAopReplaceExtendsClass.class);
+        Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(AndroidAopModifyExtendsClass.class);
         for (Element element : elements) {
             Name name1 = element.getSimpleName();
 //                System.out.println("======"+element);
-            AndroidAopReplaceExtendsClass cut = element.getAnnotation(AndroidAopReplaceExtendsClass.class);
+            AndroidAopModifyExtendsClass cut = element.getAnnotation(AndroidAopModifyExtendsClass.class);
             String className = cut.value();
 
             TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(name1+"$$AndroidAopClass")

@@ -7,7 +7,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceExtendsClass;
 import com.google.android.material.textview.MaterialTextView;
 
 public class ReplaceBaseTextView extends MaterialTextView {

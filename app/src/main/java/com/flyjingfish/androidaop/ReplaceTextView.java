@@ -8,8 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 
-import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceExtendsClass;
-
 //@AndroidAopReplaceExtendsClass("com.google.android.material.textview.MaterialTextView")
 public class ReplaceTextView extends AppCompatTextView {
     public ReplaceTextView(@NonNull Context context) {

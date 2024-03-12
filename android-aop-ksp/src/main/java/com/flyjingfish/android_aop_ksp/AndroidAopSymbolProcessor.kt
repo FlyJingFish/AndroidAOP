@@ -5,7 +5,7 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod
 import com.flyjingfish.android_aop_annotation.aop_anno.AopPointCut
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopPointCut
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceClass
-import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceExtendsClass
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopModifyExtendsClass
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethod
 import com.flyjingfish.android_aop_annotation.aop_anno.AopReplaceMethod
 import com.flyjingfish.android_aop_annotation.aop_anno.AopReplaceExtendsClass
@@ -315,11 +315,11 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
 
   private fun processReplaceExtendsClass(resolver: Resolver): List<KSAnnotated> {
     val symbols :Sequence<KSAnnotated> =
-      resolver.getSymbolsWithAnnotation(AndroidAopReplaceExtendsClass::class.qualifiedName!!)
+      resolver.getSymbolsWithAnnotation(AndroidAopModifyExtendsClass::class.qualifiedName!!)
     for (symbol in symbols) {
       val annotationMap = getAnnotation(symbol)
       val classMethodMap: MutableMap<String, Any?> =
-        annotationMap["@AndroidAopReplaceExtendsClass"] ?: continue
+        annotationMap["@AndroidAopModifyExtendsClass"] ?: continue
 
       val targetClassName: String? = classMethodMap["value"]?.toString()
 
