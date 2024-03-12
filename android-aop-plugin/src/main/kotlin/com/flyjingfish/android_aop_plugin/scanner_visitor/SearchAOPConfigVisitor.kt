@@ -156,12 +156,11 @@ class SearchAOPConfigVisitor(val logger: Logger) : ClassVisitor(Opcodes.ASM9) {
     }
 
     companion object {
-        const val CLASS_POINT = "Lcom/flyjingfish/android_aop_annotation/anno/AndroidAopClass"
-        const val METHOD_POINT = "Lcom/flyjingfish/android_aop_annotation/anno/AndroidAopMethod"
-        const val MATCH_POINT = "Lcom/flyjingfish/android_aop_annotation/anno/AndroidAopMatch"
-        const val REPLACE_POINT =
-            "Lcom/flyjingfish/android_aop_annotation/anno/AndroidAopReplaceMethodInvoke"
+        const val CLASS_POINT = "Lcom/flyjingfish/android_aop_annotation/aop_anno/AndroidAopClass"
+        const val METHOD_POINT = "Lcom/flyjingfish/android_aop_annotation/aop_anno/AopPointCut"
+        const val MATCH_POINT = "Lcom/flyjingfish/android_aop_annotation/aop_anno/AopMatchClassMethod"
+        const val REPLACE_POINT = "Lcom/flyjingfish/android_aop_annotation/aop_anno/AopReplaceMethod"
         const val EXTENDS_POINT =
-            "Lcom/flyjingfish/android_aop_annotation/anno/ReplaceExtendsClass"
+            "Lcom/flyjingfish/android_aop_annotation/aop_anno/AopReplaceExtendsClass"
     }
 }

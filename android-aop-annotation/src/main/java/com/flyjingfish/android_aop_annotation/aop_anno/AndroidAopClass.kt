@@ -1,4 +1,4 @@
-package com.flyjingfish.android_aop_annotation.anno
+package com.flyjingfish.android_aop_annotation.aop_anno
 
 
 /**

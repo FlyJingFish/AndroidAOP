@@ -1,15 +1,15 @@
 package com.flyjingfish.android_aop_processor;
 
-import com.flyjingfish.android_aop_annotation.anno.AndroidAopClass;
-import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatch;
+import com.flyjingfish.android_aop_annotation.aop_anno.AndroidAopClass;
+import com.flyjingfish.android_aop_annotation.aop_anno.AopMatchClassMethod;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod;
-import com.flyjingfish.android_aop_annotation.anno.AndroidAopMethod;
+import com.flyjingfish.android_aop_annotation.aop_anno.AopPointCut;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopPointCut;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceClass;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceExtendsClass;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethod;
-import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethodInvoke;
-import com.flyjingfish.android_aop_annotation.anno.ReplaceExtendsClass;
+import com.flyjingfish.android_aop_annotation.aop_anno.AopReplaceMethod;
+import com.flyjingfish.android_aop_annotation.aop_anno.AopReplaceExtendsClass;
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
 import com.flyjingfish.android_aop_annotation.enums.MatchType;
 import com.squareup.javapoet.AnnotationSpec;
@@ -135,7 +135,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
                     .addAnnotation(AndroidAopClass.class)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
             MethodSpec.Builder whatsMyName1 = whatsMyName("withinAnnotatedClass")
-                    .addAnnotation(AnnotationSpec.builder(AndroidAopMethod.class)
+                    .addAnnotation(AnnotationSpec.builder(AopPointCut.class)
                             .addMember("value", "$S", "@"+element)
                             .addMember("pointCutClassName", "$S", className)
                             .build());
@@ -186,7 +186,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
                     .addAnnotation(AndroidAopClass.class)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
             MethodSpec.Builder whatsMyName1 = whatsMyName("withinAnnotatedClass")
-                    .addAnnotation(AnnotationSpec.builder(AndroidAopMatch.class)
+                    .addAnnotation(AnnotationSpec.builder(AopMatchClassMethod.class)
                             .addMember("baseClassName", "$S", className)
                             .addMember("methodNames", "$S", methodNamesBuilder)
                             .addMember("pointCutClassName", "$S", element)
@@ -224,7 +224,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
                     .addAnnotation(AndroidAopClass.class)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
             MethodSpec.Builder whatsMyName1 = whatsMyName("withinAnnotatedClass")
-                    .addAnnotation(AnnotationSpec.builder(AndroidAopReplaceMethodInvoke.class)
+                    .addAnnotation(AnnotationSpec.builder(AopReplaceMethod.class)
                             .addMember("targetClassName", "$S", className)
                             .addMember("invokeClassName", "$S", element)
                             .build());
@@ -256,7 +256,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
                     .addAnnotation(AndroidAopClass.class)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
             MethodSpec.Builder whatsMyName1 = whatsMyName("withinAnnotatedClass")
-                    .addAnnotation(AnnotationSpec.builder(ReplaceExtendsClass.class)
+                    .addAnnotation(AnnotationSpec.builder(AopReplaceExtendsClass.class)
                             .addMember("targetClassName", "$S", className)
                             .addMember("replaceClassName", "$S", element)
                             .build());

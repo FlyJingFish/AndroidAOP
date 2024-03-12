@@ -1,14 +1,14 @@
 package com.flyjingfish.android_aop_ksp
-import com.flyjingfish.android_aop_annotation.anno.AndroidAopClass
-import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatch
+import com.flyjingfish.android_aop_annotation.aop_anno.AndroidAopClass
+import com.flyjingfish.android_aop_annotation.aop_anno.AopMatchClassMethod
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod
-import com.flyjingfish.android_aop_annotation.anno.AndroidAopMethod
+import com.flyjingfish.android_aop_annotation.aop_anno.AopPointCut
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopPointCut
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceClass
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceExtendsClass
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethod
-import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethodInvoke
-import com.flyjingfish.android_aop_annotation.anno.ReplaceExtendsClass
+import com.flyjingfish.android_aop_annotation.aop_anno.AopReplaceMethod
+import com.flyjingfish.android_aop_annotation.aop_anno.AopReplaceExtendsClass
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod
 import com.google.devtools.ksp.containingFile
 import com.google.devtools.ksp.processing.CodeGenerator
@@ -131,7 +131,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
 
       val whatsMyName1 = whatsMyName("withinAnnotatedClass")
         .addAnnotation(
-          AnnotationSpec.builder(AndroidAopMethod::class)
+          AnnotationSpec.builder(AopPointCut::class)
             .addMember(
               "value = %S",
               "@$className"
@@ -209,7 +209,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       }
       val whatsMyName1 = whatsMyName("withinAnnotatedClass")
         .addAnnotation(
-          AnnotationSpec.builder(AndroidAopMatch::class)
+          AnnotationSpec.builder(AopMatchClassMethod::class)
             .addMember(
               "baseClassName = %S",
               targetClassName
@@ -261,7 +261,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         .addAnnotation(AndroidAopClass::class)
       val whatsMyName1 = whatsMyName("withinAnnotatedClass")
         .addAnnotation(
-          AnnotationSpec.builder(AndroidAopReplaceMethodInvoke::class)
+          AnnotationSpec.builder(AopReplaceMethod::class)
             .addMember(
               "targetClassName = %S",
               targetClassName
@@ -335,7 +335,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         .addAnnotation(AndroidAopClass::class)
       val whatsMyName1 = whatsMyName("withinAnnotatedClass")
         .addAnnotation(
-          AnnotationSpec.builder(ReplaceExtendsClass::class)
+          AnnotationSpec.builder(AopReplaceExtendsClass::class)
             .addMember(
               "targetClassName = %S",
               targetClassName

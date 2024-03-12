@@ -3,16 +3,14 @@ package com.flyjingfish.androidaop;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceExtendsClass;
-import com.google.android.material.textview.MaterialTextView;
 
-@AndroidAopReplaceExtendsClass("androidx.appcompat.widget.AppCompatTextView")
+//@AndroidAopReplaceExtendsClass("com.google.android.material.textview.MaterialTextView")
 public class ReplaceTextView extends AppCompatTextView {
     public ReplaceTextView(@NonNull Context context) {
         super(context);
