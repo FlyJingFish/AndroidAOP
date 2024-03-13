@@ -202,8 +202,8 @@ object InitConfig {
         replaceMethodInfoMap[replaceMethodInfo.getReplaceKey()] = replaceMethodInfo
     }
 
-    fun addModifyClassInfo(targetClassName: String, modifyClassName: String){
-        modifyExtendsClassMap[targetClassName] = ModifyExtendsClassJson("修改继承类",targetClassName,modifyClassName,"未被使用")
+    fun addModifyClassInfo(targetClassName: String, extendsClassName: String){
+        modifyExtendsClassMap[targetClassName] = ModifyExtendsClassJson("修改继承类",targetClassName,extendsClassName,"未被使用")
     }
 
     fun useModifyClassInfo(targetClassName: String){

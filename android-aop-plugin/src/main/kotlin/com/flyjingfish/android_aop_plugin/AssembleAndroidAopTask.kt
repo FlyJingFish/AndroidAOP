@@ -281,14 +281,14 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             WovenInfoUtils.addClassMethodRecords(addClassMethodRecord.value)
         }
         WovenInfoUtils.removeDeletedClassMethodRecord()
-        WovenInfoUtils.verifyReplaceExtendsClassInfo()
+        WovenInfoUtils.verifyModifyExtendsClassInfo()
     }
 
     private fun wovenIntoCode(){
         WovenInfoUtils.makeReplaceMethodInfoUse()
 //        logger.error("getClassMethodRecord="+WovenInfoUtils.classMethodRecords)
         val hasReplace = WovenInfoUtils.hasReplace()
-        val hasReplaceExtendsClass = WovenInfoUtils.hasReplaceExtendsClass()
+        val hasReplaceExtendsClass = WovenInfoUtils.hasModifyExtendsClass()
         allDirectories.get().forEach { directory ->
             val directoryPath = directory.asFile.absolutePath
             directory.asFile.walk().forEach { file ->
@@ -339,7 +339,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             }
                         }else if (hasReplaceExtendsClass && !className.startsWith("kotlinx/") && !className.startsWith("kotlin/")){
                             val clazzName = className.replace(_CLASS,"")
-                            val replaceExtendsClassName = WovenInfoUtils.getReplaceExtendsClass(Utils.slashToDotClassName(clazzName))
+                            val replaceExtendsClassName = WovenInfoUtils.getModifyExtendsClass(Utils.slashToDotClassName(clazzName))
                             if (replaceExtendsClassName !=null){
                                 FileInputStream(file).use { inputs ->
                                     val byteArray = inputs.readAllBytes()
@@ -439,7 +439,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             }
                         }else if(hasReplaceExtendsClass && !entryName.startsWith("kotlinx/") && !entryName.startsWith("kotlin/")){
                             val clazzName = entryName.replace(_CLASS,"")
-                            val replaceExtendsClassName = WovenInfoUtils.getReplaceExtendsClass(Utils.slashToDotClassName(clazzName))
+                            val replaceExtendsClassName = WovenInfoUtils.getModifyExtendsClass(Utils.slashToDotClassName(clazzName))
                             if (replaceExtendsClassName !=null){
                                 jarFile.getInputStream(jarEntry).use { inputs ->
                                     val byteArray = inputs.readAllBytes()

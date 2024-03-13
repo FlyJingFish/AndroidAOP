@@ -6,4 +6,4 @@ package com.flyjingfish.android_aop_annotation.aop_anno
  */
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS)
-annotation class AndroidAopClass
+annotation class AopClass

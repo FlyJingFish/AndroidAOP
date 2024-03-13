@@ -1,5 +1,5 @@
 package com.flyjingfish.android_aop_ksp
-import com.flyjingfish.android_aop_annotation.aop_anno.AndroidAopClass
+import com.flyjingfish.android_aop_annotation.aop_anno.AopClass
 import com.flyjingfish.android_aop_annotation.aop_anno.AopMatchClassMethod
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod
 import com.flyjingfish.android_aop_annotation.aop_anno.AopPointCut
@@ -8,7 +8,7 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceClass
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopModifyExtendsClass
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethod
 import com.flyjingfish.android_aop_annotation.aop_anno.AopReplaceMethod
-import com.flyjingfish.android_aop_annotation.aop_anno.AopReplaceExtendsClass
+import com.flyjingfish.android_aop_annotation.aop_anno.AopModifyExtendsClass
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod
 import com.google.devtools.ksp.containingFile
 import com.google.devtools.ksp.processing.CodeGenerator
@@ -34,13 +34,16 @@ import java.lang.annotation.ElementType
 class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
                                 private val logger: KSPLogger
 ) : SymbolProcessor {
+  companion object{
+    const val AOP_METHOD_NAME = "aopConfigMethod"
+  }
   override fun process(resolver: Resolver): List<KSAnnotated> {
 //    logger.error("---------AndroidAopSymbolProcessor---------")
     val ret1 = processPointCut(resolver)
     val ret2 = processMatch(resolver)
     processReplaceMethod(resolver)
     val ret3 = processReplace(resolver)
-    val ret4 = processReplaceExtendsClass(resolver)
+    val ret4 = processModifyExtendsClass(resolver)
     val ret = arrayListOf<KSAnnotated>()
     ret.addAll(ret1)
     ret.addAll(ret2)
@@ -54,7 +57,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
     for (symbol in symbols) {
       val annotationMap = getAnnotation(symbol)
       val classMethodMap: MutableMap<String, Any?> =
-        annotationMap["@AndroidAopPointCut"] ?: continue
+        annotationMap["@"+AndroidAopPointCut::class.simpleName] ?: continue
 
       val value: KSType? =
         if (classMethodMap["value"] != null) classMethodMap["value"] as KSType else null
@@ -127,9 +130,9 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       val typeBuilder = TypeSpec.classBuilder(
         fileName
       ).addModifiers(KModifier.FINAL)
-        .addAnnotation(AndroidAopClass::class)
+        .addAnnotation(AopClass::class)
 
-      val whatsMyName1 = whatsMyName("withinAnnotatedClass")
+      val whatsMyName1 = whatsMyName(AOP_METHOD_NAME)
         .addAnnotation(
           AnnotationSpec.builder(AopPointCut::class)
             .addMember(
@@ -171,7 +174,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
 
       val annotationMap = getAnnotation(symbol)
       val classMethodMap: MutableMap<String, Any?> =
-        annotationMap["@AndroidAopMatchClassMethod"] ?: continue
+        annotationMap["@"+AndroidAopMatchClassMethod::class.simpleName] ?: continue
 
       val targetClassName: String? = classMethodMap["targetClassName"]?.toString()
       val methodNames: ArrayList<String>? =
@@ -190,7 +193,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       val typeBuilder = TypeSpec.classBuilder(
         fileName
       ).addModifiers(KModifier.FINAL)
-        .addAnnotation(AndroidAopClass::class)
+        .addAnnotation(AopClass::class)
       val methodNamesBuilder = StringBuilder()
       for (i in methodNames.indices) {
         methodNamesBuilder.append(methodNames[i])
@@ -207,7 +210,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
           }
         }
       }
-      val whatsMyName1 = whatsMyName("withinAnnotatedClass")
+      val whatsMyName1 = whatsMyName(AOP_METHOD_NAME)
         .addAnnotation(
           AnnotationSpec.builder(AopMatchClassMethod::class)
             .addMember(
@@ -245,7 +248,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
     for (symbol in symbols) {
       val annotationMap = getAnnotation(symbol)
       val classMethodMap: MutableMap<String, Any?> =
-        annotationMap["@AndroidAopReplaceClass"] ?: continue
+        annotationMap["@"+AndroidAopReplaceClass::class.simpleName] ?: continue
 
       val targetClassName: String? = classMethodMap["value"]?.toString()
 
@@ -258,8 +261,8 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       val typeBuilder = TypeSpec.classBuilder(
         fileName
       ).addModifiers(KModifier.FINAL)
-        .addAnnotation(AndroidAopClass::class)
-      val whatsMyName1 = whatsMyName("withinAnnotatedClass")
+        .addAnnotation(AopClass::class)
+      val whatsMyName1 = whatsMyName(AOP_METHOD_NAME)
         .addAnnotation(
           AnnotationSpec.builder(AopReplaceMethod::class)
             .addMember(
@@ -313,13 +316,13 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
     return symbols.filter { !it.validate() }.toList()
   }
 
-  private fun processReplaceExtendsClass(resolver: Resolver): List<KSAnnotated> {
+  private fun processModifyExtendsClass(resolver: Resolver): List<KSAnnotated> {
     val symbols :Sequence<KSAnnotated> =
       resolver.getSymbolsWithAnnotation(AndroidAopModifyExtendsClass::class.qualifiedName!!)
     for (symbol in symbols) {
       val annotationMap = getAnnotation(symbol)
       val classMethodMap: MutableMap<String, Any?> =
-        annotationMap["@AndroidAopModifyExtendsClass"] ?: continue
+        annotationMap["@"+AndroidAopModifyExtendsClass::class.simpleName] ?: continue
 
       val targetClassName: String? = classMethodMap["value"]?.toString()
 
@@ -332,16 +335,16 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       val typeBuilder = TypeSpec.classBuilder(
         fileName
       ).addModifiers(KModifier.FINAL)
-        .addAnnotation(AndroidAopClass::class)
-      val whatsMyName1 = whatsMyName("withinAnnotatedClass")
+        .addAnnotation(AopClass::class)
+      val whatsMyName1 = whatsMyName(AOP_METHOD_NAME)
         .addAnnotation(
-          AnnotationSpec.builder(AopReplaceExtendsClass::class)
+          AnnotationSpec.builder(AopModifyExtendsClass::class)
             .addMember(
               "targetClassName = %S",
               targetClassName
             )
             .addMember(
-              "replaceClassName = %S",
+              "extendsClassName = %S",
               className
             )
             .build()

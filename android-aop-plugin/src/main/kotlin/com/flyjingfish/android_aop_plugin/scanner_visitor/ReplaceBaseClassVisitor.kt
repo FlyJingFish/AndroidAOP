@@ -18,7 +18,7 @@ open class ReplaceBaseClassVisitor(
         superName: String?,
         interfaces: Array<out String>?
     ) {
-        val replaceExtendsClassName = WovenInfoUtils.getReplaceExtendsClass(slashToDotClassName(name))
+        val replaceExtendsClassName = WovenInfoUtils.getModifyExtendsClass(slashToDotClassName(name))
         val newReplaceExtendsClassName = replaceExtendsClassName?.let {
             WovenInfoUtils.getClassString(
                 it

@@ -29,21 +29,21 @@ object WovenInfoUtils {
     private val replaceMethodInfoMap = HashMap<String, HashMap<String, ReplaceMethodInfo>>()
     val replaceMethodInfoMapUse = HashMap<String, ReplaceMethodInfo>()
     private val modifyExtendsClassMap = HashMap<String, String>()
-    fun addReplaceExtendsClassInfo(targetClassName: String, modifyClassName: String) {
-        modifyExtendsClassMap[targetClassName] = modifyClassName
-        InitConfig.addModifyClassInfo(targetClassName, modifyClassName)
+    fun addModifyExtendsClassInfo(targetClassName: String, extendsClassName: String) {
+        modifyExtendsClassMap[targetClassName] = extendsClassName
+        InitConfig.addModifyClassInfo(targetClassName, extendsClassName)
     }
-    fun getReplaceExtendsClass(targetClassName: String) :String?{
+    fun getModifyExtendsClass(targetClassName: String) :String?{
         return modifyExtendsClassMap[targetClassName]
     }
-    fun verifyReplaceExtendsClassInfo() {
+    fun verifyModifyExtendsClassInfo() {
         for (mutableEntry in modifyExtendsClassMap) {
             if (Utils.isInstanceof(mutableEntry.value,mutableEntry.key)){
                 throw IllegalArgumentException("${mutableEntry.value} 不能继承 ${mutableEntry.key}，或者其继承类不可以继承 ${mutableEntry.key}")
             }
         }
     }
-    fun hasReplaceExtendsClass():Boolean{
+    fun hasModifyExtendsClass():Boolean{
         return modifyExtendsClassMap.isNotEmpty()
     }
     fun addReplaceMethodInfo(filePath: String, replaceMethodInfo: ReplaceMethodInfo) {

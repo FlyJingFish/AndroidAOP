@@ -4,7 +4,7 @@ import com.flyjingfish.android_aop_plugin.beans.AopMatchCut
 import com.flyjingfish.android_aop_plugin.beans.AopMethodCut
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addAnnoInfo
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addMatchInfo
-import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addReplaceExtendsClassInfo
+import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addModifyExtendsClassInfo
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addReplaceInfo
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassVisitor
@@ -105,14 +105,14 @@ class SearchAOPConfigVisitor(val logger: Logger) : ClassVisitor(Opcodes.ASM9) {
 
     internal inner class ReplaceExtendsClassVisitor : AnnotationVisitor(Opcodes.ASM9) {
         private var targetClassName: String? = null
-        private var replaceClassName: String? = null
+        private var extendsClassName: String? = null
         override fun visit(name: String, value: Any) {
             if (isAndroidAopClass) {
                 if (name == "targetClassName") {
                     targetClassName = value.toString()
                 }
-                if (name == "replaceClassName") {
-                    replaceClassName = value.toString()
+                if (name == "extendsClassName") {
+                    extendsClassName = value.toString()
                 }
             }
             super.visit(name, value)
@@ -120,8 +120,8 @@ class SearchAOPConfigVisitor(val logger: Logger) : ClassVisitor(Opcodes.ASM9) {
 
         override fun visitEnd() {
             super.visitEnd()
-            if (targetClassName != null && replaceClassName != null) {
-                addReplaceExtendsClassInfo(targetClassName!!, replaceClassName!!)
+            if (targetClassName != null && extendsClassName != null) {
+                addModifyExtendsClassInfo(targetClassName!!, extendsClassName!!)
             }
         }
     }
@@ -156,11 +156,11 @@ class SearchAOPConfigVisitor(val logger: Logger) : ClassVisitor(Opcodes.ASM9) {
     }
 
     companion object {
-        const val CLASS_POINT = "Lcom/flyjingfish/android_aop_annotation/aop_anno/AndroidAopClass"
+        const val CLASS_POINT = "Lcom/flyjingfish/android_aop_annotation/aop_anno/AopClass"
         const val METHOD_POINT = "Lcom/flyjingfish/android_aop_annotation/aop_anno/AopPointCut"
         const val MATCH_POINT = "Lcom/flyjingfish/android_aop_annotation/aop_anno/AopMatchClassMethod"
         const val REPLACE_POINT = "Lcom/flyjingfish/android_aop_annotation/aop_anno/AopReplaceMethod"
         const val EXTENDS_POINT =
-            "Lcom/flyjingfish/android_aop_annotation/aop_anno/AopReplaceExtendsClass"
+            "Lcom/flyjingfish/android_aop_annotation/aop_anno/AopModifyExtendsClass"
     }
 }

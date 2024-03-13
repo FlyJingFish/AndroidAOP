@@ -5,7 +5,7 @@ package com.flyjingfish.android_aop_annotation.aop_anno
  */
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.FUNCTION)
-annotation class AopReplaceExtendsClass(
+annotation class AopModifyExtendsClass(
     /**
      * @return 目标类名（包含包名）
      */
@@ -13,5 +13,5 @@ annotation class AopReplaceExtendsClass(
     /**
      * @return 替换类名（包含包名）
      */
-    val replaceClassName: String,
+    val extendsClassName: String,
 )
