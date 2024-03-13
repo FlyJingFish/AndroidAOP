@@ -1,5 +1,6 @@
 package com.flyjingfish.android_aop_plugin.scanner_visitor
 
+import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils.dotToSlash
 import com.flyjingfish.android_aop_plugin.utils.Utils.slashToDotClassName
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
@@ -24,6 +25,7 @@ open class ReplaceBaseClassVisitor(
             )
         }
         if (!replaceExtendsClassName.isNullOrEmpty() && !newReplaceExtendsClassName.isNullOrEmpty()){
+            InitConfig.useModifyClassInfo(slashToDotClassName(name))
             super.visit(version, access, name, signature, dotToSlash(newReplaceExtendsClassName), interfaces)
         }else{
             super.visit(version, access, name, signature, superName, interfaces)

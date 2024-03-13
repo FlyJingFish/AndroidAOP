@@ -10,6 +10,7 @@ import com.flyjingfish.android_aop_plugin.beans.CutReplaceClassJson
 import com.flyjingfish.android_aop_plugin.beans.CutReplaceClassMap
 import com.flyjingfish.android_aop_plugin.beans.CutReplaceMethodJson
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
+import com.flyjingfish.android_aop_plugin.beans.ModifyExtendsClassJson
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig.Companion.cutInfoJson
 import com.google.gson.Gson
@@ -27,7 +28,8 @@ object InitConfig {
     private lateinit var buildConfigCacheFile: File
     private lateinit var cutInfoFile: File
     private val cutInfoMap = mutableMapOf<String, CutJsonMap?>()
-    private val replaceMethodInfoList = mutableMapOf<String, ReplaceMethodInfo>()
+    private val replaceMethodInfoMap = mutableMapOf<String, ReplaceMethodInfo>()
+    private val modifyExtendsClassMap = mutableMapOf<String, ModifyExtendsClassJson>()
     var isInit: Boolean = false
     private val gson: Gson = GsonBuilder().create()
     private fun <T> optFromJsonString(jsonString: String, clazz: Class<T>): T? {
@@ -80,7 +82,8 @@ object InitConfig {
         temporaryDir = File(project.buildDir.absolutePath + "/tmp")
         cutInfoFile = File(temporaryDir, "cutInfo.json")
         cutInfoMap.clear()
-        replaceMethodInfoList.clear()
+        replaceMethodInfoMap.clear()
+        modifyExtendsClassMap.clear()
         return isInit
     }
 
@@ -137,7 +140,7 @@ object InitConfig {
             val allReplaceMethodInfo = mutableMapOf<String, ReplaceMethodInfo>()
             allReplaceMethodInfo.putAll(WovenInfoUtils.replaceMethodInfoMapUse)
             val replaceCutMap = mutableMapOf<String,CutReplaceClassMap>()
-            for (replaceMethodInfo in replaceMethodInfoList) {
+            for (replaceMethodInfo in replaceMethodInfoMap) {
                 var cutJson = replaceCutMap[replaceMethodInfo.value.getReplaceJsonKey()]
                 if (cutJson == null){
                     cutJson = CutReplaceClassMap(
@@ -184,6 +187,11 @@ object InitConfig {
                 )
                 cutJsons.add(json)
             }
+
+            for (mutableEntry in modifyExtendsClassMap) {
+                cutJsons.add(mutableEntry.value)
+            }
+
             val json = GsonBuilder().setPrettyPrinting().create().toJson(cutJsons)
 
             saveFile(cutInfoFile, json)
@@ -191,7 +199,16 @@ object InitConfig {
     }
 
     fun addReplaceMethodInfo(replaceMethodInfo: ReplaceMethodInfo) {
-        replaceMethodInfoList[replaceMethodInfo.getReplaceKey()] = replaceMethodInfo
+        replaceMethodInfoMap[replaceMethodInfo.getReplaceKey()] = replaceMethodInfo
+    }
+
+    fun addModifyClassInfo(targetClassName: String, modifyClassName: String){
+        modifyExtendsClassMap[targetClassName] = ModifyExtendsClassJson("修改继承类",targetClassName,modifyClassName,"未被使用")
+    }
+
+    fun useModifyClassInfo(targetClassName: String){
+        val json = modifyExtendsClassMap[targetClassName]
+        json?.used = "已被使用"
     }
 
     private fun temporaryDirMkdirs() {
@@ -200,47 +217,5 @@ object InitConfig {
         }
 
     }
-    /*
-
-    [{
-            "type": "注解",
-            "className": "注解全名",
-            "cutClasses": [{
-                "className": "切入点类",
-                "method": [{
-                        "name": "test",
-                        "returnType": "",
-                        "paramTypes": "int,double"
-                    },
-                    {
-                        "name": "test",
-                        "returnType": "",
-                        "paramTypes": "int,double"
-                    }
-                ]
-            }]
-
-        },
-        {
-            "type": "匹配",
-            "className": "匹配全名",
-            "cutClasses": [{
-                "className": "切入点类",
-                "method": [{
-                        "name": "test",
-                        "returnType": "",
-                        "paramTypes": "int,double"
-                    },
-                    {
-                        "name": "test",
-                        "returnType": "",
-                        "paramTypes": "int,double"
-                    }
-                ]
-            }]
-
-        }
-    ]
-     */
 
 }
