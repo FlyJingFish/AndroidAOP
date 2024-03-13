@@ -474,16 +474,30 @@ object ReplaceLog {
 
 #### 四、**@AndroidAopModifyExtendsClass** 是修改目标类的继承类
 
-如下例所示，就是要把 ```BaseActivity``` 的继承类替换成 ```ReplaceBaseActivity```
+如下例所示，就是要把 ```AppCompatImageView``` 的继承类替换成 ```ReplaceImageView```
+
+应用场景：非侵入式地实现监控大图加载的功能
 
 [详细使用方式](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopModifyExtendsClass)
 
-```kotlin
-@AndroidAopModifyExtendsClass("com.flyjingfish.test_lib.BaseActivity")
-abstract class ReplaceBaseActivity :AppCompatActivity() {
-    override fun onResume() {
-        super.onResume()
-        Log.e("ReplaceBaseActivity","ReplaceBaseActivity-onResume")
+```java
+@AndroidAopModifyExtendsClass("androidx.appcompat.widget.AppCompatImageView")
+public class ReplaceImageView extends ImageView {
+    public ReplaceImageView(@NonNull Context context) {
+        super(context);
+    }
+    public ReplaceImageView(@NonNull Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public ReplaceImageView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+
+    @Override
+    public void setImageDrawable(@Nullable Drawable drawable) {
+        super.setImageDrawable(drawable);
+        //做一些监测或者再次修改
     }
 }
 ```

@@ -441,9 +441,33 @@ object ReplaceLog {
 
 #### 4. **@AndroidAopModifyExtendsClass** is an inherited class that modifies the target class
 
-As shown in the following example, you need to replace the inherited class of ```BaseActivity``` with ```ReplaceBaseActivity```
+As shown in the following example, you need to replace the inherited class of ```AppCompatImageView``` with ```ReplaceImageView```
+
+Application scenario: non-invasively implement the function of monitoring large image loading
 
 [Detailed usage](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopModifyExtendsClass)
+
+```java
+@AndroidAopModifyExtendsClass("androidx.appcompat.widget.AppCompatImageView")
+public class ReplaceImageView extends ImageView {
+    public ReplaceImageView(@NonNull Context context) {
+        super(context);
+    }
+    public ReplaceImageView(@NonNull Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public ReplaceImageView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+
+    @Override
+    public void setImageDrawable(@Nullable Drawable drawable) {
+        super.setImageDrawable(drawable);
+        //做一些监测或者再次修改
+    }
+}
+```
 
 ### [Please see the wiki documentation for detailed usage](https://github.com/FlyJingFish/AndroidAOP/wiki)
 
