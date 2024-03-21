@@ -179,10 +179,10 @@ android {
 
 [上述注解使用示例都在这](https://github.com/FlyJingFish/AndroidAOP/blob/master/app/src/main/java/com/flyjingfish/androidaop/MainActivity.kt#L128),[还有这](https://github.com/FlyJingFish/AndroidAOP/blob/master/app/src/main/java/com/flyjingfish/androidaop/SecondActivity.java#L64)
 
-### 这块强调一下 @OnLifecycle
+- @OnLifecycle
 
-- **1、@OnLifecycle 加到的方法所属对象必须是属于直接或间接继承自 FragmentActivity 或 Fragment的方法才有用，或者注解方法的对象实现 LifecycleOwner 也可以**
-- 2、如果第1点不符合的情况下，可以给切面方法第一个参数设置为第1点的类型，在调用切面方法传入也是可以的，例如：
+  - **1、@OnLifecycle 加到的方法所属对象必须是属于直接或间接继承自 FragmentActivity 或 Fragment的方法才有用，或者注解方法的对象实现 LifecycleOwner 也可以**
+  - 2、如果第1点不符合的情况下，可以给切面方法第一个参数设置为第1点的类型，在调用切面方法传入也是可以的，例如：
 
 ```java
 public class StaticClass {
@@ -194,9 +194,6 @@ public class StaticClass {
 
 }
 ```
-
-
-### 下面再着重介绍下 @TryCatch @Permission @CustomIntercept @CheckNetwork
 
 - @TryCatch 使用此注解你可以设置以下设置（非必须）
 ```java
@@ -281,12 +278,14 @@ AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
 
 ## 此外本库也同样支持让你自己做切面，实现起来非常简单！
 
-### 本库通过 @AndroidAopPointCut、 @AndroidAopMatchClassMethod、 @AndroidAopReplaceClass 和 AndroidAopModifyExtendsClass 四种注解，实现自定义切面
+### 本库通过以下四种注解，实现自定义切面
+
+- @AndroidAopPointCut 是为方法加注解的切面
+- @AndroidAopMatchClassMethod 是匹配类的方法的切面
+- @AndroidAopReplaceClass 是替换方法调用的
+- @AndroidAopModifyExtendsClass 是修改继承类
 
 #### 一、**@AndroidAopPointCut** 是在方法上通过注解的形式做切面的，上述中注解都是通过这个做的，[详细使用请看wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopPointCut)
-
-
-⚠️注意：自定义的注解（也就是被 @AndroidAopPointCut 注解的注解类）如果是 Kotlin 代码请用 android-aop-ksp 那个库
 
 下面以 @CustomIntercept 为例介绍下该如何使用
 
@@ -335,7 +334,6 @@ fun onCustomIntercept(){
 
 **匹配方法支持精准匹配，[点此看wiki详细使用文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)**
 
-⚠️注意：自定义的匹配类方法切面（也就是被 @AndroidAopMatchClassMethod 注解的代码）如果是 Kotlin 代码请用 android-aop-ksp 那个库
 
 - 例子一
 
@@ -450,7 +448,7 @@ public class ReplaceToast {
 }
 ```
 
-该例意思就是凡是代码中写```Toast.makeText```和```Toast.show```的地方都被替换成```ReplaceToast.makeText```和```ReplaceToast.show```
+该例意思就是凡是代码中写```Toast.makeText```和```Toast.show```  ...的地方都被替换成```ReplaceToast.makeText```和```ReplaceToast.show``` ...
 
 - Kotlin写法
 ```kotlin
@@ -472,13 +470,13 @@ object ReplaceLog {
 [如果函数是 suspend 修饰的，点此看详细说明](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopReplaceClass#%E5%A6%82%E6%9E%9C%E8%A2%AB%E6%9B%BF%E6%8D%A2%E5%87%BD%E6%95%B0%E6%98%AF-suspend-%E4%BF%AE%E9%A5%B0%E7%9A%84%E9%82%A3%E4%B9%88%E4%BD%A0%E5%8F%AA%E8%83%BD%E7%94%A8kotlin%E4%BB%A3%E7%A0%81%E6%9D%A5%E5%86%99%E5%B9%B6%E4%B8%94%E6%9B%BF%E6%8D%A2%E5%87%BD%E6%95%B0%E4%B9%9F%E8%A6%81%E8%A2%AB-suspend-%E4%BF%AE%E9%A5%B0)
 
 
-#### 四、**@AndroidAopModifyExtendsClass** 是修改目标类的继承类
+#### 四、**@AndroidAopModifyExtendsClass** 是修改目标类的继承类[详细使用方式](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopModifyExtendsClass)
+
+通常是在某个类的继承关系中替换掉其中一层，然后重写一些函数，在重写的函数中加入一些你想加的逻辑代码，起到监听、改写原有逻辑的作用
 
 如下例所示，就是要把 ```AppCompatImageView``` 的继承类替换成 ```ReplaceImageView```
 
 应用场景：非侵入式地实现监控大图加载的功能
-
-[详细使用方式](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopModifyExtendsClass)
 
 ```java
 @AndroidAopModifyExtendsClass("androidx.appcompat.widget.AppCompatImageView")
@@ -502,7 +500,6 @@ public class ReplaceImageView extends ImageView {
 }
 ```
 
-### [详细使用请看wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki)
 
 ### 常见问题
 

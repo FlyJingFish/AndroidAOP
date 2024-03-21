@@ -268,12 +268,15 @@ AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
 
 ## In addition, this library also supports you to make aspects by yourself, which is very simple to implement!
 
-### This library implements custom aspects through two annotations: @AndroidAopPointCut、 @AndroidAopMatchClassMethod and @AndroidAopReplaceClass
+### This library uses the following four annotations to implement custom aspects
+
+- @AndroidAopPointCut is an aspect that annotates methods
+- @AndroidAopMatchClassMethod is the aspect of matching class methods
+- @AndroidAopReplaceClass is called by the replacement method
+- @AndroidAopModifyExtendsClass is a modified inherited class
 
 #### 1. **@AndroidAopPointCut** is used to make aspects in the form of annotations on the method. The above annotations are all made through this. [Please see the wiki document for detailed usage](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopPointCut)
 
-
-⚠️Note: For custom annotations (that is, annotation classes annotated by @AndroidAopPointCut), if it is Kotlin code, please use the android-aop-ksp library
 
 The following uses @CustomIntercept as an example to introduce how to use it.
 
@@ -320,8 +323,6 @@ fun onCustomIntercept(){
 #### 2. **@AndroidAopMatchClassMethod** is used to match aspects of a certain class and its corresponding method.
 
 **The matching method supports accurate matching, [click here to see detailed usage documentation on the wiki](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)**
-
-⚠️Note: For custom matching class method aspects (that is, code annotated with @AndroidAopMatchClassMethod), if it is Kotlin code, please use the android-aop-ksp library
 
 - Example 1
 
@@ -439,13 +440,13 @@ object ReplaceLog {
 }
 ```
 
-#### 4. **@AndroidAopModifyExtendsClass** is an inherited class that modifies the target class
+#### 4. **@AndroidAopModifyExtendsClass** is an inherited class that modifies the target class[Detailed usage](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopModifyExtendsClass)
+
+Usually, you replace one layer in the inheritance relationship of a certain class, then rewrite some functions, and add some logic code you want to the rewritten functions to monitor and rewrite the original logic.
 
 As shown in the following example, you need to replace the inherited class of ```AppCompatImageView``` with ```ReplaceImageView```
 
 Application scenario: non-invasively implement the function of monitoring large image loading
-
-[Detailed usage](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopModifyExtendsClass)
 
 ```java
 @AndroidAopModifyExtendsClass("androidx.appcompat.widget.AppCompatImageView")
@@ -469,7 +470,6 @@ public class ReplaceImageView extends ImageView {
 }
 ```
 
-### [Please see the wiki documentation for detailed usage](https://github.com/FlyJingFish/AndroidAOP/wiki)
 
 ### common problem
 
