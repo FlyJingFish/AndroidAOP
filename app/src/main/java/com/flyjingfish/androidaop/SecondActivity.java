@@ -6,6 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.flyjingfish.android_aop_core.annotations.CustomIntercept;
 import com.flyjingfish.android_aop_core.annotations.Delay;
 import com.flyjingfish.android_aop_core.annotations.MainThread;
 import com.flyjingfish.android_aop_core.annotations.Scheduled;
@@ -13,6 +14,8 @@ import com.flyjingfish.android_aop_core.utils.AndroidAop;
 import com.flyjingfish.androidaop.databinding.ActivitySecondBinding;
 import com.flyjingfish.androidaop.test.MyOnClickListener2;
 import com.flyjingfish.test_lib.annotation.MyAnno;
+
+import java.lang.reflect.Method;
 
 public class SecondActivity extends BaseActivity2 {
 
@@ -46,10 +49,31 @@ public class SecondActivity extends BaseActivity2 {
         binding.btnOnDelay1Stop.setOnClickListener(v -> AndroidAop.INSTANCE.shutdownNow("onDelay1"));
         binding.btnOnDelay2Stop.setOnClickListener(v -> AndroidAop.INSTANCE.shutdownNow("onDelay2"));
         binding.tvLogcat.setOnClickListener(v -> binding.tvLogcat.setText("日志:（点此清除）\n") );
+
+//        Method[] methods = SecondActivity.class.getDeclaredMethods();
+//        for (Method method : methods) {
+//            Class<?>[] classes = method.getParameterTypes();
+//            for (Class<?> aClass : classes) {
+//                Log.e(TAG,method.getName()+",aClass="+aClass.getName());
+//            }
+//        }
+    }
+
+    @MyAnno
+    public void testIntArray(int[] intArray,int[][] intArray1,int[][][] intArray2,int i,Method[] methods,
+                             boolean[] b1,
+                             char[] b2,
+                             byte[] b3,
+                             short[] b4,
+                             float[] b5,
+                             long[] b6,
+                             double[] b7){
+
     }
 
     @MyAnno
     private void onSingleClick() {
+        testIntArray(new int[]{0,1},null,null,0,null,null,null,null,null,null,null,null);
         Log.e("Test_click", "onSingleClick");
     }
 

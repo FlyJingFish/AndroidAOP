@@ -1,5 +1,7 @@
 package com.flyjingfish.android_aop_annotation;
 
+import java.util.regex.Pattern;
+
 public final class Conversions {
 	// Can't make instances of me
 	private Conversions() {}
@@ -155,7 +157,49 @@ public final class Conversions {
 		}else if ("boolean".equals(className)){
 			return boolean.class;
 		}else{
-			return Class.forName(className);
+			if (classnameArrayPattern.matcher(className).find()){
+				return Class.forName(getArrayClazzName(className));
+			}else {
+				return Class.forName(className);
+			}
+		}
+	}
+
+	private static final Pattern classnameArrayPattern = Pattern.compile("\\[\\]");
+	private static String getArrayClazzName(String classname) {
+		String subStr = "[]";
+		int count = 0;
+		int index = 0;
+
+		while ((index = classname.indexOf(subStr, index)) != -1) {
+			index += subStr.length();
+			count++;
+		}
+
+		return "[".repeat(count) +
+				getTypeInternal(classnameArrayPattern.matcher(classname).replaceAll(""));
+	}
+
+	private static String getTypeInternal(final String classname) {
+		switch (classname) {
+			case "boolean":
+				return "Z";
+			case "char":
+				return "C";
+			case "byte":
+				return "B";
+			case "short":
+				return "S";
+			case "int":
+				return "I";
+			case "float":
+				return "F";
+			case "long":
+				return "J";
+			case "double":
+				return "D";
+			default:
+				return "L"+classname+";";
 		}
 	}
 }
