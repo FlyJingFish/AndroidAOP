@@ -64,9 +64,8 @@ public final class ProceedJoinPoint {
             Object returnValue = null;
             if (!hasNext){
                 returnValue = targetMethod.invoke(target,args);
-            }
-            if (onInvokeListener != null){
-                onInvokeListener.onInvoke(returnValue);
+            }else if (onInvokeListener != null){
+                returnValue = onInvokeListener.onInvoke();
             }
             return returnValue;
         } catch (IllegalAccessException e) {
@@ -117,7 +116,7 @@ public final class ProceedJoinPoint {
     }
 
     interface OnInvokeListener{
-        void onInvoke(Object returnValue);
+        Object onInvoke();
     }
 
     void setOnInvokeListener(OnInvokeListener onInvokeListener) {

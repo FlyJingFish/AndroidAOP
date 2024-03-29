@@ -75,16 +75,21 @@ public final class AndroidAopJoinPoint {
 
 
         if (basePointCuts.size() > 1) {
-            proceedJoinPoint.setOnInvokeListener(returnValue1 -> {
+            proceedJoinPoint.setOnInvokeListener(() -> {
                 if (iterator.hasNext()) {
                     PointCutAnnotation nextCutAnnotation = iterator.next();
                     iterator.remove();
                     proceedJoinPoint.setHasNext(iterator.hasNext());
+                    Object value;
                     if (nextCutAnnotation.basePointCut != null) {
-                        returnValue[0] = nextCutAnnotation.basePointCut.invoke(proceedJoinPoint, nextCutAnnotation.annotation);
+                        value = nextCutAnnotation.basePointCut.invoke(proceedJoinPoint, nextCutAnnotation.annotation);
                     } else {
-                        returnValue[0] = nextCutAnnotation.matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
+                        value = nextCutAnnotation.matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
                     }
+                    returnValue[0] = value;
+                    return value;
+                }else {
+                    return returnValue[0];
                 }
             });
         }

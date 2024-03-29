@@ -156,12 +156,10 @@ public final class Conversions {
 			return double.class;
 		}else if ("boolean".equals(className)){
 			return boolean.class;
-		}else{
-			if (classnameArrayPattern.matcher(className).find()){
-				return Class.forName(getArrayClazzName(className));
-			}else {
-				return Class.forName(className);
-			}
+		}else if (classnameArrayPattern.matcher(className).find()){
+			return Class.forName(getArrayClazzName(className));
+		}else {
+			return Class.forName(className);
 		}
 	}
 
