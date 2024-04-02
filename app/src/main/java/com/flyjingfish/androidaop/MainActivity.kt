@@ -23,8 +23,10 @@ import com.flyjingfish.androidaop.databinding.ActivityMainBinding
 import com.flyjingfish.androidaop.test.MyOnClickListener
 import com.flyjingfish.androidaop.test.MyOnClickListener2
 import com.flyjingfish.androidaop.test.Round
+import com.flyjingfish.androidaop.test.TestBaseReplace
 import com.flyjingfish.androidaop.test2.StaticClass
 import com.flyjingfish.androidaop.test.TestBean
+import com.flyjingfish.androidaop.test.TestReplace
 import com.flyjingfish.test_lib.BaseActivity
 import com.flyjingfish.test_lib.LocaleTransform
 import com.flyjingfish.test_lib.PermissionRejectListener
@@ -139,6 +141,9 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
         }
 
         binding.tvLogcat.setOnClickListener { binding.tvLogcat.text = "日志:（点此清除）\n" }
+
+        val bean = TestReplace()
+        bean.test()
     }
 
     @CheckNetwork(toastText = "没有网络呀～～～")

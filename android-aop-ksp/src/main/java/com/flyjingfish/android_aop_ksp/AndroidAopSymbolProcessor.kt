@@ -257,6 +257,21 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       if (targetClassName == null) {
         continue
       }
+
+      val excludeClasses: ArrayList<String>? =
+        if (classMethodMap["excludeClasses"] is ArrayList<*>) classMethodMap["excludeClasses"] as ArrayList<String> else null
+      val typeStr: String? = classMethodMap["type"]?.toString()
+      val matchType = typeStr?.substring(typeStr.lastIndexOf(".") + 1) ?: "EXTENDS"
+
+      val excludeClassesBuilder = StringBuilder()
+      if (excludeClasses != null) {
+        for (i in excludeClasses.indices) {
+          excludeClassesBuilder.append(excludeClasses[i])
+          if (i != excludeClasses.size - 1) {
+            excludeClassesBuilder.append("-")
+          }
+        }
+      }
       val fileName = "${symbol}\$\$AndroidAopClass";
       val typeBuilder = TypeSpec.classBuilder(
         fileName
@@ -272,6 +287,14 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
             .addMember(
               "invokeClassName = %S",
               className
+            )
+            .addMember(
+              "matchType = %S",
+              matchType
+            )
+            .addMember(
+              "excludeClasses = %S",
+              excludeClassesBuilder
             )
             .build()
         )

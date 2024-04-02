@@ -2,6 +2,7 @@ package com.flyjingfish.android_aop_plugin.scanner_visitor
 
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
+import com.flyjingfish.android_aop_plugin.utils.printLog
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 
@@ -17,14 +18,24 @@ class MethodReplaceInvokeAdapter(private val className:String,
         isInterface: Boolean
     ) {
         val key = owner + name + descriptor
-        val replaceMethodInfo = WovenInfoUtils.getReplaceMethodInfoUse(key)
-        if (replaceMethodInfo != null
-            && replaceMethodInfo.oldOwner == owner && replaceMethodInfo.oldMethodName == name && replaceMethodInfo.oldMethodDesc == descriptor
+        var replaceMethodInfo = WovenInfoUtils.getReplaceMethodInfoUse(key)
+        var isReplaceClass = false
+        if (replaceMethodInfo == null){
+            val oldOwner = WovenInfoUtils.getRealReplaceInfo(owner)
+            if (oldOwner != null){
+                val oldKey = oldOwner + name + descriptor
+                replaceMethodInfo = WovenInfoUtils.getReplaceMethodInfoUse(oldKey)
+                isReplaceClass = replaceMethodInfo != null && replaceMethodInfo.oldOwner == oldOwner && replaceMethodInfo.oldMethodName == name && replaceMethodInfo.oldMethodDesc == descriptor
+            }
+        }else{
+            isReplaceClass = replaceMethodInfo.oldOwner == owner && replaceMethodInfo.oldMethodName == name && replaceMethodInfo.oldMethodDesc == descriptor
+        }
+        if (isReplaceClass && replaceMethodInfo != null
             && (!className.contains(replaceMethodInfo.newOwner) || methodNameDesc != "${replaceMethodInfo.newMethodName}${replaceMethodInfo.newMethodDesc}")) {
             val shouldReplaceDesc: String = if (opcode == Opcodes.INVOKESTATIC) {
                 descriptor
             } else {
-                descriptor.replace("(", "(L$owner;")
+                descriptor.replace("(", "(L${replaceMethodInfo.oldOwner};")
             }
             if (shouldReplaceDesc == replaceMethodInfo.newMethodDesc) {
                 InitConfig.addReplaceMethodInfo(replaceMethodInfo)

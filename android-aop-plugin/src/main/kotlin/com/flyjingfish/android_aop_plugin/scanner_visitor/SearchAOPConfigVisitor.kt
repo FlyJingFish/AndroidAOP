@@ -2,9 +2,12 @@ package com.flyjingfish.android_aop_plugin.scanner_visitor
 
 import com.flyjingfish.android_aop_plugin.beans.AopMatchCut
 import com.flyjingfish.android_aop_plugin.beans.AopMethodCut
+import com.flyjingfish.android_aop_plugin.beans.AopReplaceCut
+import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addAnnoInfo
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addMatchInfo
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addModifyExtendsClassInfo
+import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addReplaceCut
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addReplaceInfo
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassVisitor
@@ -83,6 +86,8 @@ class SearchAOPConfigVisitor(val logger: Logger) : ClassVisitor(Opcodes.ASM9) {
     internal inner class ReplaceMethodVisitor : AnnotationVisitor(Opcodes.ASM9) {
         private var targetClassName: String? = null
         private var invokeClassName: String? = null
+        private var matchType = "EXTENDS"
+        private var excludeClasses: String? = null
         override fun visit(name: String, value: Any) {
             if (isAndroidAopClass) {
                 if (name == "targetClassName") {
@@ -90,6 +95,12 @@ class SearchAOPConfigVisitor(val logger: Logger) : ClassVisitor(Opcodes.ASM9) {
                 }
                 if (name == "invokeClassName") {
                     invokeClassName = value.toString()
+                }
+                if (name == "matchType") {
+                    matchType = value.toString()
+                }
+                if (name == "excludeClasses") {
+                    excludeClasses = value.toString()
                 }
             }
             super.visit(name, value)
@@ -99,6 +110,12 @@ class SearchAOPConfigVisitor(val logger: Logger) : ClassVisitor(Opcodes.ASM9) {
             super.visitEnd()
             if (targetClassName != null && invokeClassName != null) {
                 addReplaceInfo(targetClassName!!, invokeClassName!!)
+                var strings: Array<String>? = null
+                if (excludeClasses != null) {
+                    strings = excludeClasses!!.split("-").toTypedArray()
+                }
+
+                addReplaceCut(AopReplaceCut(targetClassName!!,invokeClassName!!,matchType,strings))
             }
         }
     }

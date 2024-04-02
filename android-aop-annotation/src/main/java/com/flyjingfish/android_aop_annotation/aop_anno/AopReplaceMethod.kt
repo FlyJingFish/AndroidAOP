@@ -14,4 +14,6 @@ annotation class AopReplaceMethod(
      * @return 替换类名（包含包名）
      */
     val invokeClassName: String,
+    val matchType: String,
+    val excludeClasses: String
 )

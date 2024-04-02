@@ -220,7 +220,15 @@ public class AndroidAopProcessor extends AbstractProcessor {
 //                System.out.println("======"+element);
             AndroidAopReplaceClass cut = element.getAnnotation(AndroidAopReplaceClass.class);
             String className = cut.value();
-
+            String[] excludeClasses = cut.excludeClasses();
+            MatchType matchType = cut.type();
+            StringBuilder excludeClassesBuilder = new StringBuilder();
+            for (int i = 0; i < excludeClasses.length; i++) {
+                excludeClassesBuilder.append(excludeClasses[i]);
+                if (i != excludeClasses.length -1){
+                    excludeClassesBuilder.append("-");
+                }
+            }
             TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(name1+"$$AndroidAopClass")
                     .addAnnotation(AopClass.class)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
@@ -228,6 +236,8 @@ public class AndroidAopProcessor extends AbstractProcessor {
                     .addAnnotation(AnnotationSpec.builder(AopReplaceMethod.class)
                             .addMember("targetClassName", "$S", className)
                             .addMember("invokeClassName", "$S", element)
+                            .addMember("matchType", "$S", matchType.name())
+                            .addMember("excludeClasses", "$S", excludeClassesBuilder)
                             .build());
 
             typeBuilder.addMethod(whatsMyName1.build());

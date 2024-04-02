@@ -7,6 +7,7 @@ import java.security.MessageDigest
 object FileHashUtils {
     private var fileHashMap1: HashMap<String, String> = HashMap()
     private var fileHashMap2: HashMap<String, String> = HashMap()
+    private var fileHashMap3: HashMap<String, String> = HashMap()
     var isChangeAopMatch = true
     fun isAsmScan(file: String, fileBytes: ByteArray,step: Int): Boolean {
         if (!AndroidAopConfig.increment){
@@ -33,6 +34,7 @@ object FileHashUtils {
         when(step){
             1 -> fileHashMap1[file] = hash
             2 -> fileHashMap2[file] = hash
+            3 -> fileHashMap3[file] = hash
         }
 
     }
@@ -40,7 +42,8 @@ object FileHashUtils {
     private fun getFileHash(file: String, step: Int): String? {
         return when(step){
             1 -> fileHashMap1[file]
-            else -> fileHashMap2[file]
+            2 -> fileHashMap2[file]
+            else -> fileHashMap3[file]
         }
     }
 

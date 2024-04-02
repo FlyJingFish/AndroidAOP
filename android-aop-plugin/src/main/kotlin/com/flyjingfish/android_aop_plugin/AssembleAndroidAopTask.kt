@@ -174,6 +174,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         val addClassMethodRecords = mutableMapOf<String,ClassMethodRecord>()
         val deleteClassMethodRecords = mutableSetOf<String>()
         allDirectories.get().forEach { directory ->
+            val directoryPath = directory.asFile.absolutePath
             directory.asFile.walk().forEach { file ->
                 if (file.isFile) {
                     val isClassFile = file.name.endsWith(_CLASS)
@@ -183,7 +184,16 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     if (isClassFile && Utils.isIncludeFilterMatched(tranEntryName, includes) && !Utils.isExcludeFilterMatched(tranEntryName, excludes)) {
                         FileInputStream(file).use { inputs ->
                             val bytes = inputs.readAllBytes()
+
                             if (bytes.isNotEmpty()){
+                                val inAsm3 = FileHashUtils.isAsmScan(file.absolutePath,bytes,3)
+                                if (inAsm3){
+
+                                    if (file.absolutePath.endsWith(_CLASS)){
+                                        val className = file.absolutePath.replace("$directoryPath/","").replace(".class","")
+                                        WovenInfoUtils.addExtendsReplace(Utils.slashToDot(className))
+                                    }
+                                }
                                 val inAsm = FileHashUtils.isAsmScan(file.absolutePath,bytes,2)
                                 if (inAsm){
 
@@ -214,7 +224,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             }
                         }
                     }
-
                 }
             }
         }
@@ -237,6 +246,14 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                         jarFile.getInputStream(jarEntry).use { inputs ->
                             val bytes = inputs.readAllBytes();
                             if (bytes.isNotEmpty()){
+                                val inAsm3 = FileHashUtils.isAsmScan(entryName,bytes,3)
+                                if (inAsm3){
+
+                                    if (entryName.endsWith(_CLASS)){
+                                        val className = entryName.replace(".class","")
+                                        WovenInfoUtils.addExtendsReplace(Utils.slashToDot(className))
+                                    }
+                                }
                                 val inAsm = FileHashUtils.isAsmScan(entryName,bytes,2)
                                 if (inAsm){
                                     WovenInfoUtils.deleteClassMethodRecord(entryName)

@@ -2,6 +2,7 @@ package com.flyjingfish.android_aop_plugin.utils
 
 import com.flyjingfish.android_aop_plugin.beans.AopMatchCut
 import com.flyjingfish.android_aop_plugin.beans.AopMethodCut
+import com.flyjingfish.android_aop_plugin.beans.AopReplaceCut
 import com.flyjingfish.android_aop_plugin.beans.ClassMethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ClassSuperInfo
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
@@ -24,6 +25,8 @@ object WovenInfoUtils {
     private val classSuperCacheMap = HashMap<String, String>()
     private val classMethodRecords: HashMap<String, HashMap<String, MethodRecord>> =
         HashMap()//类名为key，value为方法map集合
+    private val invokeMethodCuts = mutableListOf<AopReplaceCut>()
+    private val realInvokeMethodMap = HashMap<String, String>()
     private val invokeMethodMap = HashMap<String, String>()
     private val replaceMethodMap = HashMap<String, String>()
     private val replaceMethodInfoMap = HashMap<String, HashMap<String, ReplaceMethodInfo>>()
@@ -72,6 +75,17 @@ object WovenInfoUtils {
     fun addReplaceInfo(targetClassName: String,invokeClassName: String) {
         invokeMethodMap[invokeClassName] = targetClassName
         replaceMethodMap[targetClassName] = invokeClassName
+    }
+
+    fun addReplaceCut(aopReplaceCut: AopReplaceCut) {
+        invokeMethodCuts.add(aopReplaceCut)
+    }
+
+    fun addRealReplaceInfo(targetClassName: String,invokeClassName: String) {
+        realInvokeMethodMap[targetClassName] = invokeClassName
+    }
+    fun getRealReplaceInfo(targetClassName: String):String? {
+       return realInvokeMethodMap[targetClassName]
     }
     fun containInvoke(className: String):Boolean{
         return invokeMethodMap.containsKey(className)
@@ -153,6 +167,7 @@ object WovenInfoUtils {
         replaceMethodMap.clear()
         replaceMethodInfoMapUse.clear()
         modifyExtendsClassMap.clear()
+        invokeMethodCuts.clear()
         if (!AndroidAopConfig.increment) {
             aopMethodCuts.clear()
             aopMatchCuts.clear()
@@ -299,5 +314,112 @@ object WovenInfoUtils {
 
     fun aopMatchsChanged(): Boolean {
         return lastAopMatchCuts != aopMatchCuts
+    }
+
+    fun addExtendsReplace(className:String){
+        val invokeCuts = invokeMethodCuts.filter {
+            it.matchType != AopMatchCut.MatchType.SELF.name
+        }
+        if (invokeCuts.isEmpty()){
+            return
+        }
+        val ctClass = try {
+            ClassPoolUtils.classPool?.getCtClass(className) ?: return
+        } catch (e: Exception) {
+            return
+        }
+
+        val realClsName: String
+        val superName: String?
+        val interfaces: Array<String?>
+        try {
+            realClsName = Utils.dotToSlash(className)
+            superName = ctClass.superclass.name
+            val interfacesCls = ctClass.interfaces
+            interfaces = arrayOfNulls(interfacesCls.size)
+            if (interfacesCls != null){
+                for ((index,interfacesCl) in interfacesCls.withIndex()) {
+                    interfaces[index] = interfacesCl.name
+                }
+            }
+        } catch (e: Exception) {
+            return
+        }
+
+        invokeCuts.forEach { aopReplaceCut ->
+            val target = Utils.dotToSlash(aopReplaceCut.targetClassName)
+            if (AopMatchCut.MatchType.SELF.name != aopReplaceCut.matchType) {
+
+                val excludeClazz = aopReplaceCut.excludeClass
+                var exclude = false
+                var isDirectExtends = false
+                if (excludeClazz != null) {
+                    val clsName = Utils.slashToDotClassName(className)
+                    for (clazz in excludeClazz) {
+                        if (clsName == Utils.slashToDotClassName(clazz)) {
+                            exclude = true
+                            break
+                        }
+                    }
+                }
+                if (!exclude) {
+                    var isImplementsInterface = false
+                    if (interfaces.isNotEmpty()) {
+                        for (anInterface in interfaces) {
+                            val inter = Utils.slashToDotClassName(anInterface!!)
+                            if (inter == Utils.slashToDotClassName(aopReplaceCut.targetClassName)) {
+                                isImplementsInterface = true
+                                break
+                            }
+                        }
+                    }
+                    if (isImplementsInterface || Utils.slashToDotClassName(aopReplaceCut.targetClassName) == Utils.slashToDotClassName(
+                            superName!!
+                        )
+                    ) {
+                        isDirectExtends = true
+                    }
+                    //isDirectExtends 为true 说明是直接继承
+                    if (AopMatchCut.MatchType.DIRECT_EXTENDS.name == aopReplaceCut.matchType) {
+                        if (isDirectExtends) {
+                            addRealReplaceInfo(realClsName,target)
+                        }
+                    } else if (AopMatchCut.MatchType.LEAF_EXTENDS.name == aopReplaceCut.matchType) {
+                        var isExtends = false
+                        if (isDirectExtends) {
+                            isExtends = true
+                        } else {
+                            val clsName = Utils.slashToDotClassName(className)
+                            val parentClsName = aopReplaceCut.targetClassName
+                            if (clsName != Utils.slashToDotClassName(parentClsName)) {
+                                isExtends = Utils.isInstanceof(
+                                    clsName,
+                                    Utils.slashToDotClassName(parentClsName)
+                                )
+                            }
+                        }
+                        if (isExtends && isLeaf(className)) {
+                            addRealReplaceInfo(realClsName,target)
+                        }
+                    } else {
+                        if (isDirectExtends) {
+                            addRealReplaceInfo(realClsName,target)
+                        } else {
+                            val clsName = Utils.slashToDotClassName(className)
+                            val parentClsName = aopReplaceCut.targetClassName
+                            if (clsName != Utils.slashToDotClassName(parentClsName)) {
+                                val isInstanceof = Utils.isInstanceof(
+                                    clsName,
+                                    Utils.slashToDotClassName(parentClsName)
+                                )
+                                if (isInstanceof) {
+                                    addRealReplaceInfo(realClsName,target)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
