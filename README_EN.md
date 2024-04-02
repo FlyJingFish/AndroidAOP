@@ -40,6 +40,12 @@ Minimum Gradle version: 7.5👇
 
 Minimum SDK version: minSdkVersion >= 21
 
+## Star trend chart
+
+[![Stargazers over time](https://starchart.cc/FlyJingFish/AndroidAOP.svg)](https://starchart.cc/FlyJingFish/AndroidAOP)
+
+---
+
 ## Steps for usage
 
 **Can I give the project a Star before starting? Thank you very much, your support is my only motivation. Welcome Stars and Issues!**
