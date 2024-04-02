@@ -9,6 +9,7 @@ object FileHashUtils {
     private var fileHashMap2: HashMap<String, String> = HashMap()
     private var fileHashMap3: HashMap<String, String> = HashMap()
     var isChangeAopMatch = true
+    var isChangeAopReplace = true
     fun isAsmScan(file: String, fileBytes: ByteArray,step: Int): Boolean {
         if (!AndroidAopConfig.increment){
             return true
@@ -17,6 +18,11 @@ object FileHashUtils {
         val hash = getSHA256Hash(fileBytes)
         WovenInfoUtils.removeClassCache(file)
         if (step == 2 && isChangeAopMatch){
+//            printLog("isAsmScan1 = $file")
+            putFileHash(file, fileBytes,step)
+            return true
+        }
+        if (step == 3 && isChangeAopReplace){
 //            printLog("isAsmScan1 = $file")
             putFileHash(file, fileBytes,step)
             return true

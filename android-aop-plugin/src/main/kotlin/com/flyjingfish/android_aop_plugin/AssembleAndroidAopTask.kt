@@ -166,6 +166,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 //        InitConfig.saveBuildConfig()
         ClassPoolUtils.initClassPool()
         FileHashUtils.isChangeAopMatch = WovenInfoUtils.aopMatchsChanged()
+        FileHashUtils.isChangeAopReplace = WovenInfoUtils.aopReplacesChanged()
     }
 
     private fun searchJoinPointLocation(){

@@ -28,6 +28,7 @@ object WovenInfoUtils {
     private val invokeMethodCuts = mutableListOf<AopReplaceCut>()
     private val realInvokeMethodMap = HashMap<String, String>()
     private val invokeMethodMap = HashMap<String, String>()
+    private val lastInvokeMethodMap = HashMap<String, String>()
     private val replaceMethodMap = HashMap<String, String>()
     private val replaceMethodInfoMap = HashMap<String, HashMap<String, ReplaceMethodInfo>>()
     val replaceMethodInfoMapUse = HashMap<String, ReplaceMethodInfo>()
@@ -187,6 +188,9 @@ object WovenInfoUtils {
 
             lastAopMatchCuts.clear()
             lastAopMatchCuts.putAll(aopMatchCuts)
+
+            lastInvokeMethodMap.clear()
+            lastInvokeMethodMap.putAll(invokeMethodMap)
             aopMethodCuts.clear()
             aopMatchCuts.clear()
             classPaths.clear()
@@ -314,6 +318,10 @@ object WovenInfoUtils {
 
     fun aopMatchsChanged(): Boolean {
         return lastAopMatchCuts != aopMatchCuts
+    }
+
+    fun aopReplacesChanged(): Boolean {
+        return lastInvokeMethodMap != invokeMethodMap
     }
 
     fun addExtendsReplace(className:String){
