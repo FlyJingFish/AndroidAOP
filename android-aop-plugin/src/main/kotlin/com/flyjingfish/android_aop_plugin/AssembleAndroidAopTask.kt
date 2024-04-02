@@ -11,6 +11,7 @@ import com.flyjingfish.android_aop_plugin.scanner_visitor.MethodReplaceInvokeVis
 import com.flyjingfish.android_aop_plugin.scanner_visitor.RegisterMapWovenInfoCode
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ReplaceBaseClassVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
+import com.flyjingfish.android_aop_plugin.utils.AndroidConfig
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
 import com.flyjingfish.android_aop_plugin.utils.FileHashUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
@@ -166,10 +167,33 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 //        InitConfig.saveBuildConfig()
         ClassPoolUtils.initClassPool()
         FileHashUtils.isChangeAopMatch = WovenInfoUtils.aopMatchsChanged()
-        FileHashUtils.isChangeAopReplace = WovenInfoUtils.aopReplacesChanged()
     }
 
     private fun searchJoinPointLocation(){
+        val androidConfig = AndroidConfig(project)
+        val list: List<File> = androidConfig.getBootClasspath()
+        for (file in list) {
+            try {
+                val jarFile = JarFile(file)
+                val enumeration = jarFile.entries()
+                while (enumeration.hasMoreElements()) {
+                    val jarEntry = enumeration.nextElement()
+                    try {
+                        val entryName = jarEntry.name
+                        if (entryName.endsWith(Utils._CLASS)) {
+                            val className = entryName.replace(".class","")
+                            WovenInfoUtils.addExtendsReplace(Utils.slashToDot(className))
+                        }
+                    } catch (_: Exception) {
+
+                    }
+                }
+                jarFile.close()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
         val includes = AndroidAopConfig.includes
         val excludes = AndroidAopConfig.excludes
         val addClassMethodRecords = mutableMapOf<String,ClassMethodRecord>()
@@ -187,14 +211,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             val bytes = inputs.readAllBytes()
 
                             if (bytes.isNotEmpty()){
-                                val inAsm3 = FileHashUtils.isAsmScan(file.absolutePath,bytes,3)
-                                if (inAsm3){
-
-                                    if (file.absolutePath.endsWith(_CLASS)){
-                                        val className = file.absolutePath.replace("$directoryPath/","").replace(".class","")
-                                        WovenInfoUtils.addExtendsReplace(Utils.slashToDot(className))
-                                    }
-                                }
                                 val inAsm = FileHashUtils.isAsmScan(file.absolutePath,bytes,2)
                                 if (inAsm){
 
@@ -225,6 +241,11 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             }
                         }
                     }
+
+                    if (file.absolutePath.endsWith(_CLASS)){
+                        val className = file.absolutePath.replace("$directoryPath/","").replace(".class","")
+                        WovenInfoUtils.addExtendsReplace(Utils.slashToDot(className))
+                    }
                 }
             }
         }
@@ -235,7 +256,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 val jarEntry = enumeration.nextElement()
                 try {
                     val entryName = jarEntry.name
-                    if (jarEntry.isDirectory || jarEntry.name.isEmpty()) {
+                    if (jarEntry.isDirectory || entryName.isEmpty() || entryName.startsWith("META-INF/") || "module-info.class" == entryName) {
                         continue
                     }
                     val isClassFile = entryName.endsWith(_CLASS)
@@ -247,14 +268,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                         jarFile.getInputStream(jarEntry).use { inputs ->
                             val bytes = inputs.readAllBytes();
                             if (bytes.isNotEmpty()){
-                                val inAsm3 = FileHashUtils.isAsmScan(entryName,bytes,3)
-                                if (inAsm3){
-
-                                    if (entryName.endsWith(_CLASS)){
-                                        val className = entryName.replace(".class","")
-                                        WovenInfoUtils.addExtendsReplace(Utils.slashToDot(className))
-                                    }
-                                }
                                 val inAsm = FileHashUtils.isAsmScan(entryName,bytes,2)
                                 if (inAsm){
                                     WovenInfoUtils.deleteClassMethodRecord(entryName)
@@ -283,6 +296,10 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 }
                             }
                         }
+                    }
+                    if (entryName.endsWith(_CLASS)){
+                        val className = entryName.replace(".class","")
+                        WovenInfoUtils.addExtendsReplace(Utils.slashToDot(className))
                     }
                 } catch (e: Exception) {
                     if (!(e is ZipException && e.message?.startsWith("duplicate entry:") == true)) {

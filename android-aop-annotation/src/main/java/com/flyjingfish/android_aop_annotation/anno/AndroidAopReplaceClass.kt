@@ -14,10 +14,10 @@ annotation class AndroidAopReplaceClass(
      */
     val value: String,
     /**
-     *
+     * 当所设置的值 ***不是 [MatchType.SELF] 时*** 会拖慢打包速度
      * @return 返回匹配类型 [MatchType]
      */
-    val type: MatchType = MatchType.EXTENDS,
+    val type: MatchType = MatchType.SELF,
     /**
      *
      * @return 排除继承中的类名数组（包含包名）

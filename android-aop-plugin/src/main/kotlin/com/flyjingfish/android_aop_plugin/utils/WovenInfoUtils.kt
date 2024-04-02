@@ -28,7 +28,6 @@ object WovenInfoUtils {
     private val invokeMethodCuts = mutableListOf<AopReplaceCut>()
     private val realInvokeMethodMap = HashMap<String, String>()
     private val invokeMethodMap = HashMap<String, String>()
-    private val lastInvokeMethodMap = HashMap<String, String>()
     private val replaceMethodMap = HashMap<String, String>()
     private val replaceMethodInfoMap = HashMap<String, HashMap<String, ReplaceMethodInfo>>()
     val replaceMethodInfoMapUse = HashMap<String, ReplaceMethodInfo>()
@@ -169,6 +168,8 @@ object WovenInfoUtils {
         replaceMethodInfoMapUse.clear()
         modifyExtendsClassMap.clear()
         invokeMethodCuts.clear()
+        realInvokeMethodMap.clear()
+        invokeMethodCutCache = null
         if (!AndroidAopConfig.increment) {
             aopMethodCuts.clear()
             aopMatchCuts.clear()
@@ -189,8 +190,6 @@ object WovenInfoUtils {
             lastAopMatchCuts.clear()
             lastAopMatchCuts.putAll(aopMatchCuts)
 
-            lastInvokeMethodMap.clear()
-            lastInvokeMethodMap.putAll(invokeMethodMap)
             aopMethodCuts.clear()
             aopMatchCuts.clear()
             classPaths.clear()
@@ -320,15 +319,14 @@ object WovenInfoUtils {
         return lastAopMatchCuts != aopMatchCuts
     }
 
-    fun aopReplacesChanged(): Boolean {
-        return lastInvokeMethodMap != invokeMethodMap
-    }
-
+    private var invokeMethodCutCache : MutableList<AopReplaceCut>?= null
     fun addExtendsReplace(className:String){
-        val invokeCuts = invokeMethodCuts.filter {
-            it.matchType != AopMatchCut.MatchType.SELF.name
+        if (invokeMethodCutCache == null){
+            invokeMethodCutCache = invokeMethodCuts.filter {
+                it.matchType != AopMatchCut.MatchType.SELF.name
+            }.toMutableList()
         }
-        if (invokeCuts.isEmpty()){
+        if (invokeMethodCutCache?.isEmpty() == true){
             return
         }
         val ctClass = try {
@@ -354,7 +352,7 @@ object WovenInfoUtils {
             return
         }
 
-        invokeCuts.forEach { aopReplaceCut ->
+        invokeMethodCutCache?.forEach { aopReplaceCut ->
             val target = Utils.dotToSlash(aopReplaceCut.targetClassName)
             if (AopMatchCut.MatchType.SELF.name != aopReplaceCut.matchType) {
 
