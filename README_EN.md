@@ -60,7 +60,7 @@ Add directly to ```build.gradle``` of **app**
 //Required items 👇
 plugins {
      ...
-     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.4.9"
+     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.5.0"
 }
 ```
 
@@ -72,7 +72,7 @@ plugins {
 buildscript {
      dependencies {
          //Required items 👇
-         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.4.9'
+         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.5.0'
      }
 }
 ```
@@ -120,12 +120,12 @@ plugins {
 
 dependencies {
      //Required items 👇
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.4.9'
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.4.9'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.5.0'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.5.0'
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️supports aspects written in Java and Kotlin code
-     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.4.9'
+     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.5.0'
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️only applies to aspects written in Java code
-     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.4.9'
+     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.5.0'
      //⚠️Choose one of the above android-aop-ksp and android-aop-processor
 }
 ```
