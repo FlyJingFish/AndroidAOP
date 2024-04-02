@@ -170,27 +170,29 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     }
 
     private fun searchJoinPointLocation(){
-        val androidConfig = AndroidConfig(project)
-        val list: List<File> = androidConfig.getBootClasspath()
-        for (file in list) {
-            try {
-                val jarFile = JarFile(file)
-                val enumeration = jarFile.entries()
-                while (enumeration.hasMoreElements()) {
-                    val jarEntry = enumeration.nextElement()
-                    try {
-                        val entryName = jarEntry.name
-                        if (entryName.endsWith(Utils._CLASS)) {
-                            val className = entryName.replace(".class","")
-                            WovenInfoUtils.addExtendsReplace(Utils.slashToDot(className))
-                        }
-                    } catch (_: Exception) {
+        if (WovenInfoUtils.isHasExtendsReplace()){
+            val androidConfig = AndroidConfig(project)
+            val list: List<File> = androidConfig.getBootClasspath()
+            for (file in list) {
+                try {
+                    val jarFile = JarFile(file)
+                    val enumeration = jarFile.entries()
+                    while (enumeration.hasMoreElements()) {
+                        val jarEntry = enumeration.nextElement()
+                        try {
+                            val entryName = jarEntry.name
+                            if (entryName.endsWith(Utils._CLASS)) {
+                                val className = entryName.replace(".class","")
+                                WovenInfoUtils.addExtendsReplace(Utils.slashToDot(className))
+                            }
+                        } catch (_: Exception) {
 
+                        }
                     }
+                    jarFile.close()
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
-                jarFile.close()
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
         }
 

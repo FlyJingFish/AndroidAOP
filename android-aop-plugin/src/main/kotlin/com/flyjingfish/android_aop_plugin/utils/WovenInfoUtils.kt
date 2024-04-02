@@ -319,14 +319,18 @@ object WovenInfoUtils {
         return lastAopMatchCuts != aopMatchCuts
     }
 
-    private var invokeMethodCutCache : MutableList<AopReplaceCut>?= null
-    fun addExtendsReplace(className:String){
+    fun isHasExtendsReplace():Boolean{
         if (invokeMethodCutCache == null){
             invokeMethodCutCache = invokeMethodCuts.filter {
                 it.matchType != AopMatchCut.MatchType.SELF.name
             }.toMutableList()
         }
-        if (invokeMethodCutCache?.isEmpty() == true){
+        return !invokeMethodCutCache.isNullOrEmpty()
+    }
+
+    private var invokeMethodCutCache : MutableList<AopReplaceCut>?= null
+    fun addExtendsReplace(className:String){
+        if (!isHasExtendsReplace()){
             return
         }
         val ctClass = try {
