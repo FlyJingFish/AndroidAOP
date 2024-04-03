@@ -4,6 +4,7 @@ package com.flyjingfish.android_aop_annotation;
 import com.flyjingfish.android_aop_annotation.base.BasePointCut;
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
 import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils;
+import com.flyjingfish.android_aop_annotation.utils.MethodMap;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -22,17 +23,27 @@ public final class AndroidAopJoinPoint {
     private Method targetMethod;
     private Method originalMethod;
     private String cutMatchClassName;
+    private String paramsKey;
+    private String methodKey;
+    private String targetClassName;
 
     public AndroidAopJoinPoint(String targetClassName, Object target, String originalMethodName, String targetMethodName) {
-//        this.targetClassName = targetClassName;
-        try {
-            targetClass = Class.forName(targetClassName);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(targetClassName + "的类名不可被混淆");
-        }
+        this.targetClassName = targetClassName;
         this.target = target;
         this.originalMethodName = originalMethodName;
         this.targetMethodName = targetMethodName;
+        String key = targetClassName + "-" + target;
+        Class<?> clazz = AndroidAopBeanUtils.INSTANCE.getClassCache(key);
+        if (clazz == null){
+            try {
+                clazz = Class.forName(targetClassName);
+                AndroidAopBeanUtils.INSTANCE.putClassCache(key,clazz,target);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(targetClassName + "的类名不可被混淆");
+            }
+        }
+        targetClass = clazz;
+
     }
 
 
@@ -58,7 +69,7 @@ public final class AndroidAopJoinPoint {
             String annotationName = annotation.annotationType().getName();
             String cutClassName = AndroidAopBeanUtils.INSTANCE.getCutClassName(annotationName);
             if (cutClassName != null) {
-                BasePointCut<Annotation> basePointCut = AndroidAopBeanUtils.INSTANCE.getBasePointCut(proceedJoinPoint, cutClassName, annotationName);
+                BasePointCut<Annotation> basePointCut = AndroidAopBeanUtils.INSTANCE.getBasePointCut(proceedJoinPoint, cutClassName, annotationName,targetClassName,methodKey);
                 if (basePointCut != null) {
                     PointCutAnnotation pointCutAnnotation = new PointCutAnnotation(annotation, basePointCut);
                     basePointCuts.add(pointCutAnnotation);
@@ -67,7 +78,7 @@ public final class AndroidAopJoinPoint {
         }
 
         if (cutMatchClassName != null) {
-            MatchClassMethod matchClassMethod = AndroidAopBeanUtils.INSTANCE.getMatchClassMethod(proceedJoinPoint, cutMatchClassName);
+            MatchClassMethod matchClassMethod = AndroidAopBeanUtils.INSTANCE.getMatchClassMethod(proceedJoinPoint, cutMatchClassName,targetClassName,methodKey);
             PointCutAnnotation pointCutAnnotation = new PointCutAnnotation(matchClassMethod);
             basePointCuts.add(pointCutAnnotation);
         }
@@ -133,10 +144,37 @@ public final class AndroidAopJoinPoint {
 
     public void setArgs(Object[] args) {
         this.mArgs = args;
+        getTargetMethod();
+    }
+
+    private void getTargetMethod(){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("(");
+        if (mArgClassNames != null && mArgClassNames.length > 0){
+            int index = 0;
+            for (String argClassName : mArgClassNames) {
+                stringBuilder.append(argClassName);
+                if (index != mArgClassNames.length - 1){
+                    stringBuilder.append(",");
+                }
+                index++;
+            }
+        }
+        stringBuilder.append(")");
+        paramsKey = stringBuilder.toString();
+        methodKey = originalMethodName + paramsKey;
+
+        String key = targetClassName +"-" + target + "-" + methodKey;
+        MethodMap methodMap = AndroidAopBeanUtils.INSTANCE.getMethodMapCache(key);
+        if (methodMap != null){
+            targetMethod = methodMap.getTargetMethod();
+            originalMethod = methodMap.getOriginalMethod();
+            return;
+        }
         try {
             Class<?>[] classes;
             if (mArgClassNames != null && mArgClassNames.length > 0) {
-                classes = new Class[args.length];
+                classes = new Class[mArgClassNames.length];
                 int index = 0;
                 for (String className : mArgClassNames) {
                     try {
@@ -150,45 +188,25 @@ public final class AndroidAopJoinPoint {
             } else {
                 classes = new Class<?>[0];
             }
-            Class<?> tClass = null;
-            if (target != null) {
-                tClass = target.getClass();
-            }
-            if (tClass == null) {
-                tClass = targetClass;
-            }
+            Class<?> tClass = targetClass;
             if (tClass == null) {
                 throw new RuntimeException("织入代码异常");
             }
-            try {
-                targetMethod = tClass.getDeclaredMethod(targetMethodName, classes);
-            } catch (NoSuchMethodException e) {
-                try {
-                    targetMethod = tClass.getMethod(targetMethodName, classes);
-                } catch (NoSuchMethodException ex) {
-                    targetMethod = targetClass.getDeclaredMethod(targetMethodName, classes);
-                }
-            }
+            targetMethod = tClass.getDeclaredMethod(targetMethodName, classes);
             try {
                 originalMethod = tClass.getDeclaredMethod(originalMethodName, classes);
-            } catch (NoSuchMethodException e) {
-                try {
-                    originalMethod = tClass.getMethod(originalMethodName, classes);
-                } catch (NoSuchMethodException ex) {
-                    try {
-                        originalMethod = targetClass.getDeclaredMethod(originalMethodName, classes);
-                    } catch (NoSuchMethodException exc) {
-                        String realMethodName = getRealMethodName(originalMethodName);
-                        if (realMethodName == null){
-                            throw new RuntimeException(exc);
-                        }
-                        originalMethod = targetClass.getDeclaredMethod(realMethodName, classes);
-                    }
+            } catch (NoSuchMethodException exc) {
+                String realMethodName = getRealMethodName(originalMethodName);
+                if (realMethodName == null){
+                    throw new RuntimeException(exc);
                 }
+                originalMethod = tClass.getDeclaredMethod(realMethodName, classes);
             }
             targetMethod.setAccessible(true);
             originalMethod.setAccessible(true);
-        } catch (NoSuchMethodException e) {
+            methodMap = new MethodMap(originalMethod,targetMethod);
+            AndroidAopBeanUtils.INSTANCE.putMethodMapCache(key,methodMap,target);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
