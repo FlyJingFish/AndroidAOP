@@ -22,6 +22,7 @@ public final class AndroidAopJoinPoint {
     private Method targetMethod;
     private Method originalMethod;
     private String cutMatchClassName;
+    private String paramsKey;
 
     public AndroidAopJoinPoint(String targetClassName, Object target, String originalMethodName, String targetMethodName) {
 //        this.targetClassName = targetClassName;
@@ -42,6 +43,18 @@ public final class AndroidAopJoinPoint {
 
     public void setArgClassNames(String[] argClassNames) {
         this.mArgClassNames = argClassNames;
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("(");
+        int index = 0;
+        for (String argClassName : argClassNames) {
+            stringBuilder.append(argClassName);
+            if (index != argClassNames.length - 1){
+                stringBuilder.append(",");
+            }
+            index++;
+        }
+        stringBuilder.append(")");
+        paramsKey = stringBuilder.toString();
     }
 
     public Object joinPointExecute() {
@@ -133,10 +146,14 @@ public final class AndroidAopJoinPoint {
 
     public void setArgs(Object[] args) {
         this.mArgs = args;
+        getTargetMethod();
+    }
+
+    private void getTargetMethod(){
         try {
             Class<?>[] classes;
             if (mArgClassNames != null && mArgClassNames.length > 0) {
-                classes = new Class[args.length];
+                classes = new Class[mArgClassNames.length];
                 int index = 0;
                 for (String className : mArgClassNames) {
                     try {
