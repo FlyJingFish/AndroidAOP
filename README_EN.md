@@ -88,10 +88,7 @@ buildscript {
          classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.5.2'
      }
 }
-
-
-
-
+```
 </details>
 
 2. Add in ```build.gradle``` of **app**
@@ -113,7 +110,6 @@ plugins {
 //Required items 👇
 apply plugin: 'android.aop' //It's best to put it on the last line
 ```
-
 
 </details>
 
