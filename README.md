@@ -85,8 +85,8 @@ buildscript {
 ```gradle
 
 plugins {
-    ...
-    id 'io.github.FlyJingFish.AndroidAop.android-aop' version '1.5.1' apply false
+    //必须项 👇
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.5.1" apply false
 }
 ```
 
