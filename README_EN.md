@@ -79,7 +79,8 @@ buildscript {
 }
 ```
 
-or new version
+<details>
+<summary>or new version</summary>
 
 ```gradle
 
@@ -88,6 +89,8 @@ plugins {
     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.5.1" apply false
 }
 ```
+
+</details>
 
 2. Add in ```build.gradle``` of **app**
 
@@ -98,7 +101,8 @@ old version
 apply plugin: 'android.aop' //It's best to put it on the last line
 ```
 
-or new version
+<details>
+<summary>or new version</summary>
 
 ```gradle
 //Required items 👇
@@ -107,6 +111,8 @@ plugins {
      id 'android.aop'//It is best to put it on the last line
 }
 ```
+
+</details>
 
 
 
