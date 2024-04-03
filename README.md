@@ -69,12 +69,24 @@ plugins {
 
 1、在 **项目根目录** 的 ```build.gradle``` 里依赖插件
 
+老版本
+
 ```gradle
 buildscript {
     dependencies {
         //必须项 👇
         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.5.1'
     }
+}
+```
+
+或者新版本
+
+```gradle
+
+plugins {
+    ...
+    id 'io.github.FlyJingFish.AndroidAop.android-aop' version '1.5.1' apply false
 }
 ```
 
