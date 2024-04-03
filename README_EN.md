@@ -68,8 +68,19 @@ plugins {
 
 1. Depend on the plug-in in ```build.gradle``` in the **project root directory**
 
-old version
+new version
 
+```gradle
+
+plugins {
+    //必须项 👇
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.5.1" apply false
+}
+```
+
+<details>
+<summary><strong>or old version</strong></summary>
+     
 ```gradle
 buildscript {
      dependencies {
@@ -77,33 +88,15 @@ buildscript {
          classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.5.2'
      }
 }
-```
 
-<details>
-<summary>or new version</summary>
 
-```gradle
 
-plugins {
-    //必须项 👇
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.5.2" apply false
-}
-```
 
 </details>
 
 2. Add in ```build.gradle``` of **app**
 
-old version
-
-```gradle
-//Required items 👇
-apply plugin: 'android.aop' //It's best to put it on the last line
-```
-
-<details>
-<summary>or new version</summary>
-
+new version
 ```gradle
 //Required items 👇
 plugins {
@@ -111,6 +104,16 @@ plugins {
      id 'android.aop'//It is best to put it on the last line
 }
 ```
+
+
+<details>
+<summary><strong>or old version</strong></summary>
+     
+```gradle
+//Required items 👇
+apply plugin: 'android.aop' //It's best to put it on the last line
+```
+
 
 </details>
 
