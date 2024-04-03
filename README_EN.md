@@ -42,7 +42,7 @@ Minimum SDK version: minSdkVersion >= 21
 
 ## Star trend chart
 
-[![Stargazers over time](https://starchart.cc/FlyJingFish/AndroidAOP.svg)](https://starchart.cc/FlyJingFish/AndroidAOP)
+[![Stargazers over time](https://starchart.cc/FlyJingFish/AndroidAOP.svg?variant=adaptive)](https://starchart.cc/FlyJingFish/AndroidAOP)
 
 ---
 
