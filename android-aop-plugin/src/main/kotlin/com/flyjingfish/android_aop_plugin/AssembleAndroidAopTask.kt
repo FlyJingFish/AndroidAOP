@@ -322,6 +322,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     }
 
     private fun wovenIntoCode(){
+        val includes = AndroidAopConfig.includes
+        val excludes = AndroidAopConfig.excludes
         WovenInfoUtils.makeReplaceMethodInfoUse()
 //        logger.error("getClassMethodRecord="+WovenInfoUtils.classMethodRecords)
         val hasReplace = WovenInfoUtils.hasReplace()
@@ -351,8 +353,12 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             }
                             jarOutput.closeEntry()
                         }
+                        val isClassFile = file.name.endsWith(_CLASS)
+                        val tranEntryName = file.absolutePath.replace("/", ".")
+                            .replace("\\", ".")
+                        val isWovenInfoCode = isClassFile && Utils.isIncludeFilterMatched(tranEntryName, includes) && !Utils.isExcludeFilterMatched(tranEntryName, excludes)
                         val className = file.absolutePath.replace("$directoryPath/","")
-                        if (hasReplace && !className.startsWith("kotlinx/") && !className.startsWith("kotlin/")){
+                        if (isWovenInfoCode && hasReplace && !className.startsWith("kotlinx/") && !className.startsWith("kotlin/")){
                             FileInputStream(file).use { inputs ->
                                 val byteArray = inputs.readAllBytes()
                                 if (byteArray.isNotEmpty()){
@@ -374,7 +380,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     copy()
                                 }
                             }
-                        }else if (hasReplaceExtendsClass && !className.startsWith("kotlinx/") && !className.startsWith("kotlin/")){
+                        }else if (isWovenInfoCode && hasReplaceExtendsClass && !className.startsWith("kotlinx/") && !className.startsWith("kotlin/")){
                             val clazzName = className.replace(_CLASS,"")
                             val replaceExtendsClassName = WovenInfoUtils.getModifyExtendsClass(Utils.slashToDotClassName(clazzName))
                             if (replaceExtendsClassName !=null){
@@ -452,7 +458,12 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             }
                             jarOutput.closeEntry()
                         }
-                        if (hasReplace && !entryName.startsWith("kotlinx/") && !entryName.startsWith("kotlin/")){
+                        val isClassFile = entryName.endsWith(_CLASS)
+                        val tranEntryName = entryName.replace("/", ".")
+                            .replace("\\", ".")
+                        val isWovenInfoCode = isClassFile && Utils.isIncludeFilterMatched(tranEntryName, includes) && !Utils.isExcludeFilterMatched(tranEntryName, excludes)
+
+                        if (isWovenInfoCode && hasReplace && !entryName.startsWith("kotlinx/") && !entryName.startsWith("kotlin/")){
                             jarFile.getInputStream(jarEntry).use { inputs ->
                                 val byteArray = inputs.readAllBytes()
                                 if (byteArray.isNotEmpty()){
@@ -474,7 +485,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     copy()
                                 }
                             }
-                        }else if(hasReplaceExtendsClass && !entryName.startsWith("kotlinx/") && !entryName.startsWith("kotlin/")){
+                        }else if(isWovenInfoCode && hasReplaceExtendsClass && !entryName.startsWith("kotlinx/") && !entryName.startsWith("kotlin/")){
                             val clazzName = entryName.replace(_CLASS,"")
                             val replaceExtendsClassName = WovenInfoUtils.getModifyExtendsClass(Utils.slashToDotClassName(clazzName))
                             if (replaceExtendsClassName !=null){
