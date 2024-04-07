@@ -15,7 +15,6 @@ import java.util.List;
 public final class AndroidAopJoinPoint {
     private final Object target;
     private final Class<?> targetClass;
-//    private final String targetClassName;
     private Object[] mArgs;
     private String[] mArgClassNames;
     private final String targetMethodName;
@@ -25,24 +24,14 @@ public final class AndroidAopJoinPoint {
     private String cutMatchClassName;
     private String paramsKey;
     private String methodKey;
-    private String targetClassName;
+    private final String targetClassName;
 
-    public AndroidAopJoinPoint(String targetClassName, Object target, String originalMethodName, String targetMethodName) {
-        this.targetClassName = targetClassName;
+    public AndroidAopJoinPoint(Class<?> clazz, Object target, String originalMethodName, String targetMethodName) {
+        this.targetClassName = clazz.getName();
         this.target = target;
         this.originalMethodName = originalMethodName;
         this.targetMethodName = targetMethodName;
-        String key = targetClassName + "-" + target;
-        Class<?> clazz = AndroidAopBeanUtils.INSTANCE.getClassCache(key);
-        if (clazz == null){
-            try {
-                clazz = Class.forName(targetClassName);
-                AndroidAopBeanUtils.INSTANCE.putClassCache(key,clazz,target);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(targetClassName + "的类名不可被混淆");
-            }
-        }
-        targetClass = clazz;
+        this.targetClass = clazz;
 
     }
 
@@ -206,7 +195,7 @@ public final class AndroidAopJoinPoint {
             originalMethod.setAccessible(true);
             methodMap = new MethodMap(originalMethod,targetMethod);
             AndroidAopBeanUtils.INSTANCE.putMethodMapCache(key,methodMap,target);
-        } catch (Exception e) {
+        } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }

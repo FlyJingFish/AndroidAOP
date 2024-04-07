@@ -13,7 +13,6 @@ internal object AndroidAopBeanUtils {
     private val mMatchClassMethodMap = ConcurrentHashMap<String, MatchClassMethod?>()
     private val mTargetReferenceMap = ConcurrentHashMap<String, KeyWeakReference<Any>>()
     private val mTargetMethodMap = ConcurrentHashMap<String, MethodMap>()
-    private val mTargetClassMap = ConcurrentHashMap<String, Class<*>>()
     private val mTargetKeyReferenceQueue = ReferenceQueue<Any>()
     private val mSingleIO: ExecutorService = Executors.newSingleThreadExecutor()
 
@@ -94,19 +93,6 @@ internal object AndroidAopBeanUtils {
         observeTarget(target,key)
     }
 
-    fun getClassCache(key: String): Class<*>? {
-        val clazz = mTargetClassMap[key]
-        if (clazz != null){
-            removeWeaklyReachableObjectsOnIOThread()
-        }
-        return clazz
-    }
-
-    fun putClassCache(key: String, clazz:Class<*>, target:Any?) {
-        mTargetClassMap[key] = clazz
-        observeTarget(target,key)
-    }
-
     private fun observeTarget(target : Any?,key :String){
         mSingleIO.execute{
             if (target != null){
@@ -132,7 +118,6 @@ internal object AndroidAopBeanUtils {
                 mBasePointCutMap.remove(ref.key)
                 mMatchClassMethodMap.remove(ref.key)
                 mTargetMethodMap.remove(ref.key)
-                mTargetClassMap.remove(ref.key)
             }
         } while (ref != null)
     }

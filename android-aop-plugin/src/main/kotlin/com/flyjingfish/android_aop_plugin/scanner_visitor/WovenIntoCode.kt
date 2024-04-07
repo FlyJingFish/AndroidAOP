@@ -197,7 +197,7 @@ object WovenIntoCode {
                     ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointExecute()"
                 )
 
-                val constructor = "\"$targetClassName\",${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\"";
+                val constructor = "$targetClassName.class,${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\"";
                 val body =
                     """ {AndroidAopJoinPoint pointCut = new AndroidAopJoinPoint($constructor);"""+
                             (if (cutClassName != null) "        pointCut.setCutMatchClassName(\"$cutClassName\");\n" else "") +
@@ -206,10 +206,6 @@ object WovenIntoCode {
                             (if (isHasArgs) "        Object[] args = new Object[]{$argsBuffer};\n" else "") +
                             (if (isHasArgs) "        pointCut.setArgs(args);\n" else "        pointCut.setArgs(null);\n") +
                             "        "+returnStr+";}"
-//                val allSignature = ctMethod.signature
-//                printLog("returnType = ${returnType.name}")
-//                printLog("allSignature = $allSignature")
-//                printLog(body)
                 ctMethod.setBody(body)
                 InitConfig.putCutInfo(value)
             } catch (e: NotFoundException) {
