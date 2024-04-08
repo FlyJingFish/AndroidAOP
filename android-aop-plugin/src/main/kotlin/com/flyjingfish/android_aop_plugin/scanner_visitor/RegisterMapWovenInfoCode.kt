@@ -1,6 +1,5 @@
 package com.flyjingfish.android_aop_plugin.scanner_visitor
 
-import com.flyjingfish.android_aop_plugin.beans.AopMethodCut
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import org.objectweb.asm.ClassReader
@@ -10,7 +9,6 @@ import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.commons.AdviceAdapter
 import java.io.InputStream
-import java.util.HashMap
 
 class RegisterMapWovenInfoCode {
 
@@ -26,35 +24,93 @@ class RegisterMapWovenInfoCode {
         : ClassVisitor(Opcodes.ASM9, mClassVisitor) {
 
         override fun visitMethod(
-                access: Int,
-                name: String?,
-                desc: String?,
-                signature: String?,
-                exception: Array<out String>?
+            access: Int,
+            name: String?,
+            desc: String?,
+            signature: String?,
+            exception: Array<out String>?
         ): MethodVisitor {
             var mv = mClassVisitor.visitMethod(access, name, desc, signature, exception)
-            if ("registerMap" == name) {
-                mv = MyMethodAdapter(mv, access, name, desc)
+            if ("registerCreators" == name) {
+                mv = MyCutMethodAdapter(mv, access, name, desc)
+            }else if ("registerMatchCreators" == name) {
+                mv = MyMatchMethodAdapter(mv, access, name, desc)
             }
             return mv
         }
     }
 
-    inner class MyMethodAdapter(mv: MethodVisitor, access: Int, name: String, desc: String?)
+    inner class MyCutMethodAdapter(mv: MethodVisitor, access: Int, name: String, desc: String?)
         : AdviceAdapter(Opcodes.ASM9, mv, access, name, desc) {
 
         override fun visitInsn(opcode: Int) {
             if (opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN) {
-                val map: HashMap<String, AopMethodCut> = WovenInfoUtils.aopMethodCuts
+                val map: HashMap<String, String> = WovenInfoUtils.aopInstances
                 if (map.isNotEmpty()) {
-                    map.forEach { (_, value) ->
-                        val name = value.anno+"-"+value.cutClassName
-                        mv.visitLdcInsn(name)
-                        mv.visitMethodInsn(
+                    map.forEach { (key, value) ->
+                        val methodVisitor = mv
+
+                        methodVisitor.visitLdcInsn(key)
+
+                        methodVisitor.visitTypeInsn(NEW, value)
+                        methodVisitor.visitInsn(DUP)
+                        methodVisitor.visitMethodInsn(
+                            INVOKESPECIAL,
+                            value,
+                            "<init>",
+                            "()V",
+                            false
+                        )
+
+                        methodVisitor.visitMethodInsn(
                             INVOKESTATIC,
-                            Utils.dotToSlash(Utils.MethodAnnoUtils),
-                            "register",
-                            "(Ljava/lang/String;)V",
+                            Utils.dotToSlash(Utils.JoinAnnoCutUtils),
+                            "registerCreator",
+                            "(Ljava/lang/String;Lcom/flyjingfish/android_aop_annotation/base/BasePointCutCreator;)V",
+                            false
+                        )
+                    }
+                }
+            }
+            super.visitInsn(opcode)
+        }
+
+        override fun visitMaxs(maxStack: Int, maxLocals: Int) {
+            super.visitMaxs(maxStack + 4, maxLocals)
+        }
+
+        override fun onMethodExit(opcode: Int) {
+            super.onMethodExit(opcode)
+        }
+    }
+
+    inner class MyMatchMethodAdapter(mv: MethodVisitor, access: Int, name: String, desc: String?)
+        : AdviceAdapter(Opcodes.ASM9, mv, access, name, desc) {
+
+        override fun visitInsn(opcode: Int) {
+            if (opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN) {
+                val map: HashMap<String, String> = WovenInfoUtils.aopInstances
+                if (map.isNotEmpty()) {
+                    map.forEach { (key, value) ->
+                        val methodVisitor = mv
+
+                        methodVisitor.visitLdcInsn(key)
+
+                        methodVisitor.visitTypeInsn(NEW, value)
+                        methodVisitor.visitInsn(DUP)
+                        methodVisitor.visitMethodInsn(
+                            INVOKESPECIAL,
+                            value,
+                            "<init>",
+                            "()V",
+                            false
+                        )
+
+                        methodVisitor.visitMethodInsn(
+                            INVOKESTATIC,
+                            Utils.dotToSlash(Utils.JoinAnnoCutUtils),
+                            "registerMatchCreator",
+                            "(Ljava/lang/String;Lcom/flyjingfish/android_aop_annotation/base/MatchClassMethodCreator;)V",
                             false
                         )
                     }

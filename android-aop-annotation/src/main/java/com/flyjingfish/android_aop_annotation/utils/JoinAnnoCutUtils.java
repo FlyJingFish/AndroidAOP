@@ -1,25 +1,38 @@
 package com.flyjingfish.android_aop_annotation.utils;
 
+import com.flyjingfish.android_aop_annotation.base.BasePointCutCreator;
+import com.flyjingfish.android_aop_annotation.base.MatchClassMethodCreator;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 final class JoinAnnoCutUtils {
-    private static final Map<String,String> mAnnoCutMap = new ConcurrentHashMap<>();
-    public static void register(String mapValue){
-//        System.out.println("mapValue="+mapValue);
-        String[] str = mapValue.split("-");
-        mAnnoCutMap.put(str[0],str[1]);
+    private static final Map<String, BasePointCutCreator> mAnnoCutBeanMap = new ConcurrentHashMap<>();
+    private static final Map<String, MatchClassMethodCreator> mAnnoMatchBeanMap = new ConcurrentHashMap<>();
+    static {
+        registerCreators();
+        registerMatchCreators();
     }
 
-    public static String getCutClassName(String className){
-        return mAnnoCutMap.get("@"+className);
+    private static void registerMatchCreators() {
     }
 
-    public static boolean contains(String className){
-        return mAnnoCutMap.containsKey("@"+className);
+    private static void registerCreators(){
+
     }
 
-    public static boolean isInit(){
-        return !mAnnoCutMap.isEmpty();
+    private static void registerCreator(String className,BasePointCutCreator cutCreator){
+        mAnnoCutBeanMap.put(className,cutCreator);
     }
+    public static BasePointCutCreator getCutClassCreator(String className){
+        return mAnnoCutBeanMap.get("@"+className);
+    }
+
+    private static void registerMatchCreator(String className,MatchClassMethodCreator cutCreator){
+        mAnnoMatchBeanMap.put(className,cutCreator);
+    }
+    public static MatchClassMethodCreator getMatchClassCreator(String className){
+        return mAnnoMatchBeanMap.get(className);
+    }
+
 }

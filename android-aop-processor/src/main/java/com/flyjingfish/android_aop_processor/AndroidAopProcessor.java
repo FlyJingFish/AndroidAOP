@@ -10,11 +10,17 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopModifyExtendsClass;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethod;
 import com.flyjingfish.android_aop_annotation.aop_anno.AopReplaceMethod;
 import com.flyjingfish.android_aop_annotation.aop_anno.AopModifyExtendsClass;
+import com.flyjingfish.android_aop_annotation.base.BasePointCut;
+import com.flyjingfish.android_aop_annotation.base.BasePointCutCreator;
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
+import com.flyjingfish.android_aop_annotation.base.MatchClassMethodCreator;
 import com.flyjingfish.android_aop_annotation.enums.MatchType;
 import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
@@ -132,9 +138,11 @@ public class AndroidAopProcessor extends AbstractProcessor {
                 String errorMessage = mirroredTypeException.getLocalizedMessage();
                 className = errorMessage.substring( errorMessage.lastIndexOf(" ")+1);
             }
+            ClassName superinterface = ClassName.bestGuess(BasePointCutCreator.class.getName());
             TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(name1+"$$AndroidAopClass")
                     .addAnnotation(AopClass.class)
-                    .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
+                    .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                    .addSuperinterface(superinterface);
             MethodSpec.Builder whatsMyName1 = whatsMyName(AOP_METHOD_NAME)
                     .addAnnotation(AnnotationSpec.builder(AopPointCut.class)
                             .addMember("value", "$S", "@"+element)
@@ -143,10 +151,26 @@ public class AndroidAopProcessor extends AbstractProcessor {
 
             typeBuilder.addMethod(whatsMyName1.build());
 
-            TypeSpec typeSpec = typeBuilder.build();
             String elementClassName = element.toString();
             String packageName = elementClassName.substring(0, elementClassName.lastIndexOf("."));
-            JavaFile javaFile = JavaFile.builder(packageName, typeSpec)
+            String cutClassPackageName = className.substring(0, className.lastIndexOf("."));
+
+            TypeName implementClassName = ClassName.get(packageName, element.getSimpleName().toString());
+            ClassName bindClassName = ClassName.bestGuess(BasePointCut.class.getName());
+            ParameterizedTypeName returnType = ParameterizedTypeName.get(bindClassName,implementClassName);
+
+            MethodSpec.Builder whatsMyName2 = whatsMyName("newInstance")
+                    .addAnnotation(Override.class)
+                    .addModifiers(Modifier.FINAL)
+                    .addModifiers(Modifier.PUBLIC)
+                    .returns(returnType)
+                    .addStatement("return new "+className+"()");
+
+            typeBuilder.addMethod(whatsMyName2.build());
+
+            TypeSpec typeSpec = typeBuilder.build();
+
+            JavaFile javaFile = JavaFile.builder(cutClassPackageName, typeSpec)
                     .build();
             try {
                 javaFile.writeTo(mFiler);
@@ -183,9 +207,13 @@ public class AndroidAopProcessor extends AbstractProcessor {
                     excludeClassesBuilder.append("-");
                 }
             }
+
+            ClassName superinterface = ClassName.bestGuess(MatchClassMethodCreator.class.getName());
+
             TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(name1+"$$AndroidAopClass")
                     .addAnnotation(AopClass.class)
-                    .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
+                    .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                    .addSuperinterface(superinterface);
             MethodSpec.Builder whatsMyName1 = whatsMyName(AOP_METHOD_NAME)
                     .addAnnotation(AnnotationSpec.builder(AopMatchClassMethod.class)
                             .addMember("baseClassName", "$S", className)
@@ -196,6 +224,17 @@ public class AndroidAopProcessor extends AbstractProcessor {
                             .build());
 
             typeBuilder.addMethod(whatsMyName1.build());
+
+            ClassName bindClassName = ClassName.bestGuess(MatchClassMethod.class.getName());
+
+            MethodSpec.Builder whatsMyName2 = whatsMyName("newInstance")
+                    .addModifiers(Modifier.FINAL)
+                    .addModifiers(Modifier.PUBLIC)
+                    .addAnnotation(Override.class)
+                    .returns(bindClassName)
+                    .addStatement("return new "+element+"()");
+
+            typeBuilder.addMethod(whatsMyName2.build());
 
             TypeSpec typeSpec = typeBuilder.build();
             String elementClassName = element.toString();

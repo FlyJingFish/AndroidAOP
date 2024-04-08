@@ -2,32 +2,35 @@ package com.flyjingfish.android_aop_annotation.utils
 
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
 import com.flyjingfish.android_aop_annotation.base.BasePointCut
+import com.flyjingfish.android_aop_annotation.base.BasePointCutCreator
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod
+import com.flyjingfish.android_aop_annotation.base.MatchClassMethodCreator
 import java.lang.ref.ReferenceQueue
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 internal object AndroidAopBeanUtils {
-    private val mBasePointCutMap = ConcurrentHashMap<String, BasePointCut<Annotation>?>()
+    private val mBasePointCutMap = ConcurrentHashMap<String, BasePointCut<Annotation>>()
     private val mMatchClassMethodMap = ConcurrentHashMap<String, MatchClassMethod?>()
     private val mTargetReferenceMap = ConcurrentHashMap<String, KeyWeakReference<Any>>()
     private val mTargetMethodMap = ConcurrentHashMap<String, MethodMap>()
     private val mTargetKeyReferenceQueue = ReferenceQueue<Any>()
     private val mSingleIO: ExecutorService = Executors.newSingleThreadExecutor()
 
-    fun getCutClassName(className: String): String? {
-        if (!JoinAnnoCutUtils.isInit()){
-            MethodAnnoUtils.registerMap()
-        }
-        return JoinAnnoCutUtils.getCutClassName(className)
+    fun getCutClassCreator(annotationName: String): BasePointCutCreator? {
+        return JoinAnnoCutUtils.getCutClassCreator(annotationName)
     }
 
-    fun getBasePointCut(joinPoint: ProceedJoinPoint, cutClassName: String, annotationName : String,targetClassName:String, methodKey : String): BasePointCut<Annotation>? {
+    fun getMatchClassCreator(annotationName: String): MatchClassMethodCreator? {
+        return JoinAnnoCutUtils.getMatchClassCreator(annotationName)
+    }
+
+    fun getBasePointCut(joinPoint: ProceedJoinPoint, annotationName : String,targetClassName:String, methodKey : String): BasePointCut<Annotation>? {
         val key = "$targetClassName-${joinPoint.target}-$methodKey-$annotationName"
         var basePointCut: BasePointCut<Annotation>? = mBasePointCutMap[key]
         if (basePointCut == null) {
-            basePointCut = getNewPointCut(cutClassName)
+            basePointCut = getNewPointCut(annotationName)
             mBasePointCutMap[key] = basePointCut
             observeTarget(joinPoint.target, key)
         }else{
@@ -36,20 +39,13 @@ internal object AndroidAopBeanUtils {
         return basePointCut
     }
 
-
-
-    private fun getNewPointCut(clsName: String): BasePointCut<Annotation> {
-        val cls: Class<out BasePointCut<Annotation>> = try {
-            Class.forName(clsName) as Class<out BasePointCut<Annotation>>
-        } catch (e: ClassNotFoundException) {
-            throw RuntimeException(e)
-        }
-        val basePointCut: BasePointCut<Annotation> = if (cls != BasePointCut::class.java) {
-            cls.getDeclaredConstructor().newInstance()
+    private fun getNewPointCut(annotationName: String): BasePointCut<Annotation> {
+        val basePointCutCreator = JoinAnnoCutUtils.getCutClassCreator(annotationName)
+        if (basePointCutCreator != null){
+            return basePointCutCreator.newInstance() as BasePointCut<Annotation>
         }else{
             throw IllegalArgumentException("切面处理类必须实现 BasePointCut 接口")
         }
-        return basePointCut
     }
 
 
@@ -67,17 +63,12 @@ internal object AndroidAopBeanUtils {
     }
 
     private fun getNewMatchClassMethod(clsName: String): MatchClassMethod {
-        val cls: Class<out MatchClassMethod> = try {
-            Class.forName(clsName) as Class<out MatchClassMethod>
-        } catch (e: ClassNotFoundException) {
-            throw RuntimeException(e)
-        }
-        val matchClassMethod: MatchClassMethod = if (cls != MatchClassMethod::class.java) {
-            cls.getDeclaredConstructor().newInstance()
+        val matchClassMethodCreator = JoinAnnoCutUtils.getMatchClassCreator(clsName)
+        if (matchClassMethodCreator != null){
+            return matchClassMethodCreator.newInstance()
         }else{
             throw IllegalArgumentException("切面处理类必须实现 MatchClassMethod 接口")
         }
-        return matchClassMethod
     }
 
     fun getMethodMapCache(key: String): MethodMap? {

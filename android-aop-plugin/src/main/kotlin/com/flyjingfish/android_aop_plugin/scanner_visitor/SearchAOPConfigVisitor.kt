@@ -5,10 +5,12 @@ import com.flyjingfish.android_aop_plugin.beans.AopMethodCut
 import com.flyjingfish.android_aop_plugin.beans.AopReplaceCut
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addAnnoInfo
+import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addAopInstance
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addMatchInfo
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addModifyExtendsClassInfo
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addReplaceCut
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addReplaceInfo
+import com.flyjingfish.android_aop_plugin.utils.printLog
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
@@ -17,6 +19,7 @@ import org.slf4j.Logger
 
 class SearchAOPConfigVisitor(val logger: Logger) : ClassVisitor(Opcodes.ASM9) {
     var isAndroidAopClass = false
+    lateinit var className: String
     override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor? {
         if (descriptor.contains(CLASS_POINT)) {
             isAndroidAopClass = true
@@ -65,6 +68,8 @@ class SearchAOPConfigVisitor(val logger: Logger) : ClassVisitor(Opcodes.ASM9) {
             if (anno != null && cutClassName != null) {
                 val cut = AopMethodCut(anno!!, cutClassName!!)
                 addAnnoInfo(cut)
+//                printLog("addAopInstance==$anno className=$className")
+                addAopInstance(anno!!, className)
             }
             if (baseClassName != null && methodNames != null) {
                 var strings: Array<String>? = null
@@ -79,6 +84,7 @@ class SearchAOPConfigVisitor(val logger: Logger) : ClassVisitor(Opcodes.ASM9) {
                     strings
                 )
                 addMatchInfo(cut)
+                addAopInstance(pointCutClassName!!, className)
             }
         }
     }
@@ -170,6 +176,18 @@ class SearchAOPConfigVisitor(val logger: Logger) : ClassVisitor(Opcodes.ASM9) {
         } else {
             super.visitMethod(access, name, descriptor, signature, exceptions)
         }
+    }
+
+    override fun visit(
+        version: Int,
+        access: Int,
+        name: String,
+        signature: String?,
+        superName: String?,
+        interfaces: Array<out String>?
+    ) {
+        className = name
+        super.visit(version, access, name, signature, superName, interfaces)
     }
 
     companion object {

@@ -440,7 +440,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             }
                             jarOutput.closeEntry()
                         }
-                    }else if (Utils.dotToSlash(Utils.MethodAnnoUtils) + _CLASS == entryName) {
+                    }else if (Utils.dotToSlash(Utils.JoinAnnoCutUtils) + _CLASS == entryName) {
                         jarFile.getInputStream(jarEntry).use { inputs ->
                             val originInject = inputs.readAllBytes()
                             val resultByteArray = RegisterMapWovenInfoCode().execute(ByteArrayInputStream(originInject))

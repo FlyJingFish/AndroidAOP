@@ -9,7 +9,10 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopModifyExtendsClass
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethod
 import com.flyjingfish.android_aop_annotation.aop_anno.AopReplaceMethod
 import com.flyjingfish.android_aop_annotation.aop_anno.AopModifyExtendsClass
+import com.flyjingfish.android_aop_annotation.base.BasePointCut
+import com.flyjingfish.android_aop_annotation.base.BasePointCutCreator
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod
+import com.flyjingfish.android_aop_annotation.base.MatchClassMethodCreator
 import com.google.devtools.ksp.containingFile
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.Dependencies
@@ -25,9 +28,11 @@ import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.Origin
 import com.google.devtools.ksp.validate
 import com.squareup.kotlinpoet.AnnotationSpec
+import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeSpec
 import java.lang.annotation.ElementType
 
@@ -64,6 +69,9 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       val targetClassName: String =
         (if (value != null) value.declaration.packageName.asString() + "." + value.toString() else null)
           ?: continue
+      if (value == null){
+        continue
+      }
 
       val targetMap: MutableMap<String, Any?>? = annotationMap["@Target"]
       if (targetMap != null) {
@@ -126,11 +134,14 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
 
       val className = (symbol as KSClassDeclaration).packageName.asString() + "." + symbol
 
+      val superinterface = ClassName.bestGuess(BasePointCutCreator::class.qualifiedName!!)
+
       val fileName = "${symbol}\$\$AndroidAopClass";
       val typeBuilder = TypeSpec.classBuilder(
         fileName
       ).addModifiers(KModifier.FINAL)
         .addAnnotation(AopClass::class)
+        .addSuperinterface(superinterface)
 
       val whatsMyName1 = whatsMyName(AOP_METHOD_NAME)
         .addAnnotation(
@@ -148,7 +159,20 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
 
       typeBuilder.addFunction(whatsMyName1.build())
 
-      writeToFile(typeBuilder,symbol.packageName.asString(),fileName, symbol)
+      val implementClassName = ClassName(symbol.packageName.asString(), "$symbol")
+      val bindClassName = ClassName.bestGuess(BasePointCut::class.qualifiedName!!)
+      val returnType = bindClassName.parameterizedBy(implementClassName)
+
+      val whatsMyName2 = whatsMyName("newInstance")
+        .addModifiers(KModifier.OVERRIDE)
+        .addModifiers(KModifier.FINAL)
+        .addModifiers(KModifier.PUBLIC)
+        .returns(returnType)
+        .addStatement("return $value()")
+
+      typeBuilder.addFunction(whatsMyName2.build())
+
+      writeToFile(typeBuilder,value.declaration.packageName.asString(),fileName, symbol)
     }
     return symbols.filter { !it.validate() }.toList()
   }
@@ -189,11 +213,15 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       if (targetClassName == null || methodNames == null) {
         continue
       }
+      val superinterface = ClassName.bestGuess(MatchClassMethodCreator::class.qualifiedName!!)
+
+
       val fileName = "${symbol}\$\$AndroidAopClass";
       val typeBuilder = TypeSpec.classBuilder(
         fileName
       ).addModifiers(KModifier.FINAL)
-        .addAnnotation(AopClass::class)
+        .addAnnotation(AopClass::class).addSuperinterface(superinterface)
+
       val methodNamesBuilder = StringBuilder()
       for (i in methodNames.indices) {
         methodNamesBuilder.append(methodNames[i])
@@ -237,6 +265,18 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         )
 
       typeBuilder.addFunction(whatsMyName1.build())
+
+      val bindClassName = ClassName.bestGuess(MatchClassMethod::class.qualifiedName!!)
+
+      val whatsMyName2 = whatsMyName("newInstance")
+        .addModifiers(KModifier.OVERRIDE)
+        .addModifiers(KModifier.FINAL)
+        .addModifiers(KModifier.PUBLIC)
+        .returns(bindClassName)
+        .addStatement("return $symbol()")
+
+      typeBuilder.addFunction(whatsMyName2.build())
+
       writeToFile(typeBuilder,symbol.packageName.asString(), fileName, symbol)
     }
     return symbols.filter { !it.validate() }.toList()

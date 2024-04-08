@@ -14,6 +14,7 @@ import java.util.jar.JarFile
 
 object WovenInfoUtils {
     var aopMethodCuts: HashMap<String, AopMethodCut> = HashMap()
+    var aopInstances: HashMap<String, String> = HashMap()
     var aopMatchCuts: HashMap<String, AopMatchCut> = HashMap()
     private var lastAopMatchCuts: HashMap<String, AopMatchCut> = HashMap()
     var classPaths: HashSet<String> = HashSet()
@@ -116,6 +117,10 @@ object WovenInfoUtils {
         aopMethodCuts[info.anno] = info
     }
 
+    fun addAopInstance(key: String,className: String) {
+        aopInstances[key] = className
+    }
+
     fun isContainAnno(info: String): Boolean {
         val anno = "@" + info.substring(1, info.length).replace("/", ".").replace(";", "")
         return aopMethodCuts.contains(anno)
@@ -170,8 +175,9 @@ object WovenInfoUtils {
         invokeMethodCuts.clear()
         realInvokeMethodMap.clear()
         invokeMethodCutCache = null
+        aopMethodCuts.clear()
+        aopInstances.clear()
         if (!AndroidAopConfig.increment) {
-            aopMethodCuts.clear()
             aopMatchCuts.clear()
             lastAopMatchCuts.clear()
             classPaths.clear()
@@ -190,7 +196,6 @@ object WovenInfoUtils {
             lastAopMatchCuts.clear()
             lastAopMatchCuts.putAll(aopMatchCuts)
 
-            aopMethodCuts.clear()
             aopMatchCuts.clear()
             classPaths.clear()
 //        classMethodRecords.clear()

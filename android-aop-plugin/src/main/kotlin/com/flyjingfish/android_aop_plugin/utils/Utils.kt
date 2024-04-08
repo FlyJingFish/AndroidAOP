@@ -14,7 +14,7 @@ import java.util.regex.Pattern
 object Utils {
     const val annotationPackage = "com.flyjingfish.android_aop_annotation."
     const val corePackage = "com.flyjingfish.android_aop_core."
-    const val MethodAnnoUtils = "${annotationPackage}utils.MethodAnnoUtils"
+    const val JoinAnnoCutUtils = "${annotationPackage}utils.JoinAnnoCutUtils"
     const val _CLASS = ".class"
     fun dotToSlash(str: String): String {
         return str.replace(".", "/")

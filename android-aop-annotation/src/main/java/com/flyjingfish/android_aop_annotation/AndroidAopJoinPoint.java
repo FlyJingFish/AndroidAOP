@@ -56,9 +56,8 @@ public final class AndroidAopJoinPoint {
 
         for (Annotation annotation : annotations) {
             String annotationName = annotation.annotationType().getName();
-            String cutClassName = AndroidAopBeanUtils.INSTANCE.getCutClassName(annotationName);
-            if (cutClassName != null) {
-                BasePointCut<Annotation> basePointCut = AndroidAopBeanUtils.INSTANCE.getBasePointCut(proceedJoinPoint, cutClassName, annotationName,targetClassName,methodKey);
+            if (AndroidAopBeanUtils.INSTANCE.getCutClassCreator(annotationName) != null) {
+                BasePointCut<Annotation> basePointCut = AndroidAopBeanUtils.INSTANCE.getBasePointCut(proceedJoinPoint, annotationName,targetClassName,methodKey);
                 if (basePointCut != null) {
                     PointCutAnnotation pointCutAnnotation = new PointCutAnnotation(annotation, basePointCut);
                     basePointCuts.add(pointCutAnnotation);
@@ -66,7 +65,7 @@ public final class AndroidAopJoinPoint {
             }
         }
 
-        if (cutMatchClassName != null) {
+        if (cutMatchClassName != null && AndroidAopBeanUtils.INSTANCE.getMatchClassCreator(cutMatchClassName) != null) {
             MatchClassMethod matchClassMethod = AndroidAopBeanUtils.INSTANCE.getMatchClassMethod(proceedJoinPoint, cutMatchClassName,targetClassName,methodKey);
             PointCutAnnotation pointCutAnnotation = new PointCutAnnotation(matchClassMethod);
             basePointCuts.add(pointCutAnnotation);
