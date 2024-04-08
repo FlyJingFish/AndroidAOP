@@ -44,7 +44,7 @@ internal object AndroidAopBeanUtils {
         if (basePointCutCreator != null){
             return basePointCutCreator.newInstance() as BasePointCut<Annotation>
         }else{
-            throw IllegalArgumentException("切面处理类必须实现 BasePointCut 接口")
+            throw IllegalArgumentException("无法找到 $annotationName 的切面处理类")
         }
     }
 
@@ -67,7 +67,7 @@ internal object AndroidAopBeanUtils {
         if (matchClassMethodCreator != null){
             return matchClassMethodCreator.newInstance()
         }else{
-            throw IllegalArgumentException("切面处理类必须实现 MatchClassMethod 接口")
+            throw IllegalArgumentException("无法找到 $clsName 的切面处理类")
         }
     }
 
