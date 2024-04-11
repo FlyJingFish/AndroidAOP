@@ -33,7 +33,7 @@
 
 ### Version restrictions
 
-Minimum Gradle version: 7.5👇
+Minimum Gradle version: 7.6👇
 
 <img src="/screenshot/gradle_version.png" alt="show" height="220px" />
 
