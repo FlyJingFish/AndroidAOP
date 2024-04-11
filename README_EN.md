@@ -176,6 +176,8 @@ android {
 ```
 **Tip: Reasonable use of include and exclude can improve compilation speed. It is recommended to directly use include to set the relevant package names of your project (including app and custom module)**
 
+**⚠️⚠️⚠️After setting include and exclude, all aspects are only valid within the rules you set. Please remember your settings! **
+
 **In addition, since Android Studio may have cache after setting this, it is recommended to restart AS and clean the project before continuing development**
 ### This library has some built-in functional annotations for you to use directly.
 
