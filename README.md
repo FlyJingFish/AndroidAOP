@@ -556,6 +556,10 @@ public class ReplaceImageView extends ImageView {
 <img src="/screenshot/IMG_4076.JPG" width="280" height="350">
 </div>
 
+如果在捐赠留言中备注名称，将会被记录到列表中~ 如果你也是github开源作者，捐赠时可以留下github项目地址或者个人主页地址，链接将会被添加到列表中
+
+#### [捐赠列表](https://github.com/FlyJingFish/AndroidAOP/blob/master/give_list.md)
+
 ### 联系方式
 
 * 有问题可以加群大家一起交流 [QQ：641697838](https://qm.qq.com/cgi-bin/qm/qr?k=w2qDbv_5bpLl0lO0qjXxijl3JHCQgtXx&jump_from=webapi&authKey=Q6/YB+7q9BvOGbYv1qXZGAZLigsfwaBxDC8kz03/5Pwy7018XunUcHoC11kVLqCb)
