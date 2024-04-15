@@ -5,10 +5,13 @@ import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.commons.Method
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import java.util.zip.ZipInputStream
 
 
 object Utils {
@@ -246,6 +249,36 @@ object Utils {
     }
     fun isStaticMethod(access: Int):Boolean{
         return access and Opcodes.ACC_STATIC != 0
+    }
+
+    fun openJar(jarPath:String,destDir:String) {
+        // JAR文件路径和目标目录
+        ZipInputStream(FileInputStream(jarPath)).use { zis ->
+            while (true) {
+                val entry = zis.nextEntry ?: break
+                val entryName: String = entry.name
+                if (entryName.isEmpty() || entryName.startsWith("META-INF/") || "module-info.class" == entryName) {
+                    continue
+                }
+                val filePath: String = destDir + File.separator + entryName
+                if (!entry.isDirectory) {
+                    val file = File(filePath)
+                    val parent = file.parentFile
+                    if (!parent.exists()) {
+                        parent.mkdirs()
+                    }
+                    FileOutputStream(file).use { fos ->
+                        val buffer = ByteArray(1024)
+                        var len: Int
+                        while (zis.read(buffer).also { len = it } > 0) {
+                            fos.write(buffer, 0, len)
+                        }
+                    }
+                } else {
+                    File(filePath).mkdirs()
+                }
+            }
+        }
     }
 }
 

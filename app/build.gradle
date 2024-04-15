@@ -88,4 +88,5 @@ dependencies {
         ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:'+TestVersion
     }
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
+    implementation "org.bouncycastle:bcprov-jdk15on:1.68"
 }
