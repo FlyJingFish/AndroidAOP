@@ -4,6 +4,6 @@
     xmlns:xlink="http://www.w3.org/1999/xlink"
     width="760" height="30">
     <text font-size="16" x="0" y="20">
-        <tspan fill="red">本库仓库地址在 Maven central，当你获取不到依赖包时，请将 阿里等镜像地址 放在 mavenCentral() 之后</tspan>,
+        <tspan fill="red">本库仓库地址在 Maven central，当你获取不到依赖包时，请将 阿里等镜像地址 放在 mavenCentral() 之后</tspan>
     </text>
 </svg>
