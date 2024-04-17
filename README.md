@@ -51,7 +51,8 @@
 
 **在开始之前可以给项目一个Star吗？非常感谢，你的支持是我唯一的动力。欢迎Star和Issues!**
 
-⚠️⚠️⚠️ <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/screenshot/warning_maven_central.svg"/>
+![Stargazers over time](https://github.com/FlyJingFish/AndroidAOP/blob/master/screenshot/warning_maven_central.svg)
+<img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/screenshot/warning_maven_central.svg"/>
 
 #### 一、引入插件，下边两种方式二选一（必须）
 
