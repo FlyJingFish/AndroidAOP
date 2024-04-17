@@ -51,7 +51,7 @@
 
 **在开始之前可以给项目一个Star吗？非常感谢，你的支持是我唯一的动力。欢迎Star和Issues!**
 
-⚠️⚠️⚠️ 本库仓库地址在 Maven central，当你获取不到依赖包时，请将 `阿里等镜像地址` 放在 ```mavenCentral()``` 之后
+⚠️⚠️⚠️ <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/screenshot/warning_maven_central.svg"/>
 
 #### 一、引入插件，下边两种方式二选一（必须）
 
