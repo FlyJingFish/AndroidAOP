@@ -15,11 +15,16 @@ import javassist.bytecode.AnnotationsAttribute
 import javassist.bytecode.AttributeInfo
 import javassist.bytecode.annotation.Annotation
 import org.objectweb.asm.AnnotationVisitor
+import org.objectweb.asm.Attribute
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ClassWriter
+import org.objectweb.asm.FieldVisitor
 import org.objectweb.asm.MethodVisitor
+import org.objectweb.asm.ModuleVisitor
 import org.objectweb.asm.Opcodes
+import org.objectweb.asm.RecordComponentVisitor
+import org.objectweb.asm.TypePath
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 
@@ -72,6 +77,43 @@ object WovenIntoCode {
                         }
                     }
                 }
+
+                override fun visitModule(
+                    name: String?,
+                    access: Int,
+                    version: String?
+                ): ModuleVisitor? {
+                    return null
+                }
+
+                override fun visitTypeAnnotation(
+                    typeRef: Int,
+                    typePath: TypePath?,
+                    descriptor: String?,
+                    visible: Boolean
+                ): AnnotationVisitor? {
+                    return null
+                }
+
+
+                override fun visitRecordComponent(
+                    name: String?,
+                    descriptor: String?,
+                    signature: String?
+                ): RecordComponentVisitor? {
+                    return null
+                }
+
+                override fun visitField(
+                    access: Int,
+                    name: String?,
+                    descriptor: String?,
+                    signature: String?,
+                    value: Any?
+                ): FieldVisitor? {
+                    return null
+                }
+
                 override fun visitMethod(
                     access: Int,
                     name: String,
