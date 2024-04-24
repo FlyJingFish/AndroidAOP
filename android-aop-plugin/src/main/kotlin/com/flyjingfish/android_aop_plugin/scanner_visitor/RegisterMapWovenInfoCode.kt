@@ -48,27 +48,29 @@ class RegisterMapWovenInfoCode {
                 val map: HashMap<String, String> = WovenInfoUtils.aopInstances
                 if (map.isNotEmpty()) {
                     map.forEach { (key, value) ->
-                        val methodVisitor = mv
+                        if (key.startsWith("@")){
+                            val methodVisitor = mv
 
-                        methodVisitor.visitLdcInsn(key)
+                            methodVisitor.visitLdcInsn(key)
 
-                        methodVisitor.visitTypeInsn(NEW, value)
-                        methodVisitor.visitInsn(DUP)
-                        methodVisitor.visitMethodInsn(
-                            INVOKESPECIAL,
-                            value,
-                            "<init>",
-                            "()V",
-                            false
-                        )
+                            methodVisitor.visitTypeInsn(NEW, value)
+                            methodVisitor.visitInsn(DUP)
+                            methodVisitor.visitMethodInsn(
+                                INVOKESPECIAL,
+                                value,
+                                "<init>",
+                                "()V",
+                                false
+                            )
 
-                        methodVisitor.visitMethodInsn(
-                            INVOKESTATIC,
-                            Utils.dotToSlash(Utils.JoinAnnoCutUtils),
-                            "registerCreator",
-                            "(Ljava/lang/String;Lcom/flyjingfish/android_aop_annotation/base/BasePointCutCreator;)V",
-                            false
-                        )
+                            methodVisitor.visitMethodInsn(
+                                INVOKESTATIC,
+                                Utils.dotToSlash(Utils.JoinAnnoCutUtils),
+                                "registerCreator",
+                                "(Ljava/lang/String;Lcom/flyjingfish/android_aop_annotation/base/BasePointCutCreator;)V",
+                                false
+                            )
+                        }
                     }
                 }
             }
@@ -92,27 +94,29 @@ class RegisterMapWovenInfoCode {
                 val map: HashMap<String, String> = WovenInfoUtils.aopInstances
                 if (map.isNotEmpty()) {
                     map.forEach { (key, value) ->
-                        val methodVisitor = mv
+                        if (!key.startsWith("@")){
+                            val methodVisitor = mv
 
-                        methodVisitor.visitLdcInsn(key)
+                            methodVisitor.visitLdcInsn(key)
 
-                        methodVisitor.visitTypeInsn(NEW, value)
-                        methodVisitor.visitInsn(DUP)
-                        methodVisitor.visitMethodInsn(
-                            INVOKESPECIAL,
-                            value,
-                            "<init>",
-                            "()V",
-                            false
-                        )
+                            methodVisitor.visitTypeInsn(NEW, value)
+                            methodVisitor.visitInsn(DUP)
+                            methodVisitor.visitMethodInsn(
+                                INVOKESPECIAL,
+                                value,
+                                "<init>",
+                                "()V",
+                                false
+                            )
 
-                        methodVisitor.visitMethodInsn(
-                            INVOKESTATIC,
-                            Utils.dotToSlash(Utils.JoinAnnoCutUtils),
-                            "registerMatchCreator",
-                            "(Ljava/lang/String;Lcom/flyjingfish/android_aop_annotation/base/MatchClassMethodCreator;)V",
-                            false
-                        )
+                            methodVisitor.visitMethodInsn(
+                                INVOKESTATIC,
+                                Utils.dotToSlash(Utils.JoinAnnoCutUtils),
+                                "registerMatchCreator",
+                                "(Ljava/lang/String;Lcom/flyjingfish/android_aop_annotation/base/MatchClassMethodCreator;)V",
+                                false
+                            )
+                        }
                     }
                 }
             }

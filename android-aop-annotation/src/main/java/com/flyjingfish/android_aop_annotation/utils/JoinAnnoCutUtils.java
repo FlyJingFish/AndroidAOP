@@ -3,6 +3,8 @@ package com.flyjingfish.android_aop_annotation.utils;
 import com.flyjingfish.android_aop_annotation.base.BasePointCutCreator;
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethodCreator;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,6 +14,13 @@ final class JoinAnnoCutUtils {
     static {
         registerCreators();
         registerMatchCreators();
+        try {
+            Class<?> initClass = Class.forName("com.flyjingfish.android_aop_annotation.utils.DebugAndroidAopInit");
+            Method method = initClass.getDeclaredMethod("init");
+            method.invoke(null);
+        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
+                 IllegalAccessException ignored) {
+        }
     }
 
     private static void registerMatchCreators() {
@@ -21,14 +30,14 @@ final class JoinAnnoCutUtils {
 
     }
 
-    private static void registerCreator(String className,BasePointCutCreator cutCreator){
+    static void registerCreator(String className,BasePointCutCreator cutCreator){
         mAnnoCutBeanMap.put(className,cutCreator);
     }
     public static BasePointCutCreator getCutClassCreator(String className){
         return mAnnoCutBeanMap.get("@"+className);
     }
 
-    private static void registerMatchCreator(String className,MatchClassMethodCreator cutCreator){
+    static void registerMatchCreator(String className,MatchClassMethodCreator cutCreator){
         mAnnoMatchBeanMap.put(className,cutCreator);
     }
     public static MatchClassMethodCreator getMatchClassCreator(String className){

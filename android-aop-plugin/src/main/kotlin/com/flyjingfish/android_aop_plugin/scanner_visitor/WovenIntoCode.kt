@@ -5,6 +5,7 @@ import com.flyjingfish.android_aop_plugin.utils.ClassNameToConversions
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
+import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.printLog
 import javassist.CannotCompileException
 import javassist.CtClass
@@ -14,20 +15,14 @@ import javassist.NotFoundException
 import javassist.bytecode.AnnotationsAttribute
 import javassist.bytecode.AttributeInfo
 import javassist.bytecode.annotation.Annotation
-import org.objectweb.asm.AnnotationVisitor
-import org.objectweb.asm.Attribute
-import org.objectweb.asm.ClassReader
-import org.objectweb.asm.ClassVisitor
-import org.objectweb.asm.ClassWriter
-import org.objectweb.asm.FieldVisitor
-import org.objectweb.asm.MethodVisitor
-import org.objectweb.asm.ModuleVisitor
-import org.objectweb.asm.Opcodes
-import org.objectweb.asm.RecordComponentVisitor
-import org.objectweb.asm.TypePath
+import org.objectweb.asm.*
+import org.objectweb.asm.ClassWriter.COMPUTE_FRAMES
+import org.objectweb.asm.ClassWriter.COMPUTE_MAXS
+import org.objectweb.asm.Opcodes.*
 import java.io.ByteArrayInputStream
+import java.io.File
+import java.io.FileOutputStream
 import java.io.InputStream
-
 
 object WovenIntoCode {
     private const val METHOD_SUFFIX = "\$\$AndroidAOP"
@@ -37,14 +32,80 @@ object WovenIntoCode {
         methodRecordHashMap: HashMap<String, MethodRecord>,
         hasReplace:Boolean
     ): ByteArray {
+        val wovenRecord = mutableListOf<MethodRecord>()
+
         val cr = ClassReader(inputStreamBytes)
         val cw = ClassWriter(cr, 0)
         if (hasReplace){
-            cr.accept(MethodReplaceInvokeVisitor(cw), 0)
+            cr.accept(object :MethodReplaceInvokeVisitor(cw){
+                var classNameMd5:String ?= null
+                override fun visit(
+                    version: Int,
+                    access: Int,
+                    name: String,
+                    signature: String?,
+                    superName: String?,
+                    interfaces: Array<out String>?
+                ) {
+                    super.visit(version, access, name, signature, superName, interfaces)
+                    classNameMd5 = Utils.computeMD5(Utils.slashToDot(name))
+                }
+                override fun visitMethod(
+                    access: Int,
+                    name: String,
+                    descriptor: String,
+                    signature: String?,
+                    exceptions: Array<String?>?
+                ): MethodVisitor? {
+                    methodRecordHashMap.forEach { (_: String, value: MethodRecord) ->
+                        val oldMethodName = value.methodName
+                        val oldDescriptor = value.descriptor
+                        val newMethodName = "$oldMethodName$$$classNameMd5$METHOD_SUFFIX"
+                        if (newMethodName == name && oldDescriptor == descriptor){
+                            wovenRecord.add(value)
+                            InitConfig.putCutInfo(value)
+                        }
+                    }
+                    return super.visitMethod(access, name, descriptor, signature, exceptions)
+                }
+            }, 0)
         }else{
-            cr.accept(object : ReplaceBaseClassVisitor(cw) {}, 0)
+            cr.accept(object : ReplaceBaseClassVisitor(cw) {
+                var classNameMd5:String ?= null
+                override fun visit(
+                    version: Int,
+                    access: Int,
+                    name: String,
+                    signature: String?,
+                    superName: String?,
+                    interfaces: Array<out String>?
+                ) {
+                    super.visit(version, access, name, signature, superName, interfaces)
+                    classNameMd5 = Utils.computeMD5(Utils.slashToDot(name))
+                }
+                override fun visitMethod(
+                    access: Int,
+                    name: String,
+                    descriptor: String,
+                    signature: String?,
+                    exceptions: Array<String?>?
+                ): MethodVisitor? {
+                    methodRecordHashMap.forEach { (_: String, value: MethodRecord) ->
+                        val oldMethodName = value.methodName
+                        val oldDescriptor = value.descriptor
+                        val newMethodName = "$oldMethodName$$$classNameMd5$METHOD_SUFFIX"
+                        if (newMethodName == name && oldDescriptor == descriptor){
+                            wovenRecord.add(value)
+                        }
+                    }
+                    return super.visitMethod(access, name, descriptor, signature, exceptions)
+                }
+                                                           }, 0)
         }
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
+            if (value in wovenRecord){
+                return@forEach
+            }
             val oldMethodName = value.methodName
 //            val targetMethodName = oldMethodName + METHOD_SUFFIX
             val oldDescriptor = value.descriptor
@@ -158,6 +219,9 @@ object WovenIntoCode {
         cp.importPackage("com.flyjingfish.android_aop_annotation.Conversions")
         cp.importPackage("androidx.annotation.Keep")
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
+            if (value in wovenRecord){
+                return@forEach
+            }
             val targetClassName = ctClass.name
             val oldMethodName = value.methodName
             val targetMethodName = "$oldMethodName$$${Utils.computeMD5(targetClassName)}$METHOD_SUFFIX"
@@ -273,4 +337,95 @@ object WovenIntoCode {
         return null
     }
 
+
+    fun createInitClass(output:File) {
+        val className = "com.flyjingfish.android_aop_annotation.utils.DebugAndroidAopInit"
+        //新建一个类生成器，COMPUTE_FRAMES，COMPUTE_MAXS这2个参数能够让asm自动更新操作数栈
+        val cw = ClassWriter(COMPUTE_FRAMES or COMPUTE_MAXS)
+        //生成一个public的类，类路径是com.study.Human
+        cw.visit(V1_8, ACC_PUBLIC, Utils.dotToSlash(className), null, "java/lang/Object", null)
+
+        //生成默认的构造方法： public Human()
+        var mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null)
+        mv.visitVarInsn(ALOAD, 0)
+        mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false)
+        mv.visitInsn(RETURN)
+        mv.visitMaxs(0, 0) //更新操作数栈
+        mv.visitEnd() //一定要有visitEnd
+
+
+        //生成静态方法
+        mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, "init", "()V", null, null)
+        //生成静态方法中的字节码指令
+        val map: HashMap<String, String> = WovenInfoUtils.aopInstances
+        if (map.isNotEmpty()) {
+            map.forEach { (key, value) ->
+                val methodVisitor = mv
+                if (key.startsWith("@")){
+
+                    methodVisitor.visitLdcInsn(key)
+
+                    methodVisitor.visitTypeInsn(NEW, value)
+                    methodVisitor.visitInsn(DUP)
+                    methodVisitor.visitMethodInsn(
+                        INVOKESPECIAL,
+                        value,
+                        "<init>",
+                        "()V",
+                        false
+                    )
+
+                    methodVisitor.visitMethodInsn(
+                        INVOKESTATIC,
+                        Utils.dotToSlash(Utils.JoinAnnoCutUtils),
+                        "registerCreator",
+                        "(Ljava/lang/String;Lcom/flyjingfish/android_aop_annotation/base/BasePointCutCreator;)V",
+                        false
+                    )
+                }else{
+                    methodVisitor.visitLdcInsn(key)
+
+                    methodVisitor.visitTypeInsn(NEW, value)
+                    methodVisitor.visitInsn(DUP)
+                    methodVisitor.visitMethodInsn(
+                        INVOKESPECIAL,
+                        value,
+                        "<init>",
+                        "()V",
+                        false
+                    )
+
+                    methodVisitor.visitMethodInsn(
+                        INVOKESTATIC,
+                        Utils.dotToSlash(Utils.JoinAnnoCutUtils),
+                        "registerMatchCreator",
+                        "(Ljava/lang/String;Lcom/flyjingfish/android_aop_annotation/base/MatchClassMethodCreator;)V",
+                        false
+                    )
+                }
+
+
+            }
+        }
+
+
+        mv.visitInsn(RETURN)
+        mv.visitMaxs(0, 0)
+        mv.visitEnd()
+        //设置必要的类路径
+        val path = output.absolutePath + "/" +Utils.dotToSlash(className)+".class"
+        //获取类的byte数组
+        val classByteData = cw.toByteArray()
+        //把类数据写入到class文件,这样你就可以把这个类文件打包供其他的人使用
+        val outFile = File(path)
+        if (!outFile.parentFile.exists()){
+            outFile.parentFile.mkdirs()
+        }
+        if (!outFile.exists()){
+            outFile.createNewFile()
+        }
+        ByteArrayInputStream(classByteData).use {
+            it.copyTo(FileOutputStream(outFile))
+        }
+    }
 }

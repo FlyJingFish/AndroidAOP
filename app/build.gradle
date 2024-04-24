@@ -2,23 +2,23 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'com.google.devtools.ksp'
-//    id 'android.aop'
+    id 'android.aop'
 //    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.2.8"
 }
 
 apply from: "$rootDir/gradle/android_base.gradle"
-//androidAopConfig {
-//    enabled true
-//    // debug 为true打开日志方便调试
-//    debug true
-//    // 测试
-//    include 'com.flyjingfish'
-//    //默认关闭，开启后将会生成切点信息json文件在 /build/tmp/cutInfo.json
-//    cutInfoJson true
-//    increment true
-//    // 移除kotlin相关，编译错误和提升速度
-////    exclude 'kotlin.jvm', 'kotlin.internal','kotlinx.coroutines.internal', 'kotlinx.coroutines.android'
-//}
+androidAopConfig {
+    enabled true
+    // debug 为true打开日志方便调试
+    debug true
+    // 测试
+    include 'com.flyjingfish'
+    //默认关闭，开启后将会生成切点信息json文件在 /build/tmp/cutInfo.json
+    cutInfoJson true
+    increment true
+    // 移除kotlin相关，编译错误和提升速度
+//    exclude 'kotlin.jvm', 'kotlin.internal','kotlinx.coroutines.internal', 'kotlinx.coroutines.android'
+}
 android {
     namespace 'com.flyjingfish.androidaop'
     compileSdk 33
@@ -57,7 +57,6 @@ android {
             shrinkResources false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-
         }
         release {
             signingConfig signingConfigs.release

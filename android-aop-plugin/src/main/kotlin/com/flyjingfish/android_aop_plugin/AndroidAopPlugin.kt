@@ -26,25 +26,105 @@ class AndroidAopPlugin : Plugin<Project> {
     }
     override fun apply(project: Project) {
         val isApp = project.plugins.hasPlugin(AppPlugin::class.java)
-        val logger = project.logger;
-        if (!isApp) {
-            logger.error("Plugin ['android.aop'] can only be used under the application, not under the module library invalid!")
-            return
-        }
+        val logger = project.logger
+
         project.extensions.add("androidAopConfig", AndroidAopConfig::class.java)
 
+        val debugModeStr :String = project.properties["androidAop.debugMode"].toString()
+        val debugMode = debugModeStr == "true"
+        if (debugMode){
+            val isDynamicLibrary = project.plugins.hasPlugin(DynamicFeaturePlugin::class.java)
 
-        val isDynamicLibrary = project.plugins.hasPlugin(DynamicFeaturePlugin::class.java)
+            val android = project.extensions.findByName(ANDROID_EXTENSION_NAME) as BaseExtension
+            val variants = if (isApp or isDynamicLibrary) {
+                (android as AppExtension).applicationVariants
+            } else {
+                (android as LibraryExtension).libraryVariants
+            }
 
-        val android = project.extensions.findByName(ANDROID_EXTENSION_NAME) as BaseExtension
-        val variants = if (isApp or isDynamicLibrary) {
-            (android as AppExtension).applicationVariants
-        } else {
-            (android as LibraryExtension).libraryVariants
-        }
+            variants.all { variant ->
+                variant.outputs.all { output ->
+                    val androidAopConfig = project.extensions.getByType(AndroidAopConfig::class.java)
+                    AndroidAopConfig.debug = androidAopConfig.debug
+                    androidAopConfig.includes.forEach {
+                        AndroidAopConfig.includes.add("$it.")
+                    }
+                    androidAopConfig.excludes.forEach {
+                        AndroidAopConfig.excludes.add("$it.")
+                    }
+                    AndroidAopConfig.excludes.add(Utils.annotationPackage)
+                    AndroidAopConfig.excludes.add(Utils.corePackage)
+                    AndroidAopConfig.verifyLeafExtends = androidAopConfig.verifyLeafExtends
+                    AndroidAopConfig.cutInfoJson = androidAopConfig.cutInfoJson
+                    AndroidAopConfig.increment = androidAopConfig.increment
+                    if (androidAopConfig.cutInfoJson){
+                        InitConfig.initCutInfo(project)
+                    }
+                    if (androidAopConfig.enabled){
+                        val javaCompile: AbstractCompile =
+                            if (DefaultGroovyMethods.hasProperty(variant, "javaCompileProvider") != null) {
+                                //gradle 4.10.1 +
+                                variant.javaCompileProvider.get()
+                            } else if (DefaultGroovyMethods.hasProperty(variant, "javaCompiler") != null) {
+                                variant.javaCompiler as AbstractCompile
+                            } else {
+                                variant.javaCompile as AbstractCompile
+                            }
+                        var fullName = ""
+                        val names = output.name.split("-");
+                        for((index,token) in names.withIndex()){
+                            if ("" != token){
+                                fullName += (if (index == 0) token else token.replaceFirstChar {
+                                    if (it.isLowerCase()) it.titlecase(
+                                        Locale.getDefault()
+                                    ) else it.toString()
+                                })
+                            }
+                        }
 
-        variants.all { variant ->
-            variant.outputs.all { output ->
+                        javaCompile.doLast{
+
+                            val localInput = mutableListOf<File>()
+                            val javaPath = File(javaCompile.destinationDirectory.asFile.orNull.toString())
+                            if (javaPath.exists()){
+                                localInput.add(javaPath)
+                            }
+                            val kotlinPath = File(project.buildDir.path + "/tmp/kotlin-classes/" + fullName)
+                            if (kotlinPath.exists()){
+                                localInput.add(kotlinPath)
+                            }
+                            val jarInput = mutableListOf<File>()
+                            val androidConfig = AndroidConfig(project)
+                            val list: List<File> = androidConfig.getBootClasspath()
+                            val bootJarPath = mutableSetOf<String>()
+                            for (file in list) {
+                                bootJarPath.add(file.absolutePath)
+                            }
+                            for (file in localInput) {
+                                bootJarPath.add(file.absolutePath)
+                            }
+                            for (file in javaCompile.classpath) {
+                                if (file.absolutePath !in bootJarPath && file.exists()){
+                                    jarInput.add(file)
+                                }
+                            }
+                            if (localInput.isNotEmpty()){
+                                val output = File(javaCompile.destinationDirectory.asFile.orNull.toString())
+                                val task = CompileAndroidAopTask(jarInput,localInput,output,project,isApp)
+                                task.taskAction()
+                            }
+                        }
+                    }
+
+                }
+            }
+        }else{
+            if (!isApp) {
+                logger.error("Plugin ['android.aop'] can only be used under the application, not under the module library invalid!")
+                return
+            }
+            val androidComponents = project.extensions.getByType(AndroidComponentsExtension::class.java)
+            androidComponents.onVariants { variant ->
                 val androidAopConfig = project.extensions.getByType(AndroidAopConfig::class.java)
                 AndroidAopConfig.debug = androidAopConfig.debug
                 androidAopConfig.includes.forEach {
@@ -62,106 +142,18 @@ class AndroidAopPlugin : Plugin<Project> {
                     InitConfig.initCutInfo(project)
                 }
                 if (androidAopConfig.enabled){
-                    val javaCompile: AbstractCompile =
-                        if (DefaultGroovyMethods.hasProperty(variant, "javaCompileProvider") != null) {
-                            //gradle 4.10.1 +
-                            variant.javaCompileProvider.get()
-                        } else if (DefaultGroovyMethods.hasProperty(variant, "javaCompiler") != null) {
-                            variant.javaCompiler as AbstractCompile
-                        } else {
-                            variant.javaCompile as AbstractCompile
-                        }
-                    var fullName = ""
-                    val names = output.name.split("-");
-                    for((index,token) in names.withIndex()){
-                        if ("" != token){
-                            fullName += (if (index == 0) token else token.replaceFirstChar {
-                                if (it.isLowerCase()) it.titlecase(
-                                    Locale.getDefault()
-                                ) else it.toString()
-                            })
-                        }
-                    }
-
-                    javaCompile.doLast{
-
-                        val localInput = mutableListOf<File>()
-                        val javaPath = File(javaCompile.destinationDirectory.asFile.orNull.toString())
-                        if (javaPath.exists()){
-                            localInput.add(javaPath)
-                        }
-                        val kotlinPath = File(project.buildDir.path + "/tmp/kotlin-classes/" + fullName)
-                        if (kotlinPath.exists()){
-                            localInput.add(kotlinPath)
-                        }
-                        val jarInput = mutableListOf<File>()
-                        val androidConfig = AndroidConfig(project)
-                        val list: List<File> = androidConfig.getBootClasspath()
-                        val bootJarPath = mutableSetOf<String>()
-                        for (file in list) {
-                            bootJarPath.add(file.absolutePath)
-                        }
-                        for (file in localInput) {
-                            bootJarPath.add(file.absolutePath)
-                        }
-                        val otherName = Utils.computeMD5(project.buildDir.path)
-                        for (file in javaCompile.classpath) {
-                            if (file.absolutePath !in bootJarPath && file.exists()){
-                                val otherFile = File(project.buildDir.path+"/jarCaches/"+otherName+file.name)
-                                file.copyTo(otherFile,true)
-                                jarInput.add(otherFile)
-//                                jarInput.add(file)
-                            }
-                        }
-                        javaCompile.classpath.files.clear();
-                        for (file in list) {
-                            javaCompile.classpath.files.add(file)
-                        }
-
-                        for (file in jarInput) {
-                            javaCompile.classpath.files.add(file)
-                        }
-                        if (localInput.isNotEmpty()){
-                            val output = File(javaCompile.destinationDirectory.asFile.orNull.toString())
-                            val task = CompileAndroidAopTask(jarInput,localInput,output,project)
-                            task.taskAction()
-                        }
-                    }
+                    val task = project.tasks.register("${variant.name}AssembleAndroidAopTask", AssembleAndroidAopTask::class.java)
+                    variant.artifacts
+                        .forScope(ScopedArtifacts.Scope.ALL)
+                        .use(task)
+                        .toTransform(
+                            ScopedArtifact.CLASSES,
+                            AssembleAndroidAopTask::allJars,
+                            AssembleAndroidAopTask::allDirectories,
+                            AssembleAndroidAopTask::output
+                        )
                 }
-
             }
         }
-
-//        val androidComponents = project.extensions.getByType(AndroidComponentsExtension::class.java)
-//        androidComponents.onVariants { variant ->
-//            val androidAopConfig = project.extensions.getByType(AndroidAopConfig::class.java)
-//            AndroidAopConfig.debug = androidAopConfig.debug
-//            androidAopConfig.includes.forEach {
-//                AndroidAopConfig.includes.add("$it.")
-//            }
-//            androidAopConfig.excludes.forEach {
-//                AndroidAopConfig.excludes.add("$it.")
-//            }
-//            AndroidAopConfig.excludes.add(Utils.annotationPackage)
-//            AndroidAopConfig.excludes.add(Utils.corePackage)
-//            AndroidAopConfig.verifyLeafExtends = androidAopConfig.verifyLeafExtends
-//            AndroidAopConfig.cutInfoJson = androidAopConfig.cutInfoJson
-//            AndroidAopConfig.increment = androidAopConfig.increment
-//            if (androidAopConfig.cutInfoJson){
-//                InitConfig.initCutInfo(project)
-//            }
-//            if (androidAopConfig.enabled){
-//                val task = project.tasks.register("${variant.name}AssembleAndroidAopTask", AssembleAndroidAopTask::class.java)
-//                variant.artifacts
-//                    .forScope(ScopedArtifacts.Scope.ALL)
-//                    .use(task)
-//                    .toTransform(
-//                        ScopedArtifact.CLASSES,
-//                        AssembleAndroidAopTask::allJars,
-//                        AssembleAndroidAopTask::allDirectories,
-//                        AssembleAndroidAopTask::output
-//                    )
-//            }
-//        }
     }
 }
