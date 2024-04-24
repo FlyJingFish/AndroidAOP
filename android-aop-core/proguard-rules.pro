@@ -24,7 +24,9 @@
 -keep class * {
     @androidx.annotation.Keep <fields>;
 }
-
+-keep class com.flyjingfish.android_aop_annotation.utils.DebugAndroidAopInit{
+   *;
+}
 #-keepnames class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut
 #-keepnames class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod
 #-keep class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut{
