@@ -60,7 +60,7 @@ Add directly to ```build.gradle``` of **app**
 //Required items 👇
 plugins {
      ...
-     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.5.7"
+     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.5.8"
 }
 ```
 
@@ -85,7 +85,7 @@ plugins {
 buildscript {
      dependencies {
          //Required items 👇
-         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.5.7'
+         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.5.8'
      }
 }
 ```
@@ -137,12 +137,12 @@ plugins {
 
 dependencies {
      //Required items 👇
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.5.7'
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.5.7'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.5.8'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.5.8'
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️supports aspects written in Java and Kotlin code
-     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.5.7'
+     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.5.8'
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️only applies to aspects written in Java code
-     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.5.7'
+     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.5.8'
      //⚠️Choose one of the above android-aop-ksp and android-aop-processor
 }
 ```
@@ -179,6 +179,24 @@ android {
 **⚠️⚠️⚠️After setting include and exclude, all aspects are only valid within the rules you set. Please remember your settings! **
 
 **In addition, since Android Studio may have cache after setting this, it is recommended to restart AS and clean the project before continuing development**
+
+#### 5. The code weaving method can be set during development (this step is an optional configuration item)
+
+- **1. Please set the above [Step 1](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6% for all sub-module modules E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4% B8%80%E5%BF%85%E9%A1%BB), for example: **
+```gradle
+plugins {
+     ...
+     id 'android.aop'//It is best to put it on the last line
+}
+```
+- **2. Add the following settings to `gradle.properties` in the root directory**
+
+```
+androidAop.debugMode=true //Set to true to default to the current packaging method of your project, false to use the full packaging method
+```
+
+**⚠️⚠️⚠️Please note that when set to true, some functions will be disabled. Only the aop code will be woven into the set module, and the code will not be woven into the third-party jar package**
+
 ### This library has some built-in functional annotations for you to use directly.
 
 | Annotation name  |                                                                            Parameter description                                                                            |                                                                          Function description                                                                           |

@@ -63,7 +63,7 @@
 //必须项 👇
 plugins {
     ...
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.5.7"
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.5.8"
 }
 ```
 
@@ -77,7 +77,7 @@ plugins {
 buildscript {
     dependencies {
         //必须项 👇
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.5.7'
+        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.5.8'
     }
 }
 ```
@@ -88,7 +88,7 @@ buildscript {
 
 plugins {
     //必须项 👇
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.5.7" apply false
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.5.8" apply false
 }
 ```
 
@@ -135,17 +135,17 @@ plugins {
 
 dependencies {
     //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.5.7'
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.5.7'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.5.8'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.5.8'
     
     //必须项 👇如果您项目内已经有了这项不用加也可以
     implementation 'androidx.appcompat:appcompat:1.3.0' // 至少在1.3.0及以上
     
     //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.5.7'
+    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.5.8'
     
     //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.5.7'
+    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.5.8'
     //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
 }
 ```
@@ -182,6 +182,23 @@ android {
 **⚠️⚠️⚠️设置完了 include 和 exclude 所有切面只在您设置规则之内才有效，麻烦记住自己的设置！**
 
 **另外设置此处之后由于 Android Studio 可能有缓存，建议重启 AS 并 clean 下项目再继续开发**
+
+#### 五、开发中可设置代码织入方式（此步为可选配置项）
+
+- **1、请为所有子 module 模块设置上述[步骤一](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB)，例如：**
+```gradle
+plugins {
+    ...
+    id 'android.aop'//最好放在最后一行
+} 
+```
+- **2、在根目录的 `gradle.properties` 添加如下设置**
+
+```
+androidAop.debugMode=true //设置为 true 默认走您项目当前的打包方式 ，false 则为全量打包方式
+```
+
+**⚠️⚠️⚠️请注意设置为 true 时部分功能将失效，只会为设置的 module 织入 aop 代码，三方jar包 不会织入代码**
 
 ### 本库内置了一些功能注解可供你直接使用
 

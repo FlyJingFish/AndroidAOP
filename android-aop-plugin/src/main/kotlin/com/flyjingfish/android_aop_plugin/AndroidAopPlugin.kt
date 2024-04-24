@@ -33,6 +33,9 @@ class AndroidAopPlugin : Plugin<Project> {
         val debugModeStr :String = project.properties["androidAop.debugMode"].toString()
         val debugMode = debugModeStr == "true"
         if (debugMode){
+            if (!isApp) {
+                logger.warn("Plugin ['android.aop'] 应该被用于 com.android.application 所在 module 下,打正式包时请注意将 androidAop.debugMode 设置为 false")
+            }
             val isDynamicLibrary = project.plugins.hasPlugin(DynamicFeaturePlugin::class.java)
 
             val android = project.extensions.findByName(ANDROID_EXTENSION_NAME) as BaseExtension
@@ -120,7 +123,6 @@ class AndroidAopPlugin : Plugin<Project> {
             }
         }else{
             if (!isApp) {
-                logger.warn("Plugin ['android.aop'] can only be used under the application, not under the module library invalid!")
                 return
             }
             val androidComponents = project.extensions.getByType(AndroidComponentsExtension::class.java)
