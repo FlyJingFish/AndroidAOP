@@ -192,6 +192,7 @@ plugins {
     id 'android.aop'//最好放在最后一行
 } 
 ```
+**如果你不设置下边的`androidAop.debugMode=true`这个是不用配置的**
 - 2、在**根目录**的 `gradle.properties` 添加如下设置
 
 ```
