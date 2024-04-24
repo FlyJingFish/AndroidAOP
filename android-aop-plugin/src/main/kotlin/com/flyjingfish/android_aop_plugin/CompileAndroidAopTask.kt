@@ -3,6 +3,7 @@ package com.flyjingfish.android_aop_plugin
 import com.flyjingfish.android_aop_plugin.beans.ClassMethodRecord
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
+import com.flyjingfish.android_aop_plugin.beans.TmpFile
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.scanner_visitor.SearchAopMethodVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.SearchAOPConfigVisitor
@@ -45,7 +46,8 @@ class CompileAndroidAopTask(val allJars: MutableList<File>,
                             val allDirectories: MutableList<File>,
                             val output: File,
                             val project: Project,
-                            val outPutInitClass:Boolean
+                            val outPutInitClass:Boolean,
+                            val tmpFile:File
 ) {
 
 
@@ -326,7 +328,6 @@ class CompileAndroidAopTask(val allJars: MutableList<File>,
         WovenInfoUtils.removeDeletedClassMethodRecord()
         WovenInfoUtils.verifyModifyExtendsClassInfo()
     }
-
     private fun wovenIntoCode(){
         val includes = AndroidAopConfig.includes
         val excludes = AndroidAopConfig.excludes
@@ -334,7 +335,7 @@ class CompileAndroidAopTask(val allJars: MutableList<File>,
 //        logger.error("getClassMethodRecord="+WovenInfoUtils.classMethodRecords)
         val hasReplace = WovenInfoUtils.hasReplace()
         val hasReplaceExtendsClass = WovenInfoUtils.hasModifyExtendsClass()
-
+        val tempFiles = mutableListOf<TmpFile>()
         fun processFile(file : File,directory:File,directoryPath:String){
             if (file.isFile) {
                 val entryName = file.absolutePath.replace("$directoryPath/","")
@@ -343,7 +344,15 @@ class CompileAndroidAopTask(val allJars: MutableList<File>,
                 }
                 val relativePath = directory.toURI().relativize(file.toURI()).path
 
-                val outFile = file
+                val outFile = File(tmpFile.absolutePath+"/"+relativePath)
+                if (!outFile.parentFile.exists()){
+                    outFile.parentFile.mkdirs()
+                }
+                if (!outFile.exists()){
+                    outFile.createNewFile()
+                }
+                val tmpFile = TmpFile(file,outFile)
+                tempFiles.add(tmpFile)
                 val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(file.absolutePath)
                 if (methodsRecord != null){
                     FileInputStream(file).use { inputs ->
@@ -426,6 +435,13 @@ class CompileAndroidAopTask(val allJars: MutableList<File>,
 
         if (outPutInitClass){
             WovenIntoCode.createInitClass(output)
+        }
+
+        for (tempFile in tempFiles) {
+            tempFile.tmp.inputStream().use { inputStream ->
+                inputStream.copyTo(FileOutputStream(tempFile.target))
+            }
+//            tempFile.tmp.copyTo(tempFile.target,true)
         }
 
         exportCutInfo()

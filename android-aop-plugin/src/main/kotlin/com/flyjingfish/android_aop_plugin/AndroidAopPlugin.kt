@@ -113,7 +113,9 @@ class AndroidAopPlugin : Plugin<Project> {
                             }
                             if (localInput.isNotEmpty()){
                                 val output = File(javaCompile.destinationDirectory.asFile.orNull.toString())
-                                val task = CompileAndroidAopTask(jarInput,localInput,output,project,isApp)
+                                val task = CompileAndroidAopTask(jarInput,localInput,output,project,isApp,
+                                    File(project.buildDir.path + "/tmp/android-aop/" + fullName)
+                                )
                                 task.taskAction()
                             }
                         }
