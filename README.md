@@ -185,14 +185,14 @@ android {
 
 #### 五、开发中可设置代码织入方式（此步为可选配置项）
 
-- **1、请为所有子 module 模块设置上述[步骤一](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB)，例如：**
+- 1、请为**所有子 module 模块**设置上述[步骤一](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB)，例如：
 ```gradle
 plugins {
     ...
     id 'android.aop'//最好放在最后一行
 } 
 ```
-- **2、在根目录的 `gradle.properties` 添加如下设置**
+- 2、在**根目录**的 `gradle.properties` 添加如下设置
 
 ```
 androidAop.debugMode=true //设置为 true 默认走您项目当前的打包方式 ，false 则为全量打包方式
