@@ -108,10 +108,10 @@ class AndroidAopPlugin : Plugin<Project> {
                             }
                             for (file in javaCompile.classpath) {
                                 if (file.absolutePath !in bootJarPath && file.exists()){
-                                    if (file.isDirectory){
-                                        localInput.add(file)
-                                    }else{
+                                    if (file.absolutePath.endsWith(".jar") && !file.isDirectory){
                                         jarInput.add(file)
+                                    }else{
+                                        localInput.add(file)
                                     }
                                 }
                             }
