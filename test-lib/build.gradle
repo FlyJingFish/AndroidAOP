@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'com.google.devtools.ksp'
     id 'android.aop'
+//    id 'kotlin-kapt'
 }
 
 apply from: "$rootDir/gradle/android_base.gradle"
@@ -29,6 +30,7 @@ dependencies {
         //本地
         api project(path: ':android-aop-annotation')
 //        annotationProcessor project(path: ':android-aop-processor')
+//        kapt project(path: ':android-aop-processor')
         ksp project(':android-aop-ksp')
         api project(path: ':android-aop-core')
     }else {

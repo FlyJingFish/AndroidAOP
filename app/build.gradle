@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'com.google.devtools.ksp'
     id 'android.aop'
+//    id 'kotlin-kapt'
 //    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.2.8"
 }
 
@@ -82,6 +83,7 @@ dependencies {
     if (TestType == "0"){
         //本地
         ksp project(':android-aop-ksp')
+//        kapt project(':android-aop-processor')
     }else {
 //        annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:'+TestVersion
         ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:'+TestVersion
