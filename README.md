@@ -192,18 +192,20 @@ android {
 ```
 androidAop.debugMode=true //设置为 true 默认走您项目当前的打包方式 ，false 则为全量打包方式
 ```
-**⚠️⚠️⚠️请注意设置为 true 时编译速度会变快但部分功能将失效，只会为设置的 module 织入 aop 代码，三方jar包 不会织入代码，因此打正式包时请注意关闭此项配置**
-
 
 - 2、请为**所有子 module 模块**设置上述[步骤一](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB)，例如：
+
+**如果你不设置 `androidAop.debugMode=true` 这个是不用配置的**
+
 ```gradle
 plugins {
     ...
     id 'android.aop'//最好放在最后一行，不设置 androidAop.debugMode=true 这个就不用配置
 } 
 ```
-**如果你不设置 `androidAop.debugMode=true` 这个是不用配置的**
 
+
+**⚠️⚠️⚠️请注意设置为 true 时编译速度会变快但部分功能将失效，只会为设置的 module 织入 aop 代码，三方jar包 不会织入代码，因此打正式包时请注意关闭此项配置**
 
 
 ### 本库内置了一些功能注解可供你直接使用
