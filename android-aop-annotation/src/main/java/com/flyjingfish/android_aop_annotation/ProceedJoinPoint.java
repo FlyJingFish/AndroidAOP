@@ -63,30 +63,23 @@ public final class ProceedJoinPoint {
                 throw new IllegalArgumentException("proceed 所参数个数不对");
             }
         }
-        Object returnValue = null;
-        if (!hasNext){
-            returnValue = targetInvokeMethod.invoke(target,args);
-        }else if (onInvokeListener != null){
-            returnValue = onInvokeListener.onInvoke();
+        try {
+            Object returnValue = null;
+            if (!hasNext){
+                if (targetInvokeMethod != null){
+                    returnValue = targetInvokeMethod.invoke(target,args);
+                }else {
+                    returnValue = targetMethod.invoke(target,args);
+                }
+            }else if (onInvokeListener != null){
+                returnValue = onInvokeListener.onInvoke();
+            }
+            return returnValue;
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e.getTargetException());
         }
-        return returnValue;
-//        try {
-//            Object returnValue = null;
-//            if (!hasNext){
-//                if (targetInvokeMethod != null){
-//                    returnValue = targetInvokeMethod.invoke(target,args);
-//                }else {
-//                    returnValue = targetMethod.invoke(target,args);
-//                }
-//            }else if (onInvokeListener != null){
-//                returnValue = onInvokeListener.onInvoke();
-//            }
-//            return returnValue;
-//        } catch (IllegalAccessException e) {
-//            throw new RuntimeException(e);
-//        } catch (InvocationTargetException e) {
-//            throw new RuntimeException(e.getTargetException());
-//        }
     }
 
     /**
