@@ -28,7 +28,7 @@ object ClassFileUtils {
     fun clear(){
         invokeClasses.clear()
     }
-    fun wovenInfoInvokeClass(outputJar: File? = null,androidConfig:AndroidConfig?=null) {
+    fun wovenInfoInvokeClass(outputJar: File? = null) {
         if (reflectInvokeMethod){
             return
         }
@@ -37,12 +37,12 @@ object ClassFileUtils {
             val className = invokeClass.packageName
             val invokeBody = invokeClass.invokeBody
 //            println("invokeClass.methodName="+invokeClass.methodName)
-            val cp = if (outputJar != null && androidConfig != null){
+            val cp = if (outputJar != null){
                 val classPool = ClassPool(null)
-                val list: List<File> = androidConfig.getBootClasspath()
+                val list = WovenInfoUtils.baseClassPaths
                 classPool.appendSystemPath()
                 for (file in list) {
-                    classPool.appendClassPath(file.absolutePath)
+                    classPool.appendClassPath(file)
                 }
                 classPool.appendClassPath(outputJar.absolutePath)
                 classPool.appendClassPath(outputDir.absolutePath)

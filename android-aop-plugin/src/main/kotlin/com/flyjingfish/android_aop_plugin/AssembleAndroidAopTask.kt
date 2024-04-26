@@ -616,7 +616,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             jarFile.close()
         }
         val androidConfig = AndroidConfig(project)
-        ClassFileUtils.wovenInfoInvokeClass(ClassFileUtils.outputTmpDir,androidConfig)
+        ClassFileUtils.wovenInfoInvokeClass(ClassFileUtils.outputTmpDir)
         for (file in ClassFileUtils.outputDir.walk()) {
             if (file.isFile) {
                 val relativePath = ClassFileUtils.outputDir.toURI().relativize(file.toURI()).path

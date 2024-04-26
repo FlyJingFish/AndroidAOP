@@ -18,7 +18,7 @@ object WovenInfoUtils {
     var aopMatchCuts: HashMap<String, AopMatchCut> = HashMap()
     private var lastAopMatchCuts: HashMap<String, AopMatchCut> = HashMap()
     var classPaths: HashSet<String> = HashSet()
-    private var baseClassPaths: HashSet<String> = HashSet()
+    var baseClassPaths: HashSet<String> = HashSet()
     private var classNameMap: HashMap<String, String> = HashMap()
     private var baseClassNameMap: HashMap<String, String> = HashMap()
     private var classSuperListMap = HashMap<String, ClassSuperInfo>()
