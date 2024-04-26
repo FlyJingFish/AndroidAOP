@@ -24,6 +24,7 @@ import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
@@ -41,6 +42,9 @@ import java.util.zip.ZipException
 import kotlin.system.measureTimeMillis
 
 abstract class AssembleAndroidAopTask : DefaultTask() {
+
+    @get:Input
+    abstract var variant :String
 
     @get:InputFiles
     abstract val allJars: ListProperty<RegularFile>
@@ -62,6 +66,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     @TaskAction
     fun taskAction() {
         println("AndroidAOP woven info code start")
+        ClassFileUtils.outputDir = File(project.buildDir.absolutePath+"/tmp/android-aop/tempInvokeClass/${variant}/")
+        ClassFileUtils.outputTmpDir = File(project.buildDir.absolutePath+"/tmp/android-aop/tempAllJar/${variant}/")
         ClassFileUtils.clear()
         jarOutput = JarOutputStream(BufferedOutputStream(FileOutputStream(output.get().asFile)))
         val scanTimeCost = measureTimeMillis {
@@ -141,7 +147,9 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
             }
         }
-        WovenInfoUtils.addClassPath(ClassFileUtils.outputDir.absolutePath)
+        if (!ClassFileUtils.reflectInvokeMethod){
+            WovenInfoUtils.addClassPath(ClassFileUtils.outputDir.absolutePath)
+        }
         for (directory in ignoreJarClassPaths) {
             val directoryPath = directory.absolutePath
             WovenInfoUtils.addClassPath(directoryPath)
@@ -393,7 +401,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 //        logger.error("getClassMethodRecord="+WovenInfoUtils.classMethodRecords)
         val hasReplace = WovenInfoUtils.hasReplace()
         val hasReplaceExtendsClass = WovenInfoUtils.hasModifyExtendsClass()
-        val tmpFileDir = ClassFileUtils.outputDir
+        val tmpFileDir = ClassFileUtils.outputTmpDir
         val tmpFiles = mutableListOf<TmpFile>()
         fun processFile(file : File,directory:File,directoryPath:String){
             if (file.isFile) {
@@ -607,10 +615,21 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             }
             jarFile.close()
         }
-        ClassFileUtils.wovenInfoInvokeClass(ClassFileUtils.outputDir)
+        val androidConfig = AndroidConfig(project)
+        ClassFileUtils.wovenInfoInvokeClass(ClassFileUtils.outputTmpDir,androidConfig)
         for (file in ClassFileUtils.outputDir.walk()) {
             if (file.isFile) {
                 val relativePath = ClassFileUtils.outputDir.toURI().relativize(file.toURI()).path
+                jarOutput.putNextEntry(JarEntry(relativePath.replace(File.separatorChar, '/')))
+                file.inputStream().use { inputStream ->
+                    inputStream.copyTo(jarOutput)
+                }
+                jarOutput.closeEntry()
+            }
+        }
+        for (file in ClassFileUtils.outputTmpDir.walk()) {
+            if (file.isFile) {
+                val relativePath = ClassFileUtils.outputTmpDir.toURI().relativize(file.toURI()).path
                 jarOutput.putNextEntry(JarEntry(relativePath.replace(File.separatorChar, '/')))
                 file.inputStream().use { inputStream ->
                     inputStream.copyTo(jarOutput)

@@ -19,22 +19,31 @@ import java.io.File
 import java.io.FileOutputStream
 
 object ClassFileUtils {
+    var reflectInvokeMethod = false
     lateinit var outputDir:File
+    lateinit var outputTmpDir:File
     private val invokeClasses = mutableListOf<InvokeClass>()
     private const val oldMethodName = "invoke"
     private const val oldDescriptor = "(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;"
     fun clear(){
         invokeClasses.clear()
     }
-    fun wovenInfoInvokeClass(outputJar: File? = null) {
+    fun wovenInfoInvokeClass(outputJar: File? = null,androidConfig:AndroidConfig?=null) {
+        if (reflectInvokeMethod){
+            return
+        }
         for (invokeClass in invokeClasses) {
 
             val className = invokeClass.packageName
             val invokeBody = invokeClass.invokeBody
 //            println("invokeClass.methodName="+invokeClass.methodName)
-            val cp = if (outputJar != null){
+            val cp = if (outputJar != null && androidConfig != null){
                 val classPool = ClassPool(null)
+                val list: List<File> = androidConfig.getBootClasspath()
                 classPool.appendSystemPath()
+                for (file in list) {
+                    classPool.appendClassPath(file.absolutePath)
+                }
                 classPool.appendClassPath(outputJar.absolutePath)
                 classPool.appendClassPath(outputDir.absolutePath)
                 classPool
@@ -69,6 +78,9 @@ object ClassFileUtils {
     }
 
     fun createInvokeClass(className:String, invokeBody:String, methodName:String) {
+        if (reflectInvokeMethod){
+            return
+        }
         invokeClasses.add(InvokeClass(className,invokeBody,methodName))
 //        val className = "$packageName.Invoke${UUID.randomUUID()}"
         val invokeClass = "com.flyjingfish.android_aop_annotation.utils.InvokeMethod"

@@ -323,9 +323,10 @@ object WovenIntoCode {
                             "        return returnValue;}"
                 }
 
-                val className = "${targetClassName}\$Invoke${UUID.randomUUID().toString().replace("-","")}"
+                val className = "${targetClassName}\$Invoke${Utils.computeMD5(targetMethodName+oldDescriptor)}"
                 ClassFileUtils.createInvokeClass(className,invokeBody, oldMethodName + oldDescriptor)
                 cp.importPackage(className)
+                val argReflect = if (ClassFileUtils.reflectInvokeMethod) "" else ",new $className()"
                 val constructor = "$targetClassName.class,${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\"";
                 val body =
                     """ {AndroidAopJoinPoint pointCut = new AndroidAopJoinPoint($constructor);"""+
@@ -333,7 +334,7 @@ object WovenIntoCode {
                             (if (isHasArgs) "        String[] classNames = new String[]{$paramsClassNamesBuffer};\n" else "") +
                             (if (isHasArgs) "        pointCut.setArgClassNames(classNames);\n" else "") +
                             (if (isHasArgs) "        Object[] args = new Object[]{$argsBuffer};\n" else "") +
-                            (if (isHasArgs) "        pointCut.setArgs(args,new $className());\n" else "        pointCut.setArgs(null,new $className());\n") +
+                            (if (isHasArgs) "        pointCut.setArgs(args$argReflect);\n" else "        pointCut.setArgs(null$argReflect);\n") +
                             "        "+returnStr+";}"
                 ctMethod.setBody(body)
                 InitConfig.putCutInfo(value)

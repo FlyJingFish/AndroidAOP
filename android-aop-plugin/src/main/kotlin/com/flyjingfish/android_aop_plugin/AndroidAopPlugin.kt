@@ -31,8 +31,10 @@ class AndroidAopPlugin : Plugin<Project> {
 
         project.extensions.add("androidAopConfig", AndroidAopConfig::class.java)
 
+        val reflectInvokeMethodStr :String = project.properties["androidAop.reflectInvokeMethod"].toString()
         val debugModeStr :String = project.properties["androidAop.debugMode"].toString()
         val debugMode = debugModeStr == "true"
+        val reflectInvokeMethod = reflectInvokeMethodStr == "true"
         if (debugMode){
             if (!isApp) {
                 logger.warn("Plugin ['android.aop'] 应该被用于 com.android.application 所在 module 下,打正式包时请注意将 androidAop.debugMode 设置为 false")
@@ -117,6 +119,7 @@ class AndroidAopPlugin : Plugin<Project> {
                                 }
                             }
                             if (localInput.isNotEmpty()){
+                                ClassFileUtils.reflectInvokeMethod = reflectInvokeMethod
                                 val output = File(javaCompile.destinationDirectory.asFile.orNull.toString())
                                 val task = CompileAndroidAopTask(jarInput,localInput,output,project,isApp,
                                     File(project.buildDir.path + "/tmp/android-aop/" + fullName)
@@ -151,8 +154,10 @@ class AndroidAopPlugin : Plugin<Project> {
                     InitConfig.initCutInfo(project)
                 }
                 if (androidAopConfig.enabled){
-                    ClassFileUtils.outputDir = File(project.buildDir.absolutePath+"/tmp/android-aop/tempClass/${variant.name}/")
-                    val task = project.tasks.register("${variant.name}AssembleAndroidAopTask", AssembleAndroidAopTask::class.java)
+                    ClassFileUtils.reflectInvokeMethod = reflectInvokeMethod
+                    val task = project.tasks.register("${variant.name}AssembleAndroidAopTask", AssembleAndroidAopTask::class.java){
+                        it.variant = variant.name
+                    }
                     variant.artifacts
                         .forScope(ScopedArtifacts.Scope.ALL)
                         .use(task)
