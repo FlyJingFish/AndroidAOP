@@ -17,8 +17,8 @@ public class TestMatch{
 
     }
     @SingleClick(5000)
-    public void test1(int value1,String value2){
-
+    public Object testhahhahahah1(Object value1,Object... value2){
+        return new Object();
     }
     @SingleClick(5000)
     @MyAnno

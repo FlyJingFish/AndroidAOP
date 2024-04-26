@@ -10,6 +10,7 @@ import com.android.build.gradle.DynamicFeaturePlugin
 import com.android.build.gradle.LibraryExtension
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.utils.AndroidConfig
+import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import org.codehaus.groovy.runtime.DefaultGroovyMethods
@@ -150,6 +151,7 @@ class AndroidAopPlugin : Plugin<Project> {
                     InitConfig.initCutInfo(project)
                 }
                 if (androidAopConfig.enabled){
+                    ClassFileUtils.outputDir = File(project.buildDir.absolutePath+"/tmp/android-aop/tempClass/${variant.name}/")
                     val task = project.tasks.register("${variant.name}AssembleAndroidAopTask", AssembleAndroidAopTask::class.java)
                     variant.artifacts
                         .forScope(ScopedArtifacts.Scope.ALL)

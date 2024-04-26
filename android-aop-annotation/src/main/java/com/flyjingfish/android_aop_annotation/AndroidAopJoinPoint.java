@@ -4,6 +4,7 @@ package com.flyjingfish.android_aop_annotation;
 import com.flyjingfish.android_aop_annotation.base.BasePointCut;
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
 import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils;
+import com.flyjingfish.android_aop_annotation.utils.InvokeMethod;
 import com.flyjingfish.android_aop_annotation.utils.MethodMap;
 
 import java.lang.annotation.Annotation;
@@ -49,6 +50,7 @@ public final class AndroidAopJoinPoint {
         proceedJoinPoint.target = target;
         proceedJoinPoint.setOriginalMethod(originalMethod);
         proceedJoinPoint.setTargetMethod(targetMethod);
+        proceedJoinPoint.setTargetMethod(invokeMethod);
         Annotation[] annotations = originalMethod.getAnnotations();
         Object[] returnValue = new Object[1];
 
@@ -131,7 +133,12 @@ public final class AndroidAopJoinPoint {
     }
 
     public void setArgs(Object[] args) {
+       setArgs(args,null);
+    }
+    private InvokeMethod invokeMethod;
+    public void setArgs(Object[] args, InvokeMethod invokeMethod) {
         this.mArgs = args;
+        this.invokeMethod = invokeMethod;
         getTargetMethod();
     }
 

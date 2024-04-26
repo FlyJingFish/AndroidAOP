@@ -35,6 +35,16 @@ object ClassNameToConversions {
         return value
     }
 
+    fun getInvokeXObject(key: String): String {
+        var value = returnToValue[key]
+        value = if (value == null) {
+            "($key)%1\$s"
+        } else {
+            "Conversions.$value"
+        }
+        return value
+    }
+
     fun getReturnXObject(key: String): String {
         var value = returnToValue[key]
         value = if(key == "void"){
@@ -45,5 +55,28 @@ object ClassNameToConversions {
             "return Conversions.$value"
         }
         return value
+    }
+
+    fun getReturnInvokeXObject(key: String): String? {
+        var value = argsToObject[key]
+        value = if(key == "void"){
+            null
+        }else if (value == null) {
+            "java.lang.Object returnValue = (java.lang.Object)%1\$s"
+        } else {
+            "java.lang.Object returnValue = (java.lang.Object)Conversions.$value"
+        }
+        return value
+    }
+
+    private fun getArrayClazzName(classname: String): String {
+        val subStr = "[]"
+        var count = 0
+        var index = 0
+        while (classname.indexOf(subStr, index).also { index = it } != -1) {
+            index += subStr.length
+            count++
+        }
+        return "[".repeat(count) + "}".repeat(count)
     }
 }

@@ -9,36 +9,24 @@ import com.flyjingfish.android_aop_plugin.scanner_visitor.SearchAopMethodVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.SearchAOPConfigVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ClassSuperScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.MethodReplaceInvokeVisitor
-import com.flyjingfish.android_aop_plugin.scanner_visitor.RegisterMapWovenInfoCode
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ReplaceBaseClassVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import com.flyjingfish.android_aop_plugin.utils.AndroidConfig
+import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
 import com.flyjingfish.android_aop_plugin.utils.FileHashUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
-import com.flyjingfish.android_aop_plugin.utils.printLog
-import org.gradle.api.DefaultTask
 import org.gradle.api.Project
-import org.gradle.api.file.Directory
-import org.gradle.api.file.RegularFile
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.logging.Logger
-import org.gradle.api.provider.ListProperty
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
-import java.io.BufferedOutputStream
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.util.jar.JarEntry
 import java.util.jar.JarFile
-import java.util.jar.JarOutputStream
 import java.util.zip.ZipException
 import kotlin.system.measureTimeMillis
 
@@ -59,6 +47,8 @@ class CompileAndroidAopTask(val allJars: MutableList<File>,
     lateinit var logger: Logger
     fun taskAction() {
         logger = project.logger
+        ClassFileUtils.outputDir = output
+        ClassFileUtils.clear()
         println("AndroidAOP woven info code start")
         val scanTimeCost = measureTimeMillis {
             scanFile()
@@ -437,13 +427,15 @@ class CompileAndroidAopTask(val allJars: MutableList<File>,
             WovenIntoCode.createInitClass(output)
         }
 
+
+
         for (tempFile in tempFiles) {
             tempFile.tmp.inputStream().use { inputStream ->
                 inputStream.copyTo(FileOutputStream(tempFile.target))
             }
 //            tempFile.tmp.copyTo(tempFile.target,true)
         }
-
+        ClassFileUtils.wovenInfoInvokeClass()
         exportCutInfo()
     }
 

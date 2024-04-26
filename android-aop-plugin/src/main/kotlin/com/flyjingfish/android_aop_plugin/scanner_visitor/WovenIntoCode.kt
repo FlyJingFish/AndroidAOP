@@ -1,6 +1,7 @@
 package com.flyjingfish.android_aop_plugin.scanner_visitor
 
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
+import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
 import com.flyjingfish.android_aop_plugin.utils.ClassNameToConversions
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
@@ -23,6 +24,7 @@ import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.util.UUID
 
 object WovenIntoCode {
     private const val METHOD_SUFFIX = "\$\$AndroidAOP"
@@ -283,6 +285,7 @@ object WovenIntoCode {
                 // 非静态的成员函数的第一个参数是this
                 val pos =  1
                 val isHasArgs = len > 0
+                val invokeBuffer = StringBuffer()
                 for (i in ctClasses.indices) {
                     val aClass = ctClasses[i]
                     val name = aClass.name
@@ -292,10 +295,12 @@ object WovenIntoCode {
                     val index = i + pos
 
                     argsBuffer.append(String.format(ClassNameToConversions.getArgsXObject(name), "\$"+index))
+                    invokeBuffer.append(String.format(ClassNameToConversions.getInvokeXObject(name), "\$2[$i]"))
 
                     if (i != len - 1) {
                         paramsClassNamesBuffer.append(",")
                         argsBuffer.append(",")
+                        invokeBuffer.append(",")
                     }
                 }
 
@@ -303,6 +308,24 @@ object WovenIntoCode {
                     ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointExecute()"
                 )
 
+                val invokeReturnStr:String? = ClassNameToConversions.getReturnInvokeXObject(returnType.name)
+                val invokeStr =if (isStaticMethod){
+                    "$targetClassName.$targetMethodName($invokeBuffer)"
+                }else{
+                    "(($targetClassName)\$1).$targetMethodName($invokeBuffer)"
+                }
+                val invokeBody = if (invokeReturnStr == null){
+                    "{$invokeStr;"+
+                    "        return null;}"
+                }else{
+
+                    "{${String.format(invokeReturnStr,invokeStr)};"+
+                            "        return returnValue;}"
+                }
+
+                val className = "${targetClassName}\$Invoke${UUID.randomUUID().toString().replace("-","")}"
+                ClassFileUtils.createInvokeClass(className,invokeBody, oldMethodName + oldDescriptor)
+                cp.importPackage(className)
                 val constructor = "$targetClassName.class,${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\"";
                 val body =
                     """ {AndroidAopJoinPoint pointCut = new AndroidAopJoinPoint($constructor);"""+
@@ -310,7 +333,7 @@ object WovenIntoCode {
                             (if (isHasArgs) "        String[] classNames = new String[]{$paramsClassNamesBuffer};\n" else "") +
                             (if (isHasArgs) "        pointCut.setArgClassNames(classNames);\n" else "") +
                             (if (isHasArgs) "        Object[] args = new Object[]{$argsBuffer};\n" else "") +
-                            (if (isHasArgs) "        pointCut.setArgs(args);\n" else "        pointCut.setArgs(null);\n") +
+                            (if (isHasArgs) "        pointCut.setArgs(args,new $className());\n" else "        pointCut.setArgs(null,new $className());\n") +
                             "        "+returnStr+";}"
                 ctMethod.setBody(body)
                 InitConfig.putCutInfo(value)

@@ -1,5 +1,7 @@
 package com.flyjingfish.android_aop_annotation;
 
+import com.flyjingfish.android_aop_annotation.utils.InvokeMethod;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,6 +25,7 @@ public final class ProceedJoinPoint {
     @NotNull
     public Class<?> targetClass;
     private Method targetMethod;
+    private InvokeMethod targetInvokeMethod;
     private Method originalMethod;
     private AopMethod targetAopMethod;
     private OnInvokeListener onInvokeListener;
@@ -60,19 +63,30 @@ public final class ProceedJoinPoint {
                 throw new IllegalArgumentException("proceed 所参数个数不对");
             }
         }
-        try {
-            Object returnValue = null;
-            if (!hasNext){
-                returnValue = targetMethod.invoke(target,args);
-            }else if (onInvokeListener != null){
-                returnValue = onInvokeListener.onInvoke();
-            }
-            return returnValue;
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e.getTargetException());
+        Object returnValue = null;
+        if (!hasNext){
+            returnValue = targetInvokeMethod.invoke(target,args);
+        }else if (onInvokeListener != null){
+            returnValue = onInvokeListener.onInvoke();
         }
+        return returnValue;
+//        try {
+//            Object returnValue = null;
+//            if (!hasNext){
+//                if (targetInvokeMethod != null){
+//                    returnValue = targetInvokeMethod.invoke(target,args);
+//                }else {
+//                    returnValue = targetMethod.invoke(target,args);
+//                }
+//            }else if (onInvokeListener != null){
+//                returnValue = onInvokeListener.onInvoke();
+//            }
+//            return returnValue;
+//        } catch (IllegalAccessException e) {
+//            throw new RuntimeException(e);
+//        } catch (InvocationTargetException e) {
+//            throw new RuntimeException(e.getTargetException());
+//        }
     }
 
     /**
@@ -86,6 +100,10 @@ public final class ProceedJoinPoint {
 
     void setTargetMethod(Method targetMethod) {
         this.targetMethod = targetMethod;
+    }
+
+    void setTargetMethod(InvokeMethod targetMethod) {
+        this.targetInvokeMethod = targetMethod;
     }
 
     void setOriginalMethod(Method originalMethod) {
