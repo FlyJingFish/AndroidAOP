@@ -42,7 +42,12 @@ object ClassFileUtils {
                 val list = WovenInfoUtils.baseClassPaths
                 classPool.appendSystemPath()
                 for (file in list) {
-                    classPool.appendClassPath(file)
+                    if (File(file).exists()){
+                        try {
+                            classPool.appendClassPath(file)
+                        } catch (e: Exception) {
+                        }
+                    }
                 }
                 classPool.appendClassPath(outputJar.absolutePath)
                 classPool.appendClassPath(outputDir.absolutePath)
