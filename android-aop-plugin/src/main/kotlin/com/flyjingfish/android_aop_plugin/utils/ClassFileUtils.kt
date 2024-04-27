@@ -21,14 +21,13 @@ import java.io.FileOutputStream
 object ClassFileUtils {
     var reflectInvokeMethod = false
     lateinit var outputDir:File
-    lateinit var outputTmpDir:File
     private val invokeClasses = mutableListOf<InvokeClass>()
     private const val oldMethodName = "invoke"
     private const val oldDescriptor = "(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;"
     fun clear(){
         invokeClasses.clear()
     }
-    fun wovenInfoInvokeClass(outputJar: File? = null) {
+    fun wovenInfoInvokeClass(newClasses: MutableList<ByteArray>? = null) {
         if (reflectInvokeMethod){
             return
         }
@@ -37,23 +36,9 @@ object ClassFileUtils {
             val className = invokeClass.packageName
             val invokeBody = invokeClass.invokeBody
 //            println("invokeClass.methodName="+invokeClass.methodName)
-            val cp = if (outputJar != null){
-                val classPool = ClassPool(null)
-                val list = WovenInfoUtils.baseClassPaths
-                classPool.appendSystemPath()
-                for (file in list) {
-                    if (File(file).exists()){
-                        try {
-                            classPool.appendClassPath(file)
-                        } catch (e: Exception) {
-                        }
-                    }
-                }
-                classPool.appendClassPath(outputJar.absolutePath)
-                classPool.appendClassPath(outputDir.absolutePath)
-                classPool
-            }else{
-                ClassPoolUtils.getNewClassPool()
+            val cp = ClassPoolUtils.getNewClassPool()
+            newClasses?.forEach {
+                cp.makeClass(ByteArrayInputStream(it))
             }
             cp.importPackage("com.flyjingfish.android_aop_annotation.Conversions")
             val ctClass = cp.get(className)

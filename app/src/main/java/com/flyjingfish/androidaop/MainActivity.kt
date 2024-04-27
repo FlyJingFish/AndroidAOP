@@ -39,7 +39,7 @@ import kotlinx.coroutines.withContext
 import java.lang.Thread.sleep
 
 class MainActivity: BaseActivity2(), PermissionRejectListener{
-
+    val haha = 1
     lateinit var binding:ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

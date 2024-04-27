@@ -67,7 +67,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     fun taskAction() {
         println("AndroidAOP woven info code start")
         ClassFileUtils.outputDir = File(project.buildDir.absolutePath+"/tmp/android-aop/tempInvokeClass/${variant}/")
-        ClassFileUtils.outputTmpDir = File(project.buildDir.absolutePath+"/tmp/android-aop/tempAllJar/${variant}/")
         ClassFileUtils.clear()
         jarOutput = JarOutputStream(BufferedOutputStream(FileOutputStream(output.get().asFile)))
         val scanTimeCost = measureTimeMillis {
@@ -401,8 +400,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 //        logger.error("getClassMethodRecord="+WovenInfoUtils.classMethodRecords)
         val hasReplace = WovenInfoUtils.hasReplace()
         val hasReplaceExtendsClass = WovenInfoUtils.hasModifyExtendsClass()
-        val tmpFileDir = ClassFileUtils.outputTmpDir
-        val tmpFiles = mutableListOf<TmpFile>()
+        val newClasses = mutableListOf<ByteArray>()
         fun processFile(file : File,directory:File,directoryPath:String){
             if (file.isFile) {
                 val entryName = file.absolutePath.replace("$directoryPath/","")
@@ -411,26 +409,25 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 }
                 val relativePath = directory.toURI().relativize(file.toURI()).path
 
-                val outFile = File(tmpFileDir.absolutePath+"/"+relativePath.replace(File.separatorChar, '/'))
-                if (!outFile.parentFile.exists()){
-                    outFile.parentFile.mkdirs()
-                }
-                if (!outFile.exists()){
-                    outFile.createNewFile()
-                }
+
                 val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(file.absolutePath)
                 if (methodsRecord != null){
                     FileInputStream(file).use { inputs ->
                         val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),methodsRecord,hasReplace)
+                        jarOutput.putNextEntry(JarEntry(relativePath.replace(File.separatorChar, '/')))
                         ByteArrayInputStream(byteArray).use {
-                            it.copyTo(FileOutputStream(outFile))
+                            it.copyTo(jarOutput)
                         }
+                        jarOutput.closeEntry()
+                        newClasses.add(byteArray)
                     }
                 }else{
                     fun copy(){
+                        jarOutput.putNextEntry(JarEntry(relativePath.replace(File.separatorChar, '/')))
                         file.inputStream().use { inputStream ->
-                            inputStream.copyTo(FileOutputStream(outFile))
+                            inputStream.copyTo(jarOutput)
                         }
+                        jarOutput.closeEntry()
                     }
                     val isClassFile = file.name.endsWith(_CLASS)
                     val tranEntryName = file.absolutePath.replace("/", ".")
@@ -447,9 +444,12 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     val cv = MethodReplaceInvokeVisitor(cw)
                                     cr.accept(cv, ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
                                     val newByteArray = cw.toByteArray()
+                                    jarOutput.putNextEntry(JarEntry(relativePath.replace(File.separatorChar, '/')))
                                     ByteArrayInputStream(newByteArray).use {
-                                        it.copyTo(FileOutputStream(outFile))
+                                        it.copyTo(jarOutput)
                                     }
+                                    jarOutput.closeEntry()
+                                    newClasses.add(newByteArray)
                                 } catch (e: Exception) {
                                     copy()
                                 }
@@ -470,9 +470,12 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                         val cv = ReplaceBaseClassVisitor(cw)
                                         cr.accept(cv, ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
                                         val newByteArray = cw.toByteArray()
+                                        jarOutput.putNextEntry(JarEntry(relativePath.replace(File.separatorChar, '/')))
                                         ByteArrayInputStream(newByteArray).use {
-                                            it.copyTo(FileOutputStream(outFile))
+                                            it.copyTo(jarOutput)
                                         }
+                                        jarOutput.closeEntry()
+                                        newClasses.add(newByteArray)
                                     } catch (e: Exception) {
                                         copy()
                                     }
@@ -519,35 +522,36 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     if (jarEntry.isDirectory || entryName.isEmpty() || entryName.startsWith("META-INF/") || "module-info.class" == entryName) {
                         continue
                     }
-                    val outFile = File(tmpFileDir.absolutePath+"/"+entryName.replace(File.separatorChar, '/'))
-                    if (!outFile.parentFile.exists()){
-                        outFile.parentFile.mkdirs()
-                    }
-                    if (!outFile.exists()){
-                        outFile.createNewFile()
-                    }
+
                     val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(entryName)
 
                     if (methodsRecord != null){
                         jarFile.getInputStream(jarEntry).use { inputs ->
                             val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),methodsRecord,hasReplace)
+                            jarOutput.putNextEntry(JarEntry(entryName))
                             ByteArrayInputStream(byteArray).use {
-                                it.copyTo(FileOutputStream(outFile))
+                                it.copyTo(jarOutput)
                             }
+                            jarOutput.closeEntry()
+                            newClasses.add(byteArray)
                         }
                     }else if (Utils.dotToSlash(Utils.JoinAnnoCutUtils) + _CLASS == entryName) {
                         jarFile.getInputStream(jarEntry).use { inputs ->
                             val originInject = inputs.readAllBytes()
                             val resultByteArray = RegisterMapWovenInfoCode().execute(ByteArrayInputStream(originInject))
+                            jarOutput.putNextEntry(JarEntry(entryName))
                             ByteArrayInputStream(resultByteArray).use {
-                                it.copyTo(FileOutputStream(outFile))
+                                it.copyTo(jarOutput)
                             }
+                            jarOutput.closeEntry()
                         }
                     } else{
                         fun copy(){
+                            jarOutput.putNextEntry(JarEntry(entryName))
                             jarFile.getInputStream(jarEntry).use {
-                                it.copyTo(FileOutputStream(outFile))
+                                it.copyTo(jarOutput)
                             }
+                            jarOutput.closeEntry()
                         }
                         val isClassFile = entryName.endsWith(_CLASS)
                         val tranEntryName = entryName.replace("/", ".")
@@ -564,9 +568,12 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                         val cv = MethodReplaceInvokeVisitor(cw)
                                         cr.accept(cv, 0)
                                         val newByteArray = cw.toByteArray()
+                                        jarOutput.putNextEntry(JarEntry(entryName))
                                         ByteArrayInputStream(newByteArray).use {
-                                            it.copyTo(FileOutputStream(outFile))
+                                            it.copyTo(jarOutput)
                                         }
+                                        jarOutput.closeEntry()
+                                        newClasses.add(newByteArray)
                                     } catch (e: Exception) {
                                         copy()
                                     }
@@ -587,9 +594,12 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                             val cv = ReplaceBaseClassVisitor(cw)
                                             cr.accept(cv, 0)
                                             val newByteArray = cw.toByteArray()
+                                            jarOutput.putNextEntry(JarEntry(entryName))
                                             ByteArrayInputStream(newByteArray).use {
-                                                it.copyTo(FileOutputStream(outFile))
+                                                it.copyTo(jarOutput)
                                             }
+                                            jarOutput.closeEntry()
+                                            newClasses.add(newByteArray)
                                         } catch (e: Exception) {
                                             copy()
                                         }
@@ -615,25 +625,17 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             }
             jarFile.close()
         }
-        ClassFileUtils.wovenInfoInvokeClass(ClassFileUtils.outputTmpDir)
-        for (file in ClassFileUtils.outputDir.walk()) {
-            if (file.isFile) {
-                val relativePath = ClassFileUtils.outputDir.toURI().relativize(file.toURI()).path
-                jarOutput.putNextEntry(JarEntry(relativePath.replace(File.separatorChar, '/')))
-                file.inputStream().use { inputStream ->
-                    inputStream.copyTo(jarOutput)
+        ClassFileUtils.wovenInfoInvokeClass(newClasses)
+        if (!ClassFileUtils.reflectInvokeMethod){
+            for (file in ClassFileUtils.outputDir.walk()) {
+                if (file.isFile) {
+                    val relativePath = ClassFileUtils.outputDir.toURI().relativize(file.toURI()).path
+                    jarOutput.putNextEntry(JarEntry(relativePath.replace(File.separatorChar, '/')))
+                    file.inputStream().use { inputStream ->
+                        inputStream.copyTo(jarOutput)
+                    }
+                    jarOutput.closeEntry()
                 }
-                jarOutput.closeEntry()
-            }
-        }
-        for (file in ClassFileUtils.outputTmpDir.walk()) {
-            if (file.isFile) {
-                val relativePath = ClassFileUtils.outputTmpDir.toURI().relativize(file.toURI()).path
-                jarOutput.putNextEntry(JarEntry(relativePath.replace(File.separatorChar, '/')))
-                file.inputStream().use { inputStream ->
-                    inputStream.copyTo(jarOutput)
-                }
-                jarOutput.closeEntry()
             }
         }
         exportCutInfo()
