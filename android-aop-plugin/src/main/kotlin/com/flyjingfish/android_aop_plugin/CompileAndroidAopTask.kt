@@ -441,11 +441,6 @@ class CompileAndroidAopTask(val allJars: MutableList<File>,
         exportCutInfo()
     }
 
-
-    private fun isJarSignatureRelatedFiles(name: String): Boolean {
-        return name.startsWith("META-INF/") && name.substringAfterLast('.') in JAR_SIGNATURE_EXTENSIONS
-    }
-
     private fun exportCutInfo(){
         if (!AndroidAopConfig.cutInfoJson){
             return
