@@ -68,7 +68,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     fun taskAction() {
         val cacheJsonFile = File(project.buildDir.absolutePath+"/tmp/android-aop/${variant}/cacheInfo.json")
         if (cacheJsonFile.exists()){
-            throw RuntimeException("AndroidAOP======请clean项目======")
+            throw RuntimeException("AndroidAOP提示：由于您切换了debugMode模式，请clean项目。")
         }
         println("AndroidAOP woven info code start")
         ClassFileUtils.outputDir = File(project.buildDir.absolutePath+"/tmp/android-aop/tempInvokeClass/${variant}/")

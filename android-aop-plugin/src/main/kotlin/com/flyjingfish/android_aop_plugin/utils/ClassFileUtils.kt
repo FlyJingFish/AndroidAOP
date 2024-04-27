@@ -3,7 +3,6 @@ package com.flyjingfish.android_aop_plugin.utils
 import com.flyjingfish.android_aop_plugin.beans.InvokeClass
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import javassist.CannotCompileException
-import javassist.ClassPool
 import javassist.NotFoundException
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes.ACC_PUBLIC
@@ -22,9 +21,10 @@ object ClassFileUtils {
     var reflectInvokeMethod = false
     lateinit var outputDir:File
     private val invokeClasses = mutableListOf<InvokeClass>()
-    private const val oldMethodName = "invoke"
-    private const val oldDescriptor = "(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;"
+    private const val INVOKE_METHOD = "invoke"
+    private const val INVOKE_DESCRIPTOR = "(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;"
     fun clear(){
+        outputDir.deleteRecursively()
         invokeClasses.clear()
     }
     fun wovenInfoInvokeClass(newClasses: MutableList<ByteArray>? = null) :MutableList<String> {
@@ -45,7 +45,7 @@ object ClassFileUtils {
             val ctClass = cp.get(className)
             try {
                 val ctMethod =
-                    WovenIntoCode.getCtMethod(ctClass, oldMethodName, oldDescriptor)
+                    WovenIntoCode.getCtMethod(ctClass, INVOKE_METHOD, INVOKE_DESCRIPTOR)
                 ctMethod?.setBody(invokeBody)
             } catch (e: NotFoundException) {
                 throw RuntimeException(e)
@@ -95,7 +95,7 @@ object ClassFileUtils {
 
 
         //生成静态方法
-        mv = cw.visitMethod(ACC_PUBLIC, oldMethodName, oldDescriptor, null, null)
+        mv = cw.visitMethod(ACC_PUBLIC, INVOKE_METHOD, INVOKE_DESCRIPTOR, null, null)
         mv.visitCode();
 
         //创建StringBuilder对象
