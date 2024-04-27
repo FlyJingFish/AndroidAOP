@@ -1,6 +1,7 @@
 package com.flyjingfish.android_aop_plugin
 
 import com.flyjingfish.android_aop_plugin.beans.ClassMethodRecord
+import com.flyjingfish.android_aop_plugin.beans.CutFileJson
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.beans.TmpFile
@@ -65,6 +66,10 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     private val ignoreJarClassPaths = mutableListOf<File>()
     @TaskAction
     fun taskAction() {
+        val cacheJsonFile = File(project.buildDir.absolutePath+"/tmp/android-aop/${variant}/cacheInfo.json")
+        if (cacheJsonFile.exists()){
+            throw RuntimeException("AndroidAOP======请clean项目======")
+        }
         println("AndroidAOP woven info code start")
         ClassFileUtils.outputDir = File(project.buildDir.absolutePath+"/tmp/android-aop/tempInvokeClass/${variant}/")
         ClassFileUtils.clear()

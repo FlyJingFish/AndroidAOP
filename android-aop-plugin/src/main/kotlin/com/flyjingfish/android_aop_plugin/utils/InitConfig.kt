@@ -3,6 +3,7 @@ package com.flyjingfish.android_aop_plugin.utils
 import com.android.build.gradle.internal.coverage.JacocoReportTask
 import com.flyjingfish.android_aop_plugin.beans.CutClassesJson
 import com.flyjingfish.android_aop_plugin.beans.CutClassesJsonMap
+import com.flyjingfish.android_aop_plugin.beans.CutFileJson
 import com.flyjingfish.android_aop_plugin.beans.CutJson
 import com.flyjingfish.android_aop_plugin.beans.CutJsonMap
 import com.flyjingfish.android_aop_plugin.beans.CutMethodJson
@@ -32,7 +33,7 @@ object InitConfig {
     private val modifyExtendsClassMap = mutableMapOf<String, ModifyExtendsClassJson>()
     var isInit: Boolean = false
     private val gson: Gson = GsonBuilder().create()
-    private fun <T> optFromJsonString(jsonString: String, clazz: Class<T>): T? {
+    fun <T> optFromJsonString(jsonString: String, clazz: Class<T>): T? {
         try {
             return gson.fromJson(jsonString, clazz)
         } catch (e: Throwable) {
@@ -68,7 +69,7 @@ object InitConfig {
         }
     }
 
-    private fun readAsString(path: String): String {
+    fun readAsString(path: String): String {
         return try {
             val content = String(Files.readAllBytes(Paths.get(path)));
             content
@@ -218,4 +219,15 @@ object InitConfig {
 
     }
 
+    fun exportCacheCutFile(jsonFile: File,mutableList: MutableList<String>) {
+        if (!jsonFile.parentFile.exists()){
+            jsonFile.parentFile.mkdirs()
+        }
+        if (!jsonFile.exists()){
+            jsonFile.createNewFile()
+        }
+        val json = GsonBuilder().setPrettyPrinting().create().toJson(CutFileJson(mutableList))
+
+        saveFile(jsonFile, json)
+    }
 }

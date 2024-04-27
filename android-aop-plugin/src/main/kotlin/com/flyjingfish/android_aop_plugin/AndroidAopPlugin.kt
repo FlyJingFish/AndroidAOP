@@ -8,6 +8,7 @@ import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.DynamicFeaturePlugin
 import com.android.build.gradle.LibraryExtension
+import com.flyjingfish.android_aop_plugin.beans.CutFileJson
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.utils.AndroidConfig
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
@@ -122,7 +123,8 @@ class AndroidAopPlugin : Plugin<Project> {
                                 ClassFileUtils.reflectInvokeMethod = reflectInvokeMethod
                                 val output = File(javaCompile.destinationDirectory.asFile.orNull.toString())
                                 val task = CompileAndroidAopTask(jarInput,localInput,output,project,isApp,
-                                    File(project.buildDir.path + "/tmp/android-aop/" + fullName)
+                                    File(project.buildDir.absolutePath + "/tmp/android-aop/" + fullName),
+                                    File(project.buildDir.absolutePath+"/tmp/android-aop/${fullName}/cacheInfo.json")
                                 )
                                 task.taskAction()
                             }

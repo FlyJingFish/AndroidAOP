@@ -27,9 +27,10 @@ object ClassFileUtils {
     fun clear(){
         invokeClasses.clear()
     }
-    fun wovenInfoInvokeClass(newClasses: MutableList<ByteArray>? = null) {
+    fun wovenInfoInvokeClass(newClasses: MutableList<ByteArray>? = null) :MutableList<String> {
+        val cacheFiles = mutableListOf<String>()
         if (reflectInvokeMethod){
-            return
+            return cacheFiles
         }
         for (invokeClass in invokeClasses) {
 
@@ -64,7 +65,9 @@ object ClassFileUtils {
             ByteArrayInputStream(classByteData).use {
                 it.copyTo(FileOutputStream(outFile))
             }
+            cacheFiles.add(path)
         }
+        return cacheFiles
     }
 
     fun createInvokeClass(className:String, invokeBody:String, methodName:String) {

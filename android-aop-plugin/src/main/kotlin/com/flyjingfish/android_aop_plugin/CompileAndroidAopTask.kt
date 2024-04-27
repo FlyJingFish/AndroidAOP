@@ -35,7 +35,8 @@ class CompileAndroidAopTask(val allJars: MutableList<File>,
                             val output: File,
                             val project: Project,
                             val outPutInitClass:Boolean,
-                            val tmpFile:File
+                            val tmpFile:File,
+                            val tmpJsonFile:File
 ) {
 
 
@@ -435,7 +436,8 @@ class CompileAndroidAopTask(val allJars: MutableList<File>,
             }
 //            tempFile.tmp.copyTo(tempFile.target,true)
         }
-        ClassFileUtils.wovenInfoInvokeClass()
+        val cacheFiles = ClassFileUtils.wovenInfoInvokeClass()
+        InitConfig.exportCacheCutFile(tmpJsonFile,cacheFiles)
         exportCutInfo()
     }
 
