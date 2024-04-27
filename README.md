@@ -63,7 +63,7 @@
 //必须项 👇
 plugins {
     ...
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.6.2"
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.6.3"
 }
 ```
 
@@ -77,7 +77,7 @@ plugins {
 buildscript {
     dependencies {
         //必须项 👇
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.6.2'
+        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.6.3'
     }
 }
 ```
@@ -88,7 +88,7 @@ buildscript {
 
 plugins {
     //必须项 👇
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.6.2" apply false
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.6.3" apply false
 }
 ```
 
@@ -135,17 +135,17 @@ plugins {
 
 dependencies {
     //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.6.2'
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.6.2'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.6.3'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.6.3'
     
     //必须项 👇如果您项目内已经有了这项不用加也可以
     implementation 'androidx.appcompat:appcompat:1.3.0' // 至少在1.3.0及以上
     
     //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.6.2'
+    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.6.3'
     
     //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.6.2'
+    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.6.3'
     //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
 }
 ```
@@ -153,6 +153,7 @@ dependencies {
 
 #### 四、在 app 的build.gradle添加 androidAopConfig 配置项（此步为可选配置项）
 
+- 1、相关开发配置
 ```gradle
 plugins {
     ...
@@ -184,6 +185,12 @@ android {
 **另外设置此处之后由于 Android Studio 可能有缓存，建议重启 AS 并 clean 下项目再继续开发**
 
 **⚠️⚠️⚠️如果你配置了下边的[步骤五](#%E4%BA%94%E5%BC%80%E5%8F%91%E4%B8%AD%E5%8F%AF%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%A0%81%E7%BB%87%E5%85%A5%E6%96%B9%E5%BC%8F%E6%AD%A4%E6%AD%A5%E4%B8%BA%E5%8F%AF%E9%80%89%E9%85%8D%E7%BD%AE%E9%A1%B9),这一步的配置就只对当前module有效**
+
+- 2、有兴趣的可以切换是否使用反射执行切面方法，在**根目录**的 `gradle.properties` 添加如下设置
+
+```
+androidAop.reflectInvokeMethod = false //设置为 true 反射执行切面方法 ，默认 false
+```
 
 #### 五、开发中可设置代码织入方式（此步为可选配置项，只为在开发过程中提高打包速度）
 
