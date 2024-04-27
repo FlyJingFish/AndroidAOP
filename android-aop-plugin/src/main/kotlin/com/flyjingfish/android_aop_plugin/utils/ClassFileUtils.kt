@@ -24,7 +24,6 @@ object ClassFileUtils {
     private const val INVOKE_METHOD = "invoke"
     private const val INVOKE_DESCRIPTOR = "(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;"
     fun clear(){
-        outputDir.deleteRecursively()
         invokeClasses.clear()
     }
     fun wovenInfoInvokeClass(newClasses: MutableList<ByteArray>? = null) :MutableList<String> {

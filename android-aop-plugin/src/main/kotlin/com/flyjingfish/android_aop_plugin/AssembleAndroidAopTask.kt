@@ -73,6 +73,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         println("AndroidAOP woven info code start")
         ClassFileUtils.outputDir = File(project.buildDir.absolutePath+"/tmp/android-aop/tempInvokeClass/${variant}/")
         ClassFileUtils.clear()
+        ClassFileUtils.outputDir.deleteRecursively()
         jarOutput = JarOutputStream(BufferedOutputStream(FileOutputStream(output.get().asFile)))
         val scanTimeCost = measureTimeMillis {
             scanFile()
