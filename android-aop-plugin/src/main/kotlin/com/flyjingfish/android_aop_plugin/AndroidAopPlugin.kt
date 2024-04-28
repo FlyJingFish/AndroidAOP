@@ -31,8 +31,8 @@ class AndroidAopPlugin : Plugin<Project> {
 
         project.extensions.add("androidAopConfig", AndroidAopConfig::class.java)
 
-        val reflectInvokeMethodStr :String = project.properties[RootBooleanConfig.REFLECT_INVOKE_METHOD.propertyName].toString()
-        val debugModeStr :String = project.properties[RootBooleanConfig.DEBUG_MODE.propertyName].toString()
+        val reflectInvokeMethodStr = project.properties[RootBooleanConfig.REFLECT_INVOKE_METHOD.propertyName]?:"false"
+        val debugModeStr = project.properties[RootBooleanConfig.DEBUG_MODE.propertyName]?:"false"
         val debugMode = debugModeStr == "true"
         val reflectInvokeMethod = reflectInvokeMethodStr == "true"
         if (debugMode){
