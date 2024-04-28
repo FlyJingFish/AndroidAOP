@@ -30,20 +30,20 @@ import java.util.jar.JarFile
 import java.util.zip.ZipException
 import kotlin.system.measureTimeMillis
 
-class CompileAndroidAopTask(val allJars: MutableList<File>,
-                            val allDirectories: MutableList<File>,
-                            val output: File,
-                            val project: Project,
-                            val outPutInitClass:Boolean,
-                            val tmpFile:File,
-                            val tmpJsonFile:File
+class CompileAndroidAopTask(
+    private val allJars: MutableList<File>,
+    private val allDirectories: MutableList<File>,
+    private val output: File,
+    private val project: Project,
+    private val outPutInitClass:Boolean,
+    private val tmpCompileDir:File,
+    private val tmpJsonFile:File
 ) {
 
 
     private companion object {
         private const val END_NAME = "\$\$AndroidAopClass.class"
         private const val _CLASS = Utils._CLASS
-        private val JAR_SIGNATURE_EXTENSIONS = setOf("SF", "RSA", "DSA", "EC")
     }
     lateinit var logger: Logger
     fun taskAction() {
@@ -335,7 +335,7 @@ class CompileAndroidAopTask(val allJars: MutableList<File>,
                 }
                 val relativePath = directory.toURI().relativize(file.toURI()).path
 
-                val outFile = File(tmpFile.absolutePath+"/"+relativePath)
+                val outFile = File(tmpCompileDir.absolutePath+"/"+relativePath)
                 if (!outFile.parentFile.exists()){
                     outFile.parentFile.mkdirs()
                 }
@@ -436,6 +436,7 @@ class CompileAndroidAopTask(val allJars: MutableList<File>,
             }
 //            tempFile.tmp.copyTo(tempFile.target,true)
         }
+        tmpCompileDir.deleteRecursively()
         val cacheFiles = ClassFileUtils.wovenInfoInvokeClass()
         InitConfig.exportCacheCutFile(tmpJsonFile,cacheFiles)
         exportCutInfo()

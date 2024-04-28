@@ -8,7 +8,6 @@ import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.DynamicFeaturePlugin
 import com.android.build.gradle.LibraryExtension
-import com.flyjingfish.android_aop_plugin.beans.CutFileJson
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.utils.AndroidConfig
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
@@ -18,7 +17,6 @@ import org.codehaus.groovy.runtime.DefaultGroovyMethods
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.AbstractCompile
-import org.gradle.util.GradleVersion
 import java.io.File
 import java.util.Locale
 
@@ -49,47 +47,55 @@ class AndroidAopPlugin : Plugin<Project> {
                 (android as LibraryExtension).libraryVariants
             }
 
+
             variants.all { variant ->
                 variant.outputs.all { output ->
-                    val androidAopConfig = project.extensions.getByType(AndroidAopConfig::class.java)
-                    AndroidAopConfig.debug = androidAopConfig.debug
-                    androidAopConfig.includes.forEach {
-                        AndroidAopConfig.includes.add("$it.")
-                    }
-                    androidAopConfig.excludes.forEach {
-                        AndroidAopConfig.excludes.add("$it.")
-                    }
-                    AndroidAopConfig.excludes.add(Utils.annotationPackage)
-                    AndroidAopConfig.excludes.add(Utils.corePackage)
-                    AndroidAopConfig.verifyLeafExtends = androidAopConfig.verifyLeafExtends
-                    AndroidAopConfig.cutInfoJson = androidAopConfig.cutInfoJson
-                    AndroidAopConfig.increment = androidAopConfig.increment
-                    if (androidAopConfig.cutInfoJson){
-                        InitConfig.initCutInfo(project)
-                    }
-                    if (androidAopConfig.enabled){
-                        val javaCompile: AbstractCompile =
-                            if (DefaultGroovyMethods.hasProperty(variant, "javaCompileProvider") != null) {
-                                //gradle 4.10.1 +
-                                variant.javaCompileProvider.get()
-                            } else if (DefaultGroovyMethods.hasProperty(variant, "javaCompiler") != null) {
-                                variant.javaCompiler as AbstractCompile
-                            } else {
-                                variant.javaCompile as AbstractCompile
-                            }
-                        var fullName = ""
-                        val names = output.name.split("-");
-                        for((index,token) in names.withIndex()){
-                            if ("" != token){
-                                fullName += (if (index == 0) token else token.replaceFirstChar {
-                                    if (it.isLowerCase()) it.titlecase(
-                                        Locale.getDefault()
-                                    ) else it.toString()
-                                })
-                            }
-                        }
+                    if (isApp){
+                        val androidAopConfig = project.extensions.getByType(AndroidAopConfig::class.java)
+                        androidAopConfig.initConfig()
 
-                        javaCompile.doLast{
+                        for (childProject in project.rootProject.childProjects) {
+                            val configFile = File(Utils.configJsonFile(childProject.value))
+                            InitConfig.exportConfigJson(configFile,androidAopConfig)
+                        }
+                    }
+                    val javaCompile: AbstractCompile =
+                        if (DefaultGroovyMethods.hasProperty(variant, "javaCompileProvider") != null) {
+                            //gradle 4.10.1 +
+                            variant.javaCompileProvider.get()
+                        } else if (DefaultGroovyMethods.hasProperty(variant, "javaCompiler") != null) {
+                            variant.javaCompiler as AbstractCompile
+                        } else {
+                            variant.javaCompile as AbstractCompile
+                        }
+                    var fullName = ""
+                    val names = output.name.split("-");
+                    for((index,token) in names.withIndex()){
+                        if ("" != token){
+                            fullName += (if (index == 0) token else token.replaceFirstChar {
+                                if (it.isLowerCase()) it.titlecase(
+                                    Locale.getDefault()
+                                ) else it.toString()
+                            })
+                        }
+                    }
+
+                    javaCompile.doLast{
+                        val androidAopConfig : AndroidAopConfig = if (isApp){
+                            val config = project.extensions.getByType(AndroidAopConfig::class.java)
+                            config.initConfig()
+                            config
+                        }else{
+                            var config = InitConfig.optFromJsonString(InitConfig.readAsString(Utils.configJsonFile(project)),AndroidAopConfig::class.java)
+                            if (config == null){
+                                config = AndroidAopConfig()
+                            }
+                            config
+                        }
+                        if (androidAopConfig.cutInfoJson){
+                            InitConfig.initCutInfo(project)
+                        }
+                        if (androidAopConfig.enabled){
 
                             val localInput = mutableListOf<File>()
                             val javaPath = File(javaCompile.destinationDirectory.asFile.orNull.toString())
@@ -123,12 +129,14 @@ class AndroidAopPlugin : Plugin<Project> {
                                 ClassFileUtils.reflectInvokeMethod = reflectInvokeMethod
                                 val output = File(javaCompile.destinationDirectory.asFile.orNull.toString())
                                 val task = CompileAndroidAopTask(jarInput,localInput,output,project,isApp,
-                                    File(project.buildDir.absolutePath + "/tmp/android-aop/" + fullName),
-                                    File(project.buildDir.absolutePath+"/tmp/android-aop/${fullName}/cacheInfo.json")
+                                    File(Utils.aopCompileTempDir(project,fullName)),
+                                    File(Utils.invokeJsonFile(project,fullName))
                                 )
                                 task.taskAction()
                             }
                         }
+
+
                     }
 
                 }
@@ -140,18 +148,7 @@ class AndroidAopPlugin : Plugin<Project> {
             val androidComponents = project.extensions.getByType(AndroidComponentsExtension::class.java)
             androidComponents.onVariants { variant ->
                 val androidAopConfig = project.extensions.getByType(AndroidAopConfig::class.java)
-                AndroidAopConfig.debug = androidAopConfig.debug
-                androidAopConfig.includes.forEach {
-                    AndroidAopConfig.includes.add("$it.")
-                }
-                androidAopConfig.excludes.forEach {
-                    AndroidAopConfig.excludes.add("$it.")
-                }
-                AndroidAopConfig.excludes.add(Utils.annotationPackage)
-                AndroidAopConfig.excludes.add(Utils.corePackage)
-                AndroidAopConfig.verifyLeafExtends = androidAopConfig.verifyLeafExtends
-                AndroidAopConfig.cutInfoJson = androidAopConfig.cutInfoJson
-                AndroidAopConfig.increment = androidAopConfig.increment
+                androidAopConfig.initConfig()
                 if (androidAopConfig.cutInfoJson){
                     InitConfig.initCutInfo(project)
                 }

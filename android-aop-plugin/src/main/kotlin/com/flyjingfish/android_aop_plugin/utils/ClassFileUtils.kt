@@ -23,6 +23,7 @@ object ClassFileUtils {
     private val invokeClasses = mutableListOf<InvokeClass>()
     private const val INVOKE_METHOD = "invoke"
     private const val INVOKE_DESCRIPTOR = "(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;"
+    private const val INVOKE_CLASS = "com.flyjingfish.android_aop_annotation.utils.InvokeMethod"
     fun clear(){
         invokeClasses.clear()
     }
@@ -75,13 +76,12 @@ object ClassFileUtils {
         }
         invokeClasses.add(InvokeClass(className,invokeBody,methodName))
 //        val className = "$packageName.Invoke${UUID.randomUUID()}"
-        val invokeClass = "com.flyjingfish.android_aop_annotation.utils.InvokeMethod"
         //新建一个类生成器，COMPUTE_FRAMES，COMPUTE_MAXS这2个参数能够让asm自动更新操作数栈
         val cw = ClassWriter(ClassWriter.COMPUTE_FRAMES or ClassWriter.COMPUTE_MAXS)
         //生成一个public的类，类路径是com.study.Human
         cw.visit(
             V1_8,
-            ACC_PUBLIC, Utils.dotToSlash(className), null, "java/lang/Object", arrayOf(Utils.dotToSlash(invokeClass))
+            ACC_PUBLIC, Utils.dotToSlash(className), null, "java/lang/Object", arrayOf(Utils.dotToSlash(INVOKE_CLASS))
         )
 
         //生成默认的构造方法： public Human()

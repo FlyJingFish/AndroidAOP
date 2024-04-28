@@ -2,6 +2,7 @@ package com.flyjingfish.android_aop_plugin.utils
 
 import com.flyjingfish.android_aop_plugin.beans.MatchMethodInfo
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
+import org.gradle.api.Project
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.commons.Method
 import java.io.File
@@ -279,6 +280,20 @@ object Utils {
                 }
             }
         }
+    }
+
+    fun invokeJsonFile(project:Project, variantName:String):String{
+        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/cacheInfo.json"
+    }
+    fun aopCompileTempDir(project:Project, variantName:String):String{
+        return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileClass/"
+    }
+    fun aopTransformTempDir(project:Project, variantName:String):String{
+        return project.buildDir.absolutePath+"/tmp/android-aop/tempInvokeClass/${variantName}/"
+    }
+
+    fun configJsonFile(project:Project):String{
+        return project.buildDir.absolutePath+"/tmp/android-aop/config/androidAopConfig.json"
     }
 }
 

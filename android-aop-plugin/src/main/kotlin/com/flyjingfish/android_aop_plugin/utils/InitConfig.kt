@@ -13,6 +13,7 @@ import com.flyjingfish.android_aop_plugin.beans.CutReplaceMethodJson
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ModifyExtendsClassJson
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
+import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig.Companion.cutInfoJson
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -57,8 +58,10 @@ object InitConfig {
         return ""
     }
 
-    private fun saveFile(file: File, data: String) {
-        temporaryDirMkdirs()
+    private fun saveFile(file: File, data: String,initTemp:Boolean = true) {
+        if (initTemp){
+            temporaryDirMkdirs()
+        }
         val fos = FileOutputStream(file.absolutePath)
         try {
             fos.write(data.toByteArray())
@@ -228,6 +231,18 @@ object InitConfig {
         }
         val json = GsonBuilder().setPrettyPrinting().create().toJson(CutFileJson(mutableList))
 
-        saveFile(jsonFile, json)
+        saveFile(jsonFile, json,false)
+    }
+
+    fun exportConfigJson(jsonFile: File,androidAopConfig: AndroidAopConfig) {
+        if (!jsonFile.parentFile.exists()){
+            jsonFile.parentFile.mkdirs()
+        }
+        if (!jsonFile.exists()){
+            jsonFile.createNewFile()
+        }
+        val json = GsonBuilder().setPrettyPrinting().create().toJson(androidAopConfig)
+
+        saveFile(jsonFile, json,false)
     }
 }

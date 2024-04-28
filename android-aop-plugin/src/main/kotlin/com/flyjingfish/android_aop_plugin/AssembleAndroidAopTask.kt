@@ -1,10 +1,8 @@
 package com.flyjingfish.android_aop_plugin
 
 import com.flyjingfish.android_aop_plugin.beans.ClassMethodRecord
-import com.flyjingfish.android_aop_plugin.beans.CutFileJson
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
-import com.flyjingfish.android_aop_plugin.beans.TmpFile
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.scanner_visitor.SearchAopMethodVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.SearchAOPConfigVisitor
@@ -66,12 +64,12 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     private val ignoreJarClassPaths = mutableListOf<File>()
     @TaskAction
     fun taskAction() {
-        val cacheJsonFile = File(project.buildDir.absolutePath+"/tmp/android-aop/${variant}/cacheInfo.json")
+        val cacheJsonFile = File(Utils.invokeJsonFile(project,variant))
         if (cacheJsonFile.exists()){
             throw RuntimeException("AndroidAOP提示：由于您切换了debugMode模式，请clean项目。")
         }
         println("AndroidAOP woven info code start")
-        ClassFileUtils.outputDir = File(project.buildDir.absolutePath+"/tmp/android-aop/tempInvokeClass/${variant}/")
+        ClassFileUtils.outputDir = File(Utils.aopTransformTempDir(project,variant))
         ClassFileUtils.clear()
         ClassFileUtils.outputDir.deleteRecursively()
         jarOutput = JarOutputStream(BufferedOutputStream(FileOutputStream(output.get().asFile)))
@@ -643,6 +641,9 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     jarOutput.closeEntry()
                 }
             }
+        }
+        if (!AndroidAopConfig.debug){
+            ClassFileUtils.outputDir.deleteRecursively()
         }
         exportCutInfo()
     }

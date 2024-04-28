@@ -1,5 +1,7 @@
 package com.flyjingfish.android_aop_plugin.config
 
+import com.flyjingfish.android_aop_plugin.utils.Utils
+
 open class AndroidAopConfig {
     /**
      * 是否启用，默认启用
@@ -41,6 +43,20 @@ open class AndroidAopConfig {
         return this
     }
 
+    internal fun initConfig(){
+        AndroidAopConfig.debug = debug
+        includes.forEach {
+            AndroidAopConfig.includes.add("$it.")
+        }
+        excludes.forEach {
+            AndroidAopConfig.excludes.add("$it.")
+        }
+        AndroidAopConfig.excludes.add(Utils.annotationPackage)
+        AndroidAopConfig.excludes.add(Utils.corePackage)
+        AndroidAopConfig.verifyLeafExtends = verifyLeafExtends
+        AndroidAopConfig.cutInfoJson = cutInfoJson
+        AndroidAopConfig.increment = increment
+    }
     companion object{
         var debug = false
         val includes = mutableListOf<String>()
@@ -48,5 +64,7 @@ open class AndroidAopConfig {
         var verifyLeafExtends = true
         var cutInfoJson = false
         var increment = true
+
+
     }
 }
