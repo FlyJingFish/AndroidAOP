@@ -55,8 +55,10 @@ class AndroidAopPlugin : Plugin<Project> {
                         androidAopConfig.initConfig()
 
                         for (childProject in project.rootProject.childProjects) {
-                            val configFile = File(Utils.configJsonFile(childProject.value))
-                            InitConfig.exportConfigJson(configFile,androidAopConfig)
+                            if (project != childProject.value){
+                                val configFile = File(Utils.configJsonFile(childProject.value))
+                                InitConfig.exportConfigJson(configFile,androidAopConfig)
+                            }
                         }
                     }
                     val javaCompile: AbstractCompile =
