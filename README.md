@@ -184,7 +184,7 @@ android {
 
 **⚠️⚠️⚠️设置完了 include 和 exclude 所有切面只在您设置规则之内才有效，麻烦记住自己的设置！**
 
-**另外设置此处之后由于 Android Studio 可能有缓存，建议先 clean 再 sync 下项目（设置下边的第五步尤其注意这个步骤），再继续开发**
+**另外设置此处之后由于 Android Studio 可能有缓存，建议先 clean 再 sync 下项目，再继续开发（设置下边的第五步尤其注意这个步骤）**
 
 **⚠️⚠️⚠️如果你配置了下边的[步骤五](#%E4%BA%94%E5%BC%80%E5%8F%91%E4%B8%AD%E5%8F%AF%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%A0%81%E7%BB%87%E5%85%A5%E6%96%B9%E5%BC%8F%E6%AD%A4%E6%AD%A5%E4%B8%BA%E5%8F%AF%E9%80%89%E9%85%8D%E7%BD%AE%E9%A1%B9),这一步的配置就只对当前module有效**
 
