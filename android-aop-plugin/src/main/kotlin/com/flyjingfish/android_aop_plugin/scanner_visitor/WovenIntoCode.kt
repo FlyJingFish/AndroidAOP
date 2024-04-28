@@ -24,7 +24,6 @@ import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
-import java.util.UUID
 
 object WovenIntoCode {
     private const val METHOD_SUFFIX = "\$\$AndroidAOP"
@@ -186,9 +185,9 @@ object WovenIntoCode {
                 ): MethodVisitor? {
                     return if (oldMethodName == name && oldDescriptor == descriptor) {
                         val newAccess = if (Utils.isStaticMethod(access)){
-                            Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC + Opcodes.ACC_FINAL
+                            ACC_PUBLIC + ACC_STATIC + ACC_FINAL
                         }else{
-                            Opcodes.ACC_PUBLIC + Opcodes.ACC_FINAL
+                            ACC_PUBLIC + ACC_FINAL
                         }
                         var mv: MethodVisitor? = super.visitMethod(
                             newAccess,
@@ -221,14 +220,16 @@ object WovenIntoCode {
         cp.importPackage("com.flyjingfish.android_aop_annotation.Conversions")
         cp.importPackage("androidx.annotation.Keep")
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
-            if (value in wovenRecord){
-                return@forEach
-            }
             val targetClassName = ctClass.name
             val oldMethodName = value.methodName
             val targetMethodName = "$oldMethodName$$${Utils.computeMD5(targetClassName)}$METHOD_SUFFIX"
             val oldDescriptor = value.descriptor
             val cutClassName = value.cutClassName
+            val invokeClassName = "${targetClassName}\$Invoke${Utils.computeMD5(targetMethodName+oldDescriptor)}"
+            if (value in wovenRecord){
+                WovenInfoUtils.checkNoneInvokeClass(invokeClassName)
+                return@forEach
+            }
             try {
                 val ctMethod =
                     getCtMethod(ctClass, oldMethodName, oldDescriptor)
@@ -323,10 +324,10 @@ object WovenIntoCode {
                             "        return returnValue;}"
                 }
 
-                val className = "${targetClassName}\$Invoke${Utils.computeMD5(targetMethodName+oldDescriptor)}"
-                ClassFileUtils.createInvokeClass(className,invokeBody, oldMethodName + oldDescriptor)
-                cp.importPackage(className)
-                val argReflect = if (ClassFileUtils.reflectInvokeMethod) "" else ",new $className()"
+
+                ClassFileUtils.createInvokeClass(invokeClassName,invokeBody, oldMethodName + oldDescriptor)
+                cp.importPackage(invokeClassName)
+                val argReflect = if (ClassFileUtils.reflectInvokeMethod) "" else ",new $invokeClassName()"
                 val constructor = "$targetClassName.class,${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\"";
                 val body =
                     """ {AndroidAopJoinPoint pointCut = new AndroidAopJoinPoint($constructor);"""+

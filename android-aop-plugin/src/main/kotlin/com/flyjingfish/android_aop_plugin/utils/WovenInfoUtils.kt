@@ -33,6 +33,7 @@ object WovenInfoUtils {
     private val replaceMethodInfoMap = HashMap<String, HashMap<String, ReplaceMethodInfo>>()
     val replaceMethodInfoMapUse = HashMap<String, ReplaceMethodInfo>()
     private val modifyExtendsClassMap = HashMap<String, String>()
+    private val allClassName = mutableSetOf<String>()
     fun addModifyExtendsClassInfo(targetClassName: String, extendsClassName: String) {
         modifyExtendsClassMap[targetClassName] = extendsClassName
         InitConfig.addModifyClassInfo(targetClassName, extendsClassName)
@@ -435,6 +436,32 @@ object WovenInfoUtils {
                     }
                 }
             }
+        }
+    }
+
+    fun initAllClassName(){
+        allClassName.clear()
+        classNameMap.forEach{(_,value)->
+            allClassName.add(value)
+        }
+    }
+    private const val CHECK_CLASS_HINT = "AndroidAOP提示：由于您切换了debugMode模式，请clean项目。"
+    fun checkNoneInvokeClass(className:String){
+        if (!ClassFileUtils.reflectInvokeMethod && !allClassName.contains(className)){
+            throw RuntimeException(CHECK_CLASS_HINT)
+        }
+    }
+
+    fun checkHasInvokeClass(className:String){
+        if (!ClassFileUtils.reflectInvokeMethod && allClassName.contains(className)){
+            throw RuntimeException(CHECK_CLASS_HINT)
+        }
+    }
+
+    fun checkHasInvokeJson(project: Project,variant:String){
+        val cacheJsonFile = File(Utils.invokeJsonFile(project,variant))
+        if (cacheJsonFile.exists()){
+            throw RuntimeException(CHECK_CLASS_HINT)
         }
     }
 }

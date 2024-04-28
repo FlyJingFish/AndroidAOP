@@ -64,10 +64,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     private val ignoreJarClassPaths = mutableListOf<File>()
     @TaskAction
     fun taskAction() {
-        val cacheJsonFile = File(Utils.invokeJsonFile(project,variant))
-        if (cacheJsonFile.exists()){
-            throw RuntimeException("AndroidAOP提示：由于您切换了debugMode模式，请clean项目。")
-        }
+        WovenInfoUtils.checkHasInvokeJson(project, variant)
         println("AndroidAOP woven info code start")
         ClassFileUtils.outputDir = File(Utils.aopTransformTempDir(project,variant))
         ClassFileUtils.clear()
@@ -398,6 +395,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     }
 
     private fun wovenIntoCode(){
+        WovenInfoUtils.initAllClassName()
         val includes = AndroidAopConfig.includes
         val excludes = AndroidAopConfig.excludes
         WovenInfoUtils.makeReplaceMethodInfoUse()
@@ -634,6 +632,9 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             for (file in ClassFileUtils.outputDir.walk()) {
                 if (file.isFile) {
                     val relativePath = ClassFileUtils.outputDir.toURI().relativize(file.toURI()).path
+                    val className = relativePath.replace(File.separatorChar, '/')
+                    val invokeClassName = Utils.slashToDot(className).replace(_CLASS,"")
+                    WovenInfoUtils.checkHasInvokeClass(invokeClassName)
                     jarOutput.putNextEntry(JarEntry(relativePath.replace(File.separatorChar, '/')))
                     file.inputStream().use { inputStream ->
                         inputStream.copyTo(jarOutput)
