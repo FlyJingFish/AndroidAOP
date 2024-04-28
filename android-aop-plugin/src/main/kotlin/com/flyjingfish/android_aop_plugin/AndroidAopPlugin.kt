@@ -9,6 +9,7 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.DynamicFeaturePlugin
 import com.android.build.gradle.LibraryExtension
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
+import com.flyjingfish.android_aop_plugin.config.RootBooleanConfig
 import com.flyjingfish.android_aop_plugin.utils.AndroidConfig
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
@@ -30,8 +31,8 @@ class AndroidAopPlugin : Plugin<Project> {
 
         project.extensions.add("androidAopConfig", AndroidAopConfig::class.java)
 
-        val reflectInvokeMethodStr :String = project.properties["androidAop.reflectInvokeMethod"].toString()
-        val debugModeStr :String = project.properties["androidAop.debugMode"].toString()
+        val reflectInvokeMethodStr :String = project.properties[RootBooleanConfig.REFLECT_INVOKE_METHOD.propertyName].toString()
+        val debugModeStr :String = project.properties[RootBooleanConfig.DEBUG_MODE.propertyName].toString()
         val debugMode = debugModeStr == "true"
         val reflectInvokeMethod = reflectInvokeMethodStr == "true"
         if (debugMode){
