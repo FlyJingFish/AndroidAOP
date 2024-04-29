@@ -215,7 +215,7 @@ androidAop.debugMode=true //Set to true to use the current packaging method of y
 androidAop.debugMode.variantOnlyDebug = true //If this is not written by default, it is true
 ```
 
-**⚠️⚠️⚠️Please note that when set to true, some functions will be disabled. Only the aop code will be woven into the set module, and the code will not be woven into the third-party jar package**
+**Please note that when set to true, the release package will ignore the setting of `androidAop.debugMode = true` and automatically adopt the full packaging method. When set to false, there will be no such effect**
 
 ### This library has some built-in functional annotations for you to use directly.
 
