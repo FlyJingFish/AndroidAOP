@@ -11,6 +11,56 @@ import org.objectweb.asm.commons.AdviceAdapter
 import java.io.InputStream
 
 class RegisterMapWovenInfoCode {
+    companion object {
+        fun registerCreators(methodVisitor: MethodVisitor, key: String, value: String) {
+            if (key.startsWith("@")) {
+                methodVisitor.visitLdcInsn(key)
+
+                methodVisitor.visitTypeInsn(AdviceAdapter.NEW, value)
+                methodVisitor.visitInsn(AdviceAdapter.DUP)
+                methodVisitor.visitMethodInsn(
+                    AdviceAdapter.INVOKESPECIAL,
+                    value,
+                    "<init>",
+                    "()V",
+                    false
+                )
+
+                methodVisitor.visitMethodInsn(
+                    AdviceAdapter.INVOKESTATIC,
+                    Utils.dotToSlash(Utils.JoinAnnoCutUtils),
+                    "registerCreator",
+                    "(Ljava/lang/String;Lcom/flyjingfish/android_aop_annotation/base/BasePointCutCreator;)V",
+                    false
+                )
+            }
+        }
+
+        fun registerMatchCreators(methodVisitor: MethodVisitor, key: String, value: String) {
+            if (!key.startsWith("@")) {
+
+                methodVisitor.visitLdcInsn(key)
+
+                methodVisitor.visitTypeInsn(AdviceAdapter.NEW, value)
+                methodVisitor.visitInsn(AdviceAdapter.DUP)
+                methodVisitor.visitMethodInsn(
+                    AdviceAdapter.INVOKESPECIAL,
+                    value,
+                    "<init>",
+                    "()V",
+                    false
+                )
+
+                methodVisitor.visitMethodInsn(
+                    AdviceAdapter.INVOKESTATIC,
+                    Utils.dotToSlash(Utils.JoinAnnoCutUtils),
+                    "registerMatchCreator",
+                    "(Ljava/lang/String;Lcom/flyjingfish/android_aop_annotation/base/MatchClassMethodCreator;)V",
+                    false
+                )
+            }
+        }
+    }
 
     fun execute(inputStream: InputStream): ByteArray {
         val classReader = ClassReader(inputStream)
@@ -20,8 +70,8 @@ class RegisterMapWovenInfoCode {
         return classWriter.toByteArray()
     }
 
-    inner class MyClassVisitor(private val mClassVisitor: ClassVisitor)
-        : ClassVisitor(Opcodes.ASM9, mClassVisitor) {
+    inner class MyClassVisitor(private val mClassVisitor: ClassVisitor) :
+        ClassVisitor(Opcodes.ASM9, mClassVisitor) {
 
         override fun visitMethod(
             access: Int,
@@ -32,44 +82,26 @@ class RegisterMapWovenInfoCode {
         ): MethodVisitor {
             var mv = mClassVisitor.visitMethod(access, name, desc, signature, exception)
             if ("registerCreators" == name) {
-                mv = MyCutMethodAdapter(mv, access, name, desc)
-            }else if ("registerMatchCreators" == name) {
-                mv = MyMatchMethodAdapter(mv, access, name, desc)
+                mv = MyMethodAdapter(false,mv, access, name, desc)
+            } else if ("registerMatchCreators" == name) {
+                mv = MyMethodAdapter(true,mv, access, name, desc)
             }
             return mv
         }
     }
 
-    inner class MyCutMethodAdapter(mv: MethodVisitor, access: Int, name: String, desc: String?)
-        : AdviceAdapter(Opcodes.ASM9, mv, access, name, desc) {
+    inner class MyMethodAdapter(private val match :Boolean, mv: MethodVisitor, access: Int, name: String, desc: String?) :
+        AdviceAdapter(Opcodes.ASM9, mv, access, name, desc) {
 
         override fun visitInsn(opcode: Int) {
             if (opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN) {
                 val map: HashMap<String, String> = WovenInfoUtils.aopInstances
                 if (map.isNotEmpty()) {
                     map.forEach { (key, value) ->
-                        if (key.startsWith("@")){
-                            val methodVisitor = mv
-
-                            methodVisitor.visitLdcInsn(key)
-
-                            methodVisitor.visitTypeInsn(NEW, value)
-                            methodVisitor.visitInsn(DUP)
-                            methodVisitor.visitMethodInsn(
-                                INVOKESPECIAL,
-                                value,
-                                "<init>",
-                                "()V",
-                                false
-                            )
-
-                            methodVisitor.visitMethodInsn(
-                                INVOKESTATIC,
-                                Utils.dotToSlash(Utils.JoinAnnoCutUtils),
-                                "registerCreator",
-                                "(Ljava/lang/String;Lcom/flyjingfish/android_aop_annotation/base/BasePointCutCreator;)V",
-                                false
-                            )
+                        if (match){
+                            registerMatchCreators(mv, key, value)
+                        }else{
+                            registerCreators(mv, key, value)
                         }
                     }
                 }
@@ -86,49 +118,4 @@ class RegisterMapWovenInfoCode {
         }
     }
 
-    inner class MyMatchMethodAdapter(mv: MethodVisitor, access: Int, name: String, desc: String?)
-        : AdviceAdapter(Opcodes.ASM9, mv, access, name, desc) {
-
-        override fun visitInsn(opcode: Int) {
-            if (opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN) {
-                val map: HashMap<String, String> = WovenInfoUtils.aopInstances
-                if (map.isNotEmpty()) {
-                    map.forEach { (key, value) ->
-                        if (!key.startsWith("@")){
-                            val methodVisitor = mv
-
-                            methodVisitor.visitLdcInsn(key)
-
-                            methodVisitor.visitTypeInsn(NEW, value)
-                            methodVisitor.visitInsn(DUP)
-                            methodVisitor.visitMethodInsn(
-                                INVOKESPECIAL,
-                                value,
-                                "<init>",
-                                "()V",
-                                false
-                            )
-
-                            methodVisitor.visitMethodInsn(
-                                INVOKESTATIC,
-                                Utils.dotToSlash(Utils.JoinAnnoCutUtils),
-                                "registerMatchCreator",
-                                "(Ljava/lang/String;Lcom/flyjingfish/android_aop_annotation/base/MatchClassMethodCreator;)V",
-                                false
-                            )
-                        }
-                    }
-                }
-            }
-            super.visitInsn(opcode)
-        }
-
-        override fun visitMaxs(maxStack: Int, maxLocals: Int) {
-            super.visitMaxs(maxStack + 4, maxLocals)
-        }
-
-        override fun onMethodExit(opcode: Int) {
-            super.onMethodExit(opcode)
-        }
-    }
 }
