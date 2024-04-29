@@ -65,7 +65,7 @@
 //必须项 👇
 plugins {
     ...
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.6.5"
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.6.6"
 }
 ```
 
@@ -79,7 +79,7 @@ plugins {
 buildscript {
     dependencies {
         //必须项 👇
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.6.5'
+        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.6.6'
     }
 }
 ```
@@ -90,7 +90,7 @@ buildscript {
 
 plugins {
     //必须项 👇
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.6.5" apply false
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.6.6" apply false
 }
 ```
 
@@ -137,17 +137,17 @@ plugins {
 
 dependencies {
     //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.6.5'
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.6.5'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.6.6'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.6.6'
     
     //必须项 👇如果您项目内已经有了这项不用加也可以
     implementation 'androidx.appcompat:appcompat:1.3.0' // 至少在1.3.0及以上
     
     //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.6.5'
+    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.6.6'
     
     //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.6.5'
+    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.6.6'
     //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
 }
 ```
@@ -213,6 +213,14 @@ androidAop.debugMode=true //设置为 true 默认走您项目当前的打包方�
 ```
 
 **⚠️⚠️⚠️请注意设置为 true 时编译速度会变快但部分功能将失效，只会为设置的 module 织入 aop 代码，三方jar包 不会织入代码，因此打正式包时请注意关闭此项配置并clean项目**
+
+- 3、在**根目录**的 `gradle.properties` 添加如下设置
+
+```
+androidAop.debugMode.variantOnlyDebug = true //默认为true
+```
+
+**⚠️⚠️⚠️请注意设置为 true 时 release 包会忽略 `androidAop.debugMode = true` 的设置自动走全量打包方式，设为 false 时则没有上述效果**
 
 
 ### 本库内置了一些功能注解可供你直接使用
