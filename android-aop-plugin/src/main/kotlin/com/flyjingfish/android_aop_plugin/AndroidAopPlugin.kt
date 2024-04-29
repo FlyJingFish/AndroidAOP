@@ -2,8 +2,8 @@ package com.flyjingfish.android_aop_plugin
 
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.config.RootBooleanConfig
-import com.flyjingfish.android_aop_plugin.core.CompilePlugin
-import com.flyjingfish.android_aop_plugin.core.TransformPlugin
+import com.flyjingfish.android_aop_plugin.plugin.CompilePlugin
+import com.flyjingfish.android_aop_plugin.plugin.TransformPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 

@@ -1,4 +1,4 @@
-package com.flyjingfish.android_aop_plugin.core
+package com.flyjingfish.android_aop_plugin.plugin
 
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.AppPlugin

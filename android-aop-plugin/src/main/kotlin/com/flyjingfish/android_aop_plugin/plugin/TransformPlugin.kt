@@ -1,4 +1,4 @@
-package com.flyjingfish.android_aop_plugin.core
+package com.flyjingfish.android_aop_plugin.plugin
 
 import com.android.build.api.artifact.ScopedArtifact
 import com.android.build.api.variant.AndroidComponentsExtension
