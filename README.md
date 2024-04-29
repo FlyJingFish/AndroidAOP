@@ -193,7 +193,7 @@ android {
 **💡从1.6.3版本开始已自动切换为原生执行切面方法模式，反射默认关闭，如遇到问题可切换回反射模式或提issues**
 
 ```
-androidAop.reflectInvokeMethod = false //设置为 true 反射执行切面方法 ，默认 false
+androidAop.reflectInvokeMethod = false //设置为 true 反射执行切面方法 ，不写默认 false
 ```
 
 #### 五、开发中可设置代码织入方式（此步为可选配置项，只为在开发过程中提高打包速度）
@@ -209,7 +209,7 @@ plugins {
 - 2、在**根目录**的 `gradle.properties` 添加如下设置
 
 ```
-androidAop.debugMode=true //设置为 true 默认走您项目当前的打包方式 ，false 则为全量打包方式
+androidAop.debugMode=true //设置为 true 走您项目当前的打包方式 ，false 则为全量打包方式，不写默认false
 ```
 
 **⚠️⚠️⚠️请注意设置为 true 时编译速度会变快但部分功能将失效，只会为设置的 module 织入 aop 代码，三方jar包 不会织入代码，因此打正式包时请注意关闭此项配置并clean项目**

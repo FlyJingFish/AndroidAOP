@@ -150,6 +150,8 @@ dependencies {
 
 #### 4. Add the androidAopConfig configuration item in app’s build.gradle (this step is an optional configuration item)
 
+- 1. Related development configurations
+
 ```gradle
 plugins {
      ...
@@ -178,7 +180,16 @@ android {
 
 **⚠️⚠️⚠️After setting include and exclude, all aspects are only valid within the rules you set. Please remember your settings! **
 
-**In addition, since Android Studio may have cache after setting this, it is recommended to restart AS and clean the project before continuing development**
+**In addition, since Android Studio may have cache after setting this, it is recommended to clean and then sync the project before continuing development (pay special attention to this step in the fifth step below)**
+
+**⚠️⚠️⚠️If you configure the following [Step 5](#%E4%BA%94%E5%BC%80%E5%8F%91%E4%B8%AD%E5%8F%AF%E8% AE%BE%E7%BD%AE%E4%BB%A3%E7%A0%81%E7%BB%87%E5%85%A5%E6%96%B9%E5%BC%8F%E6%AD% A4%E6%AD%A5%E4%B8%BA%E5%8F%AF%E9%80%89%E9%85%8D%E7%BD%AE%E9%A1%B9), you must sync first after cleaning It can be applied to other modules**
+
+- 2. If you are interested, you can switch whether to use reflection to execute aspect methods and add the following settings in `gradle.properties` in the **root directory**
+
+**💡Since version 1.6.3, it has automatically switched to native execution aspect method mode. Reflection is turned off by default. If you encounter problems, you can switch back to reflection mode or raise issues**
+```
+androidAop.reflectInvokeMethod = false //Set to true to reflect the execution aspect method, if not set, the default is false
+```
 
 #### 5. The code weaving method can be set during development (this step is an optional configuration item)
 
@@ -189,10 +200,19 @@ plugins {
      id 'android.aop'//It is best to put it on the last line
 }
 ```
-- **2. Add the following settings to `gradle.properties` in the root directory**
+**If you do not set the `androidAop.debugMode=true` below, there is no need to configure it**
+- 2. Add the following settings in `gradle.properties` in the **root directory**
 
 ```
-androidAop.debugMode=true //Set to true to default to the current packaging method of your project, false to use the full packaging method
+androidAop.debugMode=true //Set to true to use the current packaging method of your project, false to use the full packaging method, otherwise the default is false
+```
+
+**⚠️⚠️⚠️ Please note that when set to true, the compilation speed will be faster but some functions will be invalid. Only the aop code will be woven into the set module. The third-party jar package will not weave in the code, so please be careful to turn it off when building the official package. Configure this and clean the project**
+
+- 3. Add the following settings in `gradle.properties` in the **root directory**
+
+```
+androidAop.debugMode.variantOnlyDebug = true //If this is not written by default, it is true
 ```
 
 **⚠️⚠️⚠️Please note that when set to true, some functions will be disabled. Only the aop code will be woven into the set module, and the code will not be woven into the third-party jar package**
