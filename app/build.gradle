@@ -56,7 +56,7 @@ android {
             dimension "env"
             signingConfig signingConfigs.release
         }
-        uformal {
+        product {
             dimension "env"
             signingConfig signingConfigs.release
         }
