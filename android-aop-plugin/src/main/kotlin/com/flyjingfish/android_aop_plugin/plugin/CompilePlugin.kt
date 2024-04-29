@@ -23,9 +23,6 @@ object CompilePlugin: BasePlugin() {
         super.apply(project)
         val isApp = project.plugins.hasPlugin(AppPlugin::class.java)
         val logger = project.logger
-        if (!isApp) {
-            logger.warn("Plugin ['android.aop'] 应该被用于 com.android.application 所在 module 下,打正式包时请注意将 androidAop.debugMode 设置为 false")
-        }
 
 
         val isDynamicLibrary = project.plugins.hasPlugin(DynamicFeaturePlugin::class.java)
@@ -61,6 +58,9 @@ object CompilePlugin: BasePlugin() {
                 }
             val variantName = variant.name
             val buildTypeName = variant.buildType.name
+            if (!isApp && isDebugMode(buildTypeName,variantName)) {
+                logger.warn("Plugin ['android.aop'] 应该被用于 com.android.application 所在 module 下,打正式包时请注意将 androidAop.debugMode 设置为 false")
+            }
 //            println("CompilePlugin=variant=$variantName,output.name=${variant.buildType.name},isDebug=${isDebugMode(buildTypeName,variantName)}")
             javaCompile.doLast{
                 val androidAopConfig : AndroidAopConfig = if (isApp){
