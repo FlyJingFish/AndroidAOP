@@ -32,10 +32,8 @@ import java.util.UUID
 
 class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
     ClassNode(Opcodes.ASM9) {
-    //    private final byte[] classByte;
     private val aopMatchCuts = mutableListOf<AopMatchCut>();
 
-    //    private final List<MethodRecord> cacheMethodRecords = new ArrayList<>();
     lateinit var className: String
     private var replaceInvokeClassName: String?=null
     private var replaceTargetClassName: String?=null

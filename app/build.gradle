@@ -50,6 +50,17 @@ android {
             keyPassword '123456'
         }
     }
+    flavorDimensions.add("env")
+    productFlavors {
+        informal {
+            dimension "env"
+            signingConfig signingConfigs.release
+        }
+        uformal {
+            dimension "env"
+            signingConfig signingConfigs.release
+        }
+    }
 
     buildTypes {
         debug {

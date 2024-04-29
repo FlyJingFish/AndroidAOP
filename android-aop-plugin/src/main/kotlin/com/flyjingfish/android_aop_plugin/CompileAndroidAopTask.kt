@@ -17,6 +17,8 @@ import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
 import com.flyjingfish.android_aop_plugin.utils.FileHashUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
+import com.flyjingfish.android_aop_plugin.utils.Utils._CLASS
+import com.flyjingfish.android_aop_plugin.utils.Utils.AOP_CONFIG_END_NAME
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
@@ -41,10 +43,6 @@ class CompileAndroidAopTask(
 ) {
 
 
-    private companion object {
-        private const val END_NAME = "\$\$AndroidAopClass.class"
-        private const val _CLASS = Utils._CLASS
-    }
     lateinit var logger: Logger
     fun taskAction() {
         logger = project.logger
@@ -70,13 +68,11 @@ class CompileAndroidAopTask(
         fun processFile(file : File,directory:File,directoryPath:String){
             if (file.isFile) {
 //                    logger.error("file.name="+file.absolutePath)
-                if (file.name.endsWith(END_NAME)) {
+                if (file.name.endsWith(AOP_CONFIG_END_NAME)) {
                     FileInputStream(file).use { inputs ->
                         val classReader = ClassReader(inputs.readAllBytes())
                         classReader.accept(
-                            SearchAOPConfigVisitor(
-                                logger
-                            ), ClassReader.EXPAND_FRAMES)
+                            SearchAOPConfigVisitor(), ClassReader.EXPAND_FRAMES)
                     }
                 }else if (file.absolutePath.endsWith(_CLASS)){
                     val className = file.absolutePath.replace("$directoryPath/","")
@@ -124,13 +120,11 @@ class CompileAndroidAopTask(
                         WovenInfoUtils.addClassName(entryName)
                     }
 //                    logger.error("entryName="+entryName)
-                    if (entryName.endsWith(END_NAME)) {
+                    if (entryName.endsWith(AOP_CONFIG_END_NAME)) {
                         jarFile.getInputStream(jarEntry).use { inputs ->
                             val classReader = ClassReader(inputs.readAllBytes())
                             classReader.accept(
-                                SearchAOPConfigVisitor(
-                                    logger
-                                ), ClassReader.EXPAND_FRAMES)
+                                SearchAOPConfigVisitor(), ClassReader.EXPAND_FRAMES)
                         }
                     }else if (entryName.endsWith(_CLASS)){
                         if (AndroidAopConfig.verifyLeafExtends && !entryName.startsWith("kotlinx/") && !entryName.startsWith("kotlin/")){

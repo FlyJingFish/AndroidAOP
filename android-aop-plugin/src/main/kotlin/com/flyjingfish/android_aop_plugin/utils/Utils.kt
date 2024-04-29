@@ -20,6 +20,11 @@ object Utils {
     const val corePackage = "com.flyjingfish.android_aop_core."
     const val JoinAnnoCutUtils = "${annotationPackage}utils.JoinAnnoCutUtils"
     const val _CLASS = ".class"
+    const val AOP_CONFIG_END_NAME = "\$\$AndroidAopClass.class"
+    private val JAR_SIGNATURE_EXTENSIONS = setOf("SF", "RSA", "DSA", "EC")
+    fun isJarSignatureRelatedFiles(name: String): Boolean {
+        return name.startsWith("META-INF/") && name.substringAfterLast('.') in JAR_SIGNATURE_EXTENSIONS
+    }
     fun dotToSlash(str: String): String {
         return str.replace(".", "/")
     }
