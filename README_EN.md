@@ -22,10 +22,13 @@
 
 6. This library supports coroutine functions whose pointcut methods are suspend-modified.
 
-7. This library supports generating Json files of all cut-point information to facilitate an overview of all cut-point locations [Configure here](https://github.com/FlyJingFish/AndroidAOP#%E5%9B%9B%E5%9C%A8-app-%E7%9A%84buildgradle%E6%B7%BB%E5%8A%A0-androidaopconfig-%E9%85%8D%E7%BD%AE%E9%A1%B9%E6%AD%A4%E6%AD%A5%E4%B8%BA%E5%8F%AF%E9%80%89%E9%85%8D%E7%BD%AE%E9%A1%B9)
+7. This library supports generating Json files of all pointcut information to facilitate an overview of all pointcut locations [Configure here](#%E5%9B%9B%E5%9C%A8-app-%E7%9A%84buildgradle%E6% B7%BB%E5%8A%A0-androidaopconfig-%E9%85%8D%E7%BD%AE%E9%A1%B9%E6%AD%A4%E6%AD%A5%E4%B8%BA%E5 %8F%AF%E9%80%89%E9%85%8D%E7%BD%AE%E9%A1%B9)
 
-**8. This library is not implemented based on AspectJ. The amount of woven code is very small and the intrusion is extremely low**
+**8. This library supports debug rapid development mode, allowing you to package at almost the same speed**
 
+**9. This library is pure static weaving into AOP code**
+
+**10. This library is not implemented based on AspectJ. The amount of woven code is very small and the intrusion is extremely low**
 
 #### [Click here to download apk, or scan the QR code below to download](https://github.com/FlyJingFish/AndroidAOP/blob/master/apk/release/app-release.apk?raw=true)
 
