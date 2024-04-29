@@ -4,8 +4,6 @@ import com.flyjingfish.android_aop_plugin.beans.ClassMethodRecord
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.TmpFile
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
-import com.flyjingfish.android_aop_plugin.scanner_visitor.MethodReplaceInvokeVisitor
-import com.flyjingfish.android_aop_plugin.scanner_visitor.ReplaceBaseClassVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import com.flyjingfish.android_aop_plugin.utils.AopTaskUtils
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
@@ -15,15 +13,11 @@ import com.flyjingfish.android_aop_plugin.utils.Utils._CLASS
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
-import org.objectweb.asm.ClassReader
-import org.objectweb.asm.ClassWriter
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
-import java.util.jar.JarEntry
-import java.util.jar.JarOutputStream
 import kotlin.system.measureTimeMillis
 
 class CompileAndroidAopTask(
