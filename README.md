@@ -217,10 +217,10 @@ androidAop.debugMode=true //设置为 true 默认走您项目当前的打包方�
 - 3、在**根目录**的 `gradle.properties` 添加如下设置
 
 ```
-androidAop.debugMode.variantOnlyDebug = true //默认为true
+androidAop.debugMode.variantOnlyDebug = true //默认不写这项就是true
 ```
 
-**⚠️⚠️⚠️请注意设置为 true 时 release 包会忽略 `androidAop.debugMode = true` 的设置自动走全量打包方式，设为 false 时则没有上述效果**
+**请注意设置为 true 时 release 包会忽略 `androidAop.debugMode = true` 的设置自动走全量打包方式，设为 false 时则没有这种效果**
 
 
 ### 本库内置了一些功能注解可供你直接使用
