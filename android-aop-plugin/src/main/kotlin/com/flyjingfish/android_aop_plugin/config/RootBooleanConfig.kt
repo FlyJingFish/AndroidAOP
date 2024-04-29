@@ -11,7 +11,7 @@ enum class RootBooleanConfig(
     stage: Stage
 ) : Option<Boolean> {
     REFLECT_INVOKE_METHOD("androidAop.reflectInvokeMethod", false, ApiStage.Stable),
-    ONLY_DEBUG("androidAop.debugMode.variantOnlyDebug", false, ApiStage.Stable),
+    ONLY_DEBUG("androidAop.debugMode.variantOnlyDebug", true, ApiStage.Stable),
     DEBUG_MODE("androidAop.debugMode", false, ApiStage.Stable);
 
     override val status = stage.status

@@ -9,9 +9,9 @@ abstract class BasePlugin :Plugin<Project> {
     private var debugMode = false
     private var onlyDebug = false
     private fun init(project: Project){
-        val reflectInvokeMethodStr = project.properties[RootBooleanConfig.REFLECT_INVOKE_METHOD.propertyName]?:"false"
-        val debugModeStr = project.properties[RootBooleanConfig.DEBUG_MODE.propertyName]?:"false"
-        val onlyModeStr = project.properties[RootBooleanConfig.ONLY_DEBUG.propertyName]?:"false"
+        val reflectInvokeMethodStr = project.properties[RootBooleanConfig.REFLECT_INVOKE_METHOD.propertyName]?:"${RootBooleanConfig.REFLECT_INVOKE_METHOD.defaultValue}"
+        val debugModeStr = project.properties[RootBooleanConfig.DEBUG_MODE.propertyName]?:"${RootBooleanConfig.DEBUG_MODE.defaultValue}"
+        val onlyModeStr = project.properties[RootBooleanConfig.ONLY_DEBUG.propertyName]?:"${RootBooleanConfig.ONLY_DEBUG.defaultValue}"
         debugMode = RootBooleanConfig.DEBUG_MODE.parse(debugModeStr)
         reflectInvokeMethod = RootBooleanConfig.REFLECT_INVOKE_METHOD.parse(reflectInvokeMethodStr)
         onlyDebug =RootBooleanConfig.ONLY_DEBUG.parse(onlyModeStr)
