@@ -58,9 +58,6 @@ object CompilePlugin: BasePlugin() {
                 }
             val variantName = variant.name
             val buildTypeName = variant.buildType.name
-            if (!isApp && isDebugMode(buildTypeName,variantName)) {
-                logger.warn("Plugin ['android.aop'] 应该被用于 com.android.application 所在 module 下,打正式包时请注意将 androidAop.debugMode 设置为 false")
-            }
 //            println("CompilePlugin=variant=$variantName,output.name=${variant.buildType.name},isDebug=${isDebugMode(buildTypeName,variantName)}")
             javaCompile.doLast{
                 val androidAopConfig : AndroidAopConfig = if (isApp){
@@ -80,7 +77,12 @@ object CompilePlugin: BasePlugin() {
                     InitConfig.initCutInfo(project)
                 }
                 if (androidAopConfig.enabled && isDebugMode(buildTypeName,variantName)){
-
+                    val hint = "AndroidAOP提示：打正式包时请注意通过设置 androidAop.debugMode 或 androidAop.debugMode.variantOnlyDebug 关闭debug模式"
+                    if (buildTypeName == "release"){
+                        logger.error(hint)
+                    }else{
+                        logger.warn(hint)
+                    }
                     val localInput = mutableListOf<File>()
                     val javaPath = File(javaCompile.destinationDirectory.asFile.orNull.toString())
                     if (javaPath.exists()){
