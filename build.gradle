@@ -56,7 +56,7 @@ def getAppVersionCode() {
     return Integer.parseInt(updateVersionString)
 }
 
-task bumpVersion() {
+task aabumpVersion() {
     doLast {
         def versionName = getAppVersionCode() + 1
         def str = versionName.toString()
