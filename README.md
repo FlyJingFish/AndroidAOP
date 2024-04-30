@@ -186,7 +186,7 @@ android {
 
 **⚠️⚠️⚠️设置完了 include 和 exclude 所有切面只在您设置规则之内才有效，麻烦记住自己的设置！**
 
-**另外设置此处之后由于 Android Studio 可能有缓存，建议先 clean 再继续开发（设置下边的第五步尤其注意 clean ）**
+**另外设置此处之后由于 Android Studio 可能有缓存，建议先 clean 再继续开发**
 
 
 - 2、有兴趣的可以切换是否使用反射执行切面方法，在**根目录**的 `gradle.properties` 添加如下设置

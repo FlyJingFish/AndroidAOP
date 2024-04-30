@@ -183,9 +183,7 @@ android {
 
 **⚠️⚠️⚠️After setting include and exclude, all aspects are only valid within the rules you set. Please remember your settings! **
 
-**In addition, since Android Studio may have cache after setting this, it is recommended to clean and then sync the project before continuing development (pay special attention to this step in the fifth step below)**
-
-**⚠️⚠️⚠️If you configure the following [Step 5](#%E4%BA%94%E5%BC%80%E5%8F%91%E4%B8%AD%E5%8F%AF%E8% AE%BE%E7%BD%AE%E4%BB%A3%E7%A0%81%E7%BB%87%E5%85%A5%E6%96%B9%E5%BC%8F%E6%AD% A4%E6%AD%A5%E4%B8%BA%E5%8F%AF%E9%80%89%E9%85%8D%E7%BD%AE%E9%A1%B9), you must sync first after cleaning It can be applied to other modules**
+**In addition, since Android Studio may have cache after setting this, it is recommended to clean it before continuing development**
 
 - 2. If you are interested, you can switch whether to use reflection to execute aspect methods and add the following settings in `gradle.properties` in the **root directory**
 
@@ -217,8 +215,7 @@ androidAop.debugMode=true //Set to true to use the current packaging method of y
 ```
 androidAop.debugMode.variantOnlyDebug = true //If this is not written by default, it is true
 ```
-
-**Please note that when set to true, the release package will ignore the setting of `androidAop.debugMode = true` and automatically adopt the full packaging method. When set to false, there will be no such effect**
+**If this is not written, the default is true**. Please note that when set to true, the release package will ignore the setting of `androidAop.debugMode = true` and automatically adopt the full packaging method. When set to false, there will be no such effect.
 
 ### This library has some built-in functional annotations for you to use directly.
 
