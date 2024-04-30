@@ -1,0 +1,34 @@
+[versions]
+sdkVersion = "31"
+minSdkVersion = "21"
+ksp = "1.8.0-1.0.9"
+kotlinpoet_version = "1.16.0"
+javapoet_version = "1.13.0"
+gradle_version = "7.4.1"
+javassist_version = "3.30.2-GA"
+asm_version = "9.6"
+gson = "2.10.1"
+core-ktx = "1.6.1"
+junit = "4.13.2"
+appcompat = "1.6.1"
+material = "1.6.0"
+leakcanary_version = "2.7"
+bcprov-jdk15on-version = "1.68"
+rxpermissions = "0.12"
+rxjava = "3.0.4"
+[libraries]
+kotlinpoet = { group = "com.squareup", name = "kotlinpoet", version.ref = "kotlinpoet_version" }
+javapoet = { group = "com.squareup", name = "javapoet", version.ref = "javapoet_version" }
+ksp-api = { group = "com.google.devtools.ksp", name = "symbol-processing-api", version.ref = "ksp" }
+javassist = { group = "org.javassist", name = "javassist", version.ref = "javassist_version" }
+asm-lib = { group = "org.ow2.asm", name = "asm", version.ref = "asm_version" }
+asm-commons = { group = "org.ow2.asm", name = "asm-commons", version.ref = "asm_version" }
+gradle = { group = "com.android.tools.build", name = "gradle", version.ref = "gradle_version" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+leakcanary = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanary_version" }
+bcprov-jdk15on = { group = "org.bouncycastle", name = "bcprov-jdk15on", version.ref = "bcprov-jdk15on-version" }
+rxpermissions = { group = "com.github.tbruyelle", name = "rxpermissions", version.ref = "rxpermissions" }
+rxjava = { group = "io.reactivex.rxjava3", name = "rxjava", version.ref = "rxjava" }

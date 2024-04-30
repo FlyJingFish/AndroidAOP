@@ -23,24 +23,24 @@ dependencyResolutionManagement {
         maven { url 'https://jitpack.io' }
     }
 
-    versionCatalogs {
-        libs {
-            version('ksp', '1.8.0-1.0.9')
-            library('kotlinpoet', 'com.squareup:kotlinpoet:1.16.0')
-            library('javapoet', 'com.squareup:javapoet:1.13.0')
-            library('ksp-api', 'com.google.devtools.ksp', 'symbol-processing-api').versionRef('ksp')
-            library('autoservice.annotations', 'com.google.auto.service:auto-service-annotations:1.0.1')
-            library('ksp-autoservice', 'dev.zacsweers.autoservice:auto-service-ksp:1.0.0')
-            library('javassist', 'org.javassist:javassist:3.30.2-GA')
-            library('asm-lib', 'org.ow2.asm:asm:9.6')
-            library('asm-commons', 'org.ow2.asm:asm-commons:9.6')
-            library('gradle', 'com.android.tools.build:gradle:7.4.1')
-            library('gson', 'com.google.code.gson:gson:2.10.1')
-            library('core-ktx', 'androidx.core:core-ktx:1.6.1')
-            library('appcompat', 'androidx.appcompat:appcompat:1.6.1')
-            library('material', 'com.google.android.material:material:1.6.0')
-        }
-    }
+//    versionCatalogs {
+//        libs {
+//            version('ksp', '1.8.0-1.0.9')
+//            library('kotlinpoet', 'com.squareup:kotlinpoet:1.16.0')
+//            library('javapoet', 'com.squareup:javapoet:1.13.0')
+//            library('ksp-api', 'com.google.devtools.ksp', 'symbol-processing-api').versionRef('ksp')
+//            library('autoservice.annotations', 'com.google.auto.service:auto-service-annotations:1.0.1')
+//            library('ksp-autoservice', 'dev.zacsweers.autoservice:auto-service-ksp:1.0.0')
+//            library('javassist', 'org.javassist:javassist:3.30.2-GA')
+//            library('asm-lib', 'org.ow2.asm:asm:9.6')
+//            library('asm-commons', 'org.ow2.asm:asm-commons:9.6')
+//            library('gradle', 'com.android.tools.build:gradle:7.4.1')
+//            library('gson', 'com.google.code.gson:gson:2.10.1')
+//            library('core-ktx', 'androidx.core:core-ktx:1.6.1')
+//            library('appcompat', 'androidx.appcompat:appcompat:1.6.1')
+//            library('material', 'com.google.android.material:material:1.6.0')
+//        }
+//    }
 }
 rootProject.name = "AndroidAOP"
 include ':app'
