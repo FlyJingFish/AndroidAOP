@@ -222,7 +222,7 @@ androidAop.debugMode.variantOnlyDebug = true //默认不写这项就是true
 ```
 **这项不写默认就是true**，请注意设置为 true 时 release 包会忽略 `androidAop.debugMode = true` 的设置自动走全量打包方式，设为 false 时则没有这种效果
 
-**💡此项功能是从1.6.6版本添加的，并默认开启，因此release包无需手动关闭 `androidAop.debugMode` **
+**💡此项功能是从1.6.6版本添加的，并默认开启，因此release包无需手动关闭 `androidAop.debugMode`**
 
 
 ### 本库内置了一些功能注解可供你直接使用
