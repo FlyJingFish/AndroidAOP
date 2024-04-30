@@ -241,7 +241,7 @@ androidAop.debugMode.variantOnlyDebug = true //默认不写这项就是true
 | @CheckNetwork    |                tag = 自定义标记<br>toastText = 无网络时toast提示<br>invokeListener = 是否接管检查网络逻辑                |                            检查网络是否可用，加入此注解可使你的方法在有网络才可进去                             |
 | @CustomIntercept |                                     value = 你自定义加的一个字符串数组的flag                                      |              自定义拦截，配合 AndroidAop.setOnCustomInterceptListener 使用，属于万金油              |
 
-[上述注解使用示例都在这](https://github.com/FlyJingFish/AndroidAOP/blob/master/app/src/main/java/com/flyjingfish/androidaop/MainActivity.kt#L128),[还有这](https://github.com/FlyJingFish/AndroidAOP/blob/master/app/src/main/java/com/flyjingfish/androidaop/SecondActivity.java#L64)
+[上述注解使用示例都在这](https://github.com/FlyJingFish/AndroidAOP/blob/master/app/src/main/java/com/flyjingfish/androidaop/MainActivity.kt#L128),[还有这](https://github.com/FlyJingFish/AndroidAOP/blob/master/app/src/main/java/com/flyjingfish/androidaop/SecondActivity.java#L64),[还有这](https://github.com/FlyJingFish/AndroidAOP/blob/master/app/src/main/java/com/flyjingfish/androidaop/MyApp.java)
 
 - @OnLifecycle
 
@@ -277,14 +277,27 @@ AndroidAop.INSTANCE.setOnPermissionsInterceptListener(new OnPermissionsIntercept
     @SuppressLint("CheckResult")
     @Override
     public void requestPermission(@NonNull ProceedJoinPoint joinPoint, @NonNull Permission permission, @NonNull OnRequestPermissionListener call) {
-        Object target =  joinPoint.getTarget();
+        Object target = joinPoint.getTarget();
+        String[] permissions = permission.value();
         if (target instanceof FragmentActivity){
             RxPermissions rxPermissions = new RxPermissions((FragmentActivity) target);
-            rxPermissions.request(permission.value()).subscribe(call::onCall);
+            rxPermissions.requestEach(permissions)
+                .subscribe(permissionResult -> {
+                    call.onCall(permissionResult.granted);
+                    if (!permissionResult.granted && target instanceof PermissionRejectListener) {
+                        ((PermissionRejectListener) target).onReject(permission,permissionResult);
+                    }
+                });
         }else if (target instanceof Fragment){
             RxPermissions rxPermissions = new RxPermissions((Fragment) target);
-            rxPermissions.request(permission.value()).subscribe(call::onCall);
-        }else{
+            rxPermissions.requestEach(permissions)
+                .subscribe(permissionResult -> {
+                    call.onCall(permissionResult.granted);
+                    if (!permissionResult.granted && target instanceof PermissionRejectListener) {
+                        ((PermissionRejectListener) target).onReject(permission,permissionResult);
+                    }
+                });
+        }else {
             // TODO: target 不是 FragmentActivity 或 Fragment ，说明注解所在方法不在其中，请自行处理这种情况
             // 建议：切点方法第一个参数可以设置为 FragmentActivity 或 Fragment ，然后 joinPoint.args[0] 就可以拿到
         }
