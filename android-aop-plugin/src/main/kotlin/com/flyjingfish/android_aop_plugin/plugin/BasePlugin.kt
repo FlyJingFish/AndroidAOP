@@ -12,9 +12,9 @@ abstract class BasePlugin :Plugin<Project> {
         val reflectInvokeMethodStr = project.properties[RootBooleanConfig.REFLECT_INVOKE_METHOD.propertyName]?:"${RootBooleanConfig.REFLECT_INVOKE_METHOD.defaultValue}"
         val debugModeStr = project.properties[RootBooleanConfig.DEBUG_MODE.propertyName]?:"${RootBooleanConfig.DEBUG_MODE.defaultValue}"
         val onlyModeStr = project.properties[RootBooleanConfig.ONLY_DEBUG.propertyName]?:"${RootBooleanConfig.ONLY_DEBUG.defaultValue}"
-        debugMode = debugModeStr.toString() == "${RootBooleanConfig.DEBUG_MODE.defaultValue}"
-        reflectInvokeMethod = reflectInvokeMethodStr.toString() == "${RootBooleanConfig.REFLECT_INVOKE_METHOD.defaultValue}"
-        onlyDebug = onlyModeStr.toString() == "${RootBooleanConfig.ONLY_DEBUG.defaultValue}"
+        debugMode = debugModeStr.toString() == "true"
+        reflectInvokeMethod = reflectInvokeMethodStr.toString() == "true"
+        onlyDebug = onlyModeStr.toString() == "true"
     }
 
     override fun apply(project: Project) {
