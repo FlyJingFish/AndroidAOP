@@ -217,6 +217,8 @@ androidAop.debugMode.variantOnlyDebug = true //If this is not written by default
 ```
 **If this is not written, the default is true**. Please note that when set to true, the release package will ignore the setting of `androidAop.debugMode = true` and automatically adopt the full packaging method. When set to false, there will be no such effect.
 
+**💡This feature was added from version 1.6.6 and is enabled by default, so the release package does not need to manually turn off `androidAop.debugMode` **
+
 ### This library has some built-in functional annotations for you to use directly.
 
 | Annotation name  |                                                                            Parameter description                                                                            |                                                                          Function description                                                                           |
