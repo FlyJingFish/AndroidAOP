@@ -3,6 +3,9 @@ package com.flyjingfish.android_aop_annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
+/**
+ * 此类持有执行方法的反射信息，且进行过缓存了，可放心使用
+ */
 public final class AopMethod {
     private final Method targetMethod;
 

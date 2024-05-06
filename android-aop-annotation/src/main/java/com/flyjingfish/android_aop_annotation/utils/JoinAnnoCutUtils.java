@@ -14,15 +14,19 @@ final class JoinAnnoCutUtils {
     static {
         registerCreators();
         registerMatchCreators();
-        try {
-            Class<?> initClass = Class.forName("com.flyjingfish.android_aop_annotation.utils.DebugAndroidAopInit");
-            Method method = initClass.getDeclaredMethod("init");
-            method.invoke(null);
-        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
-                 IllegalAccessException ignored) {
+        registerDebugAndroidAopInfo();
+    }
+    private static void registerDebugAndroidAopInfo() {
+        if (mAnnoCutBeanMap.isEmpty()){
+            try {
+                Class<?> initClass = Class.forName("com.flyjingfish.android_aop_annotation.utils.DebugAndroidAopInit");
+                Method method = initClass.getDeclaredMethod("init");
+                method.invoke(null);
+            } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
+                     IllegalAccessException ignored) {
+            }
         }
     }
-
     private static void registerMatchCreators() {
     }
 
