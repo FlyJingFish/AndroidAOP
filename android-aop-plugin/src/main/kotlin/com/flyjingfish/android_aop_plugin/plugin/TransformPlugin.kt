@@ -4,7 +4,7 @@ import com.android.build.api.artifact.ScopedArtifact
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.api.variant.ScopedArtifacts
 import com.android.build.gradle.AppPlugin
-import com.flyjingfish.android_aop_plugin.AssembleAndroidAopTask
+import com.flyjingfish.android_aop_plugin.tasks.AssembleAndroidAopTask
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig

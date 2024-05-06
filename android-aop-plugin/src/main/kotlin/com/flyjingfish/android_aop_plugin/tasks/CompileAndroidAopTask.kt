@@ -1,4 +1,4 @@
-package com.flyjingfish.android_aop_plugin
+package com.flyjingfish.android_aop_plugin.tasks
 
 import com.flyjingfish.android_aop_plugin.beans.ClassMethodRecord
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord

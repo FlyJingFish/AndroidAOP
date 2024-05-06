@@ -5,7 +5,7 @@ import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.DynamicFeaturePlugin
 import com.android.build.gradle.LibraryExtension
-import com.flyjingfish.android_aop_plugin.CompileAndroidAopTask
+import com.flyjingfish.android_aop_plugin.tasks.CompileAndroidAopTask
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.utils.AndroidConfig
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
