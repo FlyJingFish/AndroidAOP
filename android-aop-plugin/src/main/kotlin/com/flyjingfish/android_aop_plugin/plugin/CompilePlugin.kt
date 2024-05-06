@@ -26,8 +26,9 @@ object CompilePlugin: BasePlugin() {
 
 
         val isDynamicLibrary = project.plugins.hasPlugin(DynamicFeaturePlugin::class.java)
+        val androidObject: Any = project.extensions.findByName(ANDROID_EXTENSION_NAME) ?: return
 
-        val android = project.extensions.findByName(ANDROID_EXTENSION_NAME) as BaseExtension
+        val android = androidObject as BaseExtension
         val variants = if (isApp or isDynamicLibrary) {
             (android as AppExtension).applicationVariants
         } else {
