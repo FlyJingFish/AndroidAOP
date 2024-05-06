@@ -273,12 +273,8 @@ object Utils {
                     if (!parent.exists()) {
                         parent.mkdirs()
                     }
-                    FileOutputStream(file).use { fos ->
-                        val buffer = ByteArray(1024)
-                        var len: Int
-                        while (zis.read(buffer).also { len = it } > 0) {
-                            fos.write(buffer, 0, len)
-                        }
+                    FileOutputStream(file).use {
+                        zis.copyTo(it)
                     }
                 } else {
                     File(filePath).mkdirs()
