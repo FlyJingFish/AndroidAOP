@@ -212,7 +212,7 @@ apply plugin: "android.aop"
 
 **方式二：**
 
-请为**所有子 module 模块**设置，例如：
+手动为**所有子 module 模块**设置，例如：
 
 ```gradle
 plugins {
