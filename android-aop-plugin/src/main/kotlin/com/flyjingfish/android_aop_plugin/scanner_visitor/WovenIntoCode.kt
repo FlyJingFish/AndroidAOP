@@ -37,6 +37,22 @@ object WovenIntoCode {
 
         val cr = ClassReader(inputStreamBytes)
         val cw = ClassWriter(cr, 0)
+        fun visitMethod4Record(access: Int,
+                        name: String,
+                        descriptor: String,
+                        signature: String?,
+                        exceptions: Array<String?>?,
+                        classNameMd5:String ?){
+            methodRecordHashMap.forEach { (_: String, value: MethodRecord) ->
+                val oldMethodName = value.methodName
+                val oldDescriptor = value.descriptor
+                val newMethodName = "$oldMethodName$$$classNameMd5$METHOD_SUFFIX"
+                if (newMethodName == name && oldDescriptor == descriptor){
+                    wovenRecord.add(value)
+                    InitConfig.putCutInfo(value)
+                }
+            }
+        }
         if (hasReplace){
             cr.accept(object :MethodReplaceInvokeVisitor(cw){
                 var classNameMd5:String ?= null
@@ -58,15 +74,7 @@ object WovenIntoCode {
                     signature: String?,
                     exceptions: Array<String?>?
                 ): MethodVisitor? {
-                    methodRecordHashMap.forEach { (_: String, value: MethodRecord) ->
-                        val oldMethodName = value.methodName
-                        val oldDescriptor = value.descriptor
-                        val newMethodName = "$oldMethodName$$$classNameMd5$METHOD_SUFFIX"
-                        if (newMethodName == name && oldDescriptor == descriptor){
-                            wovenRecord.add(value)
-                            InitConfig.putCutInfo(value)
-                        }
-                    }
+                    visitMethod4Record(access, name, descriptor, signature, exceptions, classNameMd5)
                     return super.visitMethod(access, name, descriptor, signature, exceptions)
                 }
             }, 0)
@@ -91,14 +99,7 @@ object WovenIntoCode {
                     signature: String?,
                     exceptions: Array<String?>?
                 ): MethodVisitor? {
-                    methodRecordHashMap.forEach { (_: String, value: MethodRecord) ->
-                        val oldMethodName = value.methodName
-                        val oldDescriptor = value.descriptor
-                        val newMethodName = "$oldMethodName$$$classNameMd5$METHOD_SUFFIX"
-                        if (newMethodName == name && oldDescriptor == descriptor){
-                            wovenRecord.add(value)
-                        }
-                    }
+                    visitMethod4Record(access, name, descriptor, signature, exceptions, classNameMd5)
                     return super.visitMethod(access, name, descriptor, signature, exceptions)
                 }
                                                            }, 0)
