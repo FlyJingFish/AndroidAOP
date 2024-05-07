@@ -447,21 +447,23 @@ object WovenInfoUtils {
     }
     private const val CHECK_CLASS_HINT = "AndroidAOP提示：由于您切换了debugMode模式，请clean项目。"
     fun checkNoneInvokeClass(className:String){
-        if (!ClassFileUtils.reflectInvokeMethod && !allClassName.contains(className)){
+        if (!ClassFileUtils.reflectInvokeMethod && !allClassName.contains(className) && !ClassFileUtils.debugMode){
             throw RuntimeException(CHECK_CLASS_HINT)
         }
     }
 
     fun checkHasInvokeClass(className:String){
-        if (!ClassFileUtils.reflectInvokeMethod && allClassName.contains(className)){
+        if (!ClassFileUtils.reflectInvokeMethod && allClassName.contains(className) && !ClassFileUtils.debugMode){
             throw RuntimeException(CHECK_CLASS_HINT)
         }
     }
 
     fun checkHasInvokeJson(project: Project,variant:String){
-        val cacheJsonFile = File(Utils.invokeJsonFile(project,variant))
-        if (cacheJsonFile.exists()){
-            throw RuntimeException(CHECK_CLASS_HINT)
+        if (!ClassFileUtils.debugMode){
+            val cacheJsonFile = File(Utils.invokeJsonFile(project,variant))
+            if (cacheJsonFile.exists()){
+                throw RuntimeException(CHECK_CLASS_HINT)
+            }
         }
     }
 }

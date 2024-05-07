@@ -19,6 +19,7 @@ import java.io.FileOutputStream
 
 object ClassFileUtils {
     var reflectInvokeMethod = false
+    var debugMode = false
     lateinit var outputDir:File
     private val invokeClasses = mutableListOf<InvokeClass>()
     private const val INVOKE_METHOD = "invoke"

@@ -78,6 +78,7 @@ object CompilePlugin: BasePlugin() {
                     InitConfig.initCutInfo(project)
                 }
                 if (androidAopConfig.enabled && isDebugMode(buildTypeName,variantName)){
+                    ClassFileUtils.debugMode = true
                     val hint = "AndroidAOP提示：打正式包时请注意通过设置 androidAop.debugMode 或 androidAop.debugMode.variantOnlyDebug 关闭debug模式"
                     if (buildTypeName == "release"){
                         logger.error(hint)
