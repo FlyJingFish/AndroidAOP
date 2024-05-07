@@ -49,7 +49,6 @@ object WovenIntoCode {
                 val newMethodName = "$oldMethodName$$$classNameMd5$METHOD_SUFFIX"
                 if (newMethodName == name && oldDescriptor == descriptor){
                     wovenRecord.add(value)
-                    InitConfig.putCutInfo(value)
                 }
             }
         }
