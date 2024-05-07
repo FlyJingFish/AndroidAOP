@@ -199,14 +199,29 @@ androidAop.reflectInvokeMethod = false //设置为 true 反射执行切面方法
 
 #### 五、开发中可设置代码织入方式（此步为可选配置项，只为在开发过程中提高打包速度，版本最低1.6.6）
 
-- 1、请为**所有子 module 模块**设置上述[步骤一](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB)，例如：
+- 1、为**所有的子module**也依赖插件，请按照上述[步骤一的方式二配置项目](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB)，然后以下方式二选一
+
+**方式一（推荐）：**
+
+在**根目录**的`build.gradle` 添加如下设置
+
+```gradle
+apply plugin: "android.aop"
+```
+**💡💡💡这个方式自动为所有的 module 应用 debugMode**
+
+**方式二：**
+
+手动为**所有子 module 模块**设置，例如：
+
 ```gradle
 plugins {
     ...
     id 'android.aop'//最好放在最后一行
 }
 ```
-**如果你不设置下边的`androidAop.debugMode=true`这个是不用配置的**
+
+**💡💡💡这个方式可以只为你加过 module 应用 debugMode**
 
 - 2、在**根目录**的 `gradle.properties` 添加如下设置
 
