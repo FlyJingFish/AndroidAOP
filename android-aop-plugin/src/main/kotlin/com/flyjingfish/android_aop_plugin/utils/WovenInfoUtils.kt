@@ -458,6 +458,10 @@ object WovenInfoUtils {
         }
     }
 
+    fun containsInvokeClass(className:String):Boolean{
+        return allClassName.contains(className)
+    }
+
     fun checkHasInvokeJson(project: Project,variant:String){
         if (!ClassFileUtils.debugMode){
             val cacheJsonFile = File(Utils.invokeJsonFile(project,variant))

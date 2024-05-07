@@ -226,10 +226,10 @@ object WovenIntoCode {
             val oldDescriptor = value.descriptor
             val cutClassName = value.cutClassName
             val invokeClassName = "${targetClassName}\$Invoke${Utils.computeMD5(targetMethodName+oldDescriptor)}"
-            if (value in wovenRecord){
-                WovenInfoUtils.checkNoneInvokeClass(invokeClassName)
-                return@forEach
-            }
+//            if (value in wovenRecord){
+////                WovenInfoUtils.checkNoneInvokeClass(invokeClassName)
+//                return@forEach
+//            }
             try {
                 val ctMethod =
                     getCtMethod(ctClass, oldMethodName, oldDescriptor)

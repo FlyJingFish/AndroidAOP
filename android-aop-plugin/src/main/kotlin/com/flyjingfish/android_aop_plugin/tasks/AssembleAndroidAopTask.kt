@@ -376,9 +376,10 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     val relativePath = ClassFileUtils.outputDir.toURI().relativize(file.toURI()).path
                     val className = relativePath.replace(File.separatorChar, '/')
                     val invokeClassName = Utils.slashToDot(className).replace(_CLASS,"")
-                    WovenInfoUtils.checkHasInvokeClass(invokeClassName)
-                    file.inputStream().use {
-                        jarOutput.saveEntry(className,it)
+                    if (!WovenInfoUtils.containsInvokeClass(invokeClassName)){
+                        file.inputStream().use {
+                            jarOutput.saveEntry(className,it)
+                        }
                     }
                 }
             }
