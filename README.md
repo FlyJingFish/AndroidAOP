@@ -358,7 +358,7 @@ fun toSecondActivity(){
     startActivity(Intent(this,SecondActivity::class.java))
 }
 ```
-另外内置 Toast 可以让你接管
+另外内置 Toast 可以让你接管（意思不是说你自己写的 Toast 会走这个回调，而是这个库使用 Toast 时会回调这里）
 ```java
 AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
     @Override
