@@ -55,19 +55,7 @@ Minimum SDK version: minSdkVersion >= 21
 
 #### 1. Introduce the plug-in, choose one of the two methods below (required)
 
-##### Method 1: ```plugins``` method
-
-Add directly to ```build.gradle``` of **app**
-
-```gradle
-//Required items 👇
-plugins {
-     ...
-     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.7.1"
-}
-```
-
-##### Method 2: ```apply``` method
+##### Method 1: ```apply``` method
 
 1. Depend on the plug-in in ```build.gradle``` in the **project root directory**
 
@@ -76,8 +64,8 @@ new version
 ```gradle
 
 plugins {
-    //必须项 👇
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.5.1" apply false
+    //Required items  👇
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.5.1" apply true
 }
 ```
 
@@ -91,8 +79,21 @@ buildscript {
          classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.7.1'
      }
 }
+apply plugin: "android.aop"
 ```
 </details>
+
+##### Method 2: ```plugins``` method
+
+Add directly to ```build.gradle``` of **app**
+
+```gradle
+//Required items 👇
+plugins {
+     ...
+     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.7.1"
+}
+```
 
 2. Add in ```build.gradle``` of **app**
 
@@ -194,14 +195,25 @@ androidAop.reflectInvokeMethod = false //Set to true to reflect the execution as
 
 #### 5. The code weaving method can be set during development (this step is an optional configuration item)
 
-- **1. Please set the above [Step 1](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6% for all sub-module modules E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4% B8%80%E5%BF%85%E9%A1%BB), for example: **
+- 1. For **all sub-modules** also rely on plug-ins, please follow the above [step 1 method 1 to configure the project](#%E4%B8%80%E5%BC%95%E5%85%A5%E6 %8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA %8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB), then choose one of the following methods
+
+**Method 1 (recommended):**
+
+Configure the project according to the above [step 1 method 1](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B% E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5% BF%85%E9%A1%BB), that’s it. **This method automatically applies debugMode to all modules**
+
+
+**Method 2:**
+
+Please follow the above [Step 1 Method 1 to configure the project](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B %E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5 %BF%85%E9%A1%BB), manually set for **all sub-module modules**, for example:
+
 ```gradle
 plugins {
      ...
      id 'android.aop'//It is best to put it on the last line
 }
 ```
-**If you do not set the `androidAop.debugMode=true` below, there is no need to configure it**
+
+**💡💡💡This method can only apply debugMode to the module you have added**
 - 2. Add the following settings in `gradle.properties` in the **root directory**
 
 ```
