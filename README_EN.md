@@ -198,16 +198,16 @@ androidAop.reflectInvokeMethod = false //Set to true to reflect the execution as
 
 #### 5. The code weaving method can be set during development (this step is an optional configuration item)
 
-- 1. For **all sub-modules** also rely on plug-ins, please follow the above [step 1 method 1 to configure the project](#%E4%B8%80%E5%BC%95%E5%85%A5%E6 %8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA %8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB), then choose one of the following methods
+- 1. For **all sub-modules** also rely on plug-ins, please follow the above [step 1 method 1 to configure the project](#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required), then choose one of the following methods
 
 **Method 1 (recommended):**
 
-Configure the project according to the above [step 1 method 1](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B% E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5% BF%85%E9%A1%BB), that’s it. **This method automatically applies debugMode to all modules**
+Configure the project according to the above [step 1 method 1](#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required), that’s it. **This method automatically applies debugMode to all modules**
 
 
 **Method 2:**
 
-Please follow the above [Step 1 Method 1 to configure the project](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B %E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5 %BF%85%E9%A1%BB), manually set for **all sub-module modules**, for example:
+Please follow the above [Step 1 Method 1 to configure the project](#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required), manually set for **all sub-module modules**, for example:
 
 ```gradle
 plugins {
