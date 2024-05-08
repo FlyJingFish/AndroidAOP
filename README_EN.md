@@ -83,18 +83,6 @@ apply plugin: "android.aop"
 ```
 </details>
 
-##### Method 2: ```plugins``` method
-
-Add directly to ```build.gradle``` of **app**
-
-```gradle
-//Required items 👇
-plugins {
-     ...
-     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.7.1"
-}
-```
-
 2. Add in ```build.gradle``` of **app**
 
 new version
@@ -109,13 +97,27 @@ plugins {
 
 <details>
 <summary><strong>or old version</strong></summary>
-     
+
 ```gradle
 //Required items 👇
 apply plugin: 'android.aop' //It's best to put it on the last line
 ```
 
 </details>
+
+##### Method 2: ```plugins``` method
+
+Add directly to ```build.gradle``` of **app**
+
+```gradle
+//Required items 👇
+plugins {
+     ...
+     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.7.1"
+}
+```
+
+
 
 
 
