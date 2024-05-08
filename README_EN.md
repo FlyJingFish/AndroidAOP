@@ -146,6 +146,10 @@ dependencies {
      //Required items 👇
      implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.7.2'
      implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.7.2'
+     
+     //Required item 👇If you already have this item in your project, you don’t need to add it.
+     implementation 'androidx.appcompat:appcompat:1.3.0' // At least in 1.3.0 and above
+     
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️supports aspects written in Java and Kotlin code
      ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.7.2'
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️only applies to aspects written in Java code
