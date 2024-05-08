@@ -6,6 +6,9 @@ import com.flyjingfish.android_aop_plugin.utils.ClassNameToConversions
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
+import com.flyjingfish.android_aop_plugin.utils.Utils.CONVERSIONS_CLASS
+import com.flyjingfish.android_aop_plugin.utils.Utils.JOIN_POINT_CLASS
+import com.flyjingfish.android_aop_plugin.utils.Utils.KEEP_CLASS
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.printLog
 import javassist.CannotCompileException
@@ -216,9 +219,9 @@ object WovenIntoCode {
         val byteArrayInputStream: InputStream =
             ByteArrayInputStream(cw.toByteArray())
         val ctClass = cp.makeClass(byteArrayInputStream)
-        cp.importPackage("com.flyjingfish.android_aop_annotation.AndroidAopJoinPoint")
-        cp.importPackage("com.flyjingfish.android_aop_annotation.Conversions")
-        cp.importPackage("androidx.annotation.Keep")
+        cp.importPackage(JOIN_POINT_CLASS)
+        cp.importPackage(CONVERSIONS_CLASS)
+        cp.importPackage(KEEP_CLASS)
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
             val targetClassName = ctClass.name
             val oldMethodName = value.methodName
@@ -253,7 +256,7 @@ object WovenIntoCode {
                         AnnotationsAttribute.visibleTag
                     )
                 val annot =
-                    Annotation("androidx.annotation.Keep", constpool)
+                    Annotation(KEEP_CLASS, constpool)
                 annotAttr.addAnnotation(annot)
                 targetMethod.methodInfo.addAttribute(annotAttr)
 
@@ -269,7 +272,7 @@ object WovenIntoCode {
                 if (annotationsAttribute == null){
                     annotationsAttribute = AnnotationsAttribute(constpool, AnnotationsAttribute.visibleTag)
                 }
-                val annotation = Annotation("androidx.annotation.Keep", constpool);
+                val annotation = Annotation(KEEP_CLASS, constpool);
                 annotationsAttribute.addAnnotation(annotation);
                 ctMethod.methodInfo.addAttribute(annotationsAttribute);
 
@@ -280,6 +283,7 @@ object WovenIntoCode {
                 val argsBuffer = StringBuffer()
 
                 val paramsClassNamesBuffer = StringBuffer()
+                val paramsClassesBuffer = StringBuffer()
                 val ctClasses = ctMethod.parameterTypes
                 val returnType = ctMethod.returnType
                 val len = ctClasses.size
@@ -292,6 +296,7 @@ object WovenIntoCode {
                     val name = aClass.name
 
                     paramsClassNamesBuffer.append("\"").append(name).append("\"")
+                    paramsClassesBuffer.append(ClassNameToConversions.string2Class(name))
 
                     val index = i + pos
 
@@ -300,6 +305,7 @@ object WovenIntoCode {
 
                     if (i != len - 1) {
                         paramsClassNamesBuffer.append(",")
+                        paramsClassesBuffer.append(",")
                         argsBuffer.append(",")
                         invokeBuffer.append(",")
                     }
@@ -330,10 +336,12 @@ object WovenIntoCode {
                 val argReflect = if (ClassFileUtils.reflectInvokeMethod) "" else ",new $invokeClassName()"
                 val constructor = "$targetClassName.class,${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\"";
                 val body =
-                    """ {AndroidAopJoinPoint pointCut = new AndroidAopJoinPoint($constructor);"""+
+                    " {AndroidAopJoinPoint pointCut = new AndroidAopJoinPoint($constructor);\n"+
                             (if (cutClassName != null) "        pointCut.setCutMatchClassName(\"$cutClassName\");\n" else "") +
-                            (if (isHasArgs) "        String[] classNames = new String[]{$paramsClassNamesBuffer};\n" else "") +
-                            (if (isHasArgs) "        pointCut.setArgClassNames(classNames);\n" else "") +
+//                            (if (isHasArgs) "        String[] classNames = new String[]{$paramsClassNamesBuffer};\n" else "") +
+//                            (if (isHasArgs) "        pointCut.setArgClassNames(classNames);\n" else "") +
+                            "Class[] classes = new Class[]{$paramsClassesBuffer};\n"+
+                            "pointCut.setArgClasses(classes);\n"+
                             (if (isHasArgs) "        Object[] args = new Object[]{$argsBuffer};\n" else "") +
                             (if (isHasArgs) "        pointCut.setArgs(args$argReflect);\n" else "        pointCut.setArgs(null$argReflect);\n") +
                             "        "+returnStr+";}"

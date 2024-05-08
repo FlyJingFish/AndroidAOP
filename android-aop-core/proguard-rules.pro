@@ -21,18 +21,17 @@
 #-renamesourcefileattribute SourceFile
 
 # AndroidAop必备混淆规则 -----start-----
+#-keep class * {
+#    @androidx.annotation.Keep <fields>;
+#}
+
 -keep class * {
-    @androidx.annotation.Keep <fields>;
+    @com.flyjingfish.android_aop_annotation.aop_anno.AopKeep <fields>;
+}
+-keep class * {
+    @com.flyjingfish.android_aop_annotation.aop_anno.AopKeep <methods>;
 }
 -keep class com.flyjingfish.android_aop_annotation.utils.DebugAndroidAopInit{
    *;
 }
-#-keepnames class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut
-#-keepnames class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod
-#-keep class * implements com.flyjingfish.android_aop_annotation.base.BasePointCut{
-#    public <init>();
-#}
-#-keep class * implements com.flyjingfish.android_aop_annotation.base.MatchClassMethod{
-#    public <init>();
-#}
 # AndroidAop必备混淆规则 -----end-----

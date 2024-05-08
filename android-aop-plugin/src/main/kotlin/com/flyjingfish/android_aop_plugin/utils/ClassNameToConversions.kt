@@ -1,5 +1,7 @@
 package com.flyjingfish.android_aop_plugin.utils
 
+import java.util.regex.Pattern
+
 
 object ClassNameToConversions {
     private val argsToObject: MutableMap<String, String> = HashMap()
@@ -69,7 +71,7 @@ object ClassNameToConversions {
         return value
     }
 
-    private fun getArrayClazzName(classname: String): String {
+    private fun getClazzNameArray(classname: String): String {
         val subStr = "[]"
         var count = 0
         var index = 0
@@ -77,6 +79,10 @@ object ClassNameToConversions {
             index += subStr.length
             count++
         }
-        return "[".repeat(count) + "}".repeat(count)
+        return "[".repeat(count) + "]".repeat(count)
+    }
+
+    fun string2Class(className: String): String {
+        return "$className.class"
     }
 }

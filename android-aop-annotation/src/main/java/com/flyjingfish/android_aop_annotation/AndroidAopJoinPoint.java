@@ -17,7 +17,7 @@ public final class AndroidAopJoinPoint {
     private final Object target;
     private final Class<?> targetClass;
     private Object[] mArgs;
-    private String[] mArgClassNames;
+    private Class<?>[] mArgClasses;
     private final String targetMethodName;
     private final String originalMethodName;
     private Method targetMethod;
@@ -41,8 +41,8 @@ public final class AndroidAopJoinPoint {
         this.cutMatchClassName = cutMatchClassName;
     }
 
-    public void setArgClassNames(String[] argClassNames) {
-        this.mArgClassNames = argClassNames;
+    public void setArgClasses(Class[] argClasses) {
+        this.mArgClasses = argClasses;
     }
 
     public Object joinPointExecute() {
@@ -145,11 +145,11 @@ public final class AndroidAopJoinPoint {
     private void getTargetMethod(){
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("(");
-        if (mArgClassNames != null && mArgClassNames.length > 0){
+        if (mArgClasses != null && mArgClasses.length > 0){
             int index = 0;
-            for (String argClassName : mArgClassNames) {
-                stringBuilder.append(argClassName);
-                if (index != mArgClassNames.length - 1){
+            for (Class<?> argClassName : mArgClasses) {
+                stringBuilder.append(argClassName.getName());
+                if (index != mArgClasses.length - 1){
                     stringBuilder.append(",");
                 }
                 index++;
@@ -167,20 +167,8 @@ public final class AndroidAopJoinPoint {
             return;
         }
         try {
-            Class<?>[] classes;
-            if (mArgClassNames != null && mArgClassNames.length > 0) {
-                classes = new Class[mArgClassNames.length];
-                int index = 0;
-                for (String className : mArgClassNames) {
-                    try {
-                        Class<?> c = Conversions.getClass_(className);
-                        classes[index] = c;
-                    } catch (ClassNotFoundException ignored) {
-                    }
-
-                    index++;
-                }
-            } else {
+            Class<?>[] classes = mArgClasses;
+            if (classes == null) {
                 classes = new Class<?>[0];
             }
             Class<?> tClass = targetClass;

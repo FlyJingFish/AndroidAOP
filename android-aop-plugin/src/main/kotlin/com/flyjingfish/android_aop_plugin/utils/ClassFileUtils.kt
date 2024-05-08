@@ -2,6 +2,7 @@ package com.flyjingfish.android_aop_plugin.utils
 
 import com.flyjingfish.android_aop_plugin.beans.InvokeClass
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
+import com.flyjingfish.android_aop_plugin.utils.Utils.CONVERSIONS_CLASS
 import javassist.CannotCompileException
 import javassist.NotFoundException
 import org.objectweb.asm.ClassWriter
@@ -42,7 +43,7 @@ object ClassFileUtils {
             newClasses?.forEach {
                 cp.makeClass(ByteArrayInputStream(it))
             }
-            cp.importPackage("com.flyjingfish.android_aop_annotation.Conversions")
+            cp.importPackage(CONVERSIONS_CLASS)
             val ctClass = cp.get(className)
             try {
                 val ctMethod =

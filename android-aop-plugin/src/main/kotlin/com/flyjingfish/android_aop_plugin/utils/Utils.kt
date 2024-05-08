@@ -21,6 +21,9 @@ object Utils {
     const val JoinAnnoCutUtils = "${annotationPackage}utils.JoinAnnoCutUtils"
     const val _CLASS = ".class"
     const val AOP_CONFIG_END_NAME = "\$\$AndroidAopClass.class"
+    const val KEEP_CLASS = "com.flyjingfish.android_aop_annotation.aop_anno.AopKeep"
+    const val JOIN_POINT_CLASS = "com.flyjingfish.android_aop_annotation.AndroidAopJoinPoint"
+    const val CONVERSIONS_CLASS = "com.flyjingfish.android_aop_annotation.Conversions"
     private val JAR_SIGNATURE_EXTENSIONS = setOf("SF", "RSA", "DSA", "EC")
     fun isJarSignatureRelatedFiles(name: String): Boolean {
         return name.startsWith("META-INF/") && name.substringAfterLast('.') in JAR_SIGNATURE_EXTENSIONS
