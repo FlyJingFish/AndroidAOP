@@ -218,7 +218,7 @@ plugins {
 }
 ```
 
-**💡💡💡这个方式可以只为你加过 module 应用 debugMode**
+**💡💡💡这个方式可以只为你加过的 module 应用 debugMode**
 
 - 2、在**根目录**的 `gradle.properties` 添加如下设置
 
