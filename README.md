@@ -199,7 +199,7 @@ android {
 androidAop.reflectInvokeMethod = false //设置为 true 反射执行切面方法 ，不写默认 false
 ```
 
-#### 五、开发中可设置代码织入方式（此步为可选配置项，只为在开发过程中提高打包速度，版本最低1.6.6）
+#### 五、开发中可设置代码织入方式（此步为可选配置项，只为在开发过程中提高打包速度，版本最低1.7.1）
 
 - 1、为**所有的子module**也依赖插件，请按照上述[步骤一的方式一配置项目](#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required)，然后以下方式二选一
 

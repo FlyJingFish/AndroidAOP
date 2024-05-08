@@ -64,7 +64,7 @@ new version
 ```gradle
 
 plugins {
-    //Required items  👇
+    //Required item 👇 apply is set to true to automatically apply debugMode to all modules, if false, follow step 5 below.
     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.5.1" apply true
 }
 ```
@@ -79,6 +79,7 @@ buildscript {
          classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.7.1'
      }
 }
+//👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below.
 apply plugin: "android.aop"
 ```
 </details>
