@@ -59,19 +59,8 @@
 
 #### 一、引入插件，下边两种方式二选一（必须）
 
-##### 方式一：```plugins``` 方式
 
-直接在 **app** 的 ```build.gradle``` 添加
-
-```gradle
-//必须项 👇
-plugins {
-    ...
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.7.1"
-}
-```
-
-##### 方式二：```apply``` 方式
+##### 方式一：```apply``` 方式（推荐）
 
 1、在 **项目根目录** 的 ```build.gradle``` 里依赖插件
 
@@ -84,6 +73,8 @@ buildscript {
         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.7.1'
     }
 }
+// 👇使用 debugMode 的必须项 👇
+apply plugin: "android.aop"
 ```
 
 或者新版本
@@ -91,8 +82,8 @@ buildscript {
 ```gradle
 
 plugins {
-    //必须项 👇
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.7.1" apply false
+    //必须项 👇，注意这块的 apply 设置为 true 👉--->--->---->---->---->👇👇👇👇👇
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.7.1" apply true
 }
 ```
 
@@ -115,7 +106,17 @@ plugins {
 }
 ```
 
+##### ～～方式二：```plugins``` 方式（不推荐）～～
 
+直接在 **app** 的 ```build.gradle``` 添加
+
+```gradle
+//必须项 👇
+plugins {
+    ...
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.7.1"
+}
+```
 
 #### 二、如果你需要自定义切面，并且代码是 ```Kotlin``` (非必须)
 
@@ -199,20 +200,16 @@ androidAop.reflectInvokeMethod = false //设置为 true 反射执行切面方法
 
 #### 五、开发中可设置代码织入方式（此步为可选配置项，只为在开发过程中提高打包速度，版本最低1.6.6）
 
-- 1、为**所有的子module**也依赖插件，请按照上述[步骤一的方式二配置项目](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB)，然后以下方式二选一
+- 1、为**所有的子module**也依赖插件，请按照上述[步骤一的方式一配置项目](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB)，然后以下方式二选一
 
 **方式一（推荐）：**
 
-在**根目录**的`build.gradle` 添加如下设置
+按照上述[步骤一的方式一配置项目](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB)，就可以了。**这个方式自动为所有的 module 应用 debugMode**
 
-```gradle
-apply plugin: "android.aop"
-```
-**💡💡💡这个方式自动为所有的 module 应用 debugMode**
 
 **方式二：**
 
-手动为**所有子 module 模块**设置，例如：
+请按照上述[步骤一的方式一配置项目](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB)后，手动为**所有子 module 模块**设置，例如：
 
 ```gradle
 plugins {
