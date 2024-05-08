@@ -64,7 +64,17 @@
 
 1、在 **项目根目录** 的 ```build.gradle``` 里依赖插件
 
-老版本
+新版本
+
+```gradle
+
+plugins {
+    //必须项 👇 apply 设置为 true 自动为所有module应用debugMode，false则按下边步骤五的方式二
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.7.1" apply true
+}
+```
+
+或者老版本
 
 ```gradle
 buildscript {
@@ -77,26 +87,10 @@ buildscript {
 apply plugin: "android.aop"
 ```
 
-或者新版本
-
-```gradle
-
-plugins {
-    //必须项 👇 apply 设置为 true 自动为所有module应用debugMode，false则按下边步骤五的方式二
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.7.1" apply true
-}
-```
-
 2、在 **app** 的 ```build.gradle``` 添加
 
-老版本
 
-```gradle
-//必须项 👇
-apply plugin: 'android.aop' //最好放在最后一行
-```
-
-或者新版本
+新版本
 
 ```gradle
 //必须项 👇
@@ -104,6 +98,13 @@ plugins {
     ...
     id 'android.aop'//最好放在最后一行
 }
+```
+
+或者老版本
+
+```gradle
+//必须项 👇
+apply plugin: 'android.aop' //最好放在最后一行
 ```
 
 ##### ~~方式二：```plugins``` 方式（不推荐）~~
