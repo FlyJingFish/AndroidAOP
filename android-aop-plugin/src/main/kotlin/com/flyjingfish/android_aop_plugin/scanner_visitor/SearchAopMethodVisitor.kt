@@ -1,6 +1,7 @@
 package com.flyjingfish.android_aop_plugin.scanner_visitor
 
 
+import com.flyjingfish.android_aop_plugin.beans.AopCollectClass
 import com.flyjingfish.android_aop_plugin.beans.AopMatchCut
 import com.flyjingfish.android_aop_plugin.beans.CutInfo
 import com.flyjingfish.android_aop_plugin.beans.CutMethodJson
@@ -14,6 +15,7 @@ import com.flyjingfish.android_aop_plugin.utils.Utils.isInstanceof
 import com.flyjingfish.android_aop_plugin.utils.Utils.slashToDot
 import com.flyjingfish.android_aop_plugin.utils.Utils.slashToDotClassName
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
+import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addCollectClass
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.getAnnoInfo
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.isContainAnno
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.isLeaf
@@ -59,6 +61,29 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                 if (classString != null){
                     replaceTargetClassName = Utils.dotToSlash(classString)
                 }
+            }
+        }
+        val isAbstractClass = access and Opcodes.ACC_ABSTRACT != 0
+        WovenInfoUtils.aopCollectInfoList.forEach{
+            var isImplementsInterface = false
+            var isDirectExtends = false
+            if (interfaces != null) {
+                for (anInterface in interfaces) {
+                    val inter = slashToDotClassName(anInterface)
+                    if (inter == slashToDotClassName(it.collectClassName)) {
+                        isImplementsInterface = true
+                        break
+                    }
+                }
+            }
+            if (isImplementsInterface || slashToDotClassName(it.collectClassName) == slashToDotClassName(
+                    superName!!
+                )
+            ) {
+                isDirectExtends = true
+            }
+            if (isDirectExtends && !isAbstractClass){
+                addCollectClass(AopCollectClass(it.collectClassName,it.invokeClassName,it.invokeMethod,className))
             }
         }
         //        logger.error("className="+className+",superName="+superName+",interfaces="+ Arrays.asList(interfaces));

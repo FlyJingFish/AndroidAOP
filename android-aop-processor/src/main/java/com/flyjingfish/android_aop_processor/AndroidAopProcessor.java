@@ -1,6 +1,8 @@
 package com.flyjingfish.android_aop_processor;
 
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopCollectMethod;
 import com.flyjingfish.android_aop_annotation.aop_anno.AopClass;
+import com.flyjingfish.android_aop_annotation.aop_anno.AopCollectMethod;
 import com.flyjingfish.android_aop_annotation.aop_anno.AopMatchClassMethod;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod;
 import com.flyjingfish.android_aop_annotation.aop_anno.AopPointCut;
@@ -28,6 +30,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.Method;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -43,6 +46,7 @@ import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.ElementScanner6;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
@@ -61,6 +65,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
         set.add(AndroidAopReplaceClass.class.getCanonicalName());
         set.add(AndroidAopReplaceMethod.class.getCanonicalName());
         set.add(AndroidAopModifyExtendsClass.class.getCanonicalName());
+        set.add(AndroidAopCollectMethod.class.getCanonicalName());
         return set;
     }
     @Override
@@ -96,6 +101,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
         processReplaceMethod(set, roundEnvironment);
         processReplace(set, roundEnvironment);
         processModifyExtendsClass(set, roundEnvironment);
+        processCollectMethod(set, roundEnvironment);
         return false;
     }
 
@@ -339,6 +345,52 @@ public class AndroidAopProcessor extends AbstractProcessor {
             }
             if (!isStatic){
                 throw new IllegalArgumentException("注意：" + "方法 "+element.getEnclosingElement()+"."+name1+" 必须是静态方法 ");
+            }
+        }
+    }
+
+    private void processCollectMethod(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
+        Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(AndroidAopCollectMethod.class);
+        for (Element element : elements) {
+            Name name1 = element.getSimpleName();
+            boolean isStatic = false;
+            boolean isPublic = false;
+            Set<Modifier> modifiers = element.getModifiers();
+            for (Modifier modifier : modifiers) {
+                if ("static".equals(modifier.toString())){
+                    isStatic = true;
+                }
+                if ("public".equals(modifier.toString())){
+                    isPublic = true;
+                }
+            }
+            if (!isPublic){
+                throw new IllegalArgumentException("注意：" + "方法 "+element.getEnclosingElement()+"."+name1+" 必须是public公共方法 ");
+            }
+            if (!isStatic){
+                throw new IllegalArgumentException("注意：" + "方法 "+element.getEnclosingElement()+"."+name1+" 必须是静态方法 ");
+            }
+            TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(name1+"$$AndroidAopClass")
+                    .addAnnotation(AopClass.class)
+                    .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
+            MethodSpec.Builder whatsMyName1 = whatsMyName(AOP_METHOD_NAME)
+                    .addAnnotation(AnnotationSpec.builder(AopCollectMethod.class)
+                            .addMember("collectClassName", "$S", "className")
+                            .addMember("invokeClassName", "$S", element.getEnclosingElement())
+                            .addMember("invokeMethod", "$S", name1)
+                            .build());
+
+            typeBuilder.addMethod(whatsMyName1.build());
+
+            TypeSpec typeSpec = typeBuilder.build();
+            String elementClassName = element.toString();
+            String packageName = elementClassName.substring(0, elementClassName.lastIndexOf("."));
+            JavaFile javaFile = JavaFile.builder(packageName, typeSpec)
+                    .build();
+            try {
+                javaFile.writeTo(mFiler);
+            } catch (IOException e) {
+//                throw new RuntimeException(e);
             }
         }
     }

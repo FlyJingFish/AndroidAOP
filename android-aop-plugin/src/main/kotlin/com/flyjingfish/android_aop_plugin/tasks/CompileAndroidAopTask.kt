@@ -191,6 +191,7 @@ class CompileAndroidAopTask(
 
         if (outPutInitClass){
             WovenIntoCode.createInitClass(output)
+            WovenIntoCode.createCollectClass(output)
         }
 
         for (tempFile in tempFiles) {

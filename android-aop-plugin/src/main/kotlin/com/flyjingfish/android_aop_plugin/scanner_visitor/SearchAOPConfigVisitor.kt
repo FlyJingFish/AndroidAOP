@@ -1,11 +1,13 @@
 package com.flyjingfish.android_aop_plugin.scanner_visitor
 
+import com.flyjingfish.android_aop_plugin.beans.AopCollectCut
 import com.flyjingfish.android_aop_plugin.beans.AopMatchCut
 import com.flyjingfish.android_aop_plugin.beans.AopMethodCut
 import com.flyjingfish.android_aop_plugin.beans.AopReplaceCut
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addAnnoInfo
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addAopInstance
+import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addCollectConfig
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addMatchInfo
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addModifyExtendsClassInfo
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addReplaceCut
@@ -149,6 +151,33 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
         }
     }
 
+
+    internal inner class CollectClassVisitor : AnnotationVisitor(Opcodes.ASM9) {
+        private var collectClassName: String? = null
+        private var invokeClassName: String? = null
+        private var invokeMethod: String? = null
+        override fun visit(name: String, value: Any) {
+            if (isAndroidAopClass) {
+                if (name == "collectClassName") {
+                    collectClassName = value.toString()
+                }
+                if (name == "invokeClassName") {
+                    invokeClassName = value.toString()
+                }
+                if (name == "invokeMethod") {
+                    invokeMethod = value.toString()
+                }
+            }
+            super.visit(name, value)
+        }
+
+        override fun visitEnd() {
+            super.visitEnd()
+            if (collectClassName != null && invokeClassName != null && invokeMethod != null) {
+                addCollectConfig(AopCollectCut(collectClassName!!, invokeClassName!!, invokeMethod!!))
+            }
+        }
+    }
     internal inner class MyMethodVisitor : MethodVisitor(Opcodes.ASM9) {
         override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor? {
             return if (isAndroidAopClass) {
@@ -158,6 +187,8 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
                     ReplaceMethodVisitor()
                 } else if (descriptor.contains(EXTENDS_POINT)) {
                     ReplaceExtendsClassVisitor()
+                } else if (descriptor.contains(COLLECT_POINT)) {
+                    CollectClassVisitor()
                 } else {
                     super.visitAnnotation(descriptor, visible)
                 }
@@ -197,5 +228,6 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
         const val REPLACE_POINT = "Lcom/flyjingfish/android_aop_annotation/aop_anno/AopReplaceMethod"
         const val EXTENDS_POINT =
             "Lcom/flyjingfish/android_aop_annotation/aop_anno/AopModifyExtendsClass"
+        const val COLLECT_POINT = "Lcom/flyjingfish/android_aop_annotation/aop_anno/AopCollectMethod"
     }
 }

@@ -66,4 +66,15 @@ internal object Utils {
             Toast.makeText(AndroidAopContentProvider.appContext,text, duration).show()
         }
     }
+
+    @JvmStatic
+    fun initCollectClass(){
+        try {
+            val initClass =
+                Class.forName("com.flyjingfish.android_aop_core.utils.CollectInitClass")
+            val method = initClass.getDeclaredMethod("init")
+            method.invoke(null)
+        } catch (ignored: Throwable) {
+        }
+    }
 }

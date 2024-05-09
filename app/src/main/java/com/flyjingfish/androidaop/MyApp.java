@@ -24,6 +24,7 @@ import com.flyjingfish.android_aop_core.listeners.OnThrowableListener;
 import com.flyjingfish.android_aop_core.utils.AndroidAop;
 import com.flyjingfish.test_lib.PermissionRejectListener;
 import com.flyjingfish.test_lib.ToastUtils;
+import com.flyjingfish.test_lib.collect.InitCollect;
 import com.tbruyelle.rxpermissions3.RxPermissions;
 
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class MyApp extends Application {
         super.onCreate();
         ToastUtils.INSTANCE.setApp(this);
         INSTANCE = this;
+        InitCollect.INSTANCE.init(this);
         AndroidAop.INSTANCE.setOnPermissionsInterceptListener(new OnPermissionsInterceptListener() {
             @SuppressLint("CheckResult")
             @Override

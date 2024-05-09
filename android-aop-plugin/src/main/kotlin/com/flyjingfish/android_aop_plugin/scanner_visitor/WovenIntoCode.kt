@@ -1,5 +1,7 @@
 package com.flyjingfish.android_aop_plugin.scanner_visitor
 
+import com.flyjingfish.android_aop_plugin.beans.AopCollectClass
+import com.flyjingfish.android_aop_plugin.beans.AopCollectCut
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
 import com.flyjingfish.android_aop_plugin.utils.ClassNameToConversions
@@ -23,6 +25,7 @@ import org.objectweb.asm.*
 import org.objectweb.asm.ClassWriter.COMPUTE_FRAMES
 import org.objectweb.asm.ClassWriter.COMPUTE_MAXS
 import org.objectweb.asm.Opcodes.*
+import org.objectweb.asm.commons.AdviceAdapter
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -395,6 +398,71 @@ object WovenIntoCode {
             map.forEach { (key, value) ->
                 RegisterMapWovenInfoCode.registerCreators(mv,key, value)
                 RegisterMapWovenInfoCode.registerMatchCreators(mv,key, value)
+            }
+        }
+
+
+        mv.visitInsn(RETURN)
+        mv.visitMaxs(0, 0)
+        mv.visitEnd()
+        //设置必要的类路径
+        val path = output.absolutePath + "/" +Utils.dotToSlash(className)+".class"
+        //获取类的byte数组
+        val classByteData = cw.toByteArray()
+        //把类数据写入到class文件,这样你就可以把这个类文件打包供其他的人使用
+        val outFile = File(path)
+        if (!outFile.parentFile.exists()){
+            outFile.parentFile.mkdirs()
+        }
+        if (!outFile.exists()){
+            outFile.createNewFile()
+        }
+        ByteArrayInputStream(classByteData).use {
+            it.copyTo(FileOutputStream(outFile))
+        }
+    }
+
+    fun createCollectClass(output:File) {
+        val className = "com.flyjingfish.android_aop_core.utils.CollectInitClass"
+        //新建一个类生成器，COMPUTE_FRAMES，COMPUTE_MAXS这2个参数能够让asm自动更新操作数栈
+        val cw = ClassWriter(COMPUTE_FRAMES or COMPUTE_MAXS)
+        //生成一个public的类，类路径是com.study.Human
+        cw.visit(V1_8, ACC_PUBLIC, Utils.dotToSlash(className), null, "java/lang/Object", null)
+
+        //生成默认的构造方法： public Human()
+        var mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null)
+        mv.visitVarInsn(ALOAD, 0)
+        mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false)
+        mv.visitInsn(RETURN)
+        mv.visitMaxs(0, 0) //更新操作数栈
+        mv.visitEnd() //一定要有visitEnd
+
+
+        //生成静态方法
+        mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, "init", "()V", null, null)
+        //生成静态方法中的字节码指令
+        val map: MutableSet<AopCollectClass> = WovenInfoUtils.aopCollectClass
+        if (map.isNotEmpty()) {
+            map.forEach {
+                val methodVisitor = mv
+                val collectClazz = Utils.dotToSlash(it.collectClassName)
+                methodVisitor.visitTypeInsn(AdviceAdapter.NEW, Utils.dotToSlash(it.collectExtendsClassName))
+                methodVisitor.visitInsn(AdviceAdapter.DUP)
+                methodVisitor.visitMethodInsn(
+                    AdviceAdapter.INVOKESPECIAL,
+                    collectClazz,
+                    "<init>",
+                    "()V",
+                    false
+                )
+
+                methodVisitor.visitMethodInsn(
+                    AdviceAdapter.INVOKESTATIC,
+                    Utils.dotToSlash(it.invokeClassName),
+                    it.invokeMethod,
+                    "(L$collectClazz;)V",
+                    false
+                )
             }
         }
 

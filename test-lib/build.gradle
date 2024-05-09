@@ -28,9 +28,9 @@ dependencies {
     if (TestType == "0"){
         //本地
         api project(path: ':android-aop-annotation')
-//        annotationProcessor project(path: ':android-aop-processor')
+        annotationProcessor project(path: ':android-aop-processor')
 //        kapt project(path: ':android-aop-processor')
-        ksp project(':android-aop-ksp')
+//        ksp project(':android-aop-ksp')
         api project(path: ':android-aop-core')
     }else {
         //线上

@@ -295,7 +295,9 @@ object Utils {
     fun aopTransformTempDir(project:Project, variantName:String):String{
         return project.buildDir.absolutePath+"/tmp/android-aop/tempInvokeClass/${variantName}/"
     }
-
+    fun aopTransformCollectTempDir(project:Project, variantName:String):String{
+        return project.buildDir.absolutePath+"/tmp/android-aop/tempCollectClass/${variantName}/"
+    }
     fun configJsonFile(project:Project):String{
         return project.buildDir.absolutePath+"/tmp/android-aop/config/androidAopConfig.json"
     }

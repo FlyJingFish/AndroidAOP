@@ -1,4 +1,5 @@
 package com.flyjingfish.android_aop_ksp
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopCollectMethod
 import com.flyjingfish.android_aop_annotation.aop_anno.AopClass
 import com.flyjingfish.android_aop_annotation.aop_anno.AopMatchClassMethod
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod
@@ -7,6 +8,7 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopPointCut
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceClass
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopModifyExtendsClass
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethod
+import com.flyjingfish.android_aop_annotation.aop_anno.AopCollectMethod
 import com.flyjingfish.android_aop_annotation.aop_anno.AopReplaceMethod
 import com.flyjingfish.android_aop_annotation.aop_anno.AopModifyExtendsClass
 import com.flyjingfish.android_aop_annotation.base.BasePointCut
@@ -25,6 +27,7 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.symbol.Modifier
 import com.google.devtools.ksp.symbol.Origin
 import com.google.devtools.ksp.validate
 import com.squareup.kotlinpoet.AnnotationSpec
@@ -35,6 +38,7 @@ import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeSpec
 import java.lang.annotation.ElementType
+import java.util.Locale
 
 class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
                                 private val logger: KSPLogger
@@ -49,11 +53,13 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
     processReplaceMethod(resolver)
     val ret3 = processReplace(resolver)
     val ret4 = processModifyExtendsClass(resolver)
+    val ret5 = processCollectMethod(resolver)
     val ret = arrayListOf<KSAnnotated>()
     ret.addAll(ret1)
     ret.addAll(ret2)
     ret.addAll(ret3)
     ret.addAll(ret4)
+    ret.addAll(ret5)
     return ret
   }
 
@@ -409,6 +415,87 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
             .addMember(
               "extendsClassName = %S",
               className
+            )
+            .build()
+        )
+
+      typeBuilder.addFunction(whatsMyName1.build())
+      writeToFile(typeBuilder,symbol.packageName.asString(), fileName, symbol)
+    }
+    return symbols.filter { !it.validate() }.toList()
+  }
+
+  private fun processCollectMethod(resolver: Resolver): List<KSAnnotated> {
+    val symbols :Sequence<KSAnnotated> =
+      resolver.getSymbolsWithAnnotation(AndroidAopCollectMethod::class.qualifiedName!!)
+    for (symbol in symbols) {
+      val annotationMap = getAnnotation(symbol)
+      if (symbol !is KSFunctionDeclaration) continue
+
+
+      var className = "${symbol.packageName.asString()}."
+      var parent = symbol.parent
+      var clazzName =""
+      while (parent !is KSFile){
+        className = "$className$parent."
+        clazzName = parent.toString()
+        parent = parent?.parent
+      }
+      if (symbol.parameters.isEmpty()){
+        throw IllegalArgumentException("注意：函数$className${symbol} 必须设置您想收集的类作为参数")
+      }else if (symbol.parameters.size != 1){
+        throw IllegalArgumentException("注意：函数$className${symbol} 参数必须设置一个")
+      }
+      val returnType = symbol.returnType
+      if (returnType.toString() != "Unit"){
+        throw IllegalArgumentException("注意：函数$className${symbol} 不可以设置返回值类型")
+      }
+      if (symbol.origin == Origin.KOTLIN){
+        if (!annotationMap.containsKey("@JvmStatic")){
+          throw IllegalArgumentException("注意：函数$className${symbol} 必须添加 @JvmStatic 注解")
+        }
+        val isPrivate = symbol.modifiers.contains(Modifier.PRIVATE)
+        val isInternal = symbol.modifiers.contains(Modifier.INTERNAL)
+        if (isPrivate){
+          throw IllegalArgumentException("注意：函数$className${symbol} 不可以设置 private")
+        }
+        if (isInternal){
+          throw IllegalArgumentException("注意：函数$className${symbol} 不可以设置 internal")
+        }
+
+      }else if (symbol.origin == Origin.JAVA){
+        if (symbol.functionKind != FunctionKind.STATIC){
+          throw IllegalArgumentException("注意：方法$className${symbol} 必须是静态方法")
+        }
+        val isPublic = symbol.modifiers.contains(Modifier.PUBLIC)
+        if (!isPublic){
+          throw IllegalArgumentException("注意：函数$className${symbol} 必须是public公共方法")
+        }
+      }
+      val invokeClassName = className.substring(0,className.length-1)
+//      logger.error("invokeClassName=$invokeClassName")
+      val parameter = symbol.parameters[0]
+      val collectClassName = "${parameter.type.resolve().declaration.packageName.asString()}.${parameter.type}"
+
+      val fileName = "${clazzName}\$\$AndroidAopClass";
+      val typeBuilder = TypeSpec.classBuilder(
+        fileName
+      ).addModifiers(KModifier.FINAL)
+        .addAnnotation(AopClass::class)
+      val whatsMyName1 = whatsMyName(AOP_METHOD_NAME)
+        .addAnnotation(
+          AnnotationSpec.builder(AopCollectMethod::class)
+            .addMember(
+              "collectClassName = %S",
+              collectClassName
+            )
+            .addMember(
+              "invokeClassName = %S",
+              invokeClassName
+            )
+            .addMember(
+              "invokeMethod = %S",
+              symbol
             )
             .build()
         )

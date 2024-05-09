@@ -1,5 +1,7 @@
 package com.flyjingfish.android_aop_plugin.utils
 
+import com.flyjingfish.android_aop_plugin.beans.AopCollectClass
+import com.flyjingfish.android_aop_plugin.beans.AopCollectCut
 import com.flyjingfish.android_aop_plugin.beans.AopMatchCut
 import com.flyjingfish.android_aop_plugin.beans.AopMethodCut
 import com.flyjingfish.android_aop_plugin.beans.AopReplaceCut
@@ -34,6 +36,8 @@ object WovenInfoUtils {
     val replaceMethodInfoMapUse = HashMap<String, ReplaceMethodInfo>()
     private val modifyExtendsClassMap = HashMap<String, String>()
     private val allClassName = mutableSetOf<String>()
+    val aopCollectInfoList = mutableSetOf<AopCollectCut>()
+    val aopCollectClass = mutableSetOf<AopCollectClass>()
     fun addModifyExtendsClassInfo(targetClassName: String, extendsClassName: String) {
         modifyExtendsClassMap[targetClassName] = extendsClassName
         InitConfig.addModifyClassInfo(targetClassName, extendsClassName)
@@ -437,6 +441,14 @@ object WovenInfoUtils {
                 }
             }
         }
+    }
+
+    fun addCollectConfig(aopCollectCut: AopCollectCut){
+        aopCollectInfoList.add(aopCollectCut)
+    }
+
+    fun addCollectClass(aopCollectCut: AopCollectClass){
+        aopCollectClass.add(aopCollectCut)
     }
 
     fun initAllClassName(){

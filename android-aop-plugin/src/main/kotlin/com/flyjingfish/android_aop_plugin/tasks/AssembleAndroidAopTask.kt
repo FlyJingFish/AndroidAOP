@@ -384,8 +384,23 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 }
             }
         }
+        val collectDir = File(Utils.aopTransformCollectTempDir(project,variant))
+        WovenIntoCode.createCollectClass(collectDir)
+        for (file in collectDir.walk()) {
+            if (file.isFile) {
+                val relativePath = collectDir.toURI().relativize(file.toURI()).path
+                val className = relativePath.replace(File.separatorChar, '/')
+                val invokeClassName = Utils.slashToDot(className).replace(_CLASS,"")
+                if (!WovenInfoUtils.containsInvokeClass(invokeClassName)){
+                    file.inputStream().use {
+                        jarOutput.saveEntry(className,it)
+                    }
+                }
+            }
+        }
         if (!AndroidAopConfig.debug){
             ClassFileUtils.outputDir.deleteRecursively()
+            collectDir.deleteRecursively()
         }
         exportCutInfo()
     }
