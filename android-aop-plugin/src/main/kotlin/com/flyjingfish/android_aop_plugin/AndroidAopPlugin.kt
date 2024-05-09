@@ -21,7 +21,6 @@ class AndroidAopPlugin : Plugin<Project> {
                 }
             }
         }
-        println("AndroidAopPlugin,name=${project.name}")
         CompilePlugin(false).apply(project)
         TransformPlugin.apply(project)
     }

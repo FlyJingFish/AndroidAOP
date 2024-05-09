@@ -17,7 +17,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.compile.AbstractCompile
 import java.io.File
 
-class CompilePlugin(val root:Boolean): BasePlugin() {
+class CompilePlugin(private val root:Boolean): BasePlugin() {
     companion object{
         private const val ANDROID_EXTENSION_NAME = "android"
     }
