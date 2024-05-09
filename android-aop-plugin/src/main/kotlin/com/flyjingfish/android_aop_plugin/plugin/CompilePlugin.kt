@@ -41,9 +41,10 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
         val hasConfig = project.extensions.findByName("androidAopConfig") != null
         val syncConfig = !root && hasConfig && isApp
         if (syncConfig){
-            project.tasks.register("${project.name}AndroidAopConfigSyncTask", SyncConfigTask::class.java)
+            val taskName = "${project.name}AndroidAopConfigSyncTask"
+            project.tasks.register(taskName, SyncConfigTask::class.java)
             project.afterEvaluate {
-                project.tasks.findByName("preBuild")?.finalizedBy("${project.name}AndroidAopConfigSyncTask")
+                project.tasks.findByName("preBuild")?.finalizedBy(taskName)
             }
         }
 
