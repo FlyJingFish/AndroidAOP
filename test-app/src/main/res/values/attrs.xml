@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ShapeImageView">
+        <!-- 图像绘制形状 -->
+        <attr name="FlyJFish_shape" format="enum">
+            <enum name="rectangle" value="1" />
+            <enum name="oval" value="2" />
+        </attr>
+    </declare-styleable>
+</resources>

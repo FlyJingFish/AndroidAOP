@@ -1,5 +1,6 @@
 package com.flyjingfish.android_aop_plugin
 
+import com.android.build.gradle.AppPlugin
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.plugin.CompilePlugin
 import com.flyjingfish.android_aop_plugin.plugin.TransformPlugin
@@ -12,14 +13,16 @@ class AndroidAopPlugin : Plugin<Project> {
         if (project.rootProject == project){
             project.rootProject.childProjects.forEach { (_,value)->
                 value.afterEvaluate {
-                    val hasAop = it.plugins.hasPlugin("android.aop")
-                    if (!hasAop && it.hasProperty("android")){
-                        CompilePlugin.apply(it)
+                    val notApp = !it.plugins.hasPlugin(AppPlugin::class.java)
+                    val noneHasAop = !it.plugins.hasPlugin("android.aop")
+                    if (notApp && noneHasAop && it.hasProperty("android")){
+                        CompilePlugin(true).apply(it)
                     }
                 }
             }
         }
-        CompilePlugin.apply(project)
+        println("AndroidAopPlugin,name=${project.name}")
+        CompilePlugin(false).apply(project)
         TransformPlugin.apply(project)
     }
 }

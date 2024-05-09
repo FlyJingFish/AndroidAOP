@@ -1,6 +1,9 @@
 package com.flyjingfish.android_aop_plugin.config
 
+import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
+import org.gradle.api.Project
+import java.io.File
 
 open class AndroidAopConfig {
     /**
@@ -43,6 +46,7 @@ open class AndroidAopConfig {
         return this
     }
 
+
     internal fun initConfig(){
         AndroidAopConfig.debug = debug
         includes.forEach {
@@ -57,6 +61,11 @@ open class AndroidAopConfig {
         AndroidAopConfig.cutInfoJson = cutInfoJson
         AndroidAopConfig.increment = increment
     }
+
+    override fun toString(): String {
+        return "AndroidAopConfig(enabled=$enabled, debug=$debug, verifyLeafExtends=$verifyLeafExtends, cutInfoJson=$cutInfoJson, increment=$increment, includes=$includes, excludes=$excludes)"
+    }
+
     companion object{
         var debug = false
         val includes = mutableListOf<String>()
@@ -65,6 +74,18 @@ open class AndroidAopConfig {
         var cutInfoJson = false
         var increment = true
 
+        internal fun syncConfig(project: Project){
+            val androidAopConfig = project.extensions.getByType(AndroidAopConfig::class.java)
+            androidAopConfig.initConfig()
 
+            for (childProject in project.rootProject.childProjects) {
+                if (project != childProject.value){
+                    val configFile = File(Utils.configJsonFile(childProject.value))
+                    InitConfig.exportConfigJson(configFile,androidAopConfig)
+                }
+            }
+        }
     }
+
+
 }

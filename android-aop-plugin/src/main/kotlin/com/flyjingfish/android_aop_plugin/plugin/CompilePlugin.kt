@@ -5,8 +5,9 @@ import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.DynamicFeaturePlugin
 import com.android.build.gradle.LibraryExtension
-import com.flyjingfish.android_aop_plugin.tasks.CompileAndroidAopTask
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
+import com.flyjingfish.android_aop_plugin.tasks.CompileAndroidAopTask
+import com.flyjingfish.android_aop_plugin.tasks.SyncConfigTask
 import com.flyjingfish.android_aop_plugin.utils.AndroidConfig
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
@@ -16,8 +17,10 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.compile.AbstractCompile
 import java.io.File
 
-object CompilePlugin: BasePlugin() {
-    private const val ANDROID_EXTENSION_NAME = "android"
+class CompilePlugin(val root:Boolean): BasePlugin() {
+    companion object{
+        private const val ANDROID_EXTENSION_NAME = "android"
+    }
 
     override fun apply(project: Project) {
         super.apply(project)
@@ -35,18 +38,19 @@ object CompilePlugin: BasePlugin() {
             (android as LibraryExtension).libraryVariants
         }
 
+        val hasConfig = project.extensions.findByName("androidAopConfig") != null
+        val syncConfig = !root && hasConfig && isApp
+        if (syncConfig){
+            project.tasks.register("${project.name}AndroidAopConfigSyncTask", SyncConfigTask::class.java)
+            project.afterEvaluate {
+                project.tasks.findByName("preBuild")?.finalizedBy("${project.name}AndroidAopConfigSyncTask")
+            }
+        }
+
 
         variants.all { variant ->
-            if (isApp){
-                val androidAopConfig = project.extensions.getByType(AndroidAopConfig::class.java)
-                androidAopConfig.initConfig()
-
-                for (childProject in project.rootProject.childProjects) {
-                    if (project != childProject.value){
-                        val configFile = File(Utils.configJsonFile(childProject.value))
-                        InitConfig.exportConfigJson(configFile,androidAopConfig)
-                    }
-                }
+            if (syncConfig){
+                AndroidAopConfig.syncConfig(project)
             }
             val javaCompile: AbstractCompile =
                 if (DefaultGroovyMethods.hasProperty(variant, "javaCompileProvider") != null) {

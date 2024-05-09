@@ -1,0 +1,104 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.devtools.ksp'
+    id 'android.aop'
+//    id 'kotlin-kapt'
+//    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.2.8"
+}
+
+apply from: "$rootDir/gradle/android_base.gradle"
+androidAopConfig {
+    enabled true
+    // debug 为true打开日志方便调试
+    debug true
+    // 测试
+    include 'com.flyjingfish.test'
+    //默认关闭，开启后将会生成切点信息json文件在 /build/tmp/cutInfo.json
+    cutInfoJson true
+    increment true
+    // 移除kotlin相关，编译错误和提升速度
+//    exclude 'kotlin.jvm', 'kotlin.internal','kotlinx.coroutines.internal', 'kotlinx.coroutines.android'
+}
+android {
+    namespace 'com.flyjingfish.test_app'
+    compileSdk 33
+    defaultConfig {
+        applicationId "com.flyjingfish.test_app"
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildFeatures {
+        viewBinding true
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    signingConfigs {
+        release {
+            storeFile file(rootProject.file("keystore"))
+            storePassword '123456'
+            keyAlias 'android_aop'
+            keyPassword '123456'
+        }
+    }
+    flavorDimensions.add("env")
+    productFlavors {
+        informal {
+            dimension "env"
+            signingConfig signingConfigs.release
+        }
+        product {
+            dimension "env"
+            signingConfig signingConfigs.release
+        }
+    }
+
+    buildTypes {
+        debug {
+            ext.enableCrashlytics = false
+            signingConfig signingConfigs.release
+            shrinkResources false
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        release {
+            signingConfig signingConfigs.release
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+        }
+    }
+
+
+    packagingOptions {
+        exclude 'META-INF/kotlinx_coroutines_core.version'
+    }
+
+}
+
+dependencies {
+    implementation libs.core.ktx
+    implementation libs.appcompat
+    implementation libs.material
+    implementation project(path: ":test-lib")
+    if (TestType == "0"){
+        //本地
+        ksp project(':android-aop-ksp')
+//        kapt project(':android-aop-processor')
+    }else {
+//        annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:'+TestVersion
+        ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:'+TestVersion
+    }
+    debugImplementation libs.leakcanary
+    implementation libs.bcprov.jdk15on
+}
