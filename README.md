@@ -69,7 +69,7 @@
 ```gradle
 
 plugins {
-    //必须项 👇 apply 设置为 true 自动为所有module应用debugMode，false则按下边步骤五的方式二
+    //必须项 👇 apply 设置为 true 自动为所有module配置debugMode，false则按下边步骤五的方式二
     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.7.3" apply true
 }
 ```
@@ -83,7 +83,7 @@ buildscript {
         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.7.3'
     }
 }
-// 👇加上这句自动为所有module应用debugMode，不加则按下边步骤五的方式二
+// 👇加上这句自动为所有module配置debugMode，不加则按下边步骤五的方式二
 apply plugin: "android.aop"
 ```
 
