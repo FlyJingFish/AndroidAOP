@@ -76,7 +76,7 @@ plugins {
 buildscript {
      dependencies {
          //Required items 👇
-         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.7.3'
+         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.7.4'
      }
 }
 //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below.
@@ -114,7 +114,7 @@ Add directly to ```build.gradle``` of **app**
 //Required items 👇
 plugins {
      ...
-     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.7.3"
+     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.7.4"
 }
 ```
 
@@ -144,16 +144,16 @@ plugins {
 
 dependencies {
      //Required items 👇
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.7.3'
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.7.3'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.7.4'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.7.4'
      
      //Required item 👇If you already have this item in your project, you don’t need to add it.
      implementation 'androidx.appcompat:appcompat:1.3.0' // At least in 1.3.0 and above
      
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️supports aspects written in Java and Kotlin code
-     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.7.3'
+     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.7.4'
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️only applies to aspects written in Java code
-     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.7.3'
+     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.7.4'
      //⚠️Choose one of the above android-aop-ksp and android-aop-processor
 }
 ```
@@ -358,6 +358,7 @@ AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
 - @AndroidAopMatchClassMethod is the aspect of matching class methods
 - @AndroidAopReplaceClass is called by the replacement method
 - @AndroidAopModifyExtendsClass is a modified inherited class
+- @AndroidAopCollectMethod is the direct inheritance class of collection
 
 #### 1. **@AndroidAopPointCut** is used to make aspects in the form of annotations on the method. The above annotations are all made through this. [Please see the wiki document for detailed usage](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopPointCut)
 
@@ -554,6 +555,50 @@ public class ReplaceImageView extends ImageView {
 }
 ```
 
+#### 5. **@AndroidAopCollectMethod** is a direct inheritance class of collection [detailed usage] (https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopCollectMethod)
+
+It is extremely simple to use, the sample code has already explained
+
+- Kotlin
+
+```kotlin
+objectInitCollect {
+     private val collects = mutableListOf<SubApplication>()
+
+     @AndroidAopCollectMethod
+     @JvmStatic
+     fun collect(sub: SubApplication){
+       collects.add(sub)
+     }
+  
+     // Call this method directly. The collects collection contains data.
+     fun init(application: Application){
+         for (collect in collects) {
+             collect.onCreate(application)
+         }
+     }
+}
+```
+
+-Java
+
+```java
+public class InitCollect2 {
+     private static List<SubApplication2> collects = new ArrayList<>();
+     @AndroidAopCollectMethod
+     public static void collect(SubApplication2 sub){
+         collects.add(sub);
+     }
+    
+     // Call this method directly. The collects collection contains data.
+     public static void init(Application application){
+         Log.e("InitCollect2","----init----");
+         for (SubApplication2 collect : collects) {
+             collect.onCreate(application);
+         }
+     }
+}
+```
 
 ### common problem
 

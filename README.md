@@ -70,7 +70,7 @@
 
 plugins {
     //必须项 👇 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五的方式二
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.7.3" apply true
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.7.4" apply true
 }
 ```
 
@@ -80,7 +80,7 @@ plugins {
 buildscript {
     dependencies {
         //必须项 👇
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.7.3'
+        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.7.4'
     }
 }
 // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五的方式二
@@ -115,7 +115,7 @@ apply plugin: 'android.aop' //最好放在最后一行
 //必须项 👇
 plugins {
     ...
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.7.3"
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.7.4"
 }
 ```
 
@@ -141,17 +141,17 @@ plugins {
 
 dependencies {
     //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.7.3'
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.7.3'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.7.4'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.7.4'
     
     //必须项 👇如果您项目内已经有了这项不用加也可以
     implementation 'androidx.appcompat:appcompat:1.3.0' // 至少在1.3.0及以上
     
     //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.7.3'
+    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.7.4'
     
     //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.7.3'
+    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.7.4'
     //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
 }
 ```
@@ -378,6 +378,7 @@ AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
 - @AndroidAopMatchClassMethod 是匹配类的方法的切面
 - @AndroidAopReplaceClass 是替换方法调用的
 - @AndroidAopModifyExtendsClass 是修改继承类
+- @AndroidAopCollectMethod 是收集直接的继承类
 
 #### 一、**@AndroidAopPointCut** 是在方法上通过注解的形式做切面的，上述中注解都是通过这个做的，[详细使用请看wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopPointCut)
 
@@ -594,6 +595,50 @@ public class ReplaceImageView extends ImageView {
 }
 ```
 
+#### 五、**@AndroidAopCollectMethod** 是收集直接的继承类[详细使用方式](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopCollectMethod)
+
+使用起来极其简单，示例代码已经说明了
+
+- Kotlin
+
+```kotlin
+object InitCollect {
+    private val collects = mutableListOf<SubApplication>()
+
+    @AndroidAopCollectMethod
+    @JvmStatic
+    fun collect(sub: SubApplication){
+      collects.add(sub)
+    }
+  
+    //直接调这个方法 collects 集合就是有数据的
+    fun init(application: Application){
+        for (collect in collects) {
+            collect.onCreate(application)
+        }
+    }
+}
+```
+
+- Java
+
+```java
+public class InitCollect2 {
+    private static List<SubApplication2> collects = new ArrayList<>();
+    @AndroidAopCollectMethod
+    public static void collect(SubApplication2 sub){
+        collects.add(sub);
+    }
+    
+    //直接调这个方法 collects 集合就是有数据的
+    public static void init(Application application){
+        Log.e("InitCollect2","----init----");
+        for (SubApplication2 collect : collects) {
+            collect.onCreate(application);
+        }
+    }
+}
+```
 
 ### 常见问题
 
