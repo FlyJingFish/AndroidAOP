@@ -41,9 +41,11 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementScanner6;
@@ -370,21 +372,36 @@ public class AndroidAopProcessor extends AbstractProcessor {
             if (!isStatic){
                 throw new IllegalArgumentException("注意：" + "方法 "+element.getEnclosingElement()+"."+name1+" 必须是静态方法 ");
             }
-            TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(name1+"$$AndroidAopClass")
+
+
+            ExecutableElement executableElement = (ExecutableElement) element;
+            String returnType = executableElement.getReturnType().toString();
+            if (!"void".equals(returnType)){
+                throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 不可以设置返回值类型");
+            }
+            if (executableElement.getParameters().isEmpty()){
+                throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 必须设置您想收集的类作为参数");
+            }else if (executableElement.getParameters().size() != 1){
+                throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 参数必须设置一个");
+            }
+            VariableElement variableElement = executableElement.getParameters().get(0);
+            System.err.println("getReturnType="+executableElement.getReturnType());
+
+            TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(element.getEnclosingElement().getSimpleName()+"$$AndroidAopClass")
                     .addAnnotation(AopClass.class)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
             MethodSpec.Builder whatsMyName1 = whatsMyName(AOP_METHOD_NAME)
                     .addAnnotation(AnnotationSpec.builder(AopCollectMethod.class)
-                            .addMember("collectClassName", "$S", "className")
+                            .addMember("collectClassName", "$S", variableElement.asType())
                             .addMember("invokeClassName", "$S", element.getEnclosingElement())
                             .addMember("invokeMethod", "$S", name1)
                             .build());
 
             typeBuilder.addMethod(whatsMyName1.build());
-
             TypeSpec typeSpec = typeBuilder.build();
-            String elementClassName = element.toString();
+            String elementClassName = element.getEnclosingElement().toString();
             String packageName = elementClassName.substring(0, elementClassName.lastIndexOf("."));
+
             JavaFile javaFile = JavaFile.builder(packageName, typeSpec)
                     .build();
             try {
