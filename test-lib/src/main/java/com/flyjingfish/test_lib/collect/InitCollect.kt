@@ -11,7 +11,7 @@ object InitCollect {
 
     @AndroidAopCollectMethod
     @JvmStatic
-    fun collect(sub: SubApplication):Unit{
+    fun collect(sub: SubApplication){
         Collects.add(sub)
     }
 

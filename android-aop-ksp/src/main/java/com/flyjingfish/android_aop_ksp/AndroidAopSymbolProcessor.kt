@@ -446,9 +446,15 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       }else if (symbol.parameters.size != 1){
         throw IllegalArgumentException("注意：函数$className${symbol} 参数必须设置一个")
       }
+
       val returnType = symbol.returnType
       if (returnType.toString() != "Unit"){
         throw IllegalArgumentException("注意：函数$className${symbol} 不可以设置返回值类型")
+      }else{
+        val nullable = "${symbol.returnType?.resolve()?.nullability}" == "NULLABLE"
+        if (nullable){
+          throw IllegalArgumentException("注意：函数$className${symbol} 返回值类型不可设置可为 null 类型")
+        }
       }
       if (symbol.origin == Origin.KOTLIN){
         if (!annotationMap.containsKey("@JvmStatic")){
