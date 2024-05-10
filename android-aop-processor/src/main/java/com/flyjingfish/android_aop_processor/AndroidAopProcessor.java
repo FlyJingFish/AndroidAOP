@@ -377,7 +377,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
             ExecutableElement executableElement = (ExecutableElement) element;
             String returnType = executableElement.getReturnType().toString();
             if (!"void".equals(returnType)){
-                throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 不可以设置返回值类型");
+                throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 只可以设置 void 作为返回类型");
             }
             if (executableElement.getParameters().isEmpty()){
                 throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 必须设置您想收集的类作为参数");
