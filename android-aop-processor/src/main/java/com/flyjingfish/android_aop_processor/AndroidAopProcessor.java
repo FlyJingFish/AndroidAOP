@@ -385,7 +385,6 @@ public class AndroidAopProcessor extends AbstractProcessor {
                 throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 参数必须设置一个");
             }
             VariableElement variableElement = executableElement.getParameters().get(0);
-            System.err.println("getReturnType="+executableElement.getReturnType());
 
             TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(element.getEnclosingElement().getSimpleName()+"$$AndroidAopClass")
                     .addAnnotation(AopClass.class)
