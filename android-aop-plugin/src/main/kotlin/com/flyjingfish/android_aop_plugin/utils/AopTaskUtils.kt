@@ -9,9 +9,11 @@ import com.flyjingfish.android_aop_plugin.scanner_visitor.MethodReplaceInvokeVis
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ReplaceBaseClassVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.SearchAOPConfigVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.SearchAopMethodVisitor
+import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import org.gradle.api.Project
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
+import org.objectweb.asm.MethodVisitor
 import java.io.File
 import java.io.FileInputStream
 import java.util.jar.JarFile
@@ -255,7 +257,45 @@ object AopTaskUtils {
     fun wovenIntoCodeForReplace(byteArray: ByteArray): ByteArray {
         val cr = ClassReader(byteArray)
         val cw = ClassWriter(ClassWriter.COMPUTE_FRAMES)
-        val cv = MethodReplaceInvokeVisitor(cw)
+        var thisHasCollect = false
+        var thisHasStaticClock = false
+        var thisCollectClassName :String ?= null
+        val cv = object : MethodReplaceInvokeVisitor(cw){
+            override fun visit(
+                version: Int,
+                access: Int,
+                name: String,
+                signature: String?,
+                superName: String?,
+                interfaces: Array<out String>?
+            ) {
+                super.visit(version, access, name, signature, superName, interfaces)
+                thisHasCollect = hasCollect
+                thisCollectClassName = thisClassName
+            }
+            override fun visitMethod(
+                access: Int,
+                name: String,
+                descriptor: String,
+                signature: String?,
+                exceptions: Array<String?>?
+            ): MethodVisitor? {
+                val mv = super.visitMethod(
+                    access,
+                    name,
+                    descriptor,
+                    signature,
+                    exceptions
+                )
+                thisHasStaticClock = isHasStaticClock
+                return mv
+            }
+        }
+        thisCollectClassName?.let {
+            if (thisHasCollect && !thisHasStaticClock){
+                WovenIntoCode.wovenStaticCode(cw, it)
+            }
+        }
         cr.accept(cv, ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
         return cw.toByteArray()
     }
@@ -263,7 +303,46 @@ object AopTaskUtils {
     fun wovenIntoCodeForExtendsClass(byteArray:ByteArray):ByteArray{
         val cr = ClassReader(byteArray)
         val cw = ClassWriter(ClassWriter.COMPUTE_FRAMES)
-        val cv = ReplaceBaseClassVisitor(cw)
+        var thisHasCollect = false
+        var thisHasStaticClock = false
+        var thisCollectClassName :String ?= null
+        val cv = object : ReplaceBaseClassVisitor(cw){
+            override fun visit(
+                version: Int,
+                access: Int,
+                name: String,
+                signature: String?,
+                superName: String?,
+                interfaces: Array<out String>?
+            ) {
+                super.visit(version, access, name, signature, superName, interfaces)
+                thisHasCollect = hasCollect
+                thisCollectClassName = thisClassName
+            }
+            override fun visitMethod(
+                access: Int,
+                name: String,
+                descriptor: String,
+                signature: String?,
+                exceptions: Array<String?>?
+            ): MethodVisitor? {
+                val mv = super.visitMethod(
+                    access,
+                    name,
+                    descriptor,
+                    signature,
+                    exceptions
+                )
+                thisHasStaticClock = isHasStaticClock
+                return mv
+            }
+        }
+        thisCollectClassName?.let {
+            if (thisHasCollect && !thisHasStaticClock){
+                WovenIntoCode.wovenStaticCode(cw, it)
+            }
+        }
+
         cr.accept(cv, ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
         return cw.toByteArray()
     }

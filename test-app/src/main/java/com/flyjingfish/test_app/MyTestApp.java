@@ -28,8 +28,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class MyApp extends Application {
-    public static MyApp INSTANCE;
+public class MyTestApp extends Application {
+    public static MyTestApp INSTANCE;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -75,7 +75,7 @@ public class MyApp extends Application {
                 //  joinPoint.proceed(args)可以修改方法传入的参数，如果需要改写返回值，则在 return 处返回即可
                 //  不调用 proceed 就不会执行拦截切面方法内的代码
                 Log.e("CustomIntercept","invoke"+(customIntercept == null));
-                ToastUtils.INSTANCE.makeText(MyApp.this,"进入 @CustomIntercept 拦截器，value="+customIntercept.value()[0]);
+                ToastUtils.INSTANCE.makeText(MyTestApp.this,"进入 @CustomIntercept 拦截器，value="+customIntercept.value()[0]);
                 return joinPoint.proceed(2,(short)3,(byte)4,'5',6L,7f, 8.0d,true);
             }
         });
@@ -86,7 +86,7 @@ public class MyApp extends Application {
             public Object handleThrowable(@NonNull String flag, @Nullable Throwable throwable,TryCatch tryCatch) {
                 // TODO: 2023/11/11 发生异常可根据你当时传入的flag作出相应处理，如果需要改写返回值，则在 return 处返回即可
                 Log.e("ThrowableListener","handleThrowable");
-                ToastUtils.INSTANCE.makeText(MyApp.this,"@TryCatch Throwable="+throwable.getMessage());
+                ToastUtils.INSTANCE.makeText(MyTestApp.this,"@TryCatch Throwable="+throwable.getMessage());
                 return 3;
             }
         });

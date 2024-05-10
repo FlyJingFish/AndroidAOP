@@ -4,6 +4,7 @@ import com.flyjingfish.android_aop_plugin.beans.ClassMethodRecord
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.TmpFile
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
+import com.flyjingfish.android_aop_plugin.scanner_visitor.ReplaceBaseClassVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import com.flyjingfish.android_aop_plugin.utils.AopTaskUtils
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
@@ -13,6 +14,12 @@ import com.flyjingfish.android_aop_plugin.utils.Utils._CLASS
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
+import org.objectweb.asm.ClassReader
+import org.objectweb.asm.ClassVisitor
+import org.objectweb.asm.ClassWriter
+import org.objectweb.asm.MethodVisitor
+import org.objectweb.asm.Opcodes
+import org.objectweb.asm.commons.AdviceAdapter
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileInputStream
@@ -119,6 +126,8 @@ class CompileAndroidAopTask(
                 val tmpFile = TmpFile(file,outFile)
                 tempFiles.add(tmpFile)
                 val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(file.absolutePath)
+                val thisClassName = Utils.slashToDotClassName(entryName).replace(_CLASS,"")
+                val hasCollect = WovenInfoUtils.aopCollectClassMap[thisClassName] != null
                 if (methodsRecord != null){
                     FileInputStream(file).use { inputs ->
                         val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),methodsRecord,hasReplace)
@@ -174,6 +183,50 @@ class CompileAndroidAopTask(
                             }
                         }else{
                             copy()
+                        }
+                    }else if (hasCollect) {
+                        FileInputStream(file).use { inputs ->
+                            val byteArray = inputs.readAllBytes()
+                            if (byteArray.isNotEmpty()){
+                                try {
+                                    val cr = ClassReader(byteArray)
+                                    val cw = ClassWriter(ClassWriter.COMPUTE_FRAMES)
+                                    var thisHasStaticClock = false
+                                    val cv = object : ReplaceBaseClassVisitor(cw) {
+                                        override fun visitMethod(
+                                            access: Int,
+                                            name: String,
+                                            descriptor: String,
+                                            signature: String?,
+                                            exceptions: Array<String?>?
+                                        ): MethodVisitor? {
+                                            val mv = super.visitMethod(
+                                                access,
+                                                name,
+                                                descriptor,
+                                                signature,
+                                                exceptions
+                                            )
+                                            thisHasStaticClock = isHasStaticClock
+                                            return mv
+                                        }
+                                    }
+                                    cr.accept(cv, ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+
+                                    if (!thisHasStaticClock){
+                                        WovenIntoCode.wovenStaticCode(cw, thisClassName)
+                                    }
+
+                                    val newByteArray = cw.toByteArray()
+                                    ByteArrayInputStream(newByteArray).use {
+                                        outFile.saveEntry(it)
+                                    }
+                                } catch (e: Exception) {
+                                    copy()
+                                }
+                            }else{
+                                copy()
+                            }
                         }
                     }else{
                         copy()

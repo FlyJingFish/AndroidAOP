@@ -19,7 +19,6 @@ import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addCollectClass
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.getAnnoInfo
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.isContainAnno
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.isLeaf
-import com.flyjingfish.android_aop_plugin.utils.printLog
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.Handle
 import org.objectweb.asm.MethodVisitor
@@ -64,26 +63,26 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
             }
         }
         val isAbstractClass = access and Opcodes.ACC_ABSTRACT != 0
-        WovenInfoUtils.aopCollectInfoList.forEach{
+        WovenInfoUtils.aopCollectInfoMap.forEach{(_,aopCollectCut) ->
             var isImplementsInterface = false
             var isDirectExtends = false
             if (interfaces != null) {
                 for (anInterface in interfaces) {
                     val inter = slashToDotClassName(anInterface)
-                    if (inter == slashToDotClassName(it.collectClassName)) {
+                    if (inter == slashToDotClassName(aopCollectCut.collectClassName)) {
                         isImplementsInterface = true
                         break
                     }
                 }
             }
-            if (isImplementsInterface || slashToDotClassName(it.collectClassName) == slashToDotClassName(
+            if (isImplementsInterface || slashToDotClassName(aopCollectCut.collectClassName) == slashToDotClassName(
                     superName!!
                 )
             ) {
                 isDirectExtends = true
             }
             if (isDirectExtends && !isAbstractClass){
-                addCollectClass(AopCollectClass(it.collectClassName,it.invokeClassName,it.invokeMethod,className))
+                addCollectClass(AopCollectClass(aopCollectCut.collectClassName,aopCollectCut.invokeClassName,aopCollectCut.invokeMethod,className))
             }
         }
         //        logger.error("className="+className+",superName="+superName+",interfaces="+ Arrays.asList(interfaces));

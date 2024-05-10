@@ -58,6 +58,9 @@ object WovenIntoCode {
                 }
             }
         }
+        var thisHasCollect = false
+        var thisHasStaticClock = false
+        var thisCollectClassName :String ?= null
         if (hasReplace){
             cr.accept(object :MethodReplaceInvokeVisitor(cw){
                 var classNameMd5:String ?= null
@@ -71,6 +74,8 @@ object WovenIntoCode {
                 ) {
                     super.visit(version, access, name, signature, superName, interfaces)
                     classNameMd5 = Utils.computeMD5(Utils.slashToDot(name))
+                    thisHasCollect = hasCollect
+                    thisCollectClassName = thisClassName
                 }
                 override fun visitMethod(
                     access: Int,
@@ -80,7 +85,15 @@ object WovenIntoCode {
                     exceptions: Array<String?>?
                 ): MethodVisitor? {
                     visitMethod4Record(access, name, descriptor, signature, exceptions, classNameMd5)
-                    return super.visitMethod(access, name, descriptor, signature, exceptions)
+                    val mv = super.visitMethod(
+                        access,
+                        name,
+                        descriptor,
+                        signature,
+                        exceptions
+                    )
+                    thisHasStaticClock = isHasStaticClock
+                    return mv
                 }
             }, 0)
         }else{
@@ -96,6 +109,8 @@ object WovenIntoCode {
                 ) {
                     super.visit(version, access, name, signature, superName, interfaces)
                     classNameMd5 = Utils.computeMD5(Utils.slashToDot(name))
+                    thisHasCollect = hasCollect
+                    thisCollectClassName = thisClassName
                 }
                 override fun visitMethod(
                     access: Int,
@@ -105,7 +120,15 @@ object WovenIntoCode {
                     exceptions: Array<String?>?
                 ): MethodVisitor? {
                     visitMethod4Record(access, name, descriptor, signature, exceptions, classNameMd5)
-                    return super.visitMethod(access, name, descriptor, signature, exceptions)
+                    val mv = super.visitMethod(
+                        access,
+                        name,
+                        descriptor,
+                        signature,
+                        exceptions
+                    )
+                    thisHasStaticClock = isHasStaticClock
+                    return mv
                 }
                                                            }, 0)
         }
@@ -187,7 +210,7 @@ object WovenIntoCode {
                     name: String,
                     descriptor: String,
                     signature: String?,
-                    exceptions: Array<String>?
+                    exceptions: Array<String?>?
                 ): MethodVisitor? {
                     return if (oldMethodName == name && oldDescriptor == descriptor) {
                         val newAccess = if (Utils.isStaticMethod(access)){
@@ -217,6 +240,12 @@ object WovenIntoCode {
                 }
             }, 0)
         }
+        thisCollectClassName?.let {
+            if (thisHasCollect && !thisHasStaticClock){
+                wovenStaticCode(cw, it)
+            }
+        }
+
         val cp = ClassPoolUtils.getNewClassPool()
 //        val cp = ClassPool.getDefault();
         val byteArrayInputStream: InputStream =
@@ -359,6 +388,18 @@ object WovenIntoCode {
         return ctClass.toBytecode()
     }
 
+    fun wovenStaticCode(cw:ClassWriter,thisClassName:String){
+        val mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, "<clinit>", "()V", null, null);
+        val className1 = "$thisClassName\$Inner${Utils.computeMD5(thisClassName)}"
+        mv.visitTypeInsn(AdviceAdapter.NEW,Utils.dotToSlash(className1));
+        mv.visitInsn(AdviceAdapter.DUP);//压入栈
+        //弹出一个对象所在的地址，进行初始化操作，构造函数默认为空，此时栈大小为1（到目前只有一个局部变量）
+        mv.visitMethodInsn(AdviceAdapter.INVOKESPECIAL,Utils.dotToSlash(className1),"<init>","()V",false);
+        mv.visitInsn(Opcodes.RETURN)
+        mv.visitMaxs(0, 0)
+        mv.visitEnd()
+    }
+
     @Throws(NotFoundException::class)
     fun getCtMethod(ctClass: CtClass, methodName: String?, descriptor: String): CtMethod? {
         val ctMethods = ctClass.getDeclaredMethods(methodName)
@@ -423,67 +464,73 @@ object WovenIntoCode {
     }
 
     fun createCollectClass(output:File) {
-        val className = "com.flyjingfish.android_aop_core.utils.CollectInitClass"
-        //新建一个类生成器，COMPUTE_FRAMES，COMPUTE_MAXS这2个参数能够让asm自动更新操作数栈
-        val cw = ClassWriter(COMPUTE_FRAMES or COMPUTE_MAXS)
-        //生成一个public的类，类路径是com.study.Human
-        cw.visit(V1_8, ACC_PUBLIC, Utils.dotToSlash(className), null, "java/lang/Object", null)
+        WovenInfoUtils.aopCollectClassMap.forEach {(key,value) ->
+            if (value == null){
+                return@forEach
+            }
+            val className = "$key\$Inner${Utils.computeMD5(key)}"
+            //新建一个类生成器，COMPUTE_FRAMES，COMPUTE_MAXS这2个参数能够让asm自动更新操作数栈
+            val cw = ClassWriter(COMPUTE_FRAMES or COMPUTE_MAXS)
+            //生成一个public的类，类路径是com.study.Human
+            cw.visit(V1_8, ACC_PUBLIC+ACC_STATIC, Utils.dotToSlash(className), null, "java/lang/Object", null)
 
-        //生成默认的构造方法： public Human()
-        var mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null)
-        mv.visitVarInsn(ALOAD, 0)
-        mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false)
-        mv.visitInsn(RETURN)
-        mv.visitMaxs(0, 0) //更新操作数栈
-        mv.visitEnd() //一定要有visitEnd
+            //生成默认的构造方法： public Human()
+            var mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null)
+            mv.visitVarInsn(ALOAD, 0)
+            mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false)
+            mv.visitInsn(RETURN)
+            mv.visitMaxs(0, 0) //更新操作数栈
+            mv.visitEnd() //一定要有visitEnd
 
 
-        //生成静态方法
-        mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, "init", "()V", null, null)
-        //生成静态方法中的字节码指令
-        val map: MutableSet<AopCollectClass> = WovenInfoUtils.aopCollectClass
-        if (map.isNotEmpty()) {
-            map.forEach {
-                val methodVisitor = mv
-                val collectClazz = Utils.dotToSlash(it.collectClassName)
-                methodVisitor.visitTypeInsn(AdviceAdapter.NEW, Utils.dotToSlash(it.collectExtendsClassName))
-                methodVisitor.visitInsn(AdviceAdapter.DUP)
-                methodVisitor.visitMethodInsn(
-                    AdviceAdapter.INVOKESPECIAL,
-                    collectClazz,
-                    "<init>",
-                    "()V",
-                    false
-                )
+            //生成静态方法
+            mv = cw.visitMethod(ACC_PUBLIC+ACC_STATIC, "<clinit>", "()V", null, null);
+            //生成静态方法中的字节码指令
+            val map: MutableSet<AopCollectClass> = value
+            if (map.isNotEmpty()) {
+                map.forEach {
+                    val methodVisitor = mv
+                    val collectExtendsClazz = Utils.dotToSlash(it.collectExtendsClassName)
+                    methodVisitor.visitTypeInsn(AdviceAdapter.NEW, collectExtendsClazz)
+                    methodVisitor.visitInsn(AdviceAdapter.DUP)
+                    methodVisitor.visitMethodInsn(
+                        AdviceAdapter.INVOKESPECIAL,
+                        collectExtendsClazz,
+                        "<init>",
+                        "()V",
+                        false
+                    )
+                    val collectClazz = Utils.dotToSlash(it.collectClassName)
+                    methodVisitor.visitMethodInsn(
+                        AdviceAdapter.INVOKESTATIC,
+                        Utils.dotToSlash(it.invokeClassName),
+                        it.invokeMethod,
+                        "(L$collectClazz;)V",
+                        false
+                    )
+                }
+            }
 
-                methodVisitor.visitMethodInsn(
-                    AdviceAdapter.INVOKESTATIC,
-                    Utils.dotToSlash(it.invokeClassName),
-                    it.invokeMethod,
-                    "(L$collectClazz;)V",
-                    false
-                )
+
+            mv.visitInsn(RETURN)
+            mv.visitMaxs(0, 0)
+            mv.visitEnd()
+            //设置必要的类路径
+            val path = output.absolutePath + "/" +Utils.dotToSlash(className)+".class"
+            //获取类的byte数组
+            val classByteData = cw.toByteArray()
+            //把类数据写入到class文件,这样你就可以把这个类文件打包供其他的人使用
+            val outFile = File(path)
+            if (!outFile.parentFile.exists()){
+                outFile.parentFile.mkdirs()
+            }
+            if (!outFile.exists()){
+                outFile.createNewFile()
+            }
+            ByteArrayInputStream(classByteData).use {
+                it.copyTo(FileOutputStream(outFile))
             }
         }
 
-
-        mv.visitInsn(RETURN)
-        mv.visitMaxs(0, 0)
-        mv.visitEnd()
-        //设置必要的类路径
-        val path = output.absolutePath + "/" +Utils.dotToSlash(className)+".class"
-        //获取类的byte数组
-        val classByteData = cw.toByteArray()
-        //把类数据写入到class文件,这样你就可以把这个类文件打包供其他的人使用
-        val outFile = File(path)
-        if (!outFile.parentFile.exists()){
-            outFile.parentFile.mkdirs()
-        }
-        if (!outFile.exists()){
-            outFile.createNewFile()
-        }
-        ByteArrayInputStream(classByteData).use {
-            it.copyTo(FileOutputStream(outFile))
-        }
     }
 }

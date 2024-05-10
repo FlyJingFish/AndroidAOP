@@ -1,5 +1,7 @@
 package com.flyjingfish.test_lib.mycut;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -13,6 +15,7 @@ public class MyAnnoCut implements BasePointCut<MyAnno> {
     @Override
     public Object invoke(@NonNull ProceedJoinPoint joinPoint, @NonNull MyAnno anno) {
         joinPoint.proceed();
+        Log.e("MyAnnoCut","------invoke------");
         ToastUtils.INSTANCE.makeText(ToastUtils.app,"进入MyAnnoCut切面");
         return null;
     }

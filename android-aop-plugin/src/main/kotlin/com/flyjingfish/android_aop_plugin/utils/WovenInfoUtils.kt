@@ -36,8 +36,8 @@ object WovenInfoUtils {
     val replaceMethodInfoMapUse = HashMap<String, ReplaceMethodInfo>()
     private val modifyExtendsClassMap = HashMap<String, String>()
     private val allClassName = mutableSetOf<String>()
-    val aopCollectInfoList = mutableSetOf<AopCollectCut>()
-    val aopCollectClass = mutableSetOf<AopCollectClass>()
+    val aopCollectInfoMap = mutableMapOf<String,AopCollectCut>()
+    val aopCollectClassMap = mutableMapOf<String,MutableSet<AopCollectClass>?>()
     fun addModifyExtendsClassInfo(targetClassName: String, extendsClassName: String) {
         modifyExtendsClassMap[targetClassName] = extendsClassName
         InitConfig.addModifyClassInfo(targetClassName, extendsClassName)
@@ -182,6 +182,8 @@ object WovenInfoUtils {
         invokeMethodCutCache = null
         aopMethodCuts.clear()
         aopInstances.clear()
+//        aopCollectClassMap.clear()
+//        aopCollectInfoMap.clear()
         if (!AndroidAopConfig.increment) {
             aopMatchCuts.clear()
             lastAopMatchCuts.clear()
@@ -444,11 +446,16 @@ object WovenInfoUtils {
     }
 
     fun addCollectConfig(aopCollectCut: AopCollectCut){
-        aopCollectInfoList.add(aopCollectCut)
+        aopCollectInfoMap[aopCollectCut.invokeClassName] = aopCollectCut
     }
 
     fun addCollectClass(aopCollectCut: AopCollectClass){
-        aopCollectClass.add(aopCollectCut)
+        var set = aopCollectClassMap[aopCollectCut.invokeClassName]
+        if (set == null){
+            set = mutableSetOf()
+            aopCollectClassMap[aopCollectCut.invokeClassName] = set
+        }
+        set.add(aopCollectCut)
     }
 
     fun initAllClassName(){

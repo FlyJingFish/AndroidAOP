@@ -5,7 +5,6 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
-import com.flyjingfish.android_aop_core.utils.Utils
 
 class AndroidAopContentProvider : ContentProvider() {
     companion object{
@@ -13,7 +12,6 @@ class AndroidAopContentProvider : ContentProvider() {
     }
     override fun onCreate(): Boolean {
         appContext = context!!
-        Utils.initCollectClass()
         return true
     }
 
