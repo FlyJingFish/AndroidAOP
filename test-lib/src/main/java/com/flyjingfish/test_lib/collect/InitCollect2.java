@@ -17,6 +17,11 @@ public class InitCollect2 {
         collects.add(sub);
     }
 
+    @AndroidAopCollectMethod
+    public static void collect2(SubApplication2 sub){
+        collects.add(sub);
+    }
+
     @MyAnno
     public static void init(Application application){
         Log.e("InitCollect2","----init----");

@@ -38,6 +38,8 @@ import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeSpec
 import java.lang.annotation.ElementType
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
 import java.util.Locale
 
 class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
@@ -441,6 +443,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         clazzName = parent.toString()
         parent = parent?.parent
       }
+
       if (symbol.parameters.isEmpty()){
         throw IllegalArgumentException("注意：函数$className${symbol} 必须设置您想收集的类作为参数")
       }else if (symbol.parameters.size != 1){
@@ -482,7 +485,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
 //      logger.error("invokeClassName=$invokeClassName")
       val parameter = symbol.parameters[0]
       val collectClassName = "${parameter.type.resolve().declaration.packageName.asString()}.${parameter.type}"
-
+      clazzName += computeMD5("$symbol($collectClassName)")
       val fileName = "${clazzName}\$\$AndroidAopClass";
       val typeBuilder = TypeSpec.classBuilder(
         fileName
@@ -550,5 +553,26 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
 
   private fun whatsMyName(name: String): FunSpec.Builder {
     return FunSpec.builder(name).addModifiers(KModifier.FINAL)
+  }
+
+  private fun computeMD5(string: String): String? {
+    return try {
+      val messageDigest = MessageDigest.getInstance("MD5")
+      val digestBytes = messageDigest.digest(string.toByteArray())
+      bytesToHex(digestBytes)
+    } catch (var3: NoSuchAlgorithmException) {
+      throw IllegalStateException(var3)
+    }
+  }
+  private fun bytesToHex(bytes: ByteArray): String? {
+    val hexString = StringBuilder()
+    for (b in bytes) {
+      val hex = Integer.toHexString(0xff and b.toInt())
+      if (hex.length == 1) {
+        hexString.append('0')
+      }
+      hexString.append(hex)
+    }
+    return hexString.toString()
   }
 }

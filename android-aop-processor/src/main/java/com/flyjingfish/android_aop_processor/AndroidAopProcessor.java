@@ -31,6 +31,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -385,8 +387,13 @@ public class AndroidAopProcessor extends AbstractProcessor {
                 throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 参数必须设置一个");
             }
             VariableElement variableElement = executableElement.getParameters().get(0);
-
-            TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(element.getEnclosingElement().getSimpleName()+"$$AndroidAopClass")
+            String clazzName;
+            try {
+                clazzName = element.getEnclosingElement().getSimpleName()+computeMD5(name1+"("+variableElement.asType()+")");
+            } catch (NoSuchAlgorithmException e) {
+                clazzName = element.getEnclosingElement().getSimpleName().toString();
+            }
+            TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(clazzName+"$$AndroidAopClass")
                     .addAnnotation(AopClass.class)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
             MethodSpec.Builder whatsMyName1 = whatsMyName(AOP_METHOD_NAME)
@@ -409,6 +416,23 @@ public class AndroidAopProcessor extends AbstractProcessor {
 //                throw new RuntimeException(e);
             }
         }
+    }
+    private static String computeMD5(String message) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        byte[] digest = md.digest(message.getBytes());
+        return bytesToHex(digest);
+    }
+
+    private static String bytesToHex(byte[] bytes) {
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : bytes) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString();
     }
     private static MethodSpec.Builder whatsMyName(String name) {
         return MethodSpec.methodBuilder(name)

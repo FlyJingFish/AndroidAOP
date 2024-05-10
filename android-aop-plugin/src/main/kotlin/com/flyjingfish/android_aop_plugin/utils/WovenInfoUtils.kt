@@ -446,7 +446,7 @@ object WovenInfoUtils {
     }
 
     fun addCollectConfig(aopCollectCut: AopCollectCut){
-        aopCollectInfoMap[aopCollectCut.invokeClassName] = aopCollectCut
+        aopCollectInfoMap[aopCollectCut.getKey()] = aopCollectCut
     }
 
     fun addCollectClass(aopCollectCut: AopCollectClass){

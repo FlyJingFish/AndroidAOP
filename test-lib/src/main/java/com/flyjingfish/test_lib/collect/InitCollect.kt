@@ -15,6 +15,12 @@ object InitCollect {
         Collects.add(sub)
     }
 
+    @AndroidAopCollectMethod
+    @JvmStatic
+    fun collect2(sub: SubApplication){
+        Collects.add(sub)
+    }
+
     @MyAnno
     fun init(application: Application){
         Log.e("InitCollect","----init----");

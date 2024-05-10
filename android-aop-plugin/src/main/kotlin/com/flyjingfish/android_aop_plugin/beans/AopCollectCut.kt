@@ -4,4 +4,8 @@ data class AopCollectCut(
     val collectClassName: String,
     val invokeClassName: String,
     val invokeMethod: String,
-)
+){
+    fun getKey():String{
+        return invokeClassName + invokeMethod + collectClassName
+    }
+}
