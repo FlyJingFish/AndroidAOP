@@ -604,13 +604,18 @@ public class ReplaceImageView extends ImageView {
 ```kotlin
 object InitCollect {
     private val collects = mutableListOf<SubApplication>()
+    private val collectClazz: MutableList<Class<out SubApplication>> = mutableListOf()
 
     @AndroidAopCollectMethod
     @JvmStatic
     fun collect(sub: SubApplication){
       collects.add(sub)
     }
-  
+    @AndroidAopCollectMethod
+    @JvmStatic
+    fun collect2(sub:Class<out SubApplication>){
+      collectClazz.add(sub)
+    }
     //直接调这个方法 collects 集合就是有数据的
     fun init(application: Application){
         for (collect in collects) {
@@ -624,12 +629,17 @@ object InitCollect {
 
 ```java
 public class InitCollect2 {
-    private static List<SubApplication2> collects = new ArrayList<>();
+    private static final List<SubApplication2> collects = new ArrayList<>();
+    private static final List<Class<? extends SubApplication2>> collectClazz = new ArrayList<>();
     @AndroidAopCollectMethod
     public static void collect(SubApplication2 sub){
         collects.add(sub);
     }
-    
+
+    @AndroidAopCollectMethod
+    public static void collect3(Class<? extends SubApplication2> sub){
+        collectClazz.add(sub);
+    }
     //直接调这个方法 collects 集合就是有数据的
     public static void init(Application application){
         Log.e("InitCollect2","----init----");

@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InitCollect2 {
-    private static List<SubApplication2> collects = new ArrayList<>();
-    private static List<Class<? extends SubApplication2>> collectClazz = new ArrayList<>();
+    private static final List<SubApplication2> collects = new ArrayList<>();
+    private static final List<Class<? extends SubApplication2>> collectClazz = new ArrayList<>();
     @AndroidAopCollectMethod
     public static void collect(SubApplication2 sub){
         collects.add(sub);
