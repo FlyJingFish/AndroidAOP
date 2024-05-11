@@ -34,8 +34,11 @@ import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
@@ -47,6 +50,7 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeMirror;
@@ -60,6 +64,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
     private TypeMirror matchClassMethodType;
     private Types types;
     private static final String AOP_METHOD_NAME = "aopConfigMethod";
+    private Elements elementUtils;
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
@@ -89,7 +94,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
         super.init(processingEnvironment);
         mFiler = processingEnv.getFiler();
-        Elements elementUtils = processingEnv.getElementUtils();
+        elementUtils = processingEnv.getElementUtils();
         matchClassMethodType = elementUtils.getTypeElement(MatchClassMethod.class.getName()).asType();
         types = processingEnv.getTypeUtils();
     }
@@ -393,14 +398,25 @@ public class AndroidAopProcessor extends AbstractProcessor {
             } catch (NoSuchAlgorithmException e) {
                 clazzName = element.getEnclosingElement().getSimpleName().toString();
             }
+            String collectClassName = types.asElement(variableElement.asType()).toString();
+            boolean isClazz = "java.lang.Class".equals(collectClassName);
+            if (isClazz){
+                String type = getType(variableElement.asType().toString());
+                if (type == null){
+                    throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 参数的泛型设置的不对");
+                }else {
+                    collectClassName = type;
+                }
+            }
             TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(clazzName+"$$AndroidAopClass")
                     .addAnnotation(AopClass.class)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
             MethodSpec.Builder whatsMyName1 = whatsMyName(AOP_METHOD_NAME)
                     .addAnnotation(AnnotationSpec.builder(AopCollectMethod.class)
-                            .addMember("collectClassName", "$S", variableElement.asType())
+                            .addMember("collectClassName", "$S", collectClassName)
                             .addMember("invokeClassName", "$S", element.getEnclosingElement())
                             .addMember("invokeMethod", "$S", name1)
+                            .addMember("isClazz", "$S", isClazz+"")
                             .build());
 
             typeBuilder.addMethod(whatsMyName1.build());
@@ -416,6 +432,21 @@ public class AndroidAopProcessor extends AbstractProcessor {
 //                throw new RuntimeException(e);
             }
         }
+    }
+
+    private static final Pattern classnameArrayPattern = Pattern.compile("<\\? extends .*?>");
+    private static final Pattern classnameArrayPattern1 = Pattern.compile("<\\? extends .*?");
+
+    public static String getType(String type) {
+        Matcher matcher = classnameArrayPattern.matcher(type);
+        if (matcher.find()){
+            String type2= matcher.group();
+            Matcher matcher1 = classnameArrayPattern1.matcher(type2);
+            if (matcher1.find()){
+                return matcher1.replaceAll("").replaceAll(">","");
+            }
+        }
+        return null;
     }
     private static String computeMD5(String message) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("MD5");

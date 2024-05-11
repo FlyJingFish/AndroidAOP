@@ -508,7 +508,6 @@ object WovenIntoCode {
                                 }
                             }
                         }
-                        println("createCollectClass,extends=$extends,ctClass=$it")
 
                         if (extends){
                             if (it.isClazz){

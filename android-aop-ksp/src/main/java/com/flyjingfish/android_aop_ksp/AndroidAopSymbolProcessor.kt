@@ -1,16 +1,16 @@
 package com.flyjingfish.android_aop_ksp
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopCollectMethod
-import com.flyjingfish.android_aop_annotation.aop_anno.AopClass
-import com.flyjingfish.android_aop_annotation.aop_anno.AopMatchClassMethod
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod
-import com.flyjingfish.android_aop_annotation.aop_anno.AopPointCut
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopModifyExtendsClass
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopPointCut
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceClass
-import com.flyjingfish.android_aop_annotation.anno.AndroidAopModifyExtendsClass
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethod
+import com.flyjingfish.android_aop_annotation.aop_anno.AopClass
 import com.flyjingfish.android_aop_annotation.aop_anno.AopCollectMethod
-import com.flyjingfish.android_aop_annotation.aop_anno.AopReplaceMethod
+import com.flyjingfish.android_aop_annotation.aop_anno.AopMatchClassMethod
 import com.flyjingfish.android_aop_annotation.aop_anno.AopModifyExtendsClass
+import com.flyjingfish.android_aop_annotation.aop_anno.AopPointCut
+import com.flyjingfish.android_aop_annotation.aop_anno.AopReplaceMethod
 import com.flyjingfish.android_aop_annotation.base.BasePointCut
 import com.flyjingfish.android_aop_annotation.base.BasePointCutCreator
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod
@@ -40,6 +40,8 @@ import com.squareup.kotlinpoet.TypeSpec
 import java.lang.annotation.ElementType
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
                                 private val logger: KSPLogger
@@ -488,6 +490,9 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
 
       val isClazz = collectOutClassName == "java.lang.Class"
       val collectClassName = if (isClazz){
+        logger.error("${parameter.type}")
+        getType("${parameter.type}")
+          ?: throw IllegalArgumentException("注意：函数$className${symbol} 的 参数的泛型设置的不对")
         val element = parameter.type.element
         if (element != null){
           val typeArguments = element.typeArguments
@@ -548,7 +553,20 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
     }
     return symbols.filter { !it.validate() }.toList()
   }
+  private val classnameArrayPattern: Pattern = Pattern.compile("<\\? extends .*?>")
+  private val classnameArrayPattern1: Pattern = Pattern.compile("<\\? extends .*?")
 
+  fun getType(type: String): String? {
+    val matcher: Matcher = classnameArrayPattern.matcher(type)
+    if (matcher.find()) {
+      val type2 = matcher.group()
+      val matcher1: Matcher = classnameArrayPattern1.matcher(type2)
+      if (matcher1.find()) {
+        return matcher1.replaceAll("").replace(">".toRegex(), "")
+      }
+    }
+    return null
+  }
   private fun writeToFile(
     typeBuilder: TypeSpec.Builder,
     packageName:String,

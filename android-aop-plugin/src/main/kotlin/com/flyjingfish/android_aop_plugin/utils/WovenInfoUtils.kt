@@ -461,12 +461,8 @@ object WovenInfoUtils {
             aopCollectClassMap[aopCollectCut.invokeClassName] = set
         }
         set[aopCollectCut.getKey()] = aopCollectCut
-        printLog("addCollectClass=$aopCollectCut")
     }
     fun aopCollectChanged() {
-        printLog("aopCollectClassMap=${lastAopCollectInfoMap == aopCollectInfoMap}")
-        printLog("aopCollectClassMap000=$aopCollectInfoMap")
-        printLog("aopCollectClassMap111=$aopCollectClassMap")
         val iterator = aopCollectClassMap.iterator()
         while (iterator.hasNext()){
             val item = iterator.next()
@@ -505,7 +501,6 @@ object WovenInfoUtils {
             }
 
         }
-        printLog("aopCollectClassMap222=$aopCollectClassMap")
     }
     fun initAllClassName(){
         allClassName.clear()

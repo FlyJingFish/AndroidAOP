@@ -13,19 +13,19 @@ import java.util.List;
 public class InitCollect2 {
     private static List<SubApplication2> collects = new ArrayList<>();
     private static List<Class<? extends SubApplication2>> collectClazz = new ArrayList<>();
-    @AndroidAopCollectMethod
-    public static void collect(SubApplication2 sub){
-        collects.add(sub);
-    }
+//    @AndroidAopCollectMethod
+//    public static void collect(SubApplication2 sub){
+//        collects.add(sub);
+//    }
+//
+//    @AndroidAopCollectMethod
+//    public static void collect2(SubApplication2 sub){
+//        collects.add(sub);
+//    }
 
     @AndroidAopCollectMethod
-    public static void collect2(SubApplication2 sub){
-        collects.add(sub);
-    }
-
-    @AndroidAopCollectMethod
-    public static void collect3(Class<? extends SubApplication2> sub){
-        collectClazz.add(sub);
+    public static void collect3(Class<? super SubApplication2> sub){
+//        collectClazz.add(sub);
     }
 
     @MyAnno
