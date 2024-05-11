@@ -76,7 +76,7 @@ plugins {
 buildscript {
      dependencies {
          //Required items 👇
-         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.7.4'
+         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.7.5'
      }
 }
 //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below.
@@ -114,7 +114,7 @@ Add directly to ```build.gradle``` of **app**
 //Required items 👇
 plugins {
      ...
-     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.7.4"
+     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.7.5"
 }
 ```
 
@@ -144,16 +144,16 @@ plugins {
 
 dependencies {
      //Required items 👇
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.7.4'
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.7.4'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.7.5'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.7.5'
      
      //Required item 👇If you already have this item in your project, you don’t need to add it.
      implementation 'androidx.appcompat:appcompat:1.3.0' // At least in 1.3.0 and above
      
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️supports aspects written in Java and Kotlin code
-     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.7.4'
+     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.7.5'
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️only applies to aspects written in Java code
-     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.7.4'
+     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.7.5'
      //⚠️Choose one of the above android-aop-ksp and android-aop-processor
 }
 ```
