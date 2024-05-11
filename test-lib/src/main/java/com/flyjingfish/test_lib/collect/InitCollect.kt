@@ -9,7 +9,7 @@ import kotlin.reflect.KClass
 
 object InitCollect {
     private val Collects = mutableListOf<SubApplication>()
-    private val collectClazz: MutableList<Class<out SubApplication2>> = mutableListOf()
+    private val collectClazz: MutableList<Class<out SubApplication>> = mutableListOf()
 
     @AndroidAopCollectMethod
     @JvmStatic
@@ -19,7 +19,7 @@ object InitCollect {
 
     @AndroidAopCollectMethod
     @JvmStatic
-    fun collect2(sub:Class<out SubApplication2>){
+    fun collect2(sub:Class<out SubApplication>){
         collectClazz.add(sub)
     }
 

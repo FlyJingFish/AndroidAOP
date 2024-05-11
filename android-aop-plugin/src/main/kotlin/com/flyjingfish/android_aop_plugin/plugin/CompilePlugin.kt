@@ -5,7 +5,6 @@ import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.DynamicFeaturePlugin
 import com.android.build.gradle.LibraryExtension
-import com.android.build.gradle.internal.utils.setDisallowChanges
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.tasks.CompileAndroidAopTask
 import com.flyjingfish.android_aop_plugin.tasks.SyncConfigTask
@@ -16,6 +15,7 @@ import com.flyjingfish.android_aop_plugin.utils.Utils
 import org.codehaus.groovy.runtime.DefaultGroovyMethods
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.gradle.api.tasks.compile.JavaCompile
 import java.io.File
 
 class CompilePlugin(private val root:Boolean): BasePlugin() {
@@ -65,6 +65,9 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                 }
             val variantName = variant.name
             val buildTypeName = variant.buildType.name
+            if (javaCompile is JavaCompile){
+                javaCompile.options.isIncremental = false
+            }
 //            println("CompilePlugin=variant=$variantName,output.name=${variant.buildType.name},isDebug=${isDebugMode(buildTypeName,variantName)}")
             javaCompile.doLast{
                 val androidAopConfig : AndroidAopConfig = if (isApp){
