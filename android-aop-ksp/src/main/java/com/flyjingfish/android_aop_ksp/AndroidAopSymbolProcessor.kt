@@ -490,9 +490,15 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
 
       val isClazz = collectOutClassName == "java.lang.Class"
       val collectClassName = if (isClazz){
-        logger.error("${parameter.type}")
-        getType("${parameter.type}")
-          ?: throw IllegalArgumentException("注意：函数$className${symbol} 的 参数的泛型设置的不对")
+        if (symbol.origin == Origin.KOTLIN){
+//          logger.error("注意：函数$className${symbol}---${parameter.type.resolve()}")
+          getKotlinType("${parameter.type.resolve()}")
+            ?: throw IllegalArgumentException("注意：函数$className${symbol} 的 参数的泛型设置的不对")
+        }else if (symbol.origin == Origin.JAVA){
+//          logger.error("注意：函数$className${symbol}---${parameter.type}")
+          getJavaType("${parameter.type}")
+            ?: throw IllegalArgumentException("注意：函数$className${symbol} 的 参数的泛型设置的不对")
+        }
         val element = parameter.type.element
         if (element != null){
           val typeArguments = element.typeArguments
@@ -553,14 +559,28 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
     }
     return symbols.filter { !it.validate() }.toList()
   }
-  private val classnameArrayPattern: Pattern = Pattern.compile("<\\? extends .*?>")
-  private val classnameArrayPattern1: Pattern = Pattern.compile("<\\? extends .*?")
+  private val javaPattern: Pattern = Pattern.compile("<\\? extends .*?>")
+  private val javaPattern1: Pattern = Pattern.compile("<\\? extends .*?")
 
-  fun getType(type: String): String? {
-    val matcher: Matcher = classnameArrayPattern.matcher(type)
+  fun getJavaType(type: String): String? {
+    val matcher: Matcher = javaPattern.matcher(type)
     if (matcher.find()) {
       val type2 = matcher.group()
-      val matcher1: Matcher = classnameArrayPattern1.matcher(type2)
+      val matcher1: Matcher = javaPattern1.matcher(type2)
+      if (matcher1.find()) {
+        return matcher1.replaceAll("").replace(">".toRegex(), "")
+      }
+    }
+    return null
+  }
+
+  private val kotlinPattern: Pattern = Pattern.compile("<out .*?>")
+  private val kotlinPattern1: Pattern = Pattern.compile("<out .*?")
+  fun getKotlinType(type: String): String? {
+    val matcher: Matcher = kotlinPattern.matcher(type)
+    if (matcher.find()) {
+      val type2 = matcher.group()
+      val matcher1: Matcher = kotlinPattern1.matcher(type2)
       if (matcher1.find()) {
         return matcher1.replaceAll("").replace(">".toRegex(), "")
       }
