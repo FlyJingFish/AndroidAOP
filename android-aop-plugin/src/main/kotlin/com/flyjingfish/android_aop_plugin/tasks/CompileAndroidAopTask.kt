@@ -37,7 +37,7 @@ class CompileAndroidAopTask(
     private val tmpCompileDir:File,
     private val tmpJsonFile:File,
     private val variantName:String
-) :DefaultTask(){
+) {
 
 
     lateinit var logger: Logger
