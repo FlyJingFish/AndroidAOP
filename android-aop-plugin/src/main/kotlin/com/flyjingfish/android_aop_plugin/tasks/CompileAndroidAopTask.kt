@@ -257,16 +257,9 @@ class CompileAndroidAopTask(
                         target.parentFile.mkdirs()
                     }
                     if (!target.exists()){
-                        target.setReadable(true,true)
-                        target.setWritable(true,true)
-                        target.setExecutable(true,true)
                         target.createNewFile()
                     }
                     file.inputStream().use {
-                        target.setReadable(true,true)
-                        target.setWritable(true,true)
-                        target.setExecutable(true,true)
-                        target.deleteOnExit()
                         target.saveEntry(it)
                     }
                 }
