@@ -6,7 +6,6 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.flyjingfish.android_aop_core.annotations.CustomIntercept;
 import com.flyjingfish.android_aop_core.annotations.Delay;
 import com.flyjingfish.android_aop_core.annotations.MainThread;
 import com.flyjingfish.android_aop_core.annotations.Scheduled;

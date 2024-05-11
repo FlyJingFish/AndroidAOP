@@ -37,7 +37,8 @@ object WovenInfoUtils {
     private val modifyExtendsClassMap = HashMap<String, String>()
     private val allClassName = mutableSetOf<String>()
     val aopCollectInfoMap = mutableMapOf<String,AopCollectCut>()
-    val aopCollectClassMap = mutableMapOf<String,MutableSet<AopCollectClass>?>()
+    private val lastAopCollectInfoMap = mutableMapOf<String,AopCollectCut>()
+    val aopCollectClassMap = mutableMapOf<String,MutableMap<String,AopCollectClass>?>()
     fun addModifyExtendsClassInfo(targetClassName: String, extendsClassName: String) {
         modifyExtendsClassMap[targetClassName] = extendsClassName
         InitConfig.addModifyClassInfo(targetClassName, extendsClassName)
@@ -183,10 +184,10 @@ object WovenInfoUtils {
         aopMethodCuts.clear()
         aopInstances.clear()
 //        aopCollectClassMap.clear()
-//        aopCollectInfoMap.clear()
         if (!AndroidAopConfig.increment) {
             aopMatchCuts.clear()
             lastAopMatchCuts.clear()
+            aopCollectInfoMap.clear()
             classPaths.clear()
             baseClassPaths.clear()
             classNameMap.clear()
@@ -203,6 +204,10 @@ object WovenInfoUtils {
             lastAopMatchCuts.clear()
             lastAopMatchCuts.putAll(aopMatchCuts)
 
+            lastAopCollectInfoMap.clear()
+            lastAopCollectInfoMap.putAll(aopCollectInfoMap)
+
+            aopCollectInfoMap.clear()
             aopMatchCuts.clear()
             classPaths.clear()
 //        classMethodRecords.clear()
@@ -328,7 +333,7 @@ object WovenInfoUtils {
     }
 
     fun aopMatchsChanged(): Boolean {
-        return lastAopMatchCuts != aopMatchCuts
+        return lastAopMatchCuts != aopMatchCuts || lastAopCollectInfoMap != aopCollectInfoMap
     }
 
     fun isHasExtendsReplace():Boolean{
@@ -452,12 +457,56 @@ object WovenInfoUtils {
     fun addCollectClass(aopCollectCut: AopCollectClass){
         var set = aopCollectClassMap[aopCollectCut.invokeClassName]
         if (set == null){
-            set = mutableSetOf()
+            set = mutableMapOf()
             aopCollectClassMap[aopCollectCut.invokeClassName] = set
         }
-        set.add(aopCollectCut)
+        set[aopCollectCut.getKey()] = aopCollectCut
+        printLog("addCollectClass=$aopCollectCut")
     }
+    fun aopCollectChanged() {
+        printLog("aopCollectClassMap=${lastAopCollectInfoMap == aopCollectInfoMap}")
+        printLog("aopCollectClassMap000=$aopCollectInfoMap")
+        printLog("aopCollectClassMap111=$aopCollectClassMap")
+        val iterator = aopCollectClassMap.iterator()
+        while (iterator.hasNext()){
+            val item = iterator.next()
+            val key = item.key
+            val value = item.value
+            var containInvokeClassName = false;
+            for (mutableEntry in aopCollectInfoMap) {
+                if (mutableEntry.value.invokeClassName == key){
+                    containInvokeClassName = true
+                    break
+                }
+            }
+            if (!containInvokeClassName){
+                iterator.remove()
+            }else{
+                value?.let {
+                    val itIterator = it.iterator()
+                    while (itIterator.hasNext()){
+                        val itItem = itIterator.next()
+                        var itContain = false
+                        for (mutableEntry in aopCollectInfoMap) {
+                            if (mutableEntry.value.invokeMethod == itItem.value.invokeMethod
+                                && mutableEntry.value.collectClassName == itItem.value.collectClassName
+                                && mutableEntry.value.isClazz == itItem.value.isClazz){
+                                itContain = true
+                                break
+                            }
+                        }
 
+                        if (!itContain){
+                            itIterator.remove()
+                        }
+                    }
+                }
+
+            }
+
+        }
+        printLog("aopCollectClassMap222=$aopCollectClassMap")
+    }
     fun initAllClassName(){
         allClassName.clear()
         classNameMap.forEach{(_,value)->

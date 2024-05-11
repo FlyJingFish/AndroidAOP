@@ -5,6 +5,7 @@ import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.DynamicFeaturePlugin
 import com.android.build.gradle.LibraryExtension
+import com.android.build.gradle.internal.utils.setDisallowChanges
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.tasks.CompileAndroidAopTask
 import com.flyjingfish.android_aop_plugin.tasks.SyncConfigTask
@@ -123,7 +124,8 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                         val output = File(javaCompile.destinationDirectory.asFile.orNull.toString())
                         val task = CompileAndroidAopTask(jarInput,localInput,output,project,isApp,
                             File(Utils.aopCompileTempDir(project,variantName)),
-                            File(Utils.invokeJsonFile(project,variantName))
+                            File(Utils.invokeJsonFile(project,variantName)),
+                            variantName
                         )
                         task.taskAction()
                     }

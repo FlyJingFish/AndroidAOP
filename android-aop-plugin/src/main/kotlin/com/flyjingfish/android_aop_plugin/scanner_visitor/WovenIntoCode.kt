@@ -458,12 +458,16 @@ object WovenIntoCode {
         if (!outFile.exists()){
             outFile.createNewFile()
         }
-        ByteArrayInputStream(classByteData).use {
-            it.copyTo(FileOutputStream(outFile))
+        ByteArrayInputStream(classByteData).use {inputStream->
+            outFile.outputStream().use {
+                inputStream.copyTo(it)
+            }
+
         }
     }
 
     fun createCollectClass(output:File) {
+        val classPool = ClassPoolUtils.getNewClassPool()
         WovenInfoUtils.aopCollectClassMap.forEach {(key,value) ->
             if (value == null){
                 return@forEach
@@ -486,28 +490,61 @@ object WovenIntoCode {
             //生成静态方法
             mv = cw.visitMethod(ACC_PUBLIC+ACC_STATIC, "<clinit>", "()V", null, null);
             //生成静态方法中的字节码指令
-            val map: MutableSet<AopCollectClass> = value
+            val map: MutableMap<String,AopCollectClass> = value
             if (map.isNotEmpty()) {
-                map.forEach {
+                val iterator = map.iterator();
+                while (iterator.hasNext()){
+                    val it = iterator.next().value
                     val methodVisitor = mv
                     val collectExtendsClazz = Utils.dotToSlash(it.collectExtendsClassName)
-                    methodVisitor.visitTypeInsn(AdviceAdapter.NEW, collectExtendsClazz)
-                    methodVisitor.visitInsn(AdviceAdapter.DUP)
-                    methodVisitor.visitMethodInsn(
-                        AdviceAdapter.INVOKESPECIAL,
-                        collectExtendsClazz,
-                        "<init>",
-                        "()V",
-                        false
-                    )
-                    val collectClazz = Utils.dotToSlash(it.collectClassName)
-                    methodVisitor.visitMethodInsn(
-                        AdviceAdapter.INVOKESTATIC,
-                        Utils.dotToSlash(it.invokeClassName),
-                        it.invokeMethod,
-                        "(L$collectClazz;)V",
-                        false
-                    )
+                    try {
+                        val ctClass = classPool.get(WovenInfoUtils.getClassString(Utils.slashToDotClassName(it.collectExtendsClassName)))
+                        var extends = Utils.slashToDotClassName(ctClass.superclass.name) == it.collectClassName
+                        if (!extends){
+                            for (subCtClass in ctClass.interfaces) {
+                                if (Utils.slashToDotClassName(subCtClass.name) == it.collectClassName){
+                                    extends = true
+                                    break
+                                }
+                            }
+                        }
+                        println("createCollectClass,extends=$extends,ctClass=$it")
+
+                        if (extends){
+                            if (it.isClazz){
+                                methodVisitor.visitLdcInsn(Type.getObjectType(collectExtendsClazz));
+                                val collectClazz = Utils.dotToSlash("java.lang.Class")
+                                methodVisitor.visitMethodInsn(
+                                    AdviceAdapter.INVOKESTATIC,
+                                    Utils.dotToSlash(it.invokeClassName),
+                                    it.invokeMethod,
+                                    "(L$collectClazz;)V",
+                                    false
+                                )
+                            }else{
+                                methodVisitor.visitTypeInsn(AdviceAdapter.NEW, collectExtendsClazz)
+                                methodVisitor.visitInsn(AdviceAdapter.DUP)
+                                methodVisitor.visitMethodInsn(
+                                    AdviceAdapter.INVOKESPECIAL,
+                                    collectExtendsClazz,
+                                    "<init>",
+                                    "()V",
+                                    false
+                                )
+                                val collectClazz = Utils.dotToSlash(it.collectClassName)
+                                methodVisitor.visitMethodInsn(
+                                    AdviceAdapter.INVOKESTATIC,
+                                    Utils.dotToSlash(it.invokeClassName),
+                                    it.invokeMethod,
+                                    "(L$collectClazz;)V",
+                                    false
+                                )
+                            }
+                        }else{
+                            iterator.remove()
+                        }
+                    } catch (_: Exception) {
+                    }
                 }
             }
 
@@ -526,9 +563,15 @@ object WovenIntoCode {
             }
             if (!outFile.exists()){
                 outFile.createNewFile()
+            }else{
+                outFile.delete()
+                outFile.createNewFile()
             }
-            ByteArrayInputStream(classByteData).use {
-                it.copyTo(FileOutputStream(outFile))
+            ByteArrayInputStream(classByteData).use {inputStream->
+                outFile.outputStream().use {
+                    inputStream.copyTo(it)
+                }
+
             }
         }
 

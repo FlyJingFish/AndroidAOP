@@ -4,5 +4,10 @@ data class AopCollectClass(
     val collectClassName: String,
     val invokeClassName: String,
     val invokeMethod: String,
-    val collectExtendsClassName: String
-)
+    val collectExtendsClassName: String,
+    val isClazz:Boolean
+){
+    fun getKey():String{
+        return collectClassName+invokeClassName+invokeMethod+collectExtendsClassName+isClazz
+    }
+}

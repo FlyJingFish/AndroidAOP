@@ -156,6 +156,7 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
         private var collectClassName: String? = null
         private var invokeClassName: String? = null
         private var invokeMethod: String? = null
+        private var isClazz: String = "false"
         override fun visit(name: String, value: Any) {
             if (isAndroidAopClass) {
                 if (name == "collectClassName") {
@@ -167,6 +168,9 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
                 if (name == "invokeMethod") {
                     invokeMethod = value.toString()
                 }
+                if (name == "isClazz") {
+                    isClazz = value.toString()
+                }
             }
             super.visit(name, value)
         }
@@ -174,7 +178,7 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
         override fun visitEnd() {
             super.visitEnd()
             if (collectClassName != null && invokeClassName != null && invokeMethod != null) {
-                addCollectConfig(AopCollectCut(collectClassName!!, invokeClassName!!, invokeMethod!!))
+                addCollectConfig(AopCollectCut(collectClassName!!, invokeClassName!!, invokeMethod!!,isClazz == "true"))
             }
         }
     }

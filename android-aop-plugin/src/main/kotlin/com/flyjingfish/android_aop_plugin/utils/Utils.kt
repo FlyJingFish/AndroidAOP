@@ -292,6 +292,9 @@ object Utils {
     fun aopCompileTempDir(project:Project, variantName:String):String{
         return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileClass/"
     }
+    fun aopCompileTempOtherDir(project:Project, variantName:String):String{
+        return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileOtherClass/"
+    }
     fun aopTransformTempDir(project:Project, variantName:String):String{
         return project.buildDir.absolutePath+"/tmp/android-aop/tempInvokeClass/${variantName}/"
     }

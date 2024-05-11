@@ -40,7 +40,6 @@ import com.squareup.kotlinpoet.TypeSpec
 import java.lang.annotation.ElementType
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
-import java.util.Locale
 
 class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
                                 private val logger: KSPLogger
@@ -484,7 +483,38 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       val invokeClassName = className.substring(0,className.length-1)
 //      logger.error("invokeClassName=$invokeClassName")
       val parameter = symbol.parameters[0]
-      val collectClassName = "${parameter.type.resolve().declaration.packageName.asString()}.${parameter.type}"
+      val collectClassShortName = "${parameter.type.resolve().declaration}"
+      val collectOutClassName = "${parameter.type.resolve().declaration.packageName.asString()}.${collectClassShortName}"
+
+      val isClazz = collectOutClassName == "java.lang.Class"
+      val collectClassName = if (isClazz){
+        val element = parameter.type.element
+        if (element != null){
+          val typeArguments = element.typeArguments
+          if (typeArguments.isEmpty()){
+            throw IllegalArgumentException("注意：函数$className${symbol} 的 Class 必须指明 他的范型继承于哪个类")
+          }else{
+            val type = typeArguments[0].type
+            if (type == null){
+              throw IllegalArgumentException("注意：函数$className${symbol} 的 Class 必须指明 他的范型继承于哪个类")
+            }else{
+              val subPackageName = type.resolve().declaration.packageName.asString().toString()
+              val subClazzName = type.resolve().declaration.toString()
+              "$subPackageName.$subClazzName"
+            }
+
+          }
+        }else{
+          throw IllegalArgumentException("注意：函数$className${symbol} 的 Class 必须指明 他的范型继承于哪个类")
+        }
+
+      }else{
+        if (collectOutClassName == "kotlin.reflect.KClass"){
+          throw IllegalArgumentException("注意：函数$className${symbol} 的 参数不可以设定为 kotlin.reflect.KClass")
+        }
+        "${parameter.type.resolve().declaration.packageName.asString()}.${collectClassShortName}"
+      }
+//      logger.error("invokeClassName=$invokeClassName,isClazz=$isClazz,collectClassName=$collectClassName")
       clazzName += computeMD5("$symbol($collectClassName)")
       val fileName = "${clazzName}\$\$AndroidAopClass";
       val typeBuilder = TypeSpec.classBuilder(
@@ -505,6 +535,10 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
             .addMember(
               "invokeMethod = %S",
               symbol
+            )
+            .addMember(
+              "isClazz = %S",
+              "$isClazz"
             )
             .build()
         )

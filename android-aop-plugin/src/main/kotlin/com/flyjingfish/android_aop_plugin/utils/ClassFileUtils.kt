@@ -64,8 +64,11 @@ object ClassFileUtils {
             if (!outFile.exists()){
                 outFile.createNewFile()
             }
-            ByteArrayInputStream(classByteData).use {
-                it.copyTo(FileOutputStream(outFile))
+            ByteArrayInputStream(classByteData).use {inputStream->
+                outFile.outputStream().use {
+                    inputStream.copyTo(it)
+                }
+
             }
             cacheFiles.add(path)
         }
@@ -116,8 +119,11 @@ object ClassFileUtils {
         if (!outFile.exists()){
             outFile.createNewFile()
         }
-        ByteArrayInputStream(cw.toByteArray()).use {
-            it.copyTo(FileOutputStream(outFile))
+        ByteArrayInputStream(cw.toByteArray()).use {inputStream->
+            outFile.outputStream().use {
+                inputStream.copyTo(it)
+            }
+
         }
     }
 }

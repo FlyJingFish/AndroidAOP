@@ -17,5 +17,9 @@ annotation class AopCollectMethod(
     /**
      * @return 执行方法
      */
-    val invokeMethod: String
+    val invokeMethod: String,
+    /**
+     * @return 是否是 class
+     */
+    val isClazz:String = "false"
 )

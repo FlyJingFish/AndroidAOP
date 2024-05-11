@@ -12,6 +12,7 @@ import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils._CLASS
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
+import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.objectweb.asm.ClassReader
@@ -34,8 +35,9 @@ class CompileAndroidAopTask(
     private val project: Project,
     private val outPutInitClass:Boolean,
     private val tmpCompileDir:File,
-    private val tmpJsonFile:File
-) {
+    private val tmpJsonFile:File,
+    private val variantName:String
+) :DefaultTask(){
 
 
     lateinit var logger: Logger
@@ -77,6 +79,7 @@ class CompileAndroidAopTask(
         allJars.forEach { file ->
            AopTaskUtils.processJarForConfig(file)
         }
+        AopTaskUtils.loadJoinPointConfigEnd()
     }
 
     private fun searchJoinPointLocation(){
@@ -241,10 +244,34 @@ class CompileAndroidAopTask(
                 processFile(file,directory,directoryPath)
             }
         }
-
         if (outPutInitClass){
-            WovenIntoCode.createInitClass(output)
-            WovenIntoCode.createCollectClass(output)
+            val tmpOtherDir = File(Utils.aopCompileTempOtherDir(project,variantName))
+            WovenIntoCode.createInitClass(tmpOtherDir)
+            WovenIntoCode.createCollectClass(tmpOtherDir)
+            for (file in tmpOtherDir.walk()) {
+                if (file.isFile) {
+                    val relativePath = tmpOtherDir.toURI().relativize(file.toURI()).path
+//                    println("relativePath=$relativePath")
+                    val target = File(output.absolutePath + "/" + relativePath)
+                    if (!target.parentFile.exists()){
+                        target.parentFile.mkdirs()
+                    }
+                    if (!target.exists()){
+                        target.setReadable(true,true)
+                        target.setWritable(true,true)
+                        target.setExecutable(true,true)
+                        target.createNewFile()
+                    }
+                    file.inputStream().use {
+                        target.setReadable(true,true)
+                        target.setWritable(true,true)
+                        target.setExecutable(true,true)
+                        target.deleteOnExit()
+                        target.saveEntry(it)
+                    }
+                }
+            }
+//            tmpOtherDir.deleteRecursively()
         }
 
         for (tempFile in tempFiles) {
@@ -259,7 +286,9 @@ class CompileAndroidAopTask(
         exportCutInfo()
     }
     private fun File.saveEntry(inputStream: InputStream) {
-        inputStream.copyTo(FileOutputStream(this))
+        this.outputStream().use {
+            inputStream.copyTo(it)
+        }
     }
     private fun exportCutInfo(){
         if (!AndroidAopConfig.cutInfoJson){

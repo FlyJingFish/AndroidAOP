@@ -82,7 +82,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                 isDirectExtends = true
             }
             if (isDirectExtends && !isAbstractClass){
-                addCollectClass(AopCollectClass(aopCollectCut.collectClassName,aopCollectCut.invokeClassName,aopCollectCut.invokeMethod,className))
+                addCollectClass(AopCollectClass(aopCollectCut.collectClassName,aopCollectCut.invokeClassName,aopCollectCut.invokeMethod,className,aopCollectCut.isClazz))
             }
         }
         //        logger.error("className="+className+",superName="+superName+",interfaces="+ Arrays.asList(interfaces));
