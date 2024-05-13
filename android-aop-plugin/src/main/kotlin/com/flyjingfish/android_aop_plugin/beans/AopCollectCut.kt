@@ -4,9 +4,10 @@ data class AopCollectCut(
     val collectClassName: String,
     val invokeClassName: String,
     val invokeMethod: String,
-    val isClazz:Boolean
+    val isClazz:Boolean,
+    val regex : String
 ){
     fun getKey():String{
-        return invokeClassName + invokeMethod + collectClassName+isClazz
+        return invokeClassName + invokeMethod + collectClassName+isClazz+regex
     }
 }

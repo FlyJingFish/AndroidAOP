@@ -21,5 +21,9 @@ annotation class AopCollectMethod(
     /**
      * @return 是否是 class
      */
-    val isClazz:String = "false"
+    val isClazz:String = "false",
+    /**
+     * @return 正则表达式
+     */
+    val regex : String = ""
 )

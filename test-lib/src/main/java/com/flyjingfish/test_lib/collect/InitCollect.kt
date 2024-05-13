@@ -24,14 +24,25 @@ object InitCollect {
 
     @AndroidAopCollectMethod
     @JvmStatic
-    fun collectT(sub: SubApplication3<out Application>){
+    fun collectT(sub: SubApplication3<*>){
         Log.e("InitCollect", "----collectT----$sub")
     }
 
-    @AndroidAopCollectMethod
     @JvmStatic
     fun collectClassT(sub:Class<out SubApplication3<out Application>>){
         Log.e("InitCollect", "----collectClassT----$sub")
+    }
+
+    @AndroidAopCollectMethod(regex = ".*?\\$\\\$AndroidAopClass")
+    @JvmStatic
+    fun collectAndroidAopClassRegex(sub:Class<out Any>){
+        Log.e("InitCollect", "----collectAndroidAopClassRegexClazz----$sub")
+    }
+
+    @AndroidAopCollectMethod(regex = ".*?\\$\\\$AndroidAopClass")
+    @JvmStatic
+    fun collectAndroidAopClassRegex(sub:Any){
+        Log.e("InitCollect", "----collectAndroidAopClassRegexObject----$sub")
     }
 
     fun init(application: Application){

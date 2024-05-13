@@ -43,6 +43,17 @@ public class InitCollect2 {
         Log.e("InitCollect2","----collectClassT----"+sub);
     }
 
+
+    @AndroidAopCollectMethod(regex = ".*?\\$\\$AndroidAopClass")
+    public static void collectAndroidAopClassRegex(Object sub){
+        Log.e("InitCollect2","----collectAndroidAopClassRegexObject----"+sub);
+    }
+
+    @AndroidAopCollectMethod(regex = ".*?\\$\\$AndroidAopClass")
+    public static void collectAndroidAopClassRegex(Class<?> sub){
+        Log.e("InitCollect2","----collectAndroidAopClassRegexClazz----"+sub);
+    }
+
     @MyAnno
     public static void init(Application application){
         Log.e("InitCollect2","----init----");

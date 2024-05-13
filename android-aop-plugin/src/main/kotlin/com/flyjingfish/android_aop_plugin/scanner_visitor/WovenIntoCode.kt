@@ -30,6 +30,8 @@ import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 object WovenIntoCode {
     private const val METHOD_SUFFIX = "\$\$AndroidAOP"
@@ -508,8 +510,18 @@ object WovenIntoCode {
                                 }
                             }
                         }
-
-                        if (extends){
+                        val find = if (it.regex.isNotEmpty()){
+                            val classnameArrayPattern: Pattern = Pattern.compile(it.regex)
+                            val matcher: Matcher = classnameArrayPattern.matcher(
+                                Utils.slashToDot(
+                                    it.collectExtendsClassName
+                                )
+                            )
+                            matcher.find()
+                        }else{
+                            true
+                        }
+                        if (extends && find){
                             if (it.isClazz){
                                 methodVisitor.visitLdcInsn(Type.getObjectType(collectExtendsClazz));
                                 val collectClazz = Utils.dotToSlash("java.lang.Class")

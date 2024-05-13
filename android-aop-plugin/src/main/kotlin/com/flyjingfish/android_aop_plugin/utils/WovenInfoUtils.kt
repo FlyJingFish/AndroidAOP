@@ -486,7 +486,8 @@ object WovenInfoUtils {
                         for (mutableEntry in aopCollectInfoMap) {
                             if (mutableEntry.value.invokeMethod == itItem.value.invokeMethod
                                 && mutableEntry.value.collectClassName == itItem.value.collectClassName
-                                && mutableEntry.value.isClazz == itItem.value.isClazz){
+                                && mutableEntry.value.isClazz == itItem.value.isClazz
+                                && mutableEntry.value.regex == itItem.value.regex){
                                 itContain = true
                                 break
                             }

@@ -363,6 +363,10 @@ public class AndroidAopProcessor extends AbstractProcessor {
         Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(AndroidAopCollectMethod.class);
         for (Element element : elements) {
             Name name1 = element.getSimpleName();
+
+            AndroidAopCollectMethod cut = element.getAnnotation(AndroidAopCollectMethod.class);
+            String regex = cut.regex();
+
             boolean isStatic = false;
             boolean isPublic = false;
             Set<Modifier> modifiers = element.getModifiers();
@@ -393,12 +397,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
                 throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 参数必须设置一个");
             }
             VariableElement variableElement = executableElement.getParameters().get(0);
-            String clazzName;
-            try {
-                clazzName = element.getEnclosingElement().getSimpleName()+computeMD5(name1+"("+variableElement.asType()+")");
-            } catch (NoSuchAlgorithmException e) {
-                clazzName = element.getEnclosingElement().getSimpleName().toString();
-            }
+
             TypeMirror asType = variableElement.asType();
             Element typeElement = types.asElement(asType);
 //            System.out.println("asType="+typeElement);
@@ -407,17 +406,45 @@ public class AndroidAopProcessor extends AbstractProcessor {
             }
             String collectClassName = typeElement.toString();
             boolean isClazz = "java.lang.Class".equals(collectClassName);
+            boolean regexIsEmpty = regex == null || "".equals(regex);
             if (isClazz){
-                String type = getType(variableElement.asType().toString());
-                if (type == null){
-                    throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 参数的泛型设置的不对");
+                String checkType = variableElement.asType().toString();
+                String type = getType(checkType);
+                if (regexIsEmpty){
+                    if (type == null){
+                        throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 参数的泛型设置的不对");
+                    }else {
+                        collectClassName = type;
+                    }
                 }else {
-                    collectClassName = type;
+                    if (checkType(checkType)){
+                        throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 参数的泛型设置的不对");
+                    }else {
+                        if (type == null){
+                            collectClassName = "java.lang.Object";
+                        }else {
+                            collectClassName = type;
+                        }
+                    }
 
                 }
+
             }
             if ("kotlin.reflect.KClass".equals(collectClassName)){
                 throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 参数不可以设定为 "+collectClassName);
+            }
+            if ("kotlin.Any".equals(collectClassName) || "java.lang.Object".equals(collectClassName)){
+                if (regexIsEmpty){
+                    throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 参数不可以设定为 "+collectClassName);
+                }else{
+                    collectClassName = "java.lang.Object";
+                }
+            }
+            String clazzName;
+            try {
+                clazzName = element.getEnclosingElement().getSimpleName()+computeMD5(name1+"("+isClazz+variableElement.asType()+")");
+            } catch (NoSuchAlgorithmException e) {
+                clazzName = element.getEnclosingElement().getSimpleName().toString();
             }
 //            System.out.println("collectClassName="+collectClassName);
             TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(clazzName+"$$AndroidAopClass")
@@ -428,7 +455,8 @@ public class AndroidAopProcessor extends AbstractProcessor {
                             .addMember("collectClassName", "$S", collectClassName)
                             .addMember("invokeClassName", "$S", element.getEnclosingElement())
                             .addMember("invokeMethod", "$S", name1)
-                            .addMember("isClazz", "$S", isClazz+"")
+                            .addMember("isClazz", "$S", isClazz)
+                            .addMember("regex", "$S", regex)
                             .build());
 
             typeBuilder.addMethod(whatsMyName1.build());
@@ -448,6 +476,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
 
     private static final Pattern classnameArrayPattern = Pattern.compile("<\\? extends .*?>");
     private static final Pattern classnameArrayPattern1 = Pattern.compile("<\\? extends .*?");
+    private static final Pattern classnameArrayPattern2 = Pattern.compile("<\\? super .*?>");
 
     public static String getType(String type) {
         Matcher matcher = classnameArrayPattern.matcher(type);
@@ -468,6 +497,12 @@ public class AndroidAopProcessor extends AbstractProcessor {
         }
         return null;
     }
+
+    public static boolean checkType(String type) {
+        Matcher matcher = classnameArrayPattern2.matcher(type);
+        return matcher.find();
+    }
+
     private static String computeMD5(String message) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("MD5");
         byte[] digest = md.digest(message.getBytes());

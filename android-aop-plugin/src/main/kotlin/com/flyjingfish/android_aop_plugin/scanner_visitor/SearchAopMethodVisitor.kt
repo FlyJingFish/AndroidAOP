@@ -29,6 +29,8 @@ import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.InvokeDynamicInsnNode
 import org.objectweb.asm.tree.MethodNode
 import java.util.UUID
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 
 class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
@@ -81,8 +83,15 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
             ) {
                 isDirectExtends = true
             }
-            if (isDirectExtends && !isAbstractClass){
-                addCollectClass(AopCollectClass(aopCollectCut.collectClassName,aopCollectCut.invokeClassName,aopCollectCut.invokeMethod,className,aopCollectCut.isClazz))
+            val find = if (aopCollectCut.regex.isNotEmpty()){
+                val classnameArrayPattern: Pattern = Pattern.compile(aopCollectCut.regex)
+                val matcher: Matcher = classnameArrayPattern.matcher(slashToDot(className))
+                matcher.find()
+            }else{
+                true
+            }
+            if (isDirectExtends && !isAbstractClass && find){
+                addCollectClass(AopCollectClass(aopCollectCut.collectClassName,aopCollectCut.invokeClassName,aopCollectCut.invokeMethod,className,aopCollectCut.isClazz,aopCollectCut.regex))
             }
         }
         //        logger.error("className="+className+",superName="+superName+",interfaces="+ Arrays.asList(interfaces));

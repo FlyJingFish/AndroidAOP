@@ -448,6 +448,10 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       val annotationMap = getAnnotation(symbol)
       if (symbol !is KSFunctionDeclaration) continue
 
+      val classMethodMap: MutableMap<String, Any?> =
+        annotationMap["@"+AndroidAopCollectMethod::class.simpleName] ?: continue
+
+      val regex: String? = classMethodMap["regex"]?.toString()
 
       var className = "${symbol.packageName.asString()}."
       var parent = symbol.parent
@@ -502,25 +506,49 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       val collectOutClassName = "${parameter.type.resolve().declaration.packageName.asString()}.${collectClassShortName}"
 
       val isClazz = collectOutClassName == "java.lang.Class"
-      val collectClassName = if (isClazz){
+      var collectClassName = if (isClazz){
         if (symbol.origin == Origin.KOTLIN){
 //          logger.error("注意：函数$className${symbol}---${parameter.type.resolve()}")
-          getKotlinType("${parameter.type.resolve()}")
-            ?: throw IllegalArgumentException("注意：函数$className${symbol} 的 参数的泛型设置的不对")
+          val checkType = "${parameter.type.resolve()}"
+          if (regex.isNullOrEmpty()){
+            if (!checkKotlinType(checkType)){
+              throw IllegalArgumentException("注意：函数$className${symbol} 的 参数的泛型设置的不对")
+            }
+          }else{
+            if (checkKotlinType1(checkType)){
+              throw IllegalArgumentException("注意：函数$className${symbol} 的 参数的泛型设置的不对")
+            }
+          }
         }else if (symbol.origin == Origin.JAVA){
 //          logger.error("注意：函数$className${symbol}---${parameter.type}")
-          getJavaType("${parameter.type}")
-            ?: throw IllegalArgumentException("注意：函数$className${symbol} 的 参数的泛型设置的不对")
+          val checkType = "${parameter.type}"
+          if (regex.isNullOrEmpty()){
+            if (!checkJavaType(checkType)){
+              throw IllegalArgumentException("注意：函数$className${symbol} 的 参数的泛型设置的不对")
+            }
+          }else{
+            if (checkJavaType1(checkType)){
+              throw IllegalArgumentException("注意：函数$className${symbol} 的 参数的泛型设置的不对")
+            }
+          }
         }
         val element = parameter.type.element
         if (element != null){
           val typeArguments = element.typeArguments
           if (typeArguments.isEmpty()){
-            throw IllegalArgumentException("注意：函数$className${symbol} 的 Class 必须指明 他的范型继承于哪个类")
+            if (regex.isNullOrEmpty()){
+              throw IllegalArgumentException("注意：函数$className${symbol} 的 Class 必须指明 他的范型继承于哪个类")
+            }else{
+              "java.lang.Object"
+            }
           }else{
             val type = typeArguments[0].type
             if (type == null){
-              throw IllegalArgumentException("注意：函数$className${symbol} 的 Class 必须指明 他的范型继承于哪个类")
+              if (regex.isNullOrEmpty()){
+                throw IllegalArgumentException("注意：函数$className${symbol} 的 Class 必须指明 他的范型继承于哪个类")
+              }else{
+                "java.lang.Object"
+              }
             }else{
               val subPackageName = type.resolve().declaration.packageName.asString().toString()
               val subClazzName = type.resolve().declaration.toString()
@@ -540,8 +568,17 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         throw IllegalArgumentException("注意：函数$className${symbol} 的 参数不可以设定为 $collectClassName")
       }
 
-//      logger.error("invokeClassName=$invokeClassName,isClazz=$isClazz,collectClassName=$collectClassName")
-      clazzName += computeMD5("$symbol($collectClassName)")
+      if (collectClassName == "kotlin.Any" || collectClassName == "java.lang.Object"){
+        if (regex.isNullOrEmpty()){
+          throw IllegalArgumentException("注意：函数$className${symbol} 的 regex 为空时它的参数不可以设定为 $collectClassName")
+        }else{
+          collectClassName = "java.lang.Object"
+        }
+      }
+
+
+//      logger.error("invokeClassName=${symbol.location}")
+      clazzName += computeMD5("$symbol($isClazz,$collectClassName)")
       val fileName = "${clazzName}\$\$AndroidAopClass";
       val typeBuilder = TypeSpec.classBuilder(
         fileName
@@ -566,6 +603,10 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
               "isClazz = %S",
               "$isClazz"
             )
+            .addMember(
+              "regex = %S",
+              "$regex"
+            )
             .build()
         )
 
@@ -575,32 +616,28 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
     return symbols.filter { !it.validate() }.toList()
   }
   private val javaPattern: Pattern = Pattern.compile("<\\? extends .*?>")
-  private val javaPattern1: Pattern = Pattern.compile("<\\? extends .*?")
+  private val javaPattern1: Pattern = Pattern.compile("<\\? super .*?>")
 
-  fun getJavaType(type: String): String? {
+  fun checkJavaType(type: String): Boolean {
     val matcher: Matcher = javaPattern.matcher(type)
-    if (matcher.find()) {
-      val type2 = matcher.group()
-      val matcher1: Matcher = javaPattern1.matcher(type2)
-      if (matcher1.find()) {
-        return matcher1.replaceAll("").replace(">".toRegex(), "")
-      }
-    }
-    return null
+    return matcher.find()
+  }
+
+  fun checkJavaType1(type: String): Boolean {
+    val matcher: Matcher = javaPattern1.matcher(type)
+    return matcher.find()
   }
 
   private val kotlinPattern: Pattern = Pattern.compile("<out .*?>")
-  private val kotlinPattern1: Pattern = Pattern.compile("<out .*?")
-  fun getKotlinType(type: String): String? {
+  private val kotlinPattern1: Pattern = Pattern.compile("<in .*?>")
+  fun checkKotlinType(type: String): Boolean {
     val matcher: Matcher = kotlinPattern.matcher(type)
-    if (matcher.find()) {
-      val type2 = matcher.group()
-      val matcher1: Matcher = kotlinPattern1.matcher(type2)
-      if (matcher1.find()) {
-        return matcher1.replaceAll("").replace(">".toRegex(), "")
-      }
-    }
-    return null
+    return matcher.find()
+  }
+
+  fun checkKotlinType1(type: String): Boolean {
+    val matcher: Matcher = kotlinPattern1.matcher(type)
+    return matcher.find()
   }
   private fun writeToFile(
     typeBuilder: TypeSpec.Builder,
