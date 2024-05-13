@@ -499,62 +499,65 @@ object WovenIntoCode {
                     val it = iterator.next().value
                     val methodVisitor = mv
                     val collectExtendsClazz = Utils.dotToSlash(it.collectExtendsClassName)
-                    try {
-                        val ctClass = classPool.get(WovenInfoUtils.getClassString(Utils.slashToDotClassName(it.collectExtendsClassName)))
-                        var extends = Utils.slashToDotClassName(ctClass.superclass.name) == it.collectClassName
-                        if (!extends){
-                            for (subCtClass in ctClass.interfaces) {
-                                if (Utils.slashToDotClassName(subCtClass.name) == it.collectClassName){
-                                    extends = true
-                                    break
+                    val find = if (it.regex.isNotEmpty()){
+                        val classnameArrayPattern: Pattern = Pattern.compile(it.regex)
+                        val matcher: Matcher = classnameArrayPattern.matcher(
+                            Utils.slashToDot(
+                                it.collectExtendsClassName
+                            )
+                        )
+                        matcher.find()
+                    }else{
+                        true
+                    }
+                    if (find){
+                        try {
+                            val ctClass = classPool.get(WovenInfoUtils.getClassString(Utils.slashToDotClassName(it.collectExtendsClassName)))
+                            var extends = Utils.slashToDotClassName(ctClass.superclass.name) == it.collectClassName
+                            if (!extends){
+                                for (subCtClass in ctClass.interfaces) {
+                                    if (Utils.slashToDotClassName(subCtClass.name) == it.collectClassName){
+                                        extends = true
+                                        break
+                                    }
                                 }
                             }
-                        }
-                        val find = if (it.regex.isNotEmpty()){
-                            val classnameArrayPattern: Pattern = Pattern.compile(it.regex)
-                            val matcher: Matcher = classnameArrayPattern.matcher(
-                                Utils.slashToDot(
-                                    it.collectExtendsClassName
-                                )
-                            )
-                            matcher.find()
-                        }else{
-                            true
-                        }
-                        if (extends && find){
-                            if (it.isClazz){
-                                methodVisitor.visitLdcInsn(Type.getObjectType(collectExtendsClazz));
-                                val collectClazz = Utils.dotToSlash("java.lang.Class")
-                                methodVisitor.visitMethodInsn(
-                                    AdviceAdapter.INVOKESTATIC,
-                                    Utils.dotToSlash(it.invokeClassName),
-                                    it.invokeMethod,
-                                    "(L$collectClazz;)V",
-                                    false
-                                )
+
+                            if (extends){
+                                if (it.isClazz){
+                                    methodVisitor.visitLdcInsn(Type.getObjectType(collectExtendsClazz));
+                                    val collectClazz = Utils.dotToSlash("java.lang.Class")
+                                    methodVisitor.visitMethodInsn(
+                                        AdviceAdapter.INVOKESTATIC,
+                                        Utils.dotToSlash(it.invokeClassName),
+                                        it.invokeMethod,
+                                        "(L$collectClazz;)V",
+                                        false
+                                    )
+                                }else{
+                                    methodVisitor.visitTypeInsn(AdviceAdapter.NEW, collectExtendsClazz)
+                                    methodVisitor.visitInsn(AdviceAdapter.DUP)
+                                    methodVisitor.visitMethodInsn(
+                                        AdviceAdapter.INVOKESPECIAL,
+                                        collectExtendsClazz,
+                                        "<init>",
+                                        "()V",
+                                        false
+                                    )
+                                    val collectClazz = Utils.dotToSlash(it.collectClassName)
+                                    methodVisitor.visitMethodInsn(
+                                        AdviceAdapter.INVOKESTATIC,
+                                        Utils.dotToSlash(it.invokeClassName),
+                                        it.invokeMethod,
+                                        "(L$collectClazz;)V",
+                                        false
+                                    )
+                                }
                             }else{
-                                methodVisitor.visitTypeInsn(AdviceAdapter.NEW, collectExtendsClazz)
-                                methodVisitor.visitInsn(AdviceAdapter.DUP)
-                                methodVisitor.visitMethodInsn(
-                                    AdviceAdapter.INVOKESPECIAL,
-                                    collectExtendsClazz,
-                                    "<init>",
-                                    "()V",
-                                    false
-                                )
-                                val collectClazz = Utils.dotToSlash(it.collectClassName)
-                                methodVisitor.visitMethodInsn(
-                                    AdviceAdapter.INVOKESTATIC,
-                                    Utils.dotToSlash(it.invokeClassName),
-                                    it.invokeMethod,
-                                    "(L$collectClazz;)V",
-                                    false
-                                )
+                                iterator.remove()
                             }
-                        }else{
-                            iterator.remove()
+                        } catch (_: Exception) {
                         }
-                    } catch (_: Exception) {
                     }
                 }
             }
