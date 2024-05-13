@@ -66,23 +66,6 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
         }
         val isAbstractClass = access and Opcodes.ACC_ABSTRACT != 0
         WovenInfoUtils.aopCollectInfoMap.forEach{(_,aopCollectCut) ->
-            var isImplementsInterface = false
-            var isDirectExtends = false
-            if (interfaces != null) {
-                for (anInterface in interfaces) {
-                    val inter = slashToDotClassName(anInterface)
-                    if (inter == slashToDotClassName(aopCollectCut.collectClassName)) {
-                        isImplementsInterface = true
-                        break
-                    }
-                }
-            }
-            if (isImplementsInterface || slashToDotClassName(aopCollectCut.collectClassName) == slashToDotClassName(
-                    superName!!
-                )
-            ) {
-                isDirectExtends = true
-            }
             val find = if (aopCollectCut.regex.isNotEmpty()){
                 val classnameArrayPattern: Pattern = Pattern.compile(aopCollectCut.regex)
                 val matcher: Matcher = classnameArrayPattern.matcher(slashToDot(className))
@@ -90,8 +73,27 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
             }else{
                 true
             }
-            if (isDirectExtends && !isAbstractClass && find){
-                addCollectClass(AopCollectClass(aopCollectCut.collectClassName,aopCollectCut.invokeClassName,aopCollectCut.invokeMethod,className,aopCollectCut.isClazz,aopCollectCut.regex))
+            if (find){
+                var isImplementsInterface = false
+                var isDirectExtends = false
+                if (interfaces != null) {
+                    for (anInterface in interfaces) {
+                        val inter = slashToDotClassName(anInterface)
+                        if (inter == slashToDotClassName(aopCollectCut.collectClassName)) {
+                            isImplementsInterface = true
+                            break
+                        }
+                    }
+                }
+                if (isImplementsInterface || slashToDotClassName(aopCollectCut.collectClassName) == slashToDotClassName(
+                        superName!!
+                    )
+                ) {
+                    isDirectExtends = true
+                }
+                if (isDirectExtends && !isAbstractClass){
+                    addCollectClass(AopCollectClass(aopCollectCut.collectClassName,aopCollectCut.invokeClassName,aopCollectCut.invokeMethod,className,aopCollectCut.isClazz,aopCollectCut.regex))
+                }
             }
         }
         //        logger.error("className="+className+",superName="+superName+",interfaces="+ Arrays.asList(interfaces));
