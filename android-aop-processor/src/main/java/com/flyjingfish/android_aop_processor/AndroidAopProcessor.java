@@ -33,6 +33,7 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -398,7 +399,13 @@ public class AndroidAopProcessor extends AbstractProcessor {
             } catch (NoSuchAlgorithmException e) {
                 clazzName = element.getEnclosingElement().getSimpleName().toString();
             }
-            String collectClassName = types.asElement(variableElement.asType()).toString();
+            TypeMirror asType = variableElement.asType();
+            Element typeElement = types.asElement(asType);
+//            System.out.println("asType="+typeElement);
+            if (typeElement == null){
+                throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 参数的类型不可以设置为"+asType);
+            }
+            String collectClassName = typeElement.toString();
             boolean isClazz = "java.lang.Class".equals(collectClassName);
             if (isClazz){
                 String type = getType(variableElement.asType().toString());
@@ -406,9 +413,13 @@ public class AndroidAopProcessor extends AbstractProcessor {
                     throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 参数的泛型设置的不对");
                 }else {
                     collectClassName = type;
-                    System.out.println("collectClassName="+type);
+
                 }
             }
+            if ("kotlin.reflect.KClass".equals(collectClassName)){
+                throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 参数不可以设定为 "+collectClassName);
+            }
+//            System.out.println("collectClassName="+collectClassName);
             TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(clazzName+"$$AndroidAopClass")
                     .addAnnotation(AopClass.class)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL);

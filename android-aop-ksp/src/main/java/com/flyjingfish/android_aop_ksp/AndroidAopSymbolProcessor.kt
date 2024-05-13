@@ -48,6 +48,19 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
 ) : SymbolProcessor {
   companion object{
     const val AOP_METHOD_NAME = "aopConfigMethod"
+    val IGNORE_TYPE = mutableSetOf<String>().apply {
+      add("kotlin.Int")
+      add("kotlin.Float")
+      add("kotlin.Double")
+      add("kotlin.Long")
+      add("kotlin.Byte")
+      add("kotlin.Boolean")
+      add("kotlin.Short")
+      add("kotlin.Char")
+      add("kotlin.String")
+      add("java.lang.String")
+      add("kotlin.reflect.KClass")
+    }
   }
   override fun process(resolver: Resolver): List<KSAnnotated> {
 //    logger.error("---------AndroidAopSymbolProcessor---------")
@@ -520,11 +533,13 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         }
 
       }else{
-        if (collectOutClassName == "kotlin.reflect.KClass"){
-          throw IllegalArgumentException("注意：函数$className${symbol} 的 参数不可以设定为 kotlin.reflect.KClass")
-        }
         "${parameter.type.resolve().declaration.packageName.asString()}.${collectClassShortName}"
       }
+
+      if (collectClassName in IGNORE_TYPE){
+        throw IllegalArgumentException("注意：函数$className${symbol} 的 参数不可以设定为 $collectClassName")
+      }
+
 //      logger.error("invokeClassName=$invokeClassName,isClazz=$isClazz,collectClassName=$collectClassName")
       clazzName += computeMD5("$symbol($collectClassName)")
       val fileName = "${clazzName}\$\$AndroidAopClass";

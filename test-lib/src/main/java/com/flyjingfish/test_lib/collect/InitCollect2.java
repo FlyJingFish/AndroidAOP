@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kotlin.jvm.JvmStatic;
+import kotlin.reflect.KClass;
 
 public class InitCollect2 {
     private static final List<SubApplication2> collects = new ArrayList<>();
