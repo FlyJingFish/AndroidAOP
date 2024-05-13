@@ -74,23 +74,30 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                 true
             }
             if (find){
+                val isObject = slashToDotClassName(aopCollectCut.collectClassName) == "java.lang.Object"
                 var isImplementsInterface = false
                 var isDirectExtends = false
-                if (interfaces != null) {
-                    for (anInterface in interfaces) {
-                        val inter = slashToDotClassName(anInterface)
-                        if (inter == slashToDotClassName(aopCollectCut.collectClassName)) {
-                            isImplementsInterface = true
-                            break
+                if (!isObject){
+                    if (interfaces != null) {
+                        for (anInterface in interfaces) {
+                            val inter = slashToDotClassName(anInterface)
+                            if (inter == slashToDotClassName(aopCollectCut.collectClassName)) {
+                                isImplementsInterface = true
+                                break
+                            }
                         }
                     }
-                }
-                if (isImplementsInterface || slashToDotClassName(aopCollectCut.collectClassName) == slashToDotClassName(
-                        superName!!
-                    )
-                ) {
+                    if (isImplementsInterface || slashToDotClassName(aopCollectCut.collectClassName) == slashToDotClassName(
+                            superName!!
+                        )
+                    ) {
+                        isDirectExtends = true
+                    }
+                }else{
+                    isImplementsInterface = true
                     isDirectExtends = true
                 }
+
                 if (isDirectExtends && !isAbstractClass){
                     addCollectClass(AopCollectClass(aopCollectCut.collectClassName,aopCollectCut.invokeClassName,aopCollectCut.invokeMethod,className,aopCollectCut.isClazz,aopCollectCut.regex))
                 }
