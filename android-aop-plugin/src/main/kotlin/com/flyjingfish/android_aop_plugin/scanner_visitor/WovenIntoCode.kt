@@ -28,7 +28,6 @@ import org.objectweb.asm.Opcodes.*
 import org.objectweb.asm.commons.AdviceAdapter
 import java.io.ByteArrayInputStream
 import java.io.File
-import java.io.FileOutputStream
 import java.io.InputStream
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -496,14 +495,14 @@ object WovenIntoCode {
             if (map.isNotEmpty()) {
                 val iterator = map.iterator();
                 while (iterator.hasNext()){
-                    val it = iterator.next().value
+                    val aopCollectCut = iterator.next().value
                     val methodVisitor = mv
-                    val collectExtendsClazz = Utils.dotToSlash(it.collectExtendsClassName)
-                    val find = if (it.regex.isNotEmpty()){
-                        val classnameArrayPattern: Pattern = Pattern.compile(it.regex)
+                    val collectExtendsClazz = Utils.dotToSlash(aopCollectCut.collectExtendsClassName)
+                    val find = if (aopCollectCut.regex.isNotEmpty()){
+                        val classnameArrayPattern: Pattern = Pattern.compile(aopCollectCut.regex)
                         val matcher: Matcher = classnameArrayPattern.matcher(
                             Utils.slashToDot(
-                                it.collectExtendsClassName
+                                aopCollectCut.collectExtendsClassName
                             )
                         )
                         matcher.find()
@@ -512,25 +511,84 @@ object WovenIntoCode {
                     }
                     if (find){
                         try {
-                            val ctClass = classPool.get(WovenInfoUtils.getClassString(Utils.slashToDotClassName(it.collectExtendsClassName)))
-                            var extends = Utils.slashToDotClassName(ctClass.superclass.name) == it.collectClassName
-                            if (!extends){
-                                for (subCtClass in ctClass.interfaces) {
-                                    if (Utils.slashToDotClassName(subCtClass.name) == it.collectClassName){
-                                        extends = true
-                                        break
+                            val ctClass = classPool.get(WovenInfoUtils.getClassString(Utils.slashToDotClassName(aopCollectCut.collectExtendsClassName)))
+                            val access = ctClass.modifiers
+                            val isAbstractClass = access and ACC_ABSTRACT != 0
+                            val isObject = Utils.slashToDotClassName(aopCollectCut.collectClassName) == "java.lang.Object"
+                            var isMatchExtends = false
+                            val collectExtendsClassName = aopCollectCut.collectExtendsClassName
+                            if (!isObject){
+                                var isDirectExtends = false
+                                var isImplementsInterface = false
+                                val interfaces = ctClass.interfaces
+                                if (interfaces != null) {
+                                    for (subCtClass in ctClass.interfaces) {
+                                        if (Utils.slashToDotClassName(subCtClass.name) == aopCollectCut.collectClassName){
+                                            isImplementsInterface = true
+                                            break
+                                        }
                                     }
                                 }
-                            }
 
-                            if (extends){
-                                if (it.isClazz){
+                                if (isImplementsInterface || Utils.slashToDotClassName(aopCollectCut.collectClassName) == Utils.slashToDotClassName(
+                                        ctClass.superclass.name
+                                    )
+                                ) {
+                                    isDirectExtends = true
+                                }
+                                if (AopCollectCut.CollectType.DIRECT_EXTENDS.name == aopCollectCut.collectType) {
+                                    if (isDirectExtends) {
+                                        isMatchExtends = true
+                                    }
+                                } else if (AopCollectCut.CollectType.LEAF_EXTENDS.name == aopCollectCut.collectType) {
+                                    var isExtends = false
+                                    if (isDirectExtends) {
+                                        isExtends = true
+                                    } else {
+                                        val clsName = Utils.slashToDotClassName(collectExtendsClassName)
+                                        val parentClsName = aopCollectCut.collectClassName
+                                        if (clsName != Utils.slashToDotClassName(parentClsName)) {
+                                            isExtends = Utils.isInstanceof(
+                                                clsName,
+                                                Utils.slashToDotClassName(parentClsName)
+                                            )
+                                        }
+                                    }
+                                    if (isExtends && WovenInfoUtils.isLeaf(collectExtendsClassName)) {
+                                        isMatchExtends = true
+                                    }
+                                } else {
+                                    if (isDirectExtends) {
+                                        isMatchExtends = true
+                                    } else {
+                                        val clsName = Utils.slashToDotClassName(collectExtendsClassName)
+                                        val parentClsName = aopCollectCut.collectClassName
+                                        if (clsName != Utils.slashToDotClassName(parentClsName)) {
+                                            val isInstanceof = Utils.isInstanceof(
+                                                clsName,
+                                                Utils.slashToDotClassName(parentClsName)
+                                            )
+                                            if (isInstanceof) {
+                                                isMatchExtends = true
+                                            }
+                                        }
+                                    }
+                                }
+                            }else{
+                                isMatchExtends = true
+                            }
+                            val isAdd = if (aopCollectCut.isClazz){
+                                true
+                            }else !isAbstractClass
+
+                            if (isMatchExtends && isAdd){
+                                if (aopCollectCut.isClazz){
                                     methodVisitor.visitLdcInsn(Type.getObjectType(collectExtendsClazz));
                                     val collectClazz = Utils.dotToSlash("java.lang.Class")
                                     methodVisitor.visitMethodInsn(
                                         AdviceAdapter.INVOKESTATIC,
-                                        Utils.dotToSlash(it.invokeClassName),
-                                        it.invokeMethod,
+                                        Utils.dotToSlash(aopCollectCut.invokeClassName),
+                                        aopCollectCut.invokeMethod,
                                         "(L$collectClazz;)V",
                                         false
                                     )
@@ -544,11 +602,11 @@ object WovenIntoCode {
                                         "()V",
                                         false
                                     )
-                                    val collectClazz = Utils.dotToSlash(it.collectClassName)
+                                    val collectClazz = Utils.dotToSlash(aopCollectCut.collectClassName)
                                     methodVisitor.visitMethodInsn(
                                         AdviceAdapter.INVOKESTATIC,
-                                        Utils.dotToSlash(it.invokeClassName),
-                                        it.invokeMethod,
+                                        Utils.dotToSlash(aopCollectCut.invokeClassName),
+                                        aopCollectCut.invokeMethod,
                                         "(L$collectClazz;)V",
                                         false
                                     )

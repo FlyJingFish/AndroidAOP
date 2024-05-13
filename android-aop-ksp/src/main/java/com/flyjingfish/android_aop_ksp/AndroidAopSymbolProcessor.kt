@@ -452,6 +452,8 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         annotationMap["@"+AndroidAopCollectMethod::class.simpleName] ?: continue
 
       val regex: String? = classMethodMap["regex"]?.toString()
+      val typeStr: String? = classMethodMap["collectType"]?.toString()
+      val collectType: String = typeStr?.substring(typeStr.lastIndexOf(".") + 1) ?: "DIRECT_EXTENDS"
 
       var className = "${symbol.packageName.asString()}."
       var parent = symbol.parent
@@ -578,7 +580,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
 
 
 //      logger.error("invokeClassName=${symbol.location}")
-      clazzName += computeMD5("$symbol($isClazz,$collectClassName)")
+      clazzName += computeMD5("$symbol($isClazz,$collectType,$regex,$collectClassName)")
       val fileName = "${clazzName}\$\$AndroidAopClass";
       val typeBuilder = TypeSpec.classBuilder(
         fileName
@@ -606,6 +608,10 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
             .addMember(
               "regex = %S",
               "$regex"
+            )
+            .addMember(
+              "collectType = %S",
+              "$collectType"
             )
             .build()
         )

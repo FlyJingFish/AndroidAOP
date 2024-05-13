@@ -366,6 +366,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
 
             AndroidAopCollectMethod cut = element.getAnnotation(AndroidAopCollectMethod.class);
             String regex = cut.regex();
+            String collectType = cut.collectType().name();
 
             boolean isStatic = false;
             boolean isPublic = false;
@@ -442,7 +443,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
             }
             String clazzName;
             try {
-                clazzName = element.getEnclosingElement().getSimpleName()+computeMD5(name1+"("+isClazz+variableElement.asType()+")");
+                clazzName = element.getEnclosingElement().getSimpleName()+computeMD5(name1+"("+isClazz+","+collectType+","+regex+","+variableElement.asType()+")");
             } catch (NoSuchAlgorithmException e) {
                 clazzName = element.getEnclosingElement().getSimpleName().toString();
             }
@@ -457,6 +458,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
                             .addMember("invokeMethod", "$S", name1)
                             .addMember("isClazz", "$S", isClazz)
                             .addMember("regex", "$S", regex)
+                            .addMember("collectType", "$S", collectType)
                             .build());
 
             typeBuilder.addMethod(whatsMyName1.build());

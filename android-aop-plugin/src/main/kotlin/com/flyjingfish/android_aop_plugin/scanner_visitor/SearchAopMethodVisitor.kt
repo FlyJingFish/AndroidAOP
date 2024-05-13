@@ -2,6 +2,7 @@ package com.flyjingfish.android_aop_plugin.scanner_visitor
 
 
 import com.flyjingfish.android_aop_plugin.beans.AopCollectClass
+import com.flyjingfish.android_aop_plugin.beans.AopCollectCut
 import com.flyjingfish.android_aop_plugin.beans.AopMatchCut
 import com.flyjingfish.android_aop_plugin.beans.CutInfo
 import com.flyjingfish.android_aop_plugin.beans.CutMethodJson
@@ -19,6 +20,7 @@ import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addCollectClass
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.getAnnoInfo
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.isContainAnno
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.isLeaf
+import com.flyjingfish.android_aop_plugin.utils.printLog
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.Handle
 import org.objectweb.asm.MethodVisitor
@@ -75,9 +77,10 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
             }
             if (find){
                 val isObject = slashToDotClassName(aopCollectCut.collectClassName) == "java.lang.Object"
-                var isImplementsInterface = false
-                var isDirectExtends = false
+                var isMatchExtends = false
                 if (!isObject){
+                    var isDirectExtends = false
+                    var isImplementsInterface = false
                     if (interfaces != null) {
                         for (anInterface in interfaces) {
                             val inter = slashToDotClassName(anInterface)
@@ -93,13 +96,47 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                     ) {
                         isDirectExtends = true
                     }
+                    if (AopCollectCut.CollectType.DIRECT_EXTENDS.name == aopCollectCut.collectType) {
+                        if (isDirectExtends) {
+                            isMatchExtends = true
+                        }
+                    } else if (AopCollectCut.CollectType.LEAF_EXTENDS.name == aopCollectCut.collectType) {
+                        var isExtends = false
+                        if (isDirectExtends) {
+                            isExtends = true
+                        } else {
+                            val clsName = slashToDotClassName(className)
+                            val parentClsName = aopCollectCut.collectClassName
+                            if (clsName != slashToDotClassName(parentClsName)) {
+                                isExtends = isInstanceof(clsName, slashToDotClassName(parentClsName))
+                            }
+                        }
+                        if (isExtends && isLeaf(className)) {
+                            isMatchExtends = true
+                        }
+                    } else {
+                        if (isDirectExtends) {
+                            isMatchExtends = true
+                        } else {
+                            val clsName = slashToDotClassName(className)
+                            val parentClsName = aopCollectCut.collectClassName
+                            if (clsName != slashToDotClassName(parentClsName)) {
+                                val isInstanceof = isInstanceof(clsName, slashToDotClassName(parentClsName))
+                                if (isInstanceof) {
+                                    isMatchExtends = true
+                                }
+                            }
+                        }
+                    }
                 }else{
-                    isImplementsInterface = true
-                    isDirectExtends = true
+                    isMatchExtends = true
                 }
+                val isAdd = if (aopCollectCut.isClazz){
+                    true
+                }else !isAbstractClass
 
-                if (isDirectExtends && !isAbstractClass){
-                    addCollectClass(AopCollectClass(aopCollectCut.collectClassName,aopCollectCut.invokeClassName,aopCollectCut.invokeMethod,className,aopCollectCut.isClazz,aopCollectCut.regex))
+                if (isMatchExtends && isAdd){
+                    addCollectClass(AopCollectClass(aopCollectCut.collectClassName,aopCollectCut.invokeClassName,aopCollectCut.invokeMethod,className,aopCollectCut.isClazz,aopCollectCut.regex,aopCollectCut.collectType))
                 }
             }
         }

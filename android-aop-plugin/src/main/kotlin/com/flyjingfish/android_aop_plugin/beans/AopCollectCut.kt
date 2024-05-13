@@ -5,9 +5,13 @@ data class AopCollectCut(
     val invokeClassName: String,
     val invokeMethod: String,
     val isClazz:Boolean,
-    val regex : String
+    val regex : String,
+    val collectType : String
 ){
+    enum class CollectType{
+        EXTENDS,DIRECT_EXTENDS,LEAF_EXTENDS
+    }
     fun getKey():String{
-        return invokeClassName + invokeMethod + collectClassName+isClazz+regex
+        return invokeClassName + invokeMethod + collectClassName+isClazz+regex+collectType
     }
 }

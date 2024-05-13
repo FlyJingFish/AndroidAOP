@@ -55,6 +55,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     private val ignoreJarClassPaths = mutableListOf<File>()
     @TaskAction
     fun taskAction() {
+        WovenInfoUtils.isCompile = false
         WovenInfoUtils.checkHasInvokeJson(project, variant)
         println("AndroidAOP woven info code start")
         ClassFileUtils.outputDir = File(Utils.aopTransformTempDir(project,variant))

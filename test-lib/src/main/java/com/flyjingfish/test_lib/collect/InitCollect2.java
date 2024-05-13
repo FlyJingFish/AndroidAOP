@@ -4,6 +4,7 @@ import android.app.Application;
 import android.util.Log;
 
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopCollectMethod;
+import com.flyjingfish.android_aop_annotation.enums.CollectType;
 import com.flyjingfish.test_lib.SubApplication2;
 import com.flyjingfish.test_lib.SubApplication3;
 import com.flyjingfish.test_lib.annotation.MyAnno;
@@ -30,6 +31,16 @@ public class InitCollect2 {
     @AndroidAopCollectMethod
     public static void collect3(Class<? extends SubApplication2> sub){
         collectClazz.add(sub);
+    }
+
+    @AndroidAopCollectMethod(collectType = CollectType.LEAF_EXTENDS)
+    public static void collect3Leaf(Class<? extends SubApplication2> sub){
+        Log.e("InitCollect2","----collect3Leaf----"+sub);
+    }
+
+    @AndroidAopCollectMethod(collectType = CollectType.LEAF_EXTENDS)
+    public static void collect3Leaf(SubApplication2 sub){
+        Log.e("InitCollect2","----collect3Leaf----"+sub);
     }
 
 

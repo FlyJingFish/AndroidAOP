@@ -15,6 +15,7 @@ import java.io.File
 import java.util.jar.JarFile
 
 object WovenInfoUtils {
+    var isCompile = false
     var aopMethodCuts: HashMap<String, AopMethodCut> = HashMap()
     var aopInstances: HashMap<String, String> = HashMap()
     var aopMatchCuts: HashMap<String, AopMatchCut> = HashMap()
@@ -264,7 +265,7 @@ object WovenInfoUtils {
     }
 
     fun removeDeletedClass() {
-        if (!AndroidAopConfig.increment){
+        if (!AndroidAopConfig.increment || isCompile){
             return
         }
         val set = classSuperCacheMap.entries
@@ -274,7 +275,7 @@ object WovenInfoUtils {
     }
 
     fun removeDeletedClassMethodRecord() {
-        if (!AndroidAopConfig.increment){
+        if (!AndroidAopConfig.increment || isCompile){
             return
         }
         val set = classSuperCacheMap.entries
@@ -454,15 +455,19 @@ object WovenInfoUtils {
         aopCollectInfoMap[aopCollectCut.getKey()] = aopCollectCut
     }
 
-    fun addCollectClass(aopCollectCut: AopCollectClass){
-        var set = aopCollectClassMap[aopCollectCut.invokeClassName]
+    fun addCollectClass(aopCollectClass: AopCollectClass){
+        var set = aopCollectClassMap[aopCollectClass.invokeClassName]
         if (set == null){
             set = mutableMapOf()
-            aopCollectClassMap[aopCollectCut.invokeClassName] = set
+            aopCollectClassMap[aopCollectClass.invokeClassName] = set
         }
-        set[aopCollectCut.getKey()] = aopCollectCut
+        set[aopCollectClass.getKey()] = aopCollectClass
     }
-    fun aopCollectChanged() {
+    fun aopCollectChanged(isClear:Boolean) {
+        if (isClear){
+            aopCollectClassMap.clear()
+            return
+        }
         val iterator = aopCollectClassMap.iterator()
         while (iterator.hasNext()){
             val item = iterator.next()
@@ -487,7 +492,8 @@ object WovenInfoUtils {
                             if (mutableEntry.value.invokeMethod == itItem.value.invokeMethod
                                 && mutableEntry.value.collectClassName == itItem.value.collectClassName
                                 && mutableEntry.value.isClazz == itItem.value.isClazz
-                                && mutableEntry.value.regex == itItem.value.regex){
+                                && mutableEntry.value.regex == itItem.value.regex
+                                && mutableEntry.value.collectType == itItem.value.collectType){
                                 itContain = true
                                 break
                             }

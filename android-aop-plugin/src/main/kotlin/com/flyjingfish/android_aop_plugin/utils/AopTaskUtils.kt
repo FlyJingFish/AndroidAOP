@@ -101,7 +101,7 @@ object AopTaskUtils {
 //        InitConfig.saveBuildConfig()
         ClassPoolUtils.initClassPool()
         FileHashUtils.isChangeAopMatch = WovenInfoUtils.aopMatchsChanged()
-        WovenInfoUtils.aopCollectChanged()
+        WovenInfoUtils.aopCollectChanged(FileHashUtils.isChangeAopMatch)
     }
     fun searchJoinPointLocationStart(project:Project){
         if (WovenInfoUtils.isHasExtendsReplace()){

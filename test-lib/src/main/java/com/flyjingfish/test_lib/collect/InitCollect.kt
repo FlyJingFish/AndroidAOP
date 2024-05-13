@@ -28,6 +28,7 @@ object InitCollect {
         Log.e("InitCollect", "----collectT----$sub")
     }
 
+    @AndroidAopCollectMethod
     @JvmStatic
     fun collectClassT(sub:Class<out SubApplication3<out Application>>){
         Log.e("InitCollect", "----collectClassT----$sub")
