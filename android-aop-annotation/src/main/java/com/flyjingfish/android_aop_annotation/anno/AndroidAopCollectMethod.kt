@@ -10,7 +10,7 @@ package com.flyjingfish.android_aop_annotation.anno
 @Retention(AnnotationRetention.BINARY)
 annotation class AndroidAopCollectMethod(
     /**
-     * 当 [regex] 设置了正则表达式之后，注解方法的参数可以是 Object 或 Any ，不设置则必须执行类型
+     * 当 [regex] 设置了正则表达式之后，注解方法的参数可以是 Object 或 Any ，不设置则必须指定类型
      */
     val regex : String = ""
 )
