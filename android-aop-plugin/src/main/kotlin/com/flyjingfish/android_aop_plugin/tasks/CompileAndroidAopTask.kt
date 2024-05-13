@@ -264,7 +264,7 @@ class CompileAndroidAopTask(
                     }
                 }
             }
-            tmpOtherDir.deleteRecursively()
+//            tmpOtherDir.deleteRecursively()
         }
 
         for (tempFile in tempFiles) {

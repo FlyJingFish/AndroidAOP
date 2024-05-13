@@ -5,10 +5,13 @@ import android.util.Log;
 
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopCollectMethod;
 import com.flyjingfish.test_lib.SubApplication2;
+import com.flyjingfish.test_lib.SubApplication3;
 import com.flyjingfish.test_lib.annotation.MyAnno;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import kotlin.jvm.JvmStatic;
 
 public class InitCollect2 {
     private static final List<SubApplication2> collects = new ArrayList<>();
@@ -26,6 +29,17 @@ public class InitCollect2 {
     @AndroidAopCollectMethod
     public static void collect3(Class<? extends SubApplication2> sub){
         collectClazz.add(sub);
+    }
+
+
+    @AndroidAopCollectMethod
+    public static void collectT(SubApplication3<? extends Application> sub){
+        Log.e("InitCollect2","----collectT----"+sub);
+    }
+
+    @AndroidAopCollectMethod
+    public static void collectClassT(Class<? extends SubApplication3<? extends Application>> sub){
+        Log.e("InitCollect2","----collectClassT----"+sub);
     }
 
     @MyAnno

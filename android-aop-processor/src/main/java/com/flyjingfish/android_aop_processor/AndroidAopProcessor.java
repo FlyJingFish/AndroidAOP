@@ -406,6 +406,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
                     throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 参数的泛型设置的不对");
                 }else {
                     collectClassName = type;
+                    System.out.println("collectClassName="+type);
                 }
             }
             TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(clazzName+"$$AndroidAopClass")
@@ -443,7 +444,15 @@ public class AndroidAopProcessor extends AbstractProcessor {
             String type2= matcher.group();
             Matcher matcher1 = classnameArrayPattern1.matcher(type2);
             if (matcher1.find()){
-                return matcher1.replaceAll("").replaceAll(">","");
+                String realType = matcher1.replaceFirst("");
+                Matcher realMatcher = classnameArrayPattern.matcher(realType);
+                String realTypeClass;
+                if (realMatcher.find()){
+                    realTypeClass = realMatcher.replaceFirst("");
+                }else {
+                    realTypeClass = realType.replaceAll(">","");
+                }
+                return realTypeClass;
             }
         }
         return null;

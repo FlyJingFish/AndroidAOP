@@ -4,8 +4,7 @@ import android.app.Application
 import android.util.Log
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopCollectMethod
 import com.flyjingfish.test_lib.SubApplication
-import com.flyjingfish.test_lib.SubApplication2
-import kotlin.reflect.KClass
+import com.flyjingfish.test_lib.SubApplication3
 
 object InitCollect {
     private val Collects = mutableListOf<SubApplication>()
@@ -21,6 +20,18 @@ object InitCollect {
     @JvmStatic
     fun collect2(sub:Class<out SubApplication>){
         collectClazz.add(sub)
+    }
+
+    @AndroidAopCollectMethod
+    @JvmStatic
+    fun collectT(sub: SubApplication3<out Application>){
+        Log.e("InitCollect", "----collectT----$sub")
+    }
+
+    @AndroidAopCollectMethod
+    @JvmStatic
+    fun collectClassT(sub:Class<out SubApplication3<out Application>>){
+        Log.e("InitCollect", "----collectClassT----$sub")
     }
 
     fun init(application: Application){
