@@ -139,7 +139,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             }
             AopTaskUtils.processJarForConfig(file.asFile)
         }
-        AopTaskUtils.loadJoinPointConfigEnd()
+        AopTaskUtils.loadJoinPointConfigEnd(true)
     }
 
     private fun searchJoinPointLocation(){

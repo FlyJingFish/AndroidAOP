@@ -540,4 +540,31 @@ object WovenInfoUtils {
             }
         }
     }
+
+    fun checkLeafConfig(isApp:Boolean){
+        val verifyLeafExtends = AndroidAopConfig.verifyLeafExtends
+        if (!verifyLeafExtends && isApp){
+            fun getHintText(location:String):String{
+                return "您已在 androidAopConfig 设置了 verifyLeafExtends = false，$location 就不能再设置 LEAF_EXTENDS 类型了,如需使用请打开此项配置"
+            }
+            //@AndroidAopMatchClassMethod
+            aopMatchCuts.forEach {(_,cutConfig) ->
+                if (cutConfig.matchType == AopMatchCut.MatchType.LEAF_EXTENDS.name){
+                    throw IllegalArgumentException(getHintText(cutConfig.cutClassName))
+                }
+            }
+            //@AndroidAopReplaceClass
+            invokeMethodCuts.forEach { cutConfig ->
+                if (cutConfig.matchType == AopMatchCut.MatchType.LEAF_EXTENDS.name){
+                    throw IllegalArgumentException(getHintText(cutConfig.invokeClassName))
+                }
+            }
+            //@AndroidAopCollectMethod
+            aopCollectInfoMap.forEach {(_,cutConfig) ->
+                if (cutConfig.collectType == AopCollectCut.CollectType.LEAF_EXTENDS.name){
+                    throw IllegalArgumentException(getHintText("${cutConfig.invokeClassName}.${cutConfig.invokeMethod}"))
+                }
+            }
+        }
+    }
 }

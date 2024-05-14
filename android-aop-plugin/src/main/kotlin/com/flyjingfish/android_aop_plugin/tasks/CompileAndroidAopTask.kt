@@ -28,7 +28,7 @@ class CompileAndroidAopTask(
     private val allDirectories: MutableList<File>,
     private val output: File,
     private val project: Project,
-    private val outPutInitClass:Boolean,
+    private val isApp:Boolean,
     private val tmpCompileDir:File,
     private val tmpJsonFile:File,
     private val variantName:String
@@ -75,7 +75,7 @@ class CompileAndroidAopTask(
         allJars.forEach { file ->
            AopTaskUtils.processJarForConfig(file)
         }
-        AopTaskUtils.loadJoinPointConfigEnd()
+        AopTaskUtils.loadJoinPointConfigEnd(isApp)
     }
 
     private fun searchJoinPointLocation(){
@@ -240,7 +240,7 @@ class CompileAndroidAopTask(
                 processFile(file,directory,directoryPath)
             }
         }
-        if (outPutInitClass){
+        if (isApp){
             val tmpOtherDir = File(Utils.aopCompileTempOtherDir(project,variantName))
             WovenIntoCode.createInitClass(tmpOtherDir)
             WovenIntoCode.createCollectClass(tmpOtherDir)
@@ -276,7 +276,9 @@ class CompileAndroidAopTask(
         }
         val cacheFiles = ClassFileUtils.wovenInfoInvokeClass()
         InitConfig.exportCacheCutFile(tmpJsonFile,cacheFiles)
-        exportCutInfo()
+        if (isApp){
+            exportCutInfo()
+        }
     }
     private fun File.saveEntry(inputStream: InputStream) {
         this.outputStream().use {

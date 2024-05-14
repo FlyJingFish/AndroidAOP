@@ -95,13 +95,15 @@ object AopTaskUtils {
         jarFile.close()
     }
 
-    fun loadJoinPointConfigEnd(){
+    fun loadJoinPointConfigEnd(isApp:Boolean){
         WovenInfoUtils.removeDeletedClass()
 //        logger.error(""+WovenInfoUtils.aopMatchCuts)
 //        InitConfig.saveBuildConfig()
         ClassPoolUtils.initClassPool()
         FileHashUtils.isChangeAopMatch = WovenInfoUtils.aopMatchsChanged()
         WovenInfoUtils.aopCollectChanged(FileHashUtils.isChangeAopMatch)
+
+        WovenInfoUtils.checkLeafConfig(isApp)
     }
     fun searchJoinPointLocationStart(project:Project){
         if (WovenInfoUtils.isHasExtendsReplace()){
