@@ -21,6 +21,7 @@ import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
+import com.google.devtools.ksp.symbol.FileLocation
 import com.google.devtools.ksp.symbol.FunctionKind
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
@@ -464,8 +465,17 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         clazzName = parent.toString()
         parent = parent?.parent
       }
-      val exceptionHintPreText = "注意：函数$className${symbol}"
-      val exceptionJavaHintPreText = "注意：方法$className${symbol}"
+      var exceptionHintPreText: String
+      var exceptionJavaHintPreText: String
+      val location = symbol.location
+      if (location is FileLocation){
+        exceptionHintPreText = "注意：函数$className${symbol}:line = ${location.lineNumber}"
+        exceptionJavaHintPreText = "注意：方法$className${symbol}:line = ${location.lineNumber}"
+      }else{
+        exceptionHintPreText = "注意：函数$className${symbol}"
+        exceptionJavaHintPreText = "注意：方法$className${symbol}"
+      }
+
       if (symbol.parameters.isEmpty()){
         throw IllegalArgumentException("$exceptionHintPreText 必须设置您想收集的类作为参数")
       }else if (symbol.parameters.size != 1){
