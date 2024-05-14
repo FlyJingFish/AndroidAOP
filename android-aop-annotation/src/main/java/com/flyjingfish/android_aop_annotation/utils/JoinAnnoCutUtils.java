@@ -19,11 +19,8 @@ final class JoinAnnoCutUtils {
     private static void registerDebugAndroidAopInfo() {
         if (mAnnoCutBeanMap.isEmpty()){
             try {
-                Class<?> initClass = Class.forName("com.flyjingfish.android_aop_annotation.utils.DebugAndroidAopInit");
-                Method method = initClass.getDeclaredMethod("init");
-                method.invoke(null);
-            } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
-                     IllegalAccessException ignored) {
+                Class.forName("com.flyjingfish.android_aop_annotation.utils.DebugAndroidAopInit");
+            } catch (ClassNotFoundException ignored) {
             }
         }
     }

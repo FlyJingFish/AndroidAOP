@@ -433,7 +433,7 @@ object WovenIntoCode {
 
 
         //生成静态方法
-        mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, "init", "()V", null, null)
+        mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, "<clinit>", "()V", null, null)
         //生成静态方法中的字节码指令
         val map: HashMap<String, String> = WovenInfoUtils.aopInstances
         if (map.isNotEmpty()) {
