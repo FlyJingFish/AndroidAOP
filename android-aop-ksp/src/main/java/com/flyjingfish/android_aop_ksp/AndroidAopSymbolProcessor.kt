@@ -451,9 +451,10 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       val classMethodMap: MutableMap<String, Any?> =
         annotationMap["@"+AndroidAopCollectMethod::class.simpleName] ?: continue
 
-      val regex: String? = classMethodMap["regex"]?.toString()
+      val regex: String = classMethodMap["regex"]?.toString()?:""
       val typeStr: String? = classMethodMap["collectType"]?.toString()
       val collectType: String = typeStr?.substring(typeStr.lastIndexOf(".") + 1) ?: "DIRECT_EXTENDS"
+      val regexIsEmpty = regex.isEmpty()
 
       var className = "${symbol.packageName.asString()}."
       var parent = symbol.parent
@@ -502,6 +503,9 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
           throw IllegalArgumentException("$exceptionJavaHintPreText 必须是public公共方法")
         }
       }
+      if (!regexIsEmpty && regex.replace(" ","").isEmpty()){
+        throw IllegalArgumentException("$exceptionHintPreText 的 regex 必须包含字符，不可以只有空格")
+      }
       val invokeClassName = className.substring(0,className.length-1)
 //      logger.error("invokeClassName=$invokeClassName")
       val parameter = symbol.parameters[0]
@@ -513,7 +517,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         if (symbol.origin == Origin.KOTLIN){
 //          logger.error("$exceptionHintPreText---${parameter.type.resolve()}")
           val checkType = "${parameter.type.resolve()}"
-          if (regex.isNullOrEmpty()){
+          if (regexIsEmpty){
             if (!checkKotlinType(checkType)){
               throw IllegalArgumentException("$exceptionHintPreText 的 参数的泛型设置的不对")
             }
@@ -525,7 +529,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         }else if (symbol.origin == Origin.JAVA){
 //          logger.error("$exceptionHintPreText---${parameter.type}")
           val checkType = "${parameter.type}"
-          if (regex.isNullOrEmpty()){
+          if (regexIsEmpty){
             if (!checkJavaType(checkType)){
               throw IllegalArgumentException("$exceptionJavaHintPreText 的 参数的泛型设置的不对")
             }
@@ -539,7 +543,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         if (element != null){
           val typeArguments = element.typeArguments
           if (typeArguments.isEmpty()){
-            if (regex.isNullOrEmpty()){
+            if (regexIsEmpty){
               throw IllegalArgumentException("$exceptionHintPreText 的 Class 必须指明 他的范型继承于哪个类")
             }else{
               "java.lang.Object"
@@ -547,7 +551,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
           }else{
             val type = typeArguments[0].type
             if (type == null){
-              if (regex.isNullOrEmpty()){
+              if (regexIsEmpty){
                 throw IllegalArgumentException("$exceptionHintPreText 的 Class 必须指明 他的范型继承于哪个类")
               }else{
                 "java.lang.Object"
@@ -572,7 +576,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       }
 
       if (collectClassName == "kotlin.Any" || collectClassName == "java.lang.Object"){
-        if (regex.isNullOrEmpty()){
+        if (regexIsEmpty){
           throw IllegalArgumentException("$exceptionHintPreText 的 regex 为空时它的参数不可以设定为 $collectClassName")
         }else{
           collectClassName = "java.lang.Object"

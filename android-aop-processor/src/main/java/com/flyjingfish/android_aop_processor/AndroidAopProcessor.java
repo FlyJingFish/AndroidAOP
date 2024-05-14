@@ -362,6 +362,9 @@ public class AndroidAopProcessor extends AbstractProcessor {
             AndroidAopCollectMethod cut = element.getAnnotation(AndroidAopCollectMethod.class);
             String regex = cut.regex();
             String collectType = cut.collectType().name();
+            if (regex == null){
+                regex = "";
+            }
 
             boolean isStatic = false;
             boolean isPublic = false;
@@ -393,6 +396,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
             }else if (executableElement.getParameters().size() != 1){
                 throw new IllegalArgumentException(exceptionJavaHintPreText+" 参数必须设置一个");
             }
+
             VariableElement variableElement = executableElement.getParameters().get(0);
 
             TypeMirror asType = variableElement.asType();
@@ -403,7 +407,10 @@ public class AndroidAopProcessor extends AbstractProcessor {
             }
             String collectClassName = typeElement.toString();
             boolean isClazz = "java.lang.Class".equals(collectClassName);
-            boolean regexIsEmpty = regex == null || "".equals(regex);
+            boolean regexIsEmpty = "".equals(regex);
+            if (!regexIsEmpty && regex.replaceAll(" ","").isEmpty()){
+                throw new IllegalArgumentException(exceptionJavaHintPreText+" 的 regex 必须包含字符，不可以只有空格");
+            }
             if (isClazz){
                 String checkType = variableElement.asType().toString();
                 String type = getType(checkType);
