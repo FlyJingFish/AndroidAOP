@@ -378,7 +378,7 @@ AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
 - @AndroidAopMatchClassMethod 是匹配类的方法的切面
 - @AndroidAopReplaceClass 是替换方法调用的
 - @AndroidAopModifyExtendsClass 是修改继承类
-- @AndroidAopCollectMethod 是收集直接的继承类
+- @AndroidAopCollectMethod 是收集继承类
 
 #### 一、**@AndroidAopPointCut** 是在方法上通过注解的形式做切面的，上述中注解都是通过这个做的，[详细使用请看wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopPointCut)
 
@@ -595,7 +595,7 @@ public class ReplaceImageView extends ImageView {
 }
 ```
 
-#### 五、**@AndroidAopCollectMethod** 是收集直接的继承类[详细使用方式](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopCollectMethod)
+#### 五、**@AndroidAopCollectMethod** 是收集继承类[详细使用方式](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopCollectMethod)
 
 使用起来极其简单，示例代码已经说明了
 

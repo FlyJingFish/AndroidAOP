@@ -358,7 +358,7 @@ AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
 - @AndroidAopMatchClassMethod is the aspect of matching class methods
 - @AndroidAopReplaceClass is called by the replacement method
 - @AndroidAopModifyExtendsClass is a modified inherited class
-- @AndroidAopCollectMethod is the direct inheritance class of collection
+- @AndroidAopCollectMethod Is a collection inheritance class
 
 #### 1. **@AndroidAopPointCut** is used to make aspects in the form of annotations on the method. The above annotations are all made through this. [Please see the wiki document for detailed usage](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopPointCut)
 
@@ -555,7 +555,7 @@ public class ReplaceImageView extends ImageView {
 }
 ```
 
-#### 5. **@AndroidAopCollectMethod** is a direct inheritance class of collection [detailed usage] (https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopCollectMethod)
+#### 5. **@AndroidAopCollectMethod** Is a collection inheritance class [detailed usage] (https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopCollectMethod)
 
 It is extremely simple to use, the sample code has already explained
 
