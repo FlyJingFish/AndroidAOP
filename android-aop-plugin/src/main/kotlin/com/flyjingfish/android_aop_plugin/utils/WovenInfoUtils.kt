@@ -159,7 +159,12 @@ object WovenInfoUtils {
         } else {
             methodsRecord[key] = classMethodRecord.methodName
         }
-        oldRecord?.cutInfo?.let { methodsRecord[key]?.cutInfo?.putAll(it) }
+        oldRecord?.cutInfo?.let {
+            methodsRecord[key]?.cutInfo?.putAll(it)
+        }
+        methodsRecord[key]?.cutInfo?.let {
+            it.putAll(classMethodRecord.methodName.cutInfo)
+        }
     }
 
     fun deleteClassMethodRecord(key: String) {

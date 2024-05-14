@@ -84,7 +84,7 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                     config
                 }
                 if (androidAopConfig.cutInfoJson){
-                    InitConfig.initCutInfo(project)
+                    InitConfig.initCutInfo(project,false)
                 }
                 if (androidAopConfig.enabled && isDebugMode(buildTypeName,variantName)){
                     ClassFileUtils.debugMode = true

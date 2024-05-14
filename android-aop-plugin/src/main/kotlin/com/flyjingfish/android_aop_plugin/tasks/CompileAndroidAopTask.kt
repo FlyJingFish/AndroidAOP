@@ -289,7 +289,7 @@ class CompileAndroidAopTask(
         if (!AndroidAopConfig.cutInfoJson){
             return
         }
-        InitConfig.exportCutInfo()
+        InitConfig.exportCutInfo(isApp)
     }
 
 }

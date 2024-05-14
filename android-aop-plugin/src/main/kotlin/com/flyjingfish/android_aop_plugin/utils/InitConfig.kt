@@ -82,27 +82,29 @@ object InitConfig {
     }
 
 
-    fun initCutInfo(project: Project): Boolean {
+    fun initCutInfo(project: Project,clear:Boolean = true): Boolean {
         temporaryDir = File(project.buildDir.absolutePath + "/tmp")
         cutInfoFile = File(temporaryDir, "cutInfo.json")
+        if (clear){
+            clearCache()
+        }
+        return isInit
+    }
+
+    fun clearCache(){
         cutInfoMap.clear()
         replaceMethodInfoMap.clear()
         modifyExtendsClassMap.clear()
-        return isInit
     }
 
     fun putCutInfo(value: MethodRecord?) {
         val cutInfoMap = value?.cutInfo
-        if (cutInfoMap != null) {
-            val set = cutInfoMap.entries
-            for (mutableEntry in set) {
-                val cutInfo = mutableEntry.value
-                putCutInfo(cutInfo.type, cutInfo.className, cutInfo.anno, cutInfo.cutMethodJson)
-            }
+        cutInfoMap?.forEach {(_,cutInfo) ->
+            putCutInfo(cutInfo.type, cutInfo.className, cutInfo.anno, cutInfo.cutMethodJson)
         }
     }
 
-    fun putCutInfo(type: String, className: String, anno: String, cutMethodJson: CutMethodJson) {
+    private fun putCutInfo(type: String, className: String, anno: String, cutMethodJson: CutMethodJson) {
         var cutJson = cutInfoMap[anno]
         if (cutJson == null) {
             val cutJsonMap = CutJsonMap(type, anno)
@@ -120,7 +122,7 @@ object InitConfig {
 
     }
 
-    fun exportCutInfo() {
+    fun exportCutInfo(clearCache:Boolean = false) {
         if (cutInfoJson) {
             //CutJson
             val cutJsons = mutableListOf<Any>()
@@ -199,6 +201,10 @@ object InitConfig {
             val json = GsonBuilder().setPrettyPrinting().create().toJson(cutJsons)
 
             saveFile(cutInfoFile, json)
+
+            if (clearCache){
+                clearCache()
+            }
         }
     }
 
