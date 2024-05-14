@@ -611,6 +611,7 @@ object WovenIntoCode {
                                         false
                                     )
                                 }
+                                InitConfig.addCollect(aopCollectCut)
                             }else{
                                 iterator.remove()
                             }
