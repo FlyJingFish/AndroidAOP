@@ -30,12 +30,9 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -51,11 +48,9 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.ElementScanner6;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
@@ -379,23 +374,24 @@ public class AndroidAopProcessor extends AbstractProcessor {
                     isPublic = true;
                 }
             }
+            String exceptionJavaHintPreText = "注意：" + "方法 "+element.getEnclosingElement()+"."+name1;
             if (!isPublic){
-                throw new IllegalArgumentException("注意：" + "方法 "+element.getEnclosingElement()+"."+name1+" 必须是public公共方法 ");
+                throw new IllegalArgumentException(exceptionJavaHintPreText+" 必须是public公共方法 ");
             }
             if (!isStatic){
-                throw new IllegalArgumentException("注意：" + "方法 "+element.getEnclosingElement()+"."+name1+" 必须是静态方法 ");
+                throw new IllegalArgumentException(exceptionJavaHintPreText+" 必须是静态方法 ");
             }
 
 
             ExecutableElement executableElement = (ExecutableElement) element;
             String returnType = executableElement.getReturnType().toString();
             if (!"void".equals(returnType)){
-                throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 只可以设置 void 作为返回类型");
+                throw new IllegalArgumentException(exceptionJavaHintPreText+" 只可以设置 void 作为返回类型");
             }
             if (executableElement.getParameters().isEmpty()){
-                throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 必须设置您想收集的类作为参数");
+                throw new IllegalArgumentException(exceptionJavaHintPreText+" 必须设置您想收集的类作为参数");
             }else if (executableElement.getParameters().size() != 1){
-                throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 参数必须设置一个");
+                throw new IllegalArgumentException(exceptionJavaHintPreText+" 参数必须设置一个");
             }
             VariableElement variableElement = executableElement.getParameters().get(0);
 
@@ -403,7 +399,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
             Element typeElement = types.asElement(asType);
 //            System.out.println("asType="+typeElement);
             if (typeElement == null){
-                throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 参数的类型不可以设置为"+asType);
+                throw new IllegalArgumentException(exceptionJavaHintPreText+" 参数的类型不可以设置为"+asType);
             }
             String collectClassName = typeElement.toString();
             boolean isClazz = "java.lang.Class".equals(collectClassName);
@@ -413,13 +409,13 @@ public class AndroidAopProcessor extends AbstractProcessor {
                 String type = getType(checkType);
                 if (regexIsEmpty){
                     if (type == null){
-                        throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 参数的泛型设置的不对");
+                        throw new IllegalArgumentException(exceptionJavaHintPreText+" 参数的泛型设置的不对");
                     }else {
                         collectClassName = type;
                     }
                 }else {
                     if (checkType(checkType)){
-                        throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 参数的泛型设置的不对");
+                        throw new IllegalArgumentException(exceptionJavaHintPreText+" 参数的泛型设置的不对");
                     }else {
                         if (type == null){
                             collectClassName = "java.lang.Object";
@@ -432,11 +428,11 @@ public class AndroidAopProcessor extends AbstractProcessor {
 
             }
             if ("kotlin.reflect.KClass".equals(collectClassName)){
-                throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 参数不可以设定为 "+collectClassName);
+                throw new IllegalArgumentException(exceptionJavaHintPreText+" 参数不可以设定为 "+collectClassName);
             }
             if ("kotlin.Any".equals(collectClassName) || "java.lang.Object".equals(collectClassName)){
                 if (regexIsEmpty){
-                    throw new IllegalArgumentException("注意：函数"+element.getEnclosingElement()+"."+name1+" 参数不可以设定为 "+collectClassName);
+                    throw new IllegalArgumentException(exceptionJavaHintPreText+" 参数不可以设定为 "+collectClassName);
                 }else{
                     collectClassName = "java.lang.Object";
                 }
@@ -476,18 +472,18 @@ public class AndroidAopProcessor extends AbstractProcessor {
         }
     }
 
-    private static final Pattern classnameArrayPattern = Pattern.compile("<\\? extends .*?>");
-    private static final Pattern classnameArrayPattern1 = Pattern.compile("<\\? extends .*?");
-    private static final Pattern classnameArrayPattern2 = Pattern.compile("<\\? super .*?>");
+    private static final Pattern classnamePattern = Pattern.compile("<\\? extends .*?>");
+    private static final Pattern classnamePattern1 = Pattern.compile("<\\? extends .*?");
+    private static final Pattern classnamePattern2 = Pattern.compile("<\\? super .*?>");
 
     public static String getType(String type) {
-        Matcher matcher = classnameArrayPattern.matcher(type);
+        Matcher matcher = classnamePattern.matcher(type);
         if (matcher.find()){
             String type2= matcher.group();
-            Matcher matcher1 = classnameArrayPattern1.matcher(type2);
+            Matcher matcher1 = classnamePattern1.matcher(type2);
             if (matcher1.find()){
                 String realType = matcher1.replaceFirst("");
-                Matcher realMatcher = classnameArrayPattern.matcher(realType);
+                Matcher realMatcher = classnamePattern.matcher(realType);
                 String realTypeClass;
                 if (realMatcher.find()){
                     realTypeClass = realMatcher.replaceFirst("");
@@ -501,7 +497,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
     }
 
     public static boolean checkType(String type) {
-        Matcher matcher = classnameArrayPattern2.matcher(type);
+        Matcher matcher = classnamePattern2.matcher(type);
         return matcher.find();
     }
 

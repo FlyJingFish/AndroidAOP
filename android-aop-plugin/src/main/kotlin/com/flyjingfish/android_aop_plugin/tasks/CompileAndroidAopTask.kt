@@ -260,7 +260,9 @@ class CompileAndroidAopTask(
                     }
                 }
             }
-//            tmpOtherDir.deleteRecursively()
+            if (!AndroidAopConfig.debug){
+                tmpOtherDir.deleteRecursively()
+            }
         }
 
         for (tempFile in tempFiles) {
@@ -269,7 +271,9 @@ class CompileAndroidAopTask(
             }
 //            tempFile.tmp.copyTo(tempFile.target,true)
         }
-        tmpCompileDir.deleteRecursively()
+        if (!AndroidAopConfig.debug){
+            tmpCompileDir.deleteRecursively()
+        }
         val cacheFiles = ClassFileUtils.wovenInfoInvokeClass()
         InitConfig.exportCacheCutFile(tmpJsonFile,cacheFiles)
         exportCutInfo()

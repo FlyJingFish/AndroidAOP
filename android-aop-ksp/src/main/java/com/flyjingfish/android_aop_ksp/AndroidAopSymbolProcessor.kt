@@ -463,42 +463,43 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         clazzName = parent.toString()
         parent = parent?.parent
       }
-
+      val exceptionHintPreText = "注意：函数$className${symbol}"
+      val exceptionJavaHintPreText = "注意：方法$className${symbol}"
       if (symbol.parameters.isEmpty()){
-        throw IllegalArgumentException("注意：函数$className${symbol} 必须设置您想收集的类作为参数")
+        throw IllegalArgumentException("$exceptionHintPreText 必须设置您想收集的类作为参数")
       }else if (symbol.parameters.size != 1){
-        throw IllegalArgumentException("注意：函数$className${symbol} 参数必须设置一个")
+        throw IllegalArgumentException("$exceptionHintPreText 参数必须设置一个")
       }
 
       val returnType = symbol.returnType
       if (returnType.toString() != "Unit"){
-        throw IllegalArgumentException("注意：函数$className${symbol} 不可以设置返回值类型")
+        throw IllegalArgumentException("$exceptionHintPreText 不可以设置返回值类型")
       }else{
         val nullable = "${symbol.returnType?.resolve()?.nullability}" == "NULLABLE"
         if (nullable){
-          throw IllegalArgumentException("注意：函数$className${symbol} 返回值类型不可设置可为 null 类型")
+          throw IllegalArgumentException("$exceptionHintPreText 返回值类型不可设置可为 null 类型")
         }
       }
       if (symbol.origin == Origin.KOTLIN){
         if (!annotationMap.containsKey("@JvmStatic")){
-          throw IllegalArgumentException("注意：函数$className${symbol} 必须添加 @JvmStatic 注解")
+          throw IllegalArgumentException("$exceptionHintPreText 必须添加 @JvmStatic 注解")
         }
         val isPrivate = symbol.modifiers.contains(Modifier.PRIVATE)
         val isInternal = symbol.modifiers.contains(Modifier.INTERNAL)
         if (isPrivate){
-          throw IllegalArgumentException("注意：函数$className${symbol} 不可以设置 private")
+          throw IllegalArgumentException("$exceptionHintPreText 不可以设置 private")
         }
         if (isInternal){
-          throw IllegalArgumentException("注意：函数$className${symbol} 不可以设置 internal")
+          throw IllegalArgumentException("$exceptionHintPreText 不可以设置 internal")
         }
 
       }else if (symbol.origin == Origin.JAVA){
         if (symbol.functionKind != FunctionKind.STATIC){
-          throw IllegalArgumentException("注意：方法$className${symbol} 必须是静态方法")
+          throw IllegalArgumentException("$exceptionJavaHintPreText 必须是静态方法")
         }
         val isPublic = symbol.modifiers.contains(Modifier.PUBLIC)
         if (!isPublic){
-          throw IllegalArgumentException("注意：函数$className${symbol} 必须是public公共方法")
+          throw IllegalArgumentException("$exceptionJavaHintPreText 必须是public公共方法")
         }
       }
       val invokeClassName = className.substring(0,className.length-1)
@@ -510,27 +511,27 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       val isClazz = collectOutClassName == "java.lang.Class"
       var collectClassName = if (isClazz){
         if (symbol.origin == Origin.KOTLIN){
-//          logger.error("注意：函数$className${symbol}---${parameter.type.resolve()}")
+//          logger.error("$exceptionHintPreText---${parameter.type.resolve()}")
           val checkType = "${parameter.type.resolve()}"
           if (regex.isNullOrEmpty()){
             if (!checkKotlinType(checkType)){
-              throw IllegalArgumentException("注意：函数$className${symbol} 的 参数的泛型设置的不对")
+              throw IllegalArgumentException("$exceptionHintPreText 的 参数的泛型设置的不对")
             }
           }else{
             if (checkKotlinType1(checkType)){
-              throw IllegalArgumentException("注意：函数$className${symbol} 的 参数的泛型设置的不对")
+              throw IllegalArgumentException("$exceptionHintPreText 的 参数的泛型设置的不对")
             }
           }
         }else if (symbol.origin == Origin.JAVA){
-//          logger.error("注意：函数$className${symbol}---${parameter.type}")
+//          logger.error("$exceptionHintPreText---${parameter.type}")
           val checkType = "${parameter.type}"
           if (regex.isNullOrEmpty()){
             if (!checkJavaType(checkType)){
-              throw IllegalArgumentException("注意：函数$className${symbol} 的 参数的泛型设置的不对")
+              throw IllegalArgumentException("$exceptionJavaHintPreText 的 参数的泛型设置的不对")
             }
           }else{
             if (checkJavaType1(checkType)){
-              throw IllegalArgumentException("注意：函数$className${symbol} 的 参数的泛型设置的不对")
+              throw IllegalArgumentException("$exceptionJavaHintPreText 的 参数的泛型设置的不对")
             }
           }
         }
@@ -539,7 +540,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
           val typeArguments = element.typeArguments
           if (typeArguments.isEmpty()){
             if (regex.isNullOrEmpty()){
-              throw IllegalArgumentException("注意：函数$className${symbol} 的 Class 必须指明 他的范型继承于哪个类")
+              throw IllegalArgumentException("$exceptionHintPreText 的 Class 必须指明 他的范型继承于哪个类")
             }else{
               "java.lang.Object"
             }
@@ -547,7 +548,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
             val type = typeArguments[0].type
             if (type == null){
               if (regex.isNullOrEmpty()){
-                throw IllegalArgumentException("注意：函数$className${symbol} 的 Class 必须指明 他的范型继承于哪个类")
+                throw IllegalArgumentException("$exceptionHintPreText 的 Class 必须指明 他的范型继承于哪个类")
               }else{
                 "java.lang.Object"
               }
@@ -559,7 +560,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
 
           }
         }else{
-          throw IllegalArgumentException("注意：函数$className${symbol} 的 Class 必须指明 他的范型继承于哪个类")
+          throw IllegalArgumentException("$exceptionHintPreText 的 Class 必须指明 他的范型继承于哪个类")
         }
 
       }else{
@@ -567,12 +568,12 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       }
 
       if (collectClassName in IGNORE_TYPE){
-        throw IllegalArgumentException("注意：函数$className${symbol} 的 参数不可以设定为 $collectClassName")
+        throw IllegalArgumentException("$exceptionHintPreText 的 参数不可以设定为 $collectClassName")
       }
 
       if (collectClassName == "kotlin.Any" || collectClassName == "java.lang.Object"){
         if (regex.isNullOrEmpty()){
-          throw IllegalArgumentException("注意：函数$className${symbol} 的 regex 为空时它的参数不可以设定为 $collectClassName")
+          throw IllegalArgumentException("$exceptionHintPreText 的 regex 为空时它的参数不可以设定为 $collectClassName")
         }else{
           collectClassName = "java.lang.Object"
         }
