@@ -616,7 +616,7 @@ object InitCollect {
     fun collect2(sub:Class<out SubApplication>){
       collectClazz.add(sub)
     }
-  //直接调这个方法（方法名不限）上边的函数会悉数被回调
+  //直接调这个方法（方法名不限）上边的函数会被悉数回调
     fun init(application: Application){
         for (collect in collects) {
             collect.onCreate(application)
@@ -640,7 +640,7 @@ public class InitCollect2 {
     public static void collect3(Class<? extends SubApplication2> sub){
         collectClazz.add(sub);
     }
-  //直接调这个方法（方法名不限）上边的函数会悉数被回调
+  //直接调这个方法（方法名不限）上边的函数会被悉数回调
     public static void init(Application application){
         Log.e("InitCollect2","----init----");
         for (SubApplication2 collect : collects) {
