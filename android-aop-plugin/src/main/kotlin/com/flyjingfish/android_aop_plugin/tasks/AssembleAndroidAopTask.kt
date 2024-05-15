@@ -77,10 +77,15 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     }
 
     private fun loadJoinPointConfig(){
+        val isClassesJar = allDirectories.get().isEmpty() && allJars.get().size == 1
         WovenInfoUtils.addBaseClassInfo(project)
         ignoreJar.clear()
         ignoreJarClassPaths.clear()
         allJars.get().forEach { file ->
+            if (isClassesJar){
+                ignoreJar.add(file.asFile.absolutePath)
+                return@forEach
+            }
             val jarFile = JarFile(file.asFile)
             val enumeration = jarFile.entries()
             while (enumeration.hasMoreElements()) {
@@ -201,6 +206,14 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             jarOutput.saveEntry(jarEntryName,it)
                         }
                         newClasses.add(byteArray)
+                    }
+                }else if (Utils.dotToSlash(Utils.JoinAnnoCutUtils) + _CLASS == entryName) {
+                    FileInputStream(file).use { inputs ->
+                        val originInject = inputs.readAllBytes()
+                        val resultByteArray = RegisterMapWovenInfoCode().execute(ByteArrayInputStream(originInject))
+                        ByteArrayInputStream(resultByteArray).use {
+                            jarOutput.saveEntry(entryName,it)
+                        }
                     }
                 }else{
                     fun copy(){

@@ -26,10 +26,10 @@ dependencyResolutionManagement {
 }
 rootProject.name = "AndroidAOP"
 include ':app'
+include ':test-lib'
 include ':android-aop-annotation'
 include ':android-aop-processor'
 include ':android-aop-plugin'
 include ':android-aop-core'
-include ':test-lib'
 include ':android-aop-ksp'
-include ':test-app'
+//include ':test-app'
