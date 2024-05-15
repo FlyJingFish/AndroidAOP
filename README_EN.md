@@ -157,7 +157,7 @@ dependencies {
      //⚠️Choose one of the above android-aop-ksp and android-aop-processor
 }
 ```
-**Tips: ksp or annotationProcessor only works in the current module. In whichever module there is custom aspect code, it will be added to that module. Required dependencies can only be added to the public module through the API**
+> **Tips: ksp or annotationProcessor only works in the current module. In whichever module there is custom aspect code, it will be added to that module. Required dependencies can only be added to the public module through the API**
 
 #### 4. Add the androidAopConfig configuration item in app’s build.gradle (this step is an optional configuration item)
 
@@ -187,15 +187,15 @@ android {
      ...
 }
 ```
-**Tip: Reasonable use of include and exclude can improve compilation speed. It is recommended to directly use include to set the relevant package names of your project (including app and custom module)**
+> **Tip: Reasonable use of include and exclude can improve compilation speed. It is recommended to directly use include to set the relevant package names of your project (including app and custom module)**
 
-**⚠️⚠️⚠️After setting include and exclude, all aspects are only valid within the rules you set. Please remember your settings! **
+> **⚠️⚠️⚠️After setting include and exclude, all aspects are only valid within the rules you set. Please remember your settings!**
 
-**In addition, since Android Studio may have cache after setting this, it is recommended to clean it before continuing development**
+> **In addition, since Android Studio may have cache after setting this, it is recommended to clean it before continuing development**
 
 - 2. If you are interested, you can switch whether to use reflection to execute aspect methods and add the following settings in `gradle.properties` in the **root directory**
 
-**💡Since version 1.6.3, it has automatically switched to native execution aspect method mode. Reflection is turned off by default. If you encounter problems, you can switch back to reflection mode or raise issues**
+> **💡Since version 1.6.3, it has automatically switched to native execution aspect method mode. Reflection is turned off by default. If you encounter problems, you can switch back to reflection mode or raise issues**
 ```
 androidAop.reflectInvokeMethod = false //Set to true to reflect the execution aspect method, if not set, the default is false
 ```
@@ -220,23 +220,23 @@ plugins {
 }
 ```
 
-**💡💡💡This method can only apply debugMode to the module you have added**
+> **💡💡💡This method can only apply debugMode to the module you have added**
 - 2. Add the following settings in `gradle.properties` in the **root directory**
 
 ```
 androidAop.debugMode=true //Set to true to use the current packaging method of your project, false to use the full packaging method, otherwise the default is false
 ```
 
-**⚠️⚠️⚠️ Please note that when set to true, the compilation speed will be faster but some functions will be invalid. Only the aop code will be woven into the set module. The third-party jar package will not weave in the code, so please be careful to turn it off when building the official package. Configure this and clean the project**
+> **⚠️⚠️⚠️ Please note that when set to true, the compilation speed will be faster but some functions will be invalid. Only the aop code will be woven into the set module. The third-party jar package will not weave in the code, so please be careful to turn it off when building the official package. Configure this and clean the project**
 
 - 3. Add the following settings in `gradle.properties` in the **root directory**
 
 ```
 androidAop.debugMode.variantOnlyDebug = true //If this is not written by default, it is true
 ```
-**If this is not written, the default is true**. Please note that when set to true, the release package will ignore the setting of `androidAop.debugMode = true` and automatically adopt the full packaging method. When set to false, there will be no such effect.
+> **If this is not written, the default is true**. Please note that when set to true, the release package will ignore the setting of `androidAop.debugMode = true` and automatically adopt the full packaging method. When set to false, there will be no such effect.
 
-**💡This feature was added from version 1.6.6 and is enabled by default, so the release package does not need to manually turn off `androidAop.debugMode`**
+> **💡This feature was added from version 1.6.6 and is enabled by default, so the release package does not need to manually turn off `androidAop.debugMode`**
 
 ### This library has some built-in functional annotations for you to use directly.
 
