@@ -649,6 +649,10 @@ If you comment on the name in the donation message, it will be recorded in the l
 
 - [ShapeImageView supports displaying any graphics, you can’t think of it without it](https://github.com/FlyJingFish/ShapeImageView)
 
+- [GraphicsDrawable supports displaying arbitrary graphics, but is more lightweight](https://github.com/FlyJingFish/GraphicsDrawable)
+
+- [ModuleCommunication solves the communication needs between modules and has more convenient router functions](https://github.com/FlyJingFish/ModuleCommunication)
+
 - [FormatTextViewLib supports bolding, italics, size, underline, and strikethrough for some text. The underline supports custom distance, color, and line width; supports adding network or local images](https://github.com/FlyJingFish/FormatTextViewLib )
 
 - [View more open source libraries on the homepage](https://github.com/FlyJingFish)
