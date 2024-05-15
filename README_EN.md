@@ -352,7 +352,7 @@ AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
 
 ## In addition, this library also supports you to make aspects by yourself, which is very simple to implement!
 
-### This library uses the following four annotations to implement custom aspects
+### This library uses the following five annotations to implement custom aspects
 
 - @AndroidAopPointCut is an aspect that annotates methods
 - @AndroidAopMatchClassMethod is the aspect of matching class methods
