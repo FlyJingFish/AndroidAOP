@@ -628,10 +628,14 @@ You’ve all seen it here. If you like AndroidAOP, or feel that AndroidAOP has h
 
 If you feel that AndroidAOP has saved you a lot of development time and added luster to your project, you can also scan the QR code below and invite the author for a cup of coffee ☕
 
+#### [Donation List](https://github.com/FlyJingFish/AndroidAOP/blob/master/give_list.md)
+
 <div>
 <img src="/screenshot/IMG_4075.PNG" width="280" height="350">
 <img src="/screenshot/IMG_4076.JPG" width="280" height="350">
 </div>
+
+If you comment on the name in the donation message, it will be recorded in the list~ If you are also a GitHub open source author, you can leave the GitHub project address or personal homepage address when donating, and the link will be added to the list.
 
 ### Contact information
 
