@@ -38,7 +38,7 @@
 
 Minimum Gradle version: 7.6👇
 
-<img src="/screenshot/gradle_version.png" alt="show" height="220px" />
+<img src="/screenshot/gradle_version.png" alt="show" />
 
 
 Minimum SDK version: minSdkVersion >= 21
