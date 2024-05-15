@@ -580,7 +580,7 @@ objectInitCollect {
 }
 ```
 
--Java
+- Java
 
 ```java
 public class InitCollect2 {
