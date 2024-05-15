@@ -155,7 +155,7 @@ dependencies {
     //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
 }
 ```
-提示：ksp 或 annotationProcessor只能扫描当前 module ，在哪个 module 中有自定义切面代码就加在哪个 module，**但是自定义的切面代码是全局生效的**；必须依赖项可以通过 api 方式只加到公共 module 上
+> 提示：ksp 或 annotationProcessor只能扫描当前 module ，在哪个 module 中有自定义切面代码就加在哪个 module，**但是自定义的切面代码是全局生效的**；必须依赖项可以通过 api 方式只加到公共 module 上
 
 #### 四、在 app 的build.gradle添加 androidAopConfig 配置项（此步为可选配置项）
 
@@ -184,11 +184,11 @@ android {
     ...
 }
 ```
-**提示：合理使用 include 和 exclude 可提高编译速度，建议直接使用 include 设置你项目的相关包名（包括 app 和自定义 module 的）**
+> **提示：合理使用 include 和 exclude 可提高编译速度，建议直接使用 include 设置你项目的相关包名（包括 app 和自定义 module 的）**
 
-**⚠️⚠️⚠️设置完了 include 和 exclude 所有切面只在您设置规则之内才有效，麻烦记住自己的设置！**
+> **⚠️⚠️⚠️设置完了 include 和 exclude 所有切面只在您设置规则之内才有效，麻烦记住自己的设置！**
 
-**另外设置此处之后由于 Android Studio 可能有缓存，建议先 clean 再继续开发**
+> **另外设置此处之后由于 Android Studio 可能有缓存，建议先 clean 再继续开发**
 
 
 - 2、有兴趣的可以切换是否使用反射执行切面方法，在**根目录**的 `gradle.properties` 添加如下设置
@@ -203,12 +203,12 @@ androidAop.reflectInvokeMethod = false //设置为 true 反射执行切面方法
 
 - 1、为**所有的子module**也依赖插件，请按照上述[步骤一的方式一配置项目](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB)，然后以下方式二选一
 
-**方式一（推荐）：**
+**方式一：（推荐）**
 
 按照上述[步骤一的方式一配置项目](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB)，就可以了。**这个方式自动为所有的 module 应用 debugMode**
 
 
-**方式二：**
+~~**方式二：（不推荐）**~~
 
 请按照上述[步骤一的方式一配置项目](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB)后，手动为**所有子 module 模块**设置，例如：
 
@@ -219,7 +219,7 @@ plugins {
 }
 ```
 
-**💡💡💡这个方式可以只为你加过的 module 应用 debugMode**
+> **💡💡💡这个方式可以只为你加过的 module 应用 debugMode**
 
 - 2、在**根目录**的 `gradle.properties` 添加如下设置
 
@@ -227,16 +227,16 @@ plugins {
 androidAop.debugMode=true //设置为 true 走您项目当前的打包方式 ，false 则为全量打包方式，不写默认false
 ```
 
-**⚠️⚠️⚠️请注意设置为 true 时编译速度会变快但部分功能将失效，只会为设置的 module 织入 aop 代码，三方jar包 不会织入代码，因此打正式包时请注意关闭此项配置并clean项目**
+> **⚠️⚠️⚠️请注意设置为 true 时编译速度会变快但部分功能将失效，只会为设置的 module 织入 aop 代码，三方jar包 不会织入代码，因此打正式包时请注意关闭此项配置并clean项目**
 
 - 3、在**根目录**的 `gradle.properties` 添加如下设置
 
 ```
 androidAop.debugMode.variantOnlyDebug = true //默认不写这项就是true
 ```
-**这项不写默认就是true**，请注意设置为 true 时 release 包会忽略 `androidAop.debugMode = true` 的设置自动走全量打包方式，设为 false 时则没有这种效果
+> **这项不写默认就是true**，请注意设置为 true 时 release 包会忽略 `androidAop.debugMode = true` 的设置自动走全量打包方式，设为 false 时则没有这种效果
 
-**💡此项功能是从1.6.6版本添加的，并默认开启，因此release包无需手动关闭 `androidAop.debugMode`**
+> **💡此项功能是从1.6.6版本添加的，并默认开启，因此release包无需手动关闭 `androidAop.debugMode`**
 
 
 ### 本库内置了一些功能注解可供你直接使用
