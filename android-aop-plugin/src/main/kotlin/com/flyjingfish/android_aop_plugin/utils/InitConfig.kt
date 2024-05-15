@@ -2,6 +2,7 @@ package com.flyjingfish.android_aop_plugin.utils
 
 import com.android.build.gradle.internal.coverage.JacocoReportTask
 import com.flyjingfish.android_aop_plugin.beans.AopCollectClass
+import com.flyjingfish.android_aop_plugin.beans.CutCollectMethodJsonCache
 import com.flyjingfish.android_aop_plugin.beans.CutClassesJson
 import com.flyjingfish.android_aop_plugin.beans.CutClassesJsonMap
 import com.flyjingfish.android_aop_plugin.beans.CutCollectJson
@@ -35,7 +36,7 @@ object InitConfig {
     private val cutInfoMap = mutableMapOf<String, CutJsonMap?>()
     private val replaceMethodInfoMap = mutableMapOf<String, ReplaceMethodInfo>()
     private val modifyExtendsClassMap = mutableMapOf<String, ModifyExtendsClassJson>()
-    private val collectClassMap = mutableMapOf<String, MutableMap<String,MutableSet<String>>>()
+    private val collectClassMap = mutableMapOf<String, MutableMap<String, CutCollectMethodJsonCache>>()
     var isInit: Boolean = false
     private val gson: Gson = GsonBuilder().create()
     fun <T> optFromJsonString(jsonString: String, clazz: Class<T>): T? {
@@ -204,14 +205,14 @@ object InitConfig {
             }
             collectClassMap.forEach {(classKey,classMap)->
                 val collectClassJson = CutCollectJson("收集切面",classKey)
-                classMap.forEach {(methodName,classes)->
-                    val methodJson = CutCollectMethodJson(methodName,classes.size)
-                    methodJson.classes.addAll(classes)
+                classMap.forEach {(methodName,methodCache)->
+                    val methodJson = CutCollectMethodJson(methodName,methodCache.collectType,methodCache.regex,methodCache.classes.size)
+                    methodJson.classes.addAll(methodCache.classes)
                     collectClassJson.collectMethod.add(methodJson)
                 }
                 cutJsons.add(collectClassJson)
             }
-            val json = GsonBuilder().setPrettyPrinting().create().toJson(cutJsons)
+            val json = GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(cutJsons)
 
             saveFile(cutInfoFile, json)
 
@@ -271,37 +272,14 @@ object InitConfig {
             classMap = mutableMapOf()
             collectClassMap[aopCollectClass.invokeClassName] = classMap
         }
-        val paramKey = if (aopCollectClass.isClazz) "Class[? extends ${aopCollectClass.collectClassName}]" else aopCollectClass.collectClassName
+        val paramKey = if (aopCollectClass.isClazz) "Class<? extends ${aopCollectClass.collectClassName}>" else aopCollectClass.collectClassName
         val methodKey = "${aopCollectClass.invokeMethod}($paramKey)"
         var methodSet = classMap[methodKey]
         if (methodSet == null){
-            methodSet = mutableSetOf()
+            methodSet = CutCollectMethodJsonCache(aopCollectClass.collectType,aopCollectClass.regex)
             classMap[methodKey] = methodSet
         }
-        methodSet.add(aopCollectClass.collectExtendsClassName)
+        methodSet.classes.add(aopCollectClass.collectExtendsClassName)
 
     }
 }
-
-
-
-/**
-
-{
-    "type": "收集切面",
-    "collectClass": "com.flyjingfish.test_lib.collect.InitCollect2",
-    "collectMethod": [
-        {
-            "method": "collect(sssss)",
-            "classCount": 1,
-            "class": [
-                "com.flyjingfish.test_lib.collect.test"
-            ]
-
-        }
-    ]
-}
-
-
-
- */

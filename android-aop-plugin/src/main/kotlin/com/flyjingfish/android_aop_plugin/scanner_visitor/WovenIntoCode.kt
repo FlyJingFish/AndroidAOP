@@ -2,6 +2,7 @@ package com.flyjingfish.android_aop_plugin.scanner_visitor
 
 import com.flyjingfish.android_aop_plugin.beans.AopCollectClass
 import com.flyjingfish.android_aop_plugin.beans.AopCollectCut
+import com.flyjingfish.android_aop_plugin.beans.CutFileJson
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
 import com.flyjingfish.android_aop_plugin.utils.ClassNameToConversions
@@ -21,6 +22,7 @@ import javassist.NotFoundException
 import javassist.bytecode.AnnotationsAttribute
 import javassist.bytecode.AttributeInfo
 import javassist.bytecode.annotation.Annotation
+import org.gradle.api.Project
 import org.objectweb.asm.*
 import org.objectweb.asm.ClassWriter.COMPUTE_FRAMES
 import org.objectweb.asm.ClassWriter.COMPUTE_MAXS
@@ -648,5 +650,19 @@ object WovenIntoCode {
             }
         }
 
+    }
+
+    fun deleteOtherCompileClass(project:Project, variantName:String){
+        val json : CutFileJson? = InitConfig.optFromJsonString(
+            InitConfig.readAsString(Utils.aopCompileTempOtherJson(project,variantName)),
+            CutFileJson::class.java)
+        json?.let {
+            it.cacheFileJson.forEach {filePath ->
+                val file = File(filePath)
+                if (file.exists()){
+                    file.delete()
+                }
+            }
+        }
     }
 }

@@ -21,7 +21,8 @@ import java.util.jar.JarFile
 object AopTaskUtils {
     fun processFileForConfig(file : File, directory: File, directoryPath:String){
         if (file.isFile) {
-//                    logger.error("file.name="+file.absolutePath)
+            val className = file.absolutePath.replace("$directoryPath/","")
+            WovenInfoUtils.addClassName(className)
             if (file.name.endsWith(Utils.AOP_CONFIG_END_NAME)) {
                 FileInputStream(file).use { inputs ->
                     val classReader = ClassReader(inputs.readAllBytes())
@@ -29,8 +30,6 @@ object AopTaskUtils {
                         SearchAOPConfigVisitor(), ClassReader.EXPAND_FRAMES)
                 }
             }else if (file.absolutePath.endsWith(Utils._CLASS)){
-                val className = file.absolutePath.replace("$directoryPath/","")
-                WovenInfoUtils.addClassName(className)
                 if (AndroidAopConfig.verifyLeafExtends && !className.startsWith("kotlinx/") && !className.startsWith("kotlin/")){
                     FileInputStream(file).use { inputs ->
                         val bytes = inputs.readAllBytes()

@@ -24,11 +24,6 @@ public class InitCollect2 {
     }
 
     @AndroidAopCollectMethod
-    public static void collect2(SubApplication2 sub){
-        collects.add(sub);
-    }
-
-    @AndroidAopCollectMethod
     public static void collect3(Class<? extends SubApplication2> sub){
         collectClazz.add(sub);
     }

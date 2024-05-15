@@ -6,6 +6,7 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.DynamicFeaturePlugin
 import com.android.build.gradle.LibraryExtension
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
+import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import com.flyjingfish.android_aop_plugin.tasks.CompileAndroidAopTask
 import com.flyjingfish.android_aop_plugin.tasks.SyncConfigTask
 import com.flyjingfish.android_aop_plugin.utils.AndroidConfig
@@ -65,10 +66,23 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                 }
             val variantName = variant.name
             val buildTypeName = variant.buildType.name
-            if (javaCompile is JavaCompile){
+            if (!isIncremental() && javaCompile is JavaCompile && isDebugMode(buildTypeName,variantName)){
                 javaCompile.options.isIncremental = false
             }
 //            println("CompilePlugin=variant=$variantName,output.name=${variant.buildType.name},isDebug=${isDebugMode(buildTypeName,variantName)}")
+            if (isApp && isIncremental()){
+                javaCompile.doFirst{
+                    val enabled = try {
+                        val firstConfig = project.extensions.getByType(AndroidAopConfig::class.java)
+                        firstConfig.enabled
+                    } catch (e: Exception) {
+                        true
+                    }
+                    if (enabled && isDebugMode(buildTypeName,variantName)){
+                        WovenIntoCode.deleteOtherCompileClass(project, variantName)
+                    }
+                }
+            }
             javaCompile.doLast{
                 val androidAopConfig : AndroidAopConfig = if (isApp){
                     val config = project.extensions.getByType(AndroidAopConfig::class.java)

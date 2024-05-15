@@ -241,6 +241,7 @@ class CompileAndroidAopTask(
             }
         }
         if (isApp){
+            val cacheDeleteFiles = mutableListOf<String>()
             val tmpOtherDir = File(Utils.aopCompileTempOtherDir(project,variantName))
             WovenIntoCode.createInitClass(tmpOtherDir)
             WovenIntoCode.createCollectClass(tmpOtherDir)
@@ -258,8 +259,10 @@ class CompileAndroidAopTask(
                     file.inputStream().use {
                         target.saveEntry(it)
                     }
+                    cacheDeleteFiles.add(target.absolutePath)
                 }
             }
+            InitConfig.exportCacheCutFile(File(Utils.aopCompileTempOtherJson(project,variantName)),cacheDeleteFiles)
             if (!AndroidAopConfig.debug){
                 tmpOtherDir.deleteRecursively()
             }
