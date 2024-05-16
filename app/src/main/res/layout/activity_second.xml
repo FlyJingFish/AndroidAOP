@@ -14,7 +14,7 @@
         app:flow_wrapMode="chain"
         app:constraint_referenced_ids="btn_inner,
         btn_onScheduled1, btn_onScheduled2,btn_onScheduled1_stop,
-        btn_onScheduled2_stop,btn_onDelay1,btn_onDelay2,btn_onDelay1_stop,btn_onDelay2_stop"
+        btn_onScheduled2_stop,btn_onDelay1,btn_onDelay2,btn_onDelay1_stop,btn_onDelay2_stop,iv_image"
         />
     <Button
         android:id="@+id/btn_inner"
@@ -88,6 +88,11 @@
         app:layout_constraintTop_toTopOf="parent"
         android:textAllCaps="false"
         android:text="\@Delay 2 Stop"/>
+    <ImageView
+        android:id="@+id/iv_image"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@mipmap/ic_launcher_round"/>
     <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"

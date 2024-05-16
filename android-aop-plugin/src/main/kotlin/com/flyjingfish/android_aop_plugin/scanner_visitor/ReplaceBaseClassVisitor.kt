@@ -1,9 +1,10 @@
 package com.flyjingfish.android_aop_plugin.scanner_visitor
 
+import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
-import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils.computeMD5
 import com.flyjingfish.android_aop_plugin.utils.Utils.dotToSlash
+import com.flyjingfish.android_aop_plugin.utils.Utils.slashToDot
 import com.flyjingfish.android_aop_plugin.utils.Utils.slashToDotClassName
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import org.objectweb.asm.ClassVisitor
@@ -15,6 +16,8 @@ open class ReplaceBaseClassVisitor(
     classVisitor: ClassVisitor
 ) : ClassVisitor(Opcodes.ASM9, classVisitor) {
     lateinit var thisClassName:String
+    private var oldSuperName:String?=null
+    private var modifyExtendsClassName:String?=null
     var isHasStaticClock = false
     var hasCollect = false
     override fun visit(
@@ -25,6 +28,7 @@ open class ReplaceBaseClassVisitor(
         superName: String?,
         interfaces: Array<out String>?
     ) {
+        oldSuperName = superName
         thisClassName = slashToDotClassName(name)
         hasCollect = WovenInfoUtils.aopCollectClassMap[thisClassName] != null
         val replaceExtendsClassName = WovenInfoUtils.getModifyExtendsClass(slashToDotClassName(name))
@@ -35,7 +39,8 @@ open class ReplaceBaseClassVisitor(
         }
         if (!replaceExtendsClassName.isNullOrEmpty() && !newReplaceExtendsClassName.isNullOrEmpty()){
             InitConfig.useModifyClassInfo(slashToDotClassName(name))
-            super.visit(version, access, name, signature, dotToSlash(newReplaceExtendsClassName), interfaces)
+            modifyExtendsClassName = dotToSlash(newReplaceExtendsClassName)
+            super.visit(version, access, name, signature, modifyExtendsClassName, interfaces)
         }else{
             super.visit(version, access, name, signature, superName, interfaces)
         }
@@ -58,12 +63,15 @@ open class ReplaceBaseClassVisitor(
         )
         if (hasCollect && name == "<clinit>"){
             isHasStaticClock = true
-            mv = MyMethodAdapter(mv, access, name, descriptor)
+            mv = MethodStaticAdapter(mv, access, name, descriptor)
+        }
+        if (modifyExtendsClassName != null && name == "<init>"){
+            mv = MethodInitAdapter(mv)
         }
         return mv
     }
 
-    inner class MyMethodAdapter(mv: MethodVisitor, access: Int, name: String, desc: String?) :
+    inner class MethodStaticAdapter(mv: MethodVisitor, access: Int, name: String, desc: String?) :
         AdviceAdapter(Opcodes.ASM9, mv, access, name, desc) {
 
         override fun visitInsn(opcode: Int) {
@@ -84,6 +92,35 @@ open class ReplaceBaseClassVisitor(
 
         override fun onMethodExit(opcode: Int) {
             super.onMethodExit(opcode)
+        }
+    }
+
+    inner class MethodInitAdapter(methodVisitor: MethodVisitor?) :
+        MethodVisitor(Opcodes.ASM9, methodVisitor) {
+        override fun visitMethodInsn(
+            opcode: Int,
+            owner: String,
+            name: String,
+            descriptor: String,
+            isInterface: Boolean
+        ) {
+            val extendClass = modifyExtendsClassName
+            if (name == "<init>" && oldSuperName == owner && extendClass != null && hasConstructor(slashToDot(extendClass),descriptor)) {
+                super.visitMethodInsn(opcode, extendClass, name, descriptor, isInterface)
+            } else {
+                super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
+            }
+        }
+
+        private fun hasConstructor(extendClass:String, descriptor: String):Boolean{
+            val constructor = try {
+                val cp = ClassPoolUtils.getNewClassPool()
+                val ctClass = cp.get(extendClass)
+                ctClass.getConstructor(descriptor)
+            } catch (e: Exception) {
+                null
+            }
+            return constructor != null
         }
     }
 }
