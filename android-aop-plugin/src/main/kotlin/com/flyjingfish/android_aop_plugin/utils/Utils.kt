@@ -299,10 +299,13 @@ object Utils {
         return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileOtherClassJson/needDelClassInfo.json"
     }
     fun aopTransformTempDir(project:Project, variantName:String):String{
-        return project.buildDir.absolutePath+"/tmp/android-aop/tempInvokeClass/${variantName}/"
+        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempInvokeClass/"
     }
     fun aopTransformCollectTempDir(project:Project, variantName:String):String{
-        return project.buildDir.absolutePath+"/tmp/android-aop/tempCollectClass/${variantName}/"
+        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempCollectClass/"
+    }
+    fun aopTransformIgnoreJarDir(project:Project, variantName:String):String{
+        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempTransformIgnoreJar/"
     }
     fun configJsonFile(project:Project):String{
         return project.buildDir.absolutePath+"/tmp/android-aop/config/androidAopConfig.json"

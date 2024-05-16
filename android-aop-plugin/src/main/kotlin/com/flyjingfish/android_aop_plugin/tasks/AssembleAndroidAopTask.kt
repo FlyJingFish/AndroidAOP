@@ -103,7 +103,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             jarFile.close()
         }
         if (ignoreJar.isNotEmpty()){
-            val temporaryDir = File(project.buildDir.absolutePath + "/tmp/android-aop")
+            val temporaryDir = File(Utils.aopTransformIgnoreJarDir(project,variant))
             for (path in ignoreJar) {
                 val destDir = "${temporaryDir.absolutePath}/${Utils.computeMD5(File(path).name)}"
                 val destFile = File(destDir)

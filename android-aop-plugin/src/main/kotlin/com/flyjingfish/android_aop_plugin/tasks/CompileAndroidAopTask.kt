@@ -58,16 +58,13 @@ class CompileAndroidAopTask(
     private fun loadJoinPointConfig(){
         WovenInfoUtils.addBaseClassInfo(project)
 
-        fun processFile(file : File,directory:File,directoryPath:String){
-            AopTaskUtils.processFileForConfig(file, directory, directoryPath)
-        }
         //第一遍找配置文件
         allDirectories.forEach { directory ->
 //            printLog("directory.asFile.absolutePath = ${directory.asFile.absolutePath}")
             val directoryPath = directory.absolutePath
             WovenInfoUtils.addClassPath(directoryPath)
             directory.walk().forEach { file ->
-                processFile(file,directory,directoryPath)
+                AopTaskUtils.processFileForConfig(file, directory, directoryPath)
             }
 
         }
@@ -84,14 +81,10 @@ class CompileAndroidAopTask(
         val addClassMethodRecords = mutableMapOf<String,ClassMethodRecord>()
         val deleteClassMethodRecords = mutableSetOf<String>()
 
-        fun processFile(file : File,directory:File,directoryPath:String){
-            AopTaskUtils.processFileForSearch(file, directory, directoryPath,addClassMethodRecords, deleteClassMethodRecords)
-        }
-
         allDirectories.forEach { directory ->
             val directoryPath = directory.absolutePath
             directory.walk().forEach { file ->
-                processFile(file,directory,directoryPath)
+                AopTaskUtils.processFileForSearch(file, directory, directoryPath,addClassMethodRecords, deleteClassMethodRecords)
             }
         }
         allJars.forEach { file ->
