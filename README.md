@@ -64,7 +64,7 @@
 
 1、在 **项目根目录** 的 ```build.gradle``` 里依赖插件
 
-> plugins DSL
+新版本
 
 ```gradle
 
@@ -74,7 +74,7 @@ plugins {
 }
 ```
 
-> legacy plugin application:
+或者老版本
 
 ```gradle
 buildscript {
@@ -90,7 +90,7 @@ apply plugin: "android.aop"
 2、在 **app** 的 ```build.gradle``` 添加
 
 
-> plugins DSL
+新版本
 
 ```gradle
 //必须项 👇
@@ -100,7 +100,7 @@ plugins {
 }
 ```
 
-> legacy plugin application:
+或者老版本
 
 ```gradle
 //必须项 👇
