@@ -59,7 +59,7 @@ Minimum SDK version: minSdkVersion >= 21
 
 1. Depend on the plug-in in ```build.gradle``` in the **project root directory**
 
-new version
+Using the **plugins DSL**:
 
 ```gradle
 
@@ -70,7 +70,7 @@ plugins {
 ```
 
 <details>
-<summary><strong>or old version</strong></summary>
+<summary><strong>Using legacy plugin application:</strong></summary>
      
 ```gradle
 buildscript {
@@ -86,7 +86,8 @@ apply plugin: "android.aop"
 
 2. Add in ```build.gradle``` of **app**
 
-new version
+Using the **plugins DSL**:
+
 ```gradle
 //Required items 👇
 plugins {
@@ -97,7 +98,7 @@ plugins {
 
 
 <details>
-<summary><strong>or old version</strong></summary>
+<summary><strong>Using legacy plugin application:</strong></summary>
 
 ```gradle
 //Required items 👇
