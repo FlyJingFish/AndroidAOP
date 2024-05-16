@@ -65,7 +65,7 @@ new version
 
 plugins {
     //Required item 👇 apply is set to true to automatically apply debugMode to all modules, if false, follow step 5 below.
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.7.9" apply true
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.8.1" apply true
 }
 ```
 
