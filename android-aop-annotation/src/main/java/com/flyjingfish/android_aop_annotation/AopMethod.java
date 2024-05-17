@@ -1,5 +1,6 @@
 package com.flyjingfish.android_aop_annotation;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
@@ -41,4 +42,11 @@ public final class AopMethod {
         return targetMethod.getModifiers();
     }
 
+    public Annotation[] getAnnotations() {
+        return targetMethod.getAnnotations();
+    }
+
+    public <T extends Annotation> T getAnnotation(Class<T> var1) {
+        return targetMethod.getAnnotation(var1);
+    }
 }
