@@ -29,7 +29,7 @@ object ClassFileUtils {
     fun clear(){
         invokeClasses.clear()
     }
-    fun wovenInfoInvokeClass(newClasses: MutableList<ByteArray>? = null) :MutableList<String> {
+    fun wovenInfoInvokeClass(newClasses: MutableList<ByteArray>) :MutableList<String> {
         val cacheFiles = mutableListOf<String>()
         if (reflectInvokeMethod){
             return cacheFiles
