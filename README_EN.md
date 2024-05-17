@@ -65,7 +65,7 @@ Using the **plugins DSL**:
 
 plugins {
     //Required item 👇 apply is set to true to automatically apply debugMode to all modules, if false, follow step 5 below.
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.8.1" apply true
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.8.2" apply true
 }
 ```
 
@@ -76,7 +76,7 @@ plugins {
 buildscript {
      dependencies {
          //Required items 👇
-         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.8.1'
+         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.8.2'
      }
 }
 //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below.
@@ -115,7 +115,7 @@ Add directly to ```build.gradle``` of **app**
 //Required items 👇
 plugins {
      ...
-     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.8.1"
+     id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.8.2"
 }
 ```
 
@@ -145,16 +145,16 @@ plugins {
 
 dependencies {
      //Required items 👇
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.8.1'
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.8.1'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.8.2'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.8.2'
      
      //Required item 👇If you already have this item in your project, you don’t need to add it.
      implementation 'androidx.appcompat:appcompat:1.3.0' // At least in 1.3.0 and above
      
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️supports aspects written in Java and Kotlin code
-     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.8.1'
+     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.8.2'
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️only applies to aspects written in Java code
-     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.8.1'
+     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.8.2'
      //⚠️Choose one of the above android-aop-ksp and android-aop-processor
 }
 ```
