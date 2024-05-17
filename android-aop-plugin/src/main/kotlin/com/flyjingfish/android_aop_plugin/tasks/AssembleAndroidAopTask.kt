@@ -237,7 +237,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     ByteArrayInputStream(newByteArray).use {
                                         jarOutput.saveEntry(jarEntryName,it)
                                     }
-                                    newClasses.add(newByteArray)
+//                                    newClasses.add(newByteArray)
                                 } catch (e: Exception) {
                                     copy()
                                 }
@@ -257,7 +257,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                         ByteArrayInputStream(newByteArray).use {
                                             jarOutput.saveEntry(jarEntryName,it)
                                         }
-                                        newClasses.add(newByteArray)
+//                                        newClasses.add(newByteArray)
                                     } catch (e: Exception) {
                                         copy()
                                     }
@@ -305,7 +305,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     ByteArrayInputStream(newByteArray).use {
                                         jarOutput.saveEntry(jarEntryName,it)
                                     }
-                                    newClasses.add(newByteArray)
+//                                    newClasses.add(newByteArray)
                                 } catch (e: Exception) {
                                     copy()
                                 }
@@ -390,7 +390,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                         ByteArrayInputStream(newByteArray).use {
                                             jarOutput.saveEntry(entryName,it)
                                         }
-                                        newClasses.add(newByteArray)
+//                                        newClasses.add(newByteArray)
                                     } catch (e: Exception) {
                                         copy()
                                     }
@@ -410,7 +410,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                             ByteArrayInputStream(newByteArray).use {
                                                 jarOutput.saveEntry(entryName,it)
                                             }
-                                            newClasses.add(newByteArray)
+//                                            newClasses.add(newByteArray)
                                         } catch (e: Exception) {
                                             copy()
                                         }
@@ -458,7 +458,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                         ByteArrayInputStream(newByteArray).use {
                                             jarOutput.saveEntry(entryName,it)
                                         }
-                                        newClasses.add(newByteArray)
+//                                        newClasses.add(newByteArray)
                                     } catch (e: Exception) {
                                         copy()
                                     }

@@ -100,6 +100,7 @@ class CompileAndroidAopTask(
         val hasReplace = WovenInfoUtils.hasReplace()
         val hasReplaceExtendsClass = WovenInfoUtils.hasModifyExtendsClass()
         val tempFiles = mutableListOf<TmpFile>()
+        val newClasses = mutableListOf<ByteArray>()
         fun processFile(file : File,directory:File,directoryPath:String){
             if (file.isFile) {
                 val entryName = file.absolutePath.replace("$directoryPath/","")
@@ -126,6 +127,7 @@ class CompileAndroidAopTask(
                         ByteArrayInputStream(byteArray).use {
                             outFile.saveEntry(it)
                         }
+                        newClasses.add(byteArray)
                     }
                 }else{
                     fun copy(){
@@ -270,7 +272,7 @@ class CompileAndroidAopTask(
         if (!AndroidAopConfig.debug){
             tmpCompileDir.deleteRecursively()
         }
-        val cacheFiles = ClassFileUtils.wovenInfoInvokeClass()
+        val cacheFiles = ClassFileUtils.wovenInfoInvokeClass(newClasses)
         InitConfig.exportCacheCutFile(tmpJsonFile,cacheFiles)
         if (isApp){
             exportCutInfo()
