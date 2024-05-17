@@ -201,6 +201,9 @@ androidAop.reflectInvokeMethod = false //设置为 true 反射执行切面方法
 
 #### 五、开发中可设置代码织入方式（此步为可选配置项，只为在开发过程中提高打包速度，版本最低1.7.1）
 
+![Stargazers over time](https://github.com/FlyJingFish/AndroidAOP/blob/master/screenshot/warning_debug_mode.svg)
+
+
 - 1、为**所有的子module**也依赖插件，请按照上述[步骤一的方式一配置项目](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB)，然后以下方式二选一
 
 **方式一：（推荐）**
