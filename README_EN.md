@@ -1,3 +1,6 @@
+<h4 align="right">
+  <strong>English</strong> | <a href="https://github.com/FlyJingFish/AndroidAOP/blob/master/README.md">简体中文</a>
+</h4>
 # AndroidAOP
 
 [![Maven central](https://img.shields.io/maven-central/v/io.github.FlyJingFish.AndroidAop/android-aop-plugin)](https://central.sonatype.com/search?q=io.github.FlyJingFish.AndroidAop)
@@ -190,9 +193,8 @@ android {
 ```
 > **Tip: Reasonable use of include and exclude can improve compilation speed. It is recommended to directly use include to set the relevant package names of your project (including app and custom module)**
 
-> **⚠️⚠️⚠️After setting include and exclude, all aspects are only valid within the rules you set. Please remember your settings!**
-
-> **In addition, since Android Studio may have cache after setting this, it is recommended to clean it before continuing development**
+> [!NOTE]\
+> **⚠️⚠️⚠️After setting include and exclude, all aspects are only valid within the rules you set. Please remember your settings! In addition, since Android Studio may have cache after setting this, it is recommended to clean it before continuing development**
 
 - 2. If you are interested, you can switch whether to use reflection to execute aspect methods and add the following settings in `gradle.properties` in the **root directory**
 
@@ -228,6 +230,7 @@ plugins {
 androidAop.debugMode=true //Set to true to use the current packaging method of your project, false to use the full packaging method, otherwise the default is false
 ```
 
+> [!NOTE]\
 > **⚠️⚠️⚠️ Please note that when set to true, the compilation speed will be faster but some functions will be invalid. Only the aop code will be woven into the set module. The third-party jar package will not weave in the code, so please be careful to turn it off when building the official package. Configure this and clean the project**
 
 - 3. Add the following settings in `gradle.properties` in the **root directory**
