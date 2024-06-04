@@ -214,6 +214,8 @@ androidAop.reflectInvokeMethod = false //设置为 true 反射执行切面方法
 
 ~~**方式二：（不推荐）**~~
 
+> **💡💡💡这个方式可以只为你加过的 module 应用 debugMode，没加的 module 里边的相关切面不会生效**
+
 请按照上述[步骤一的方式一配置项目](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB)后，手动为**所有子 module 模块**设置，例如：
 
 ```gradle
@@ -223,7 +225,7 @@ plugins {
 }
 ```
 
-> **💡💡💡这个方式可以只为你加过的 module 应用 debugMode**
+
 
 - 2、在**根目录**的 `gradle.properties` 添加如下设置
 
