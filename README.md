@@ -1,6 +1,7 @@
 <h4 align="right">
   <strong>简体中文</strong> | <a href="https://github.com/FlyJingFish/AndroidAOP/blob/master/README_EN.md">English</a>
 </h4>
+
 # AndroidAOP
 
 [![Maven central](https://img.shields.io/maven-central/v/io.github.FlyJingFish.AndroidAop/android-aop-plugin)](https://central.sonatype.com/search?q=io.github.FlyJingFish.AndroidAop)
@@ -9,7 +10,6 @@
 [![GitHub issues](https://img.shields.io/github/issues/FlyJingFish/AndroidAop.svg)](https://github.com/FlyJingFish/AndroidAop/issues)
 [![GitHub license](https://img.shields.io/github/license/FlyJingFish/AndroidAop.svg)](https://github.com/FlyJingFish/AndroidAop/blob/master/LICENSE)
 
-## [English document](https://github.com/FlyJingFish/AndroidAOP/blob/master/README_EN.md)
 
 ### AndroidAOP 是专属于 Android 端 Aop 框架，只需一个注解就可以请求权限、切换线程、禁止多点、监测生命周期等等，**本库不是基于 AspectJ 实现的 Aop**，当然你也可以定制出属于你的 Aop 代码，心动不如行动，赶紧用起来吧
 
