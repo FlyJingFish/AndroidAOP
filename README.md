@@ -110,6 +110,10 @@ plugins {
 apply plugin: 'android.aop' //最好放在最后一行
 ```
 
+> [!CAUTION]\
+> **⚠️⚠️⚠️`id 'android.aop'` 这句尽量放在最后一行，尤其是必须在 `id 'com.android.application'` 或 `id 'com.android.library'` 的后边**
+
+
 ##### ~~方式二：```plugins``` 方式（不推荐）~~
 
 直接在 **app** 的 ```build.gradle``` 添加
@@ -118,7 +122,7 @@ apply plugin: 'android.aop' //最好放在最后一行
 //必须项 👇
 plugins {
     ...
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.8.2"
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.8.2"//最好放在最后一行
 }
 ```
 
