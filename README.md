@@ -172,6 +172,7 @@ dependencies {
 ```gradle
 plugins {
     ...
+    id 'android.aop'//最好放在最后一行
 }
 androidAopConfig {
     // enabled 为 false 切面不再起作用，默认不写为 true

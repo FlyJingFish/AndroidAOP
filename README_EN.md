@@ -171,6 +171,7 @@ dependencies {
 ```gradle
 plugins {
      ...
+     id 'android.aop'//It is best to put it on the last line
 }
 androidAopConfig {
      // enabled is false, the aspect no longer works, the default is not written as true
