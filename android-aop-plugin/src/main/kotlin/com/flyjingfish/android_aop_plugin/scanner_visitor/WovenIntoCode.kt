@@ -21,6 +21,7 @@ import javassist.Modifier
 import javassist.NotFoundException
 import javassist.bytecode.AnnotationsAttribute
 import javassist.bytecode.AttributeInfo
+import javassist.bytecode.ConstPool
 import javassist.bytecode.annotation.Annotation
 import org.gradle.api.Project
 import org.objectweb.asm.*
@@ -281,35 +282,11 @@ object WovenIntoCode {
                     return@forEach
                 }
 
-                val ccFile = ctClass.classFile
-                val constpool = ccFile.constPool
-
-                // create the annotation
-                val annotAttr =
-                    AnnotationsAttribute(
-                        constpool,
-                        AnnotationsAttribute.visibleTag
-                    )
-                val annot =
-                    Annotation(KEEP_CLASS, constpool)
-                annotAttr.addAnnotation(annot)
-                targetMethod.methodInfo.addAttribute(annotAttr)
+                val constPool = ctClass.classFile.constPool
 
                 //给原有方法增加 @Keep，防止被混淆
-                val attributeInfos :List<AttributeInfo> = ctMethod.methodInfo.attributes
-                var annotationsAttribute :AnnotationsAttribute ?= null
-                for (attributeInfo in attributeInfos) {
-                    if (attributeInfo is AnnotationsAttribute){
-                        annotationsAttribute = attributeInfo
-                        break
-                    }
-                }
-                if (annotationsAttribute == null){
-                    annotationsAttribute = AnnotationsAttribute(constpool, AnnotationsAttribute.visibleTag)
-                }
-                val annotation = Annotation(KEEP_CLASS, constpool);
-                annotationsAttribute.addAnnotation(annotation);
-                ctMethod.methodInfo.addAttribute(annotationsAttribute);
+                targetMethod.addKeepClassAnnotation(constPool)
+                ctMethod.addKeepClassAnnotation(constPool)
 
 //                val paramNames: MutableList<String> =
 //                    ArrayList()
@@ -389,6 +366,27 @@ object WovenIntoCode {
             }
         }
         return ctClass.toBytecode()
+    }
+
+    private fun CtMethod.addKeepClassAnnotation(constPool: ConstPool){
+        //给原有方法增加 @Keep，防止被混淆
+        val attributeInfos :List<AttributeInfo> = methodInfo.attributes
+        var annotationsAttribute :AnnotationsAttribute ?= null
+        for (attributeInfo in attributeInfos) {
+            if (attributeInfo is AnnotationsAttribute){
+                annotationsAttribute = attributeInfo
+                break
+            }
+        }
+        if (annotationsAttribute == null){
+            annotationsAttribute = AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag)
+        }
+        val ctMethodNoneHasKeep = annotationsAttribute.getAnnotation(KEEP_CLASS) == null
+        if (ctMethodNoneHasKeep){
+            val annotation = Annotation(KEEP_CLASS, constPool);
+            annotationsAttribute.addAnnotation(annotation);
+            methodInfo.addAttribute(annotationsAttribute);
+        }
     }
 
     fun wovenStaticCode(cw:ClassWriter,thisClassName:String){
