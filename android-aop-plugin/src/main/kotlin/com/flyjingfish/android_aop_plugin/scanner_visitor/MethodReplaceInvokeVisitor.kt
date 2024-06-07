@@ -9,6 +9,7 @@ open class MethodReplaceInvokeVisitor(
     classVisitor: ClassVisitor
 ) : ReplaceBaseClassVisitor(classVisitor) {
     lateinit var className: String
+    var replaced = false
     override fun visit(
         version: Int,
         access: Int,
@@ -31,6 +32,11 @@ open class MethodReplaceInvokeVisitor(
 
         if (mv != null && Utils.isHasMethodBody(access)) {
             mv = MethodReplaceInvokeAdapter(className,"$name$descriptor",mv)
+            mv.onResultListener = object : MethodReplaceInvokeAdapter.OnResultListener{
+                override fun onBack() {
+                    replaced = true
+                }
+            }
         }
         return mv
     }

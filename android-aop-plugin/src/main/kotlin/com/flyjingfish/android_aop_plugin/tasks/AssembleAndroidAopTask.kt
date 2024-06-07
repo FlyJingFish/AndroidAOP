@@ -234,7 +234,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             if (byteArray.isNotEmpty()){
                                 try {
                                     val newByteArray = AopTaskUtils.wovenIntoCodeForReplace(byteArray)
-                                    ByteArrayInputStream(newByteArray).use {
+                                    ByteArrayInputStream(newByteArray.byteArray).use {
                                         jarOutput.saveEntry(jarEntryName,it)
                                     }
 //                                    newClasses.add(newByteArray)
@@ -254,7 +254,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 if (byteArray.isNotEmpty()){
                                     try {
                                         val newByteArray = AopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
-                                        ByteArrayInputStream(newByteArray).use {
+                                        ByteArrayInputStream(newByteArray.byteArray).use {
                                             jarOutput.saveEntry(jarEntryName,it)
                                         }
 //                                        newClasses.add(newByteArray)
@@ -387,7 +387,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 if (byteArray.isNotEmpty()){
                                     try {
                                         val newByteArray = AopTaskUtils.wovenIntoCodeForReplace(byteArray)
-                                        ByteArrayInputStream(newByteArray).use {
+                                        ByteArrayInputStream(newByteArray.byteArray).use {
                                             jarOutput.saveEntry(entryName,it)
                                         }
 //                                        newClasses.add(newByteArray)
@@ -407,7 +407,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     if (byteArray.isNotEmpty()){
                                         try {
                                             val newByteArray = AopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
-                                            ByteArrayInputStream(newByteArray).use {
+                                            ByteArrayInputStream(newByteArray.byteArray).use {
                                                 jarOutput.saveEntry(entryName,it)
                                             }
 //                                            newClasses.add(newByteArray)

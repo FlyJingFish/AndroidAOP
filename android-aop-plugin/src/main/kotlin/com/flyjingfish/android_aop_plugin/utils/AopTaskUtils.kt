@@ -3,6 +3,7 @@ package com.flyjingfish.android_aop_plugin.utils
 import com.flyjingfish.android_aop_plugin.beans.ClassMethodRecord
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
+import com.flyjingfish.android_aop_plugin.beans.WovenResult
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ClassSuperScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.MethodReplaceInvokeVisitor
@@ -256,12 +257,13 @@ object AopTaskUtils {
 
     }
 
-    fun wovenIntoCodeForReplace(byteArray: ByteArray): ByteArray {
+    fun wovenIntoCodeForReplace(byteArray: ByteArray): WovenResult {
         val cr = ClassReader(byteArray)
         val cw = ClassWriter(ClassWriter.COMPUTE_FRAMES)
         var thisHasCollect = false
         var thisHasStaticClock = false
         var thisCollectClassName :String ?= null
+        var replaceResult = false
         val cv = object : MethodReplaceInvokeVisitor(cw){
             override fun visit(
                 version: Int,
@@ -292,22 +294,29 @@ object AopTaskUtils {
                 thisHasStaticClock = isHasStaticClock
                 return mv
             }
+
+            override fun visitEnd() {
+                super.visitEnd()
+                replaceResult = replaced
+            }
         }
         thisCollectClassName?.let {
             if (thisHasCollect && !thisHasStaticClock){
                 WovenIntoCode.wovenStaticCode(cw, it)
+                replaceResult = true
             }
         }
         cr.accept(cv, ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
-        return cw.toByteArray()
+        return WovenResult(cw.toByteArray(),replaceResult)
     }
 
-    fun wovenIntoCodeForExtendsClass(byteArray:ByteArray):ByteArray{
+    fun wovenIntoCodeForExtendsClass(byteArray:ByteArray): WovenResult {
         val cr = ClassReader(byteArray)
         val cw = ClassWriter(ClassWriter.COMPUTE_FRAMES)
         var thisHasCollect = false
         var thisHasStaticClock = false
         var thisCollectClassName :String ?= null
+        var replaceResult = false
         val cv = object : ReplaceBaseClassVisitor(cw){
             override fun visit(
                 version: Int,
@@ -320,6 +329,7 @@ object AopTaskUtils {
                 super.visit(version, access, name, signature, superName, interfaces)
                 thisHasCollect = hasCollect
                 thisCollectClassName = thisClassName
+                replaceResult = modifyExtendsClassName != null
             }
             override fun visitMethod(
                 access: Int,
@@ -342,10 +352,12 @@ object AopTaskUtils {
         thisCollectClassName?.let {
             if (thisHasCollect && !thisHasStaticClock){
                 WovenIntoCode.wovenStaticCode(cw, it)
+                replaceResult = true
             }
         }
 
         cr.accept(cv, ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
-        return cw.toByteArray()
+
+        return WovenResult(cw.toByteArray(),replaceResult)
     }
 }

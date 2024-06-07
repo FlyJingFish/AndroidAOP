@@ -109,19 +109,23 @@ class CompileAndroidAopTask(
                 }
                 val relativePath = directory.toURI().relativize(file.toURI()).path
 
-                val outFile = File(tmpCompileDir.absolutePath+"/"+relativePath)
-                if (!outFile.parentFile.exists()){
-                    outFile.parentFile.mkdirs()
-                }
-                if (!outFile.exists()){
-                    outFile.createNewFile()
-                }
-                val tmpFile = TmpFile(file,outFile)
-                tempFiles.add(tmpFile)
+
                 val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(file.absolutePath)
                 val thisClassName = Utils.slashToDotClassName(entryName).replace(_CLASS,"")
                 val hasCollect = WovenInfoUtils.aopCollectClassMap[thisClassName] != null
+                val outFile = File(tmpCompileDir.absolutePath+"/"+relativePath)
+                fun mkOutFile(){
+                    if (!outFile.parentFile.exists()){
+                        outFile.parentFile.mkdirs()
+                    }
+                    if (!outFile.exists()){
+                        outFile.createNewFile()
+                    }
+                    val tmpFile = TmpFile(file,outFile)
+                    tempFiles.add(tmpFile)
+                }
                 if (methodsRecord != null){
+                    mkOutFile()
                     FileInputStream(file).use { inputs ->
                         val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),methodsRecord,hasReplace)
                         ByteArrayInputStream(byteArray).use {
@@ -131,9 +135,9 @@ class CompileAndroidAopTask(
                     }
                 }else{
                     fun copy(){
-                        file.inputStream().use {
-                            outFile.saveEntry(it)
-                        }
+//                        file.inputStream().use {
+//                            outFile.saveEntry(it)
+//                        }
                     }
                     val isClassFile = file.name.endsWith(_CLASS)
                     val tranEntryName = file.absolutePath.replace("/", ".")
@@ -146,8 +150,11 @@ class CompileAndroidAopTask(
                             if (byteArray.isNotEmpty()){
                                 try {
                                     val newByteArray = AopTaskUtils.wovenIntoCodeForReplace(byteArray)
-                                    ByteArrayInputStream(newByteArray).use {
-                                        outFile.saveEntry(it)
+                                    if (newByteArray.modified){
+                                        mkOutFile()
+                                        ByteArrayInputStream(newByteArray.byteArray).use {
+                                            outFile.saveEntry(it)
+                                        }
                                     }
                                 } catch (e: Exception) {
                                     copy()
@@ -165,8 +172,11 @@ class CompileAndroidAopTask(
                                 if (byteArray.isNotEmpty()){
                                     try {
                                         val newByteArray = AopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
-                                        ByteArrayInputStream(newByteArray).use {
-                                            outFile.saveEntry(it)
+                                        if (newByteArray.modified){
+                                            mkOutFile()
+                                            ByteArrayInputStream(newByteArray.byteArray).use {
+                                                outFile.saveEntry(it)
+                                            }
                                         }
                                     } catch (e: Exception) {
                                         copy()
@@ -211,6 +221,7 @@ class CompileAndroidAopTask(
                                         WovenIntoCode.wovenStaticCode(cw, thisClassName)
                                     }
 
+                                    mkOutFile()
                                     val newByteArray = cw.toByteArray()
                                     ByteArrayInputStream(newByteArray).use {
                                         outFile.saveEntry(it)

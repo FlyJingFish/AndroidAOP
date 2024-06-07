@@ -17,7 +17,7 @@ open class ReplaceBaseClassVisitor(
 ) : ClassVisitor(Opcodes.ASM9, classVisitor) {
     lateinit var thisClassName:String
     private var oldSuperName:String?=null
-    private var modifyExtendsClassName:String?=null
+    var modifyExtendsClassName:String?=null
     var isHasStaticClock = false
     var hasCollect = false
     override fun visit(

@@ -137,7 +137,7 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                         }
                     }
                     if (localInput.isNotEmpty()){
-                        ClassFileUtils.reflectInvokeMethod = reflectInvokeMethod
+                        ClassFileUtils.reflectInvokeMethod = isReflectInvokeMethod(buildTypeName,variantName)
                         val output = File(javaCompile.destinationDirectory.asFile.orNull.toString())
                         val task = CompileAndroidAopTask(jarInput,localInput,output,project,isApp,
                             File(Utils.aopCompileTempDir(project,variantName)),

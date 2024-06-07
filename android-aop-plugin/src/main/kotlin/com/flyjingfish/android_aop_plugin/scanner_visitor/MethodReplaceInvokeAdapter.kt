@@ -10,6 +10,11 @@ import org.objectweb.asm.Opcodes
 class MethodReplaceInvokeAdapter(private val className:String,
                                  private val methodNameDesc:String, methodVisitor: MethodVisitor?) :
     MethodVisitor(Opcodes.ASM9, methodVisitor) {
+
+    interface OnResultListener{
+        fun onBack()
+    }
+    var onResultListener : OnResultListener ?= null
     override fun visitMethodInsn(
         opcode: Int,
         owner: String,
@@ -47,6 +52,7 @@ class MethodReplaceInvokeAdapter(private val className:String,
                     replaceMethodInfo.newMethodDesc,
                     false
                 )
+                onResultListener?.onBack()
             } else {
                 super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
             }
