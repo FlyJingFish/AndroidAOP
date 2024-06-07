@@ -255,6 +255,17 @@ androidAop.debugMode.variantOnlyDebug = true //默认不写这项就是true
 
 > **💡此项功能是从1.6.6版本添加的，并默认开启，因此release包无需手动关闭 `androidAop.debugMode`**
 
+- 4、在**根目录**的 `gradle.properties` 添加如下设置（选填）
+
+```
+androidAop.reflectInvokeMethod = true //设置为 true 反射执行切面方法 ，不写默认 false
+androidAop.reflectInvokeMethod.variantOnlyDebug = false // 设置为 true 则只会在 debug 下才有效
+```
+> [!TIP]\
+> 反射执行切面方法会加快打包速度
+> androidAop.reflectInvokeMethod.variantOnlyDebug 请注意设置为 true 时 release 包会忽略 `androidAop.reflectInvokeMethod = true` 的设置自动不走反射，设为 false 时则没有这种效果
+
+
 
 ### 本库内置了一些功能注解可供你直接使用
 
