@@ -243,24 +243,14 @@ object InitConfig {
     }
 
     fun exportCacheCutFile(jsonFile: File,mutableList: MutableList<String>) {
-        if (!jsonFile.parentFile.exists()){
-            jsonFile.parentFile.mkdirs()
-        }
-        if (!jsonFile.exists()){
-            jsonFile.createNewFile()
-        }
+        jsonFile.checkExist()
         val json = GsonBuilder().setPrettyPrinting().create().toJson(CutFileJson(mutableList))
 
         saveFile(jsonFile, json,false)
     }
 
     fun exportConfigJson(jsonFile: File,androidAopConfig: AndroidAopConfig) {
-        if (!jsonFile.parentFile.exists()){
-            jsonFile.parentFile.mkdirs()
-        }
-        if (!jsonFile.exists()){
-            jsonFile.createNewFile()
-        }
+        jsonFile.checkExist()
         val json = GsonBuilder().setPrettyPrinting().create().toJson(androidAopConfig)
 
         saveFile(jsonFile, json,false)

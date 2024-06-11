@@ -13,6 +13,7 @@ import com.flyjingfish.android_aop_plugin.utils.Utils.CONVERSIONS_CLASS
 import com.flyjingfish.android_aop_plugin.utils.Utils.JOIN_POINT_CLASS
 import com.flyjingfish.android_aop_plugin.utils.Utils.KEEP_CLASS
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
+import com.flyjingfish.android_aop_plugin.utils.checkExist
 import com.flyjingfish.android_aop_plugin.utils.printLog
 import javassist.CannotCompileException
 import javassist.CtClass
@@ -453,12 +454,7 @@ object WovenIntoCode {
         val classByteData = cw.toByteArray()
         //把类数据写入到class文件,这样你就可以把这个类文件打包供其他的人使用
         val outFile = File(path)
-        if (!outFile.parentFile.exists()){
-            outFile.parentFile.mkdirs()
-        }
-        if (!outFile.exists()){
-            outFile.createNewFile()
-        }
+        outFile.checkExist()
         ByteArrayInputStream(classByteData).use {inputStream->
             outFile.outputStream().use {
                 inputStream.copyTo(it)
@@ -631,15 +627,7 @@ object WovenIntoCode {
             val classByteData = cw.toByteArray()
             //把类数据写入到class文件,这样你就可以把这个类文件打包供其他的人使用
             val outFile = File(path)
-            if (!outFile.parentFile.exists()){
-                outFile.parentFile.mkdirs()
-            }
-            if (!outFile.exists()){
-                outFile.createNewFile()
-            }else{
-                outFile.delete()
-                outFile.createNewFile()
-            }
+            outFile.checkExist(true)
             ByteArrayInputStream(classByteData).use {inputStream->
                 outFile.outputStream().use {
                     inputStream.copyTo(it)

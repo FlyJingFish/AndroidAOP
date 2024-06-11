@@ -12,6 +12,7 @@ import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils._CLASS
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
+import com.flyjingfish.android_aop_plugin.utils.checkExist
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.objectweb.asm.ClassReader
@@ -115,12 +116,7 @@ class CompileAndroidAopTask(
                 val hasCollect = WovenInfoUtils.aopCollectClassMap[thisClassName] != null
                 val outFile = File(tmpCompileDir.absolutePath+"/"+relativePath)
                 fun mkOutFile(){
-                    if (!outFile.parentFile.exists()){
-                        outFile.parentFile.mkdirs()
-                    }
-                    if (!outFile.exists()){
-                        outFile.createNewFile()
-                    }
+                    outFile.checkExist()
                     val tmpFile = TmpFile(file,outFile)
                     tempFiles.add(tmpFile)
                 }
@@ -256,12 +252,7 @@ class CompileAndroidAopTask(
                     val relativePath = tmpOtherDir.toURI().relativize(file.toURI()).path
 //                    println("relativePath=$relativePath")
                     val target = File(output.absolutePath + "/" + relativePath)
-                    if (!target.parentFile.exists()){
-                        target.parentFile.mkdirs()
-                    }
-                    if (!target.exists()){
-                        target.createNewFile()
-                    }
+                    target.checkExist()
                     file.inputStream().use {
                         target.saveEntry(it)
                     }

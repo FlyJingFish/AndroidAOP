@@ -40,7 +40,7 @@ object ClassFileUtils {
             val invokeBody = invokeClass.invokeBody
 //            println("invokeClass.methodName="+invokeClass.methodName)
             val cp = ClassPoolUtils.getNewClassPool()
-            newClasses?.forEach {
+            newClasses.forEach {
                 cp.makeClass(ByteArrayInputStream(it))
             }
             cp.importPackage(CONVERSIONS_CLASS)
@@ -58,12 +58,7 @@ object ClassFileUtils {
 //            //把类数据写入到class文件,这样你就可以把这个类文件打包供其他的人使用
             val path = outputDir.absolutePath + "/" +Utils.dotToSlash(className)+".class"
             val outFile = File(path)
-            if (!outFile.parentFile.exists()){
-                outFile.parentFile.mkdirs()
-            }
-            if (!outFile.exists()){
-                outFile.createNewFile()
-            }
+            outFile.checkExist()
             ByteArrayInputStream(classByteData).use {inputStream->
                 outFile.outputStream().use {
                     inputStream.copyTo(it)
@@ -113,12 +108,7 @@ object ClassFileUtils {
 
         val path = outputDir.absolutePath + "/" +Utils.dotToSlash(className)+".class"
         val outFile = File(path)
-        if (!outFile.parentFile.exists()){
-            outFile.parentFile.mkdirs()
-        }
-        if (!outFile.exists()){
-            outFile.createNewFile()
-        }
+        outFile.checkExist()
         ByteArrayInputStream(cw.toByteArray()).use {inputStream->
             outFile.outputStream().use {
                 inputStream.copyTo(it)

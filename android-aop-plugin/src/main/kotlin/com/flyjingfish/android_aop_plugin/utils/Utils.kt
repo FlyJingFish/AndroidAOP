@@ -317,3 +317,15 @@ fun printLog(text: String) {
         println(text)
     }
 }
+
+fun File.checkExist(delete:Boolean = false){
+    if (!parentFile.exists()){
+        parentFile.mkdirs()
+    }
+    if (!exists()){
+        createNewFile()
+    }else if (delete){
+        delete()
+        createNewFile()
+    }
+}
