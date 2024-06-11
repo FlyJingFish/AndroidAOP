@@ -209,7 +209,7 @@ android {
 androidAop.reflectInvokeMethod = false //设置为 true 反射执行切面方法 ，不写默认 false
 ```
 
-#### 五、开发中可设置代码织入方式（此步为可选配置项，只为在开发过程中提高打包速度，版本最低1.7.1）
+#### 五、开发中可设置代码织入方式（此步为可选配置项，只为在开发过程中提高打包速度）
 
 ![Stargazers over time](https://github.com/FlyJingFish/AndroidAOP/blob/master/screenshot/warning_debug_mode.svg)
 
@@ -253,7 +253,7 @@ androidAop.debugMode.variantOnlyDebug = true //默认不写这项就是true
 > [!TIP]\
 > **这项不写默认就是true**，请注意设置为 true 时 release 包会忽略 `androidAop.debugMode = true` 的设置自动走全量打包方式，设为 false 时则没有这种效果
 
-> **💡此项功能是从1.6.6版本添加的，并默认开启，因此release包无需手动关闭 `androidAop.debugMode`**
+> **此项功能默认开启，因此release包无需手动关闭 `androidAop.debugMode`**
 
 - 4、在**根目录**的 `gradle.properties` 添加如下设置（选填，追求极致可以配置这项）
 
