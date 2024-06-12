@@ -262,7 +262,7 @@ androidAop.reflectInvokeMethod = true //设置为 true 反射执行切面方法 
 androidAop.reflectInvokeMethod.variantOnlyDebug = false // 设置为 true 则只会在 debug 下才有效，不写默认false
 ```
 > [!TIP]\
-> 反射执行切面方法会加快打包速度
+> 反射执行切面方法会加快打包速度<br>
 > 请注意`androidAop.reflectInvokeMethod.variantOnlyDebug` 设置为 true 时 release 包会忽略 `androidAop.reflectInvokeMethod = true` 的设置自动不走反射，设为 false 时则没有这种效果（不写默认false）
 
 
