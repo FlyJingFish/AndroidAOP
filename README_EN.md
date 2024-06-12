@@ -245,8 +245,8 @@ androidAop.reflectInvokeMethod = true //Setel ke true untuk mencerminkan metode 
 androidAop.reflectInvokeMethod.variantOnlyDebug = false // Jika disetel ke true, ini hanya akan efektif saat debug. Jika tidak disetel, defaultnya adalah false.
 ```
 > [!TIPS]\
-> 1. Eksekusi refleksi metode aspek akan mempercepat pengemasan<br>
-> 2. Harap perhatikan bahwa ketika `androidAop.reflectInvokeMethod.variantOnlyDebug` disetel ke true, paket rilis akan mengabaikan setelan `androidAop.reflectInvokeMethod = true` dan secara otomatis menonaktifkan refleksi. Jika disetel ke false, tidak ada efek seperti itu ( defaultnya salah jika tidak ditulis)
+> 1、Eksekusi refleksi metode aspek akan mempercepat pengemasan<br>
+> 2、Harap perhatikan bahwa ketika `androidAop.reflectInvokeMethod.variantOnlyDebug` disetel ke true, paket rilis akan mengabaikan setelan `androidAop.reflectInvokeMethod = true` dan secara otomatis menonaktifkan refleksi. Jika disetel ke false, tidak ada efek seperti itu ( defaultnya salah jika tidak ditulis)
 
 ### This library has some built-in functional annotations for you to use directly.
 
