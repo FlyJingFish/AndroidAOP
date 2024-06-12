@@ -198,12 +198,6 @@ android {
 > [!NOTE]\
 > **⚠️⚠️⚠️After setting include and exclude, all aspects are only valid within the rules you set. Please remember your settings! In addition, since Android Studio may have cache after setting this, it is recommended to clean it before continuing development**
 
-- 2. If you are interested, you can switch whether to use reflection to execute aspect methods and add the following settings in `gradle.properties` in the **root directory**
-
-> **💡Since version 1.6.3, it has automatically switched to native execution aspect method mode. Reflection is turned off by default. If you encounter problems, you can switch back to reflection mode or raise issues**
-```
-androidAop.reflectInvokeMethod = false //Set to true to reflect the execution aspect method, if not set, the default is false
-```
 
 #### 5. The code weaving method can be set during development (this step is an optional configuration item)
 
@@ -243,6 +237,16 @@ androidAop.debugMode.variantOnlyDebug = true //If this is not written by default
 > **If this is not written, the default is true**. Please note that when set to true, the release package will ignore the setting of `androidAop.debugMode = true` and automatically adopt the full packaging method. When set to false, there will be no such effect.
 
 > **💡This feature was added from version 1.6.6 and is enabled by default, so the release package does not need to manually turn off `androidAop.debugMode`**
+
+- 4. Tambahkan pengaturan berikut di `gradle.properties` di **direktori root** (opsional, Anda dapat mengonfigurasi ini jika Anda menginginkan yang terbaik)
+
+```
+androidAop.reflectInvokeMethod = true //Setel ke true untuk mencerminkan metode aspek eksekusi, jika tidak disetel, defaultnya adalah false
+androidAop.reflectInvokeMethod.variantOnlyDebug = false // Jika disetel ke true, ini hanya akan efektif saat debug. Jika tidak disetel, defaultnya adalah false.
+```
+> [!TIPS]\
+> 1. Eksekusi refleksi metode aspek akan mempercepat pengemasan<br>
+> 2. Harap perhatikan bahwa ketika `androidAop.reflectInvokeMethod.variantOnlyDebug` disetel ke true, paket rilis akan mengabaikan setelan `androidAop.reflectInvokeMethod = true` dan secara otomatis menonaktifkan refleksi. Jika disetel ke false, tidak ada efek seperti itu ( defaultnya salah jika tidak ditulis)
 
 ### This library has some built-in functional annotations for you to use directly.
 

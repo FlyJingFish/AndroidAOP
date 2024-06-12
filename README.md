@@ -201,14 +201,6 @@ android {
 > [!CAUTION]\
 > **⚠️⚠️⚠️设置完了 include 和 exclude 所有切面只在您设置规则之内才有效，麻烦记住自己的设置！另外设置此处之后由于 Android Studio 可能有缓存，建议先 clean 再继续开发**
 
-- 2、有兴趣的可以切换是否使用反射执行切面方法，在**根目录**的 `gradle.properties` 添加如下设置
-
-> **💡从1.6.3版本开始已自动切换为原生执行切面方法模式，反射默认关闭，如遇到问题可切换回反射模式或提issues**
-
-```
-androidAop.reflectInvokeMethod = false //设置为 true 反射执行切面方法 ，不写默认 false
-```
-
 #### 五、开发中可设置代码织入方式（此步为可选配置项，只为在开发过程中提高打包速度）
 
 ![Stargazers over time](https://github.com/FlyJingFish/AndroidAOP/blob/master/screenshot/warning_debug_mode.svg)
@@ -262,8 +254,8 @@ androidAop.reflectInvokeMethod = true //设置为 true 反射执行切面方法 
 androidAop.reflectInvokeMethod.variantOnlyDebug = false // 设置为 true 则只会在 debug 下才有效，不写默认false
 ```
 > [!TIP]\
-> 1、反射执行切面方法会加快打包速度<br>
-> 2、请注意`androidAop.reflectInvokeMethod.variantOnlyDebug` 设置为 true 时 release 包会忽略 `androidAop.reflectInvokeMethod = true` 的设置自动不走反射，设为 false 时则没有这种效果（不写默认false）
+> 1. 反射执行切面方法会加快打包速度<br>
+> 2. 请注意`androidAop.reflectInvokeMethod.variantOnlyDebug` 设置为 true 时 release 包会忽略 `androidAop.reflectInvokeMethod = true` 的设置自动不走反射，设为 false 时则没有这种效果（不写默认false）
 
 
 
