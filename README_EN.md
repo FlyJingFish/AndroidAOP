@@ -57,9 +57,9 @@ Minimum SDK version: minSdkVersion >= 21
 
 **Can I give the project a Star before starting? Thank you very much, your support is my only motivation. Welcome Stars and Issues!**
 
-#### 1. Introduce the plug-in, choose one of the two methods below (required)
+### 1. Introduce the plug-in, choose one of the two methods below (required)
 
-##### Method 1: ```apply``` method
+#### Method 1: ```apply``` method
 
 1. Depend on the plug-in in ```build.gradle``` in the **project root directory**
 
@@ -111,7 +111,7 @@ apply plugin: 'android.aop' //It's best to put it on the last line
 
 </details>
 
-##### Method 2: ```plugins``` method
+#### Method 2: ```plugins``` method
 
 Add directly to ```build.gradle``` of **app**
 
@@ -127,7 +127,7 @@ plugins {
 
 
 
-#### 2. If you need to customize aspects, and the code is ```Kotlin``` (optional)
+### 2. If you need to customize aspects, and the code is ```Kotlin``` (optional)
 
 1. Depend on the plug-in in ```build.gradle``` in the **project root directory**
 
@@ -139,7 +139,7 @@ plugins {
 ```
 [List of matching version numbers for Kotlin and KSP Github](https://github.com/google/ksp/releases)
 
-#### 3. Introduce dependent libraries (required)
+### 3. Introduce dependent libraries (required)
 
 ```gradle
 plugins {
@@ -164,7 +164,7 @@ dependencies {
 ```
 > **Tips: ksp or annotationProcessor only works in the current module. In whichever module there is custom aspect code, it will be added to that module. Required dependencies can only be added to the public module through the API**
 
-#### 4. Add the androidAopConfig configuration item in app’s build.gradle (this step is an optional configuration item)
+### 4. Add the androidAopConfig configuration item in app’s build.gradle (this step is an optional configuration item)
 
 - 1. Related development configurations
 
@@ -199,7 +199,7 @@ android {
 > **⚠️⚠️⚠️After setting include and exclude, all aspects are only valid within the rules you set. Please remember your settings! In addition, since Android Studio may have cache after setting this, it is recommended to clean it before continuing development**
 
 
-#### 5. The code weaving method can be set during development (this step is an optional configuration item)
+### 5. The code weaving method can be set during development (this step is an optional configuration item)
 
 - 1. For **all sub-modules** also rely on plug-ins, please follow the above [step 1 method 1 to configure the project](#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required), then choose one of the following methods
 
