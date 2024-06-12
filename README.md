@@ -60,10 +60,10 @@
 
 ![Stargazers over time](https://github.com/FlyJingFish/AndroidAOP/blob/master/screenshot/warning_maven_central.svg)
 
-#### 一、引入插件，下边两种方式二选一（必须）
+### 一、引入插件，下边两种方式二选一（必须）
 
 
-##### 方式一：```apply``` 方式（推荐）
+#### 方式一：```apply``` 方式（推荐）
 
 1、在 **项目根目录** 的 ```build.gradle``` 里依赖插件
 
@@ -114,7 +114,7 @@ apply plugin: 'android.aop' //最好放在最后一行
 > **⚠️⚠️⚠️`id 'android.aop'` 这句尽量放在最后一行，尤其是必须在 `id 'com.android.application'` 或 `id 'com.android.library'` 的后边**
 
 
-##### ~~方式二：```plugins``` 方式（不推荐）~~
+#### ~~方式二：```plugins``` 方式（不推荐）~~
 
 直接在 **app** 的 ```build.gradle``` 添加
 
@@ -126,7 +126,7 @@ plugins {
 }
 ```
 
-#### 二、如果你需要自定义切面，并且代码是 ```Kotlin``` (非必须)
+### 二、如果你需要自定义切面，并且代码是 ```Kotlin``` (非必须)
 
 1、在 **项目根目录** 的 ```build.gradle``` 里依赖插件
 
@@ -138,7 +138,7 @@ plugins {
 ```
 [Kotlin 和 KSP Github 的匹配版本号列表](https://github.com/google/ksp/releases)
 
-#### 三、引入依赖库(必须)
+### 三、引入依赖库(必须)
 
 ```gradle
 plugins {
@@ -166,7 +166,7 @@ dependencies {
 > [!TIP]\
 > 提示：ksp 或 annotationProcessor只能扫描当前 module ，在哪个 module 中有自定义切面代码就加在哪个 module，**但是自定义的切面代码是全局生效的**；必须依赖项可以通过 api 方式只加到公共 module 上
 
-#### 四、在 app 的build.gradle添加 androidAopConfig 配置项（此步为可选配置项）
+### 四、在 app 的build.gradle添加 androidAopConfig 配置项（此步为可选配置项）
 
 - 1、相关开发配置
 ```gradle
@@ -201,7 +201,7 @@ android {
 > [!CAUTION]\
 > **⚠️⚠️⚠️设置完了 include 和 exclude 所有切面只在您设置规则之内才有效，麻烦记住自己的设置！另外设置此处之后由于 Android Studio 可能有缓存，建议先 clean 再继续开发**
 
-#### 五、开发中可设置代码织入方式（此步为可选配置项，只为在开发过程中提高打包速度）
+### 五、开发中可设置代码织入方式（此步为可选配置项，只为在开发过程中提高打包速度）
 
 ![Stargazers over time](https://github.com/FlyJingFish/AndroidAOP/blob/master/screenshot/warning_debug_mode.svg)
 
