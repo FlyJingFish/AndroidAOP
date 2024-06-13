@@ -242,7 +242,7 @@ androidAop.debugMode.variantOnlyDebug = true //If this is not written by default
 
 ```
 androidAop.reflectInvokeMethod = true //Setel ke true untuk mencerminkan metode aspek eksekusi, jika tidak disetel, defaultnya adalah false
-androidAop.reflectInvokeMethod.variantOnlyDebug = false // Jika disetel ke true, ini hanya akan efektif saat debug. Jika tidak disetel, defaultnya adalah false.
+androidAop.reflectInvokeMethod.variantOnlyDebug = true // Jika disetel ke true, ini hanya akan efektif saat debug. Jika tidak disetel, defaultnya adalah false.
 ```
 > [!TIPS]\
 > 1、Eksekusi refleksi metode aspek akan mempercepat pengemasan<br>

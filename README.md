@@ -251,7 +251,7 @@ androidAop.debugMode.variantOnlyDebug = true //默认不写这项就是true
 
 ```
 androidAop.reflectInvokeMethod = true //设置为 true 反射执行切面方法 ，不写默认 false
-androidAop.reflectInvokeMethod.variantOnlyDebug = false // 设置为 true 则只会在 debug 下才有效，不写默认false
+androidAop.reflectInvokeMethod.variantOnlyDebug = true // 设置为 true 则只会在 debug 下才有效，不写默认false
 ```
 > [!TIP]\
 > 1、反射执行切面方法会加快打包速度<br>
