@@ -234,7 +234,7 @@ object WovenIntoCode {
                         if (hasReplace && mv != null && Utils.isHasMethodBody(access)) {
                             mv = MethodReplaceInvokeAdapter(className,"$name$descriptor",mv)
                         }
-                        mv
+                        RemoveAnnotation(mv)
                     } else {
                         null
                     }
@@ -370,24 +370,24 @@ object WovenIntoCode {
     }
 
     private fun CtMethod.addKeepClassAnnotation(constPool: ConstPool){
-        //给原有方法增加 @Keep，防止被混淆
-        val attributeInfos :List<AttributeInfo> = methodInfo.attributes
-        var annotationsAttribute :AnnotationsAttribute ?= null
-        for (attributeInfo in attributeInfos) {
-            if (attributeInfo is AnnotationsAttribute){
-                annotationsAttribute = attributeInfo
-                break
-            }
-        }
-        if (annotationsAttribute == null){
-            annotationsAttribute = AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag)
+        val visibleTagAttribute :AttributeInfo? = methodInfo.getAttribute(AnnotationsAttribute.visibleTag)
+        val annotationsAttribute = if (visibleTagAttribute == null){
+            AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag)
+        }else{
+            visibleTagAttribute as AnnotationsAttribute
         }
         val ctMethodNoneHasKeep = annotationsAttribute.getAnnotation(KEEP_CLASS) == null
         if (ctMethodNoneHasKeep){
-            val annotation = Annotation(KEEP_CLASS, constPool);
-            annotationsAttribute.addAnnotation(annotation);
-            methodInfo.addAttribute(annotationsAttribute);
+            val annotation = Annotation(KEEP_CLASS, constPool)
+            annotationsAttribute.addAnnotation(annotation)
+            if (visibleTagAttribute == null){
+                methodInfo.addAttribute(annotationsAttribute)
+            }
         }
+    }
+
+    private fun CtMethod.removeAllAnnotation(){
+        methodInfo.removeAttribute(AnnotationsAttribute.visibleTag)
     }
 
     fun wovenStaticCode(cw:ClassWriter,thisClassName:String){

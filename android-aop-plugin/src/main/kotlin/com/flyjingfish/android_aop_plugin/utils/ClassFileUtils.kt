@@ -75,6 +75,12 @@ object ClassFileUtils {
             return
         }
         invokeClasses.add(InvokeClass(className,invokeBody,methodName))
+        val path = outputDir.absolutePath + "/" +Utils.dotToSlash(className)+".class"
+        val outFile = File(path)
+        if (outFile.exists()){
+            return
+        }
+        outFile.checkExist()
 //        val className = "$packageName.Invoke${UUID.randomUUID()}"
         //新建一个类生成器，COMPUTE_FRAMES，COMPUTE_MAXS这2个参数能够让asm自动更新操作数栈
         val cw = ClassWriter(ClassWriter.COMPUTE_FRAMES or ClassWriter.COMPUTE_MAXS)
@@ -104,11 +110,8 @@ object ClassFileUtils {
 
         mv.visitInsn(IRETURN)
         mv.visitMaxs(0, 0)
-        mv.visitEnd();
+        mv.visitEnd()
 
-        val path = outputDir.absolutePath + "/" +Utils.dotToSlash(className)+".class"
-        val outFile = File(path)
-        outFile.checkExist()
         ByteArrayInputStream(cw.toByteArray()).use {inputStream->
             outFile.outputStream().use {
                 inputStream.copyTo(it)
