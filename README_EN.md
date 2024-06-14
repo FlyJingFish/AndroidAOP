@@ -210,6 +210,9 @@ Configure the project according to the above [step 1 method 1](#1-introduce-the-
 
 **Method 2:**
 
+> [!TIP]\
+> **💡💡💡This method can only apply debugMode to the modules you have added, and the related aspects in the modules that have not been added will not take effect**
+
 Please follow the above [Step 1 Method 1 to configure the project](#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required), manually set for **all sub-module modules**, for example:
 
 ```gradle
@@ -219,14 +222,13 @@ plugins {
 }
 ```
 
-> **💡💡💡This method can only apply debugMode to the module you have added**
 - 2. Add the following settings in `gradle.properties` in the **root directory**
 
 ```
 androidAop.debugMode=true //Set to true to use the current packaging method of your project, false to use the full packaging method, otherwise the default is false
 ```
 
-> [!NOTE]\
+> [!CAUTION]\
 > **⚠️⚠️⚠️ Please note that when set to true, the compilation speed will be faster but some functions will be invalid. Only the aop code will be woven into the set module. The third-party jar package will not weave in the code, so please be careful to turn it off when building the official package. Configure this and clean the project**
 
 - 3. Add the following settings in `gradle.properties` in the **root directory**
@@ -234,19 +236,20 @@ androidAop.debugMode=true //Set to true to use the current packaging method of y
 ```
 androidAop.debugMode.variantOnlyDebug = true //If this is not written by default, it is true
 ```
-> **If this is not written, the default is true**. Please note that when set to true, the release package will ignore the setting of `androidAop.debugMode = true` and automatically adopt the full packaging method. When set to false, there will be no such effect.
+> [!TIP]\
+> **If this option is not set, it will be true by default**. Please note that when it is set to true, the release package will ignore the setting of `androidAop.debugMode = true` and automatically use the full packaging method. When it is set to false, there will be no such effect
 
-> **💡This feature was added from version 1.6.6 and is enabled by default, so the release package does not need to manually turn off `androidAop.debugMode`**
+> **This function is enabled by default, so the release package does not need to manually turn off `androidAop.debugMode`**
 
-- 4. Tambahkan pengaturan berikut di `gradle.properties` di **direktori root** (opsional, Anda dapat mengonfigurasi ini jika Anda menginginkan yang terbaik)
+- 4. Add the following settings to `gradle.properties` in the **root directory** (optional, you can configure this if you want to be the best)
 
 ```
-androidAop.reflectInvokeMethod = true //Setel ke true untuk mencerminkan metode aspek eksekusi, jika tidak disetel, defaultnya adalah false
-androidAop.reflectInvokeMethod.variantOnlyDebug = true // Jika disetel ke true, ini hanya akan efektif saat debug. Jika tidak disetel, defaultnya adalah false.
+androidAop.reflectInvokeMethod = true //Set to true to reflect the execution of the facet method, if not set, the default is false
+androidAop.reflectInvokeMethod.variantOnlyDebug = true //Set to true to be effective only in debug, if not set, the default is false
 ```
-> [!TIPS]\
-> 1、Eksekusi refleksi metode aspek akan mempercepat pengemasan<br>
-> 2、Harap perhatikan bahwa ketika `androidAop.reflectInvokeMethod.variantOnlyDebug` disetel ke true, paket rilis akan mengabaikan setelan `androidAop.reflectInvokeMethod = true` dan secara otomatis menonaktifkan refleksi. Jika disetel ke false, tidak ada efek seperti itu ( defaultnya salah jika tidak ditulis)
+> [!TIP]\
+> 1、Reflection execution of the facet method will speed up packaging<br>
+> 2、Please note that when `androidAop.reflectInvokeMethod.variantOnlyDebug` is set to true, the release package will ignore the setting of `androidAop.reflectInvokeMethod = true` and automatically not reflect, and there will be no such effect when it is set to false (if not set, the default is false)
 
 ### This library has some built-in functional annotations for you to use directly.
 
