@@ -231,7 +231,7 @@ plugins {
 
 - 2、在**根目录**的 `gradle.properties` 添加如下设置
 
-```
+```properties
 androidAop.debugMode=true //设置为 true 走您项目当前的打包方式 ，false 则为全量打包方式，不写默认false
 ```
 > [!CAUTION]\
@@ -239,7 +239,7 @@ androidAop.debugMode=true //设置为 true 走您项目当前的打包方式 ，
 
 - 3、在**根目录**的 `gradle.properties` 添加如下设置
 
-```
+```properties
 androidAop.debugMode.variantOnlyDebug = true //默认不写这项就是true
 ```
 > [!TIP]\
@@ -249,7 +249,7 @@ androidAop.debugMode.variantOnlyDebug = true //默认不写这项就是true
 
 - 4、在**根目录**的 `gradle.properties` 添加如下设置（选填，追求极致可以配置这项）
 
-```
+```properties
 androidAop.reflectInvokeMethod = true //设置为 true 反射执行切面方法 ，不写默认 false
 androidAop.reflectInvokeMethod.variantOnlyDebug = true // 设置为 true 则只会在 debug 下才有效，不写默认false
 ```

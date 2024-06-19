@@ -224,7 +224,7 @@ plugins {
 
 - 2. Add the following settings in `gradle.properties` in the **root directory**
 
-```
+```properties
 androidAop.debugMode=true //Set to true to use the current packaging method of your project, false to use the full packaging method, otherwise the default is false
 ```
 
@@ -233,7 +233,7 @@ androidAop.debugMode=true //Set to true to use the current packaging method of y
 
 - 3. Add the following settings in `gradle.properties` in the **root directory**
 
-```
+```properties
 androidAop.debugMode.variantOnlyDebug = true //If this is not written by default, it is true
 ```
 > [!TIP]\
@@ -243,7 +243,7 @@ androidAop.debugMode.variantOnlyDebug = true //If this is not written by default
 
 - 4. Add the following settings to `gradle.properties` in the **root directory** (optional, you can configure this if you want to be the best)
 
-```
+```properties
 androidAop.reflectInvokeMethod = true //Set to true to reflect the execution of the facet method, if not set, the default is false
 androidAop.reflectInvokeMethod.variantOnlyDebug = true //Set to true to be effective only in debug, if not set, the default is false
 ```
