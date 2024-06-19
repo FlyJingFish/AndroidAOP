@@ -41,6 +41,9 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     @get:Input
     abstract var variant :String
 
+    @get:Input
+    abstract var reflectInvokeMethod :Boolean
+
     @get:InputFiles
     abstract val allJars: ListProperty<RegularFile>
 
@@ -55,6 +58,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     private val ignoreJarClassPaths = mutableListOf<File>()
     @TaskAction
     fun taskAction() {
+        ClassFileUtils.debugMode = false
+        ClassFileUtils.reflectInvokeMethod = reflectInvokeMethod
         WovenInfoUtils.isCompile = false
         WovenInfoUtils.checkHasInvokeJson(project, variant)
         println("AndroidAOP woven info code start")
