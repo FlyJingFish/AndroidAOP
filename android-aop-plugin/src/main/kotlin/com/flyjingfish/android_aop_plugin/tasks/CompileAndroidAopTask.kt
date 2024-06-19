@@ -36,10 +36,10 @@ class CompileAndroidAopTask(
 ) {
 
 
-    lateinit var logger: Logger
+    private lateinit var logger: Logger
     fun taskAction() {
-        WovenInfoUtils.isCompile = true
         logger = project.logger
+        WovenInfoUtils.isCompile = true
         ClassFileUtils.outputDir = output
         ClassFileUtils.clear()
         println("AndroidAOP woven info code start")
