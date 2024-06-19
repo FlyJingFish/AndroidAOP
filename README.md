@@ -223,7 +223,7 @@ android {
 ```gradle
 plugins {
     ...
-    id 'android.aop'//最好放在最后一行
+    id 'android.aop'//最好放在最后一行，尤其是必须在 `id 'com.android.application'` 或 `id 'com.android.library'` 的后边
 }
 ```
 
