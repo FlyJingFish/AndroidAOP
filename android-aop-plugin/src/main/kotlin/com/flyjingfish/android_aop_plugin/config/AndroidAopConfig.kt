@@ -49,6 +49,8 @@ open class AndroidAopConfig {
 
     internal fun initConfig(){
         AndroidAopConfig.debug = debug
+        AndroidAopConfig.includes.clear()
+        AndroidAopConfig.excludes.clear()
         includes.forEach {
             AndroidAopConfig.includes.add("$it.")
         }
