@@ -345,6 +345,9 @@ object WovenIntoCode {
 
 
                 ClassFileUtils.createInvokeClass(invokeClassName,invokeBody, oldMethodName + oldDescriptor)
+                ClassFileUtils.outputCacheDir?.let {
+                    cp.appendClassPath(it.absolutePath)
+                }
                 cp.importPackage(invokeClassName)
                 val argReflect = if (ClassFileUtils.reflectInvokeMethod) "" else ",new $invokeClassName()"
                 val constructor = "$targetClassName.class,${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\"";

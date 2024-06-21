@@ -22,6 +22,7 @@ object ClassFileUtils {
     var reflectInvokeMethod = false
     var debugMode = false
     lateinit var outputDir:File
+    var outputCacheDir:File ?= null
     private val invokeClasses = mutableListOf<InvokeClass>()
     private const val INVOKE_METHOD = "invoke"
     private const val INVOKE_DESCRIPTOR = "(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;"
@@ -38,8 +39,16 @@ object ClassFileUtils {
 
             val className = invokeClass.packageName
             val invokeBody = invokeClass.invokeBody
+            val path = outputDir.absolutePath + "/" +Utils.dotToSlash(className)+".class"
+            val outFile = File(path)
+            if (outputCacheDir != null && outFile.exists()){
+                continue
+            }
 //            println("invokeClass.methodName="+invokeClass.methodName)
             val cp = ClassPoolUtils.getNewClassPool()
+            outputCacheDir?.let {
+                cp.appendClassPath(it.absolutePath)
+            }
             newClasses.forEach {
                 cp.makeClass(ByteArrayInputStream(it))
             }
@@ -56,8 +65,7 @@ object ClassFileUtils {
             }
             val classByteData = ctClass.toBytecode()
 //            //把类数据写入到class文件,这样你就可以把这个类文件打包供其他的人使用
-            val path = outputDir.absolutePath + "/" +Utils.dotToSlash(className)+".class"
-            val outFile = File(path)
+
             outFile.checkExist()
             ByteArrayInputStream(classByteData).use {inputStream->
                 outFile.outputStream().use {
@@ -75,11 +83,19 @@ object ClassFileUtils {
             return
         }
         invokeClasses.add(InvokeClass(className,invokeBody,methodName))
-        val path = outputDir.absolutePath + "/" +Utils.dotToSlash(className)+".class"
-        val outFile = File(path)
+        if (File(outputDir.absolutePath + "/" +Utils.dotToSlash(className)+".class").exists()){
+            return
+        }
+        val cacheOutFir = outputCacheDir
+        val outFile = if (cacheOutFir != null){
+            File(cacheOutFir.absolutePath + "/" +Utils.dotToSlash(className)+".class")
+        }else{
+            File(outputDir.absolutePath + "/" +Utils.dotToSlash(className)+".class")
+        }
         if (outFile.exists()){
             return
         }
+
         outFile.checkExist()
 //        val className = "$packageName.Invoke${UUID.randomUUID()}"
         //新建一个类生成器，COMPUTE_FRAMES，COMPUTE_MAXS这2个参数能够让asm自动更新操作数栈

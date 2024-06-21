@@ -41,6 +41,7 @@ class CompileAndroidAopTask(
         logger = project.logger
         WovenInfoUtils.isCompile = true
         ClassFileUtils.outputDir = output
+        ClassFileUtils.outputCacheDir = File(Utils.aopCompileTempInvokeDir(project, variantName))
         ClassFileUtils.clear()
         println("AndroidAOP woven info code start")
         val scanTimeCost = measureTimeMillis {
