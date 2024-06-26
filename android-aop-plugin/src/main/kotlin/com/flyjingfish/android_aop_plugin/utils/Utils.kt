@@ -307,8 +307,7 @@ fun String.computeMD5(): String {
     }
 }
 fun String.instanceof(instanceofClassNameKey: String): Boolean {
-    val classNameKey = this
-    val className: String? = WovenInfoUtils.getClassString(classNameKey)
+    val className: String? = WovenInfoUtils.getClassString(this)
     val instanceofClassName: String? = WovenInfoUtils.getClassString(instanceofClassNameKey)
     if (className == null || instanceofClassName == null){
         return false
