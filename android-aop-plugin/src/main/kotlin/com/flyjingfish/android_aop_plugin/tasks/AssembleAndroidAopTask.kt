@@ -27,7 +27,6 @@ import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.MethodVisitor
 import java.io.BufferedOutputStream
-import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -208,7 +207,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 if (methodsRecord != null){
                     FileInputStream(file).use { inputs ->
                         val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),methodsRecord,hasReplace)
-                        ByteArrayInputStream(byteArray).use {
+                        byteArray.inputStream().use {
                             jarOutput.saveEntry(jarEntryName,it)
                         }
                         newClasses.add(byteArray)
@@ -216,8 +215,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 }else if (Utils.dotToSlash(Utils.JoinAnnoCutUtils) + _CLASS == entryName) {
                     FileInputStream(file).use { inputs ->
                         val originInject = inputs.readAllBytes()
-                        val resultByteArray = RegisterMapWovenInfoCode().execute(ByteArrayInputStream(originInject))
-                        ByteArrayInputStream(resultByteArray).use {
+                        val resultByteArray = RegisterMapWovenInfoCode().execute(originInject.inputStream())
+                        resultByteArray.inputStream().use {
                             jarOutput.saveEntry(entryName,it)
                         }
                     }
@@ -240,7 +239,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             if (byteArray.isNotEmpty()){
                                 try {
                                     val newByteArray = AopTaskUtils.wovenIntoCodeForReplace(byteArray)
-                                    ByteArrayInputStream(newByteArray.byteArray).use {
+                                    newByteArray.byteArray.inputStream().use {
                                         jarOutput.saveEntry(jarEntryName,it)
                                     }
 //                                    newClasses.add(newByteArray)
@@ -260,7 +259,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 if (byteArray.isNotEmpty()){
                                     try {
                                         val newByteArray = AopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
-                                        ByteArrayInputStream(newByteArray.byteArray).use {
+                                        newByteArray.byteArray.inputStream().use {
                                             jarOutput.saveEntry(jarEntryName,it)
                                         }
 //                                        newClasses.add(newByteArray)
@@ -308,7 +307,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     }
 
                                     val newByteArray = cw.toByteArray()
-                                    ByteArrayInputStream(newByteArray).use {
+                                    newByteArray.inputStream().use {
                                         jarOutput.saveEntry(jarEntryName,it)
                                     }
 //                                    newClasses.add(newByteArray)
@@ -361,7 +360,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     if (methodsRecord != null){
                         jarFile.getInputStream(jarEntry).use { inputs ->
                             val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),methodsRecord,hasReplace)
-                            ByteArrayInputStream(byteArray).use {
+                            byteArray.inputStream().use {
                                 jarOutput.saveEntry(entryName,it)
                             }
                             newClasses.add(byteArray)
@@ -369,8 +368,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     }else if (Utils.dotToSlash(Utils.JoinAnnoCutUtils) + _CLASS == entryName) {
                         jarFile.getInputStream(jarEntry).use { inputs ->
                             val originInject = inputs.readAllBytes()
-                            val resultByteArray = RegisterMapWovenInfoCode().execute(ByteArrayInputStream(originInject))
-                            ByteArrayInputStream(resultByteArray).use {
+                            val resultByteArray = RegisterMapWovenInfoCode().execute(originInject.inputStream())
+                            resultByteArray.inputStream().use {
                                 jarOutput.saveEntry(entryName,it)
                             }
                         }
@@ -393,7 +392,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 if (byteArray.isNotEmpty()){
                                     try {
                                         val newByteArray = AopTaskUtils.wovenIntoCodeForReplace(byteArray)
-                                        ByteArrayInputStream(newByteArray.byteArray).use {
+                                        newByteArray.byteArray.inputStream().use {
                                             jarOutput.saveEntry(entryName,it)
                                         }
 //                                        newClasses.add(newByteArray)
@@ -413,7 +412,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     if (byteArray.isNotEmpty()){
                                         try {
                                             val newByteArray = AopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
-                                            ByteArrayInputStream(newByteArray.byteArray).use {
+                                            newByteArray.byteArray.inputStream().use {
                                                 jarOutput.saveEntry(entryName,it)
                                             }
 //                                            newClasses.add(newByteArray)
@@ -461,7 +460,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                         }
 
                                         val newByteArray = cw.toByteArray()
-                                        ByteArrayInputStream(newByteArray).use {
+                                        newByteArray.inputStream().use {
                                             jarOutput.saveEntry(entryName,it)
                                         }
 //                                        newClasses.add(newByteArray)

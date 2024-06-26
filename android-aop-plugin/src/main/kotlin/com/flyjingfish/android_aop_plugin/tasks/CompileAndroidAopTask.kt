@@ -215,8 +215,7 @@ class CompileAndroidAopTask(
                                     }
 
                                     mkOutFile()
-                                    val newByteArray = cw.toByteArray()
-                                    newByteArray.saveFile(outFile)
+                                    cw.toByteArray().saveFile(outFile)
                                 } catch (e: Exception) {
                                     copy()
                                 }

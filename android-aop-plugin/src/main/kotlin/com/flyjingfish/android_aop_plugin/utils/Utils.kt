@@ -337,7 +337,7 @@ fun Int.isStaticMethod():Boolean{
 }
 
 fun ByteArray.saveFile(outFile : File){
-    ByteArrayInputStream(this).use { inputStream->
+    inputStream().use { inputStream->
         outFile.saveEntry(inputStream)
     }
 }
