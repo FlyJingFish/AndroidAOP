@@ -11,8 +11,6 @@ import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils.getMethodInfo
-import com.flyjingfish.android_aop_plugin.utils.Utils.isHasMethodBody
-import com.flyjingfish.android_aop_plugin.utils.Utils.isInstanceof
 import com.flyjingfish.android_aop_plugin.utils.Utils.slashToDot
 import com.flyjingfish.android_aop_plugin.utils.Utils.slashToDotClassName
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
@@ -20,7 +18,9 @@ import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addCollectClass
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.getAnnoInfo
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.isContainAnno
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.isLeaf
-import com.flyjingfish.android_aop_plugin.utils.printLog
+import com.flyjingfish.android_aop_plugin.utils.instanceof
+import com.flyjingfish.android_aop_plugin.utils.isHasMethodBody
+import com.flyjingfish.android_aop_plugin.utils.isStaticMethod
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.Handle
 import org.objectweb.asm.MethodVisitor
@@ -108,7 +108,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                             val clsName = slashToDotClassName(className)
                             val parentClsName = aopCollectCut.collectClassName
                             if (clsName != slashToDotClassName(parentClsName)) {
-                                isExtends = isInstanceof(clsName, slashToDotClassName(parentClsName))
+                                isExtends = clsName.instanceof(slashToDotClassName(parentClsName))
                             }
                         }
                         if (isExtends && isLeaf(className)) {
@@ -121,7 +121,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                             val clsName = slashToDotClassName(className)
                             val parentClsName = aopCollectCut.collectClassName
                             if (clsName != slashToDotClassName(parentClsName)) {
-                                val isInstanceof = isInstanceof(clsName, slashToDotClassName(parentClsName))
+                                val isInstanceof = clsName.instanceof(slashToDotClassName(parentClsName))
                                 if (isInstanceof) {
                                     isMatchExtends = true
                                 }
@@ -185,7 +185,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                             val clsName = slashToDotClassName(className)
                             val parentClsName = aopMatchCut.baseClassName
                             if (clsName != slashToDotClassName(parentClsName)) {
-                                isExtends = isInstanceof(clsName, slashToDotClassName(parentClsName))
+                                isExtends = clsName.instanceof(slashToDotClassName(parentClsName))
                             }
                         }
                         if (isExtends && isLeaf(className)) {
@@ -198,7 +198,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                             val clsName = slashToDotClassName(className)
                             val parentClsName = aopMatchCut.baseClassName
                             if (clsName != slashToDotClassName(parentClsName)) {
-                                val isInstanceof = isInstanceof(clsName, slashToDotClassName(parentClsName))
+                                val isInstanceof = clsName.instanceof(slashToDotClassName(parentClsName))
                                 if (isInstanceof) {
                                     aopMatchCuts.add(aopMatchCut)
                                 }
@@ -255,7 +255,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                 }
             }
 
-            if (descriptor.contains(REPLACE_POINT) && replaceTargetClassName != null && Utils.isStaticMethod(access)){
+            if (descriptor.contains(REPLACE_POINT) && replaceTargetClassName != null && access.isStaticMethod()){
 
                 val replaceMethodInfo = ReplaceMethodInfo(
                     replaceTargetClassName!!,"","",
@@ -302,7 +302,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
         }
     }
     private fun isBackMethod(access: Int):Boolean{
-        return isHasMethodBody(access)
+        return access.isHasMethodBody()
     }
     override fun visitMethod(
         access: Int, name: String, descriptor: String,
@@ -426,7 +426,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                                     isMatch = isDirectExtends
                                     if (!isMatch) {
                                         val parentClsName = aopMatchCut.baseClassName
-                                        isMatch = isInstanceof(clsName, slashToDotClassName(parentClsName))
+                                        isMatch = clsName.instanceof(slashToDotClassName(parentClsName))
                                     }
                                 }
 

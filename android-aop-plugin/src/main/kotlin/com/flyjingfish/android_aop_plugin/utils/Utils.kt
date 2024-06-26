@@ -24,10 +24,7 @@ object Utils {
     const val KEEP_CLASS = "com.flyjingfish.android_aop_annotation.aop_anno.AopKeep"
     const val JOIN_POINT_CLASS = "com.flyjingfish.android_aop_annotation.AndroidAopJoinPoint"
     const val CONVERSIONS_CLASS = "com.flyjingfish.android_aop_annotation.Conversions"
-    private val JAR_SIGNATURE_EXTENSIONS = setOf("SF", "RSA", "DSA", "EC")
-    fun isJarSignatureRelatedFiles(name: String): Boolean {
-        return name.startsWith("META-INF/") && name.substringAfterLast('.') in JAR_SIGNATURE_EXTENSIONS
-    }
+
     fun dotToSlash(str: String): String {
         return str.replace(".", "/")
     }
@@ -212,34 +209,7 @@ object Utils {
         return back
     }
 
-    fun isInstanceof(classNameKey: String, instanceofClassNameKey: String): Boolean {
-        val className: String? = WovenInfoUtils.getClassString(classNameKey)
-        val instanceofClassName: String? = WovenInfoUtils.getClassString(instanceofClassNameKey)
-        if (className == null || instanceofClassName == null){
-            return false
-        }
-        val subtypeOf = try {
-            val pool = ClassPoolUtils.classPool
-            val clazz = pool!!.get(className)
-            val instanceofClazz = pool.get(instanceofClassName)
-            clazz.subtypeOf(instanceofClazz)
-        } catch (e: Exception) {
-            false
-        }
-        return subtypeOf
-    }
-
-    fun computeMD5(string: String): String? {
-        return try {
-            val messageDigest = MessageDigest.getInstance("MD5")
-            val digestBytes = messageDigest.digest(string.toByteArray())
-            bytesToHex(digestBytes)
-        } catch (var3: NoSuchAlgorithmException) {
-            throw IllegalStateException(var3)
-        }
-    }
-
-    private fun bytesToHex(bytes: ByteArray): String? {
+    fun bytesToHex(bytes: ByteArray): String {
         val hexString = StringBuilder()
         for (b in bytes) {
             val hex = Integer.toHexString(0xff and b.toInt())
@@ -249,15 +219,6 @@ object Utils {
             hexString.append(hex)
         }
         return hexString.toString()
-    }
-
-    fun isHasMethodBody(access: Int):Boolean{
-        val isAbstractMethod = access and Opcodes.ACC_ABSTRACT != 0
-        val isNativeMethod = access and Opcodes.ACC_NATIVE != 0
-        return !isAbstractMethod && !isNativeMethod
-    }
-    fun isStaticMethod(access: Int):Boolean{
-        return access and Opcodes.ACC_STATIC != 0
     }
 
     fun openJar(jarPath:String,destDir:String) {
@@ -331,4 +292,45 @@ fun File.checkExist(delete:Boolean = false){
         delete()
         createNewFile()
     }
+}
+val JAR_SIGNATURE_EXTENSIONS = setOf("SF", "RSA", "DSA", "EC")
+fun String.isJarSignatureRelatedFiles(): Boolean {
+    return startsWith("META-INF/") && substringAfterLast('.') in JAR_SIGNATURE_EXTENSIONS
+}
+fun String.computeMD5(): String {
+    return try {
+        val messageDigest = MessageDigest.getInstance("MD5")
+        val digestBytes = messageDigest.digest(toByteArray())
+        Utils.bytesToHex(digestBytes)
+    } catch (var3: NoSuchAlgorithmException) {
+        throw IllegalStateException(var3)
+    }
+}
+fun String.instanceof(instanceofClassNameKey: String): Boolean {
+    val classNameKey = this
+    val className: String? = WovenInfoUtils.getClassString(classNameKey)
+    val instanceofClassName: String? = WovenInfoUtils.getClassString(instanceofClassNameKey)
+    if (className == null || instanceofClassName == null){
+        return false
+    }
+    val subtypeOf = try {
+        val pool = ClassPoolUtils.classPool
+        val clazz = pool!!.get(className)
+        val instanceofClazz = pool.get(instanceofClassName)
+        clazz.subtypeOf(instanceofClazz)
+    } catch (e: Exception) {
+        false
+    }
+    return subtypeOf
+}
+
+fun Int.isHasMethodBody():Boolean{
+    val access: Int = this
+    val isAbstractMethod = access and Opcodes.ACC_ABSTRACT != 0
+    val isNativeMethod = access and Opcodes.ACC_NATIVE != 0
+    return !isAbstractMethod && !isNativeMethod
+}
+fun Int.isStaticMethod():Boolean{
+    val access: Int = this
+    return access and Opcodes.ACC_STATIC != 0
 }

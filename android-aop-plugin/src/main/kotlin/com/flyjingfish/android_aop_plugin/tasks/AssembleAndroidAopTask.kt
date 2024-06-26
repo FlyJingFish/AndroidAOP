@@ -11,8 +11,9 @@ import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils._CLASS
-import com.flyjingfish.android_aop_plugin.utils.Utils.isJarSignatureRelatedFiles
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
+import com.flyjingfish.android_aop_plugin.utils.computeMD5
+import com.flyjingfish.android_aop_plugin.utils.isJarSignatureRelatedFiles
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
@@ -97,7 +98,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 val jarEntry = enumeration.nextElement()
                 try {
                     val entryName = jarEntry.name
-                    if (isJarSignatureRelatedFiles(entryName)){
+                    if (entryName.isJarSignatureRelatedFiles()){
                         ignoreJar.add(file.asFile.absolutePath)
                         break
                     }
@@ -110,7 +111,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         if (ignoreJar.isNotEmpty()){
             val temporaryDir = File(Utils.aopTransformIgnoreJarDir(project,variant))
             for (path in ignoreJar) {
-                val destDir = "${temporaryDir.absolutePath}/${Utils.computeMD5(File(path).name)}"
+                val destDir = "${temporaryDir.absolutePath}/${File(path).name.computeMD5()}"
                 val destFile = File(destDir)
                 destFile.deleteRecursively()
                 Utils.openJar(path,destDir)

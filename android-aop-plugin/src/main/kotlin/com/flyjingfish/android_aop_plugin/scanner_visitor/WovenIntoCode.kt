@@ -14,6 +14,10 @@ import com.flyjingfish.android_aop_plugin.utils.Utils.JOIN_POINT_CLASS
 import com.flyjingfish.android_aop_plugin.utils.Utils.KEEP_CLASS
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.checkExist
+import com.flyjingfish.android_aop_plugin.utils.computeMD5
+import com.flyjingfish.android_aop_plugin.utils.instanceof
+import com.flyjingfish.android_aop_plugin.utils.isHasMethodBody
+import com.flyjingfish.android_aop_plugin.utils.isStaticMethod
 import com.flyjingfish.android_aop_plugin.utils.printLog
 import javassist.CannotCompileException
 import javassist.CtClass
@@ -78,7 +82,7 @@ object WovenIntoCode {
                     interfaces: Array<out String>?
                 ) {
                     super.visit(version, access, name, signature, superName, interfaces)
-                    classNameMd5 = Utils.computeMD5(Utils.slashToDot(name))
+                    classNameMd5 = Utils.slashToDot(name).computeMD5()
                     thisHasCollect = hasCollect
                     thisCollectClassName = thisClassName
                 }
@@ -113,7 +117,7 @@ object WovenIntoCode {
                     interfaces: Array<out String>?
                 ) {
                     super.visit(version, access, name, signature, superName, interfaces)
-                    classNameMd5 = Utils.computeMD5(Utils.slashToDot(name))
+                    classNameMd5 = Utils.slashToDot(name).computeMD5()
                     thisHasCollect = hasCollect
                     thisCollectClassName = thisClassName
                 }
@@ -156,7 +160,7 @@ object WovenIntoCode {
                     interfaces: Array<out String>?
                 ) {
                     super.visit(version, access, name, signature, superName, interfaces)
-                    classNameMd5 = Utils.computeMD5(Utils.slashToDot(name))
+                    classNameMd5 = Utils.slashToDot(name).computeMD5()
                     className = name
                 }
                 override fun visitAnnotation(
@@ -218,7 +222,7 @@ object WovenIntoCode {
                     exceptions: Array<String?>?
                 ): MethodVisitor? {
                     return if (oldMethodName == name && oldDescriptor == descriptor) {
-                        val newAccess = if (Utils.isStaticMethod(access)){
+                        val newAccess = if (access.isStaticMethod()){
                             ACC_PUBLIC + ACC_STATIC + ACC_FINAL
                         }else{
                             ACC_PUBLIC + ACC_FINAL
@@ -231,7 +235,7 @@ object WovenIntoCode {
                             exceptions
                         )
 
-                        if (hasReplace && mv != null && Utils.isHasMethodBody(access)) {
+                        if (hasReplace && mv != null && access.isHasMethodBody()) {
                             mv = MethodReplaceInvokeAdapter(className,"$name$descriptor",mv)
                         }
                         RemoveAnnotation(mv)
@@ -262,10 +266,10 @@ object WovenIntoCode {
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
             val targetClassName = ctClass.name
             val oldMethodName = value.methodName
-            val targetMethodName = "$oldMethodName$$${Utils.computeMD5(targetClassName)}$METHOD_SUFFIX"
+            val targetMethodName = "$oldMethodName$$${targetClassName.computeMD5()}$METHOD_SUFFIX"
             val oldDescriptor = value.descriptor
             val cutClassName = value.cutClassName
-            val invokeClassName = "${targetClassName}\$Invoke${Utils.computeMD5(targetMethodName+oldDescriptor)}"
+            val invokeClassName = "${targetClassName}\$Invoke${(targetMethodName+oldDescriptor).computeMD5()}"
 //            if (value in wovenRecord){
 ////                WovenInfoUtils.checkNoneInvokeClass(invokeClassName)
 //                return@forEach
@@ -395,7 +399,7 @@ object WovenIntoCode {
 
     fun wovenStaticCode(cw:ClassWriter,thisClassName:String){
         val mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, "<clinit>", "()V", null, null);
-        val className1 = "$thisClassName\$Inner${Utils.computeMD5(thisClassName)}"
+        val className1 = "$thisClassName\$Inner${thisClassName.computeMD5()}"
         mv.visitTypeInsn(AdviceAdapter.NEW,Utils.dotToSlash(className1));
         mv.visitInsn(AdviceAdapter.DUP);//压入栈
         //弹出一个对象所在的地址，进行初始化操作，构造函数默认为空，此时栈大小为1（到目前只有一个局部变量）
@@ -472,7 +476,7 @@ object WovenIntoCode {
             if (value == null){
                 return@forEach
             }
-            val className = "$key\$Inner${Utils.computeMD5(key)}"
+            val className = "$key\$Inner${key.computeMD5()}"
             //新建一个类生成器，COMPUTE_FRAMES，COMPUTE_MAXS这2个参数能够让asm自动更新操作数栈
             val cw = ClassWriter(COMPUTE_FRAMES or COMPUTE_MAXS)
             //生成一个public的类，类路径是com.study.Human
@@ -547,8 +551,7 @@ object WovenIntoCode {
                                         val clsName = Utils.slashToDotClassName(collectExtendsClassName)
                                         val parentClsName = aopCollectCut.collectClassName
                                         if (clsName != Utils.slashToDotClassName(parentClsName)) {
-                                            isExtends = Utils.isInstanceof(
-                                                clsName,
+                                            isExtends = clsName.instanceof(
                                                 Utils.slashToDotClassName(parentClsName)
                                             )
                                         }
@@ -563,8 +566,7 @@ object WovenIntoCode {
                                         val clsName = Utils.slashToDotClassName(collectExtendsClassName)
                                         val parentClsName = aopCollectCut.collectClassName
                                         if (clsName != Utils.slashToDotClassName(parentClsName)) {
-                                            val isInstanceof = Utils.isInstanceof(
-                                                clsName,
+                                            val isInstanceof = clsName.instanceof(
                                                 Utils.slashToDotClassName(parentClsName)
                                             )
                                             if (isInstanceof) {

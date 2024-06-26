@@ -2,11 +2,11 @@ package com.flyjingfish.android_aop_plugin.scanner_visitor
 
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
-import com.flyjingfish.android_aop_plugin.utils.Utils.computeMD5
 import com.flyjingfish.android_aop_plugin.utils.Utils.dotToSlash
 import com.flyjingfish.android_aop_plugin.utils.Utils.slashToDot
 import com.flyjingfish.android_aop_plugin.utils.Utils.slashToDotClassName
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
+import com.flyjingfish.android_aop_plugin.utils.computeMD5
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
@@ -76,7 +76,7 @@ open class ReplaceBaseClassVisitor(
 
         override fun visitInsn(opcode: Int) {
             if (opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN) {
-                val className = "$thisClassName\$Inner${computeMD5(thisClassName)}"
+                val className = "$thisClassName\$Inner${thisClassName.computeMD5()}"
                 mv.visitTypeInsn(NEW, dotToSlash(className));
                 mv.visitInsn(DUP);//压入栈
                 //弹出一个对象所在的地址，进行初始化操作，构造函数默认为空，此时栈大小为1（到目前只有一个局部变量）

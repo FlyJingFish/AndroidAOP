@@ -1,6 +1,7 @@
 package com.flyjingfish.android_aop_plugin.scanner_visitor
 
 import com.flyjingfish.android_aop_plugin.utils.Utils
+import com.flyjingfish.android_aop_plugin.utils.isHasMethodBody
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
@@ -30,7 +31,7 @@ open class MethodReplaceInvokeVisitor(
     ): MethodVisitor? {
         var mv: MethodVisitor? = super.visitMethod(access, name, descriptor, signature, exceptions)
 
-        if (mv != null && Utils.isHasMethodBody(access)) {
+        if (mv != null && access.isHasMethodBody()) {
             mv = MethodReplaceInvokeAdapter(className,"$name$descriptor",mv)
             mv.onResultListener = object : MethodReplaceInvokeAdapter.OnResultListener{
                 override fun onBack() {

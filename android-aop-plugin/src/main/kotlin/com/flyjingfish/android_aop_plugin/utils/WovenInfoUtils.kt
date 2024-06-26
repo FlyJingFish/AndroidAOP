@@ -49,7 +49,7 @@ object WovenInfoUtils {
     }
     fun verifyModifyExtendsClassInfo() {
         for (mutableEntry in modifyExtendsClassMap) {
-            if (Utils.isInstanceof(mutableEntry.value,mutableEntry.key)){
+            if (mutableEntry.value.instanceof(mutableEntry.key)){
                 throw IllegalArgumentException("${mutableEntry.value} 不能继承 ${mutableEntry.key}，或者其继承类不可以继承 ${mutableEntry.key}")
             }
         }
@@ -425,8 +425,7 @@ object WovenInfoUtils {
                             val clsName = Utils.slashToDotClassName(className)
                             val parentClsName = aopReplaceCut.targetClassName
                             if (clsName != Utils.slashToDotClassName(parentClsName)) {
-                                isExtends = Utils.isInstanceof(
-                                    clsName,
+                                isExtends = clsName.instanceof(
                                     Utils.slashToDotClassName(parentClsName)
                                 )
                             }
@@ -441,8 +440,7 @@ object WovenInfoUtils {
                             val clsName = Utils.slashToDotClassName(className)
                             val parentClsName = aopReplaceCut.targetClassName
                             if (clsName != Utils.slashToDotClassName(parentClsName)) {
-                                val isInstanceof = Utils.isInstanceof(
-                                    clsName,
+                                val isInstanceof = clsName.instanceof(
                                     Utils.slashToDotClassName(parentClsName)
                                 )
                                 if (isInstanceof) {
