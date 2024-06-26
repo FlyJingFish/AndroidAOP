@@ -67,12 +67,7 @@ object ClassFileUtils {
 //            //把类数据写入到class文件,这样你就可以把这个类文件打包供其他的人使用
 
             outFile.checkExist()
-            ByteArrayInputStream(classByteData).use {inputStream->
-                outFile.outputStream().use {
-                    inputStream.copyTo(it)
-                }
-
-            }
+            classByteData.saveFile(outFile)
             cacheFiles.add(path)
         }
         return cacheFiles
@@ -128,11 +123,6 @@ object ClassFileUtils {
         mv.visitMaxs(0, 0)
         mv.visitEnd()
 
-        ByteArrayInputStream(cw.toByteArray()).use {inputStream->
-            outFile.outputStream().use {
-                inputStream.copyTo(it)
-            }
-
-        }
+        cw.toByteArray().saveFile(outFile)
     }
 }

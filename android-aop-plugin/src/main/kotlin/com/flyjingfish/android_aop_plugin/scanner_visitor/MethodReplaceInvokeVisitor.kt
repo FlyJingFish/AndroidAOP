@@ -1,10 +1,8 @@
 package com.flyjingfish.android_aop_plugin.scanner_visitor
 
-import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.isHasMethodBody
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
-import org.objectweb.asm.Opcodes
 
 open class MethodReplaceInvokeVisitor(
     classVisitor: ClassVisitor

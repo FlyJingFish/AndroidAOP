@@ -5,9 +5,11 @@ import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import org.gradle.api.Project
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.commons.Method
+import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.io.InputStream
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.regex.Matcher
@@ -332,4 +334,16 @@ fun Int.isHasMethodBody():Boolean{
 fun Int.isStaticMethod():Boolean{
     val access: Int = this
     return access and Opcodes.ACC_STATIC != 0
+}
+
+fun ByteArray.saveFile(outFile : File){
+    ByteArrayInputStream(this).use { inputStream->
+        outFile.saveEntry(inputStream)
+    }
+}
+
+fun File.saveEntry(inputStream: InputStream) {
+    this.outputStream().use {
+        inputStream.copyTo(it)
+    }
 }

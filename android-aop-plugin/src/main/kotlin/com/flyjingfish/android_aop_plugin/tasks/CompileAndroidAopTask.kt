@@ -13,6 +13,8 @@ import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils._CLASS
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.checkExist
+import com.flyjingfish.android_aop_plugin.utils.saveEntry
+import com.flyjingfish.android_aop_plugin.utils.saveFile
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.objectweb.asm.ClassReader
@@ -125,9 +127,7 @@ class CompileAndroidAopTask(
                     mkOutFile()
                     FileInputStream(file).use { inputs ->
                         val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),methodsRecord,hasReplace)
-                        ByteArrayInputStream(byteArray).use {
-                            outFile.saveEntry(it)
-                        }
+                        byteArray.saveFile(outFile)
                         newClasses.add(byteArray)
                     }
                 }else{
@@ -149,9 +149,7 @@ class CompileAndroidAopTask(
                                     val newByteArray = AopTaskUtils.wovenIntoCodeForReplace(byteArray)
                                     if (newByteArray.modified){
                                         mkOutFile()
-                                        ByteArrayInputStream(newByteArray.byteArray).use {
-                                            outFile.saveEntry(it)
-                                        }
+                                        newByteArray.byteArray.saveFile(outFile)
                                     }
                                 } catch (e: Exception) {
                                     copy()
@@ -171,9 +169,7 @@ class CompileAndroidAopTask(
                                         val newByteArray = AopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
                                         if (newByteArray.modified){
                                             mkOutFile()
-                                            ByteArrayInputStream(newByteArray.byteArray).use {
-                                                outFile.saveEntry(it)
-                                            }
+                                            newByteArray.byteArray.saveFile(outFile)
                                         }
                                     } catch (e: Exception) {
                                         copy()
@@ -220,9 +216,7 @@ class CompileAndroidAopTask(
 
                                     mkOutFile()
                                     val newByteArray = cw.toByteArray()
-                                    ByteArrayInputStream(newByteArray).use {
-                                        outFile.saveEntry(it)
-                                    }
+                                    newByteArray.saveFile(outFile)
                                 } catch (e: Exception) {
                                     copy()
                                 }
@@ -279,11 +273,6 @@ class CompileAndroidAopTask(
         InitConfig.exportCacheCutFile(tmpJsonFile,cacheFiles)
         if (isApp){
             exportCutInfo()
-        }
-    }
-    private fun File.saveEntry(inputStream: InputStream) {
-        this.outputStream().use {
-            inputStream.copyTo(it)
         }
     }
     private fun exportCutInfo(){

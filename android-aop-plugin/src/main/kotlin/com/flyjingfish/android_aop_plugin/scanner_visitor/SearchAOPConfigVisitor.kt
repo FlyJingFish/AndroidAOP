@@ -4,7 +4,6 @@ import com.flyjingfish.android_aop_plugin.beans.AopCollectCut
 import com.flyjingfish.android_aop_plugin.beans.AopMatchCut
 import com.flyjingfish.android_aop_plugin.beans.AopMethodCut
 import com.flyjingfish.android_aop_plugin.beans.AopReplaceCut
-import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addAnnoInfo
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addAopInstance
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addCollectConfig
@@ -12,12 +11,10 @@ import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addMatchInfo
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addModifyExtendsClassInfo
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addReplaceCut
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addReplaceInfo
-import com.flyjingfish.android_aop_plugin.utils.printLog
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
-import org.slf4j.Logger
 
 class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
     var isAndroidAopClass = false

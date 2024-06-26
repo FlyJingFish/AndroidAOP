@@ -19,6 +19,7 @@ import com.flyjingfish.android_aop_plugin.utils.instanceof
 import com.flyjingfish.android_aop_plugin.utils.isHasMethodBody
 import com.flyjingfish.android_aop_plugin.utils.isStaticMethod
 import com.flyjingfish.android_aop_plugin.utils.printLog
+import com.flyjingfish.android_aop_plugin.utils.saveFile
 import javassist.CannotCompileException
 import javassist.CtClass
 import javassist.CtMethod
@@ -462,12 +463,7 @@ object WovenIntoCode {
         //把类数据写入到class文件,这样你就可以把这个类文件打包供其他的人使用
         val outFile = File(path)
         outFile.checkExist()
-        ByteArrayInputStream(classByteData).use {inputStream->
-            outFile.outputStream().use {
-                inputStream.copyTo(it)
-            }
-
-        }
+        classByteData.saveFile(outFile)
     }
 
     fun createCollectClass(output:File) {
@@ -633,12 +629,7 @@ object WovenIntoCode {
             //把类数据写入到class文件,这样你就可以把这个类文件打包供其他的人使用
             val outFile = File(path)
             outFile.checkExist(true)
-            ByteArrayInputStream(classByteData).use {inputStream->
-                outFile.outputStream().use {
-                    inputStream.copyTo(it)
-                }
-
-            }
+            classByteData.saveFile(outFile)
         }
 
     }
