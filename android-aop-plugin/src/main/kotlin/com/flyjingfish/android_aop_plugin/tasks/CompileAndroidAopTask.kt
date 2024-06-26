@@ -20,10 +20,8 @@ import org.gradle.api.logging.Logger
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.MethodVisitor
-import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileInputStream
-import java.io.InputStream
 import kotlin.system.measureTimeMillis
 
 class CompileAndroidAopTask(
