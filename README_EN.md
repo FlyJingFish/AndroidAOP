@@ -396,7 +396,7 @@ annotation class CustomIntercept(vararg val value: String = [])
 ```
 
 <details>
-<summary><strong>Java写法:</strong></summary>
+<summary><strong>Java writing method:</strong></summary>
 
 ```java
 @AndroidAopPointCut(CustomInterceptCut.class)
