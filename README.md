@@ -407,13 +407,17 @@ AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
 
 - 创建注解(将 @AndroidAopPointCut 加到你的注解上)
 
-```java
-@AndroidAopPointCut(CustomInterceptCut.class)
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface CustomIntercept {
-    String[] value() default {};
-}
+```kotlin
+@AndroidAopPointCut(CustomInterceptCut::class)
+@Target(
+        AnnotationTarget.FUNCTION,
+        AnnotationTarget.PROPERTY_GETTER,
+        AnnotationTarget.PROPERTY_SETTER
+)
+@Retention(
+        AnnotationRetention.RUNTIME
+)
+annotation class CustomIntercept(vararg val value: String = [])
 ```
 
 - 创建注解处理切面的类（需要实现 BasePointCut 接口，它的泛型填上边的注解）

@@ -382,13 +382,17 @@ The following uses @CustomIntercept as an example to introduce how to use it.
 
 - Create annotations(You need to implement the BasePointCut interface, and fill in the annotations above for its generic type)
 
-```java
-@AndroidAopPointCut(CustomInterceptCut.class)
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface CustomIntercept {
-    String[] value() default {};
-}
+```kotlin
+@AndroidAopPointCut(CustomInterceptCut::class)
+@Target(
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY_GETTER,
+    AnnotationTarget.PROPERTY_SETTER
+)
+@Retention(
+    AnnotationRetention.RUNTIME
+)
+annotation class CustomIntercept(vararg val value: String = [])
 ```
 - Create a class that annotates the aspect (needs to implement the BasePointCut interface, and fill in the above annotation with its generic type)
 
