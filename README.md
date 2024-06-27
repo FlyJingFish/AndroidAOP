@@ -420,6 +420,19 @@ AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
 annotation class CustomIntercept(vararg val value: String = [])
 ```
 
+<details>
+<summary><strong>Java写法:</strong></summary>
+
+```java
+@AndroidAopPointCut(CustomInterceptCut.class)
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface CustomIntercept {
+    String[] value() default {};
+}
+```
+</details>
+
 - 创建注解处理切面的类（需要实现 BasePointCut 接口，它的泛型填上边的注解）
 
 ```kotlin
