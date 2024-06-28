@@ -95,6 +95,10 @@ public final class ProceedJoinPoint {
             realArgs = args;
         }
 
+        if (realArgs != null && this.args != null){
+            System.arraycopy(realArgs, 0, this.args, 0, this.args.length);
+        }
+
         try {
             Object returnValue = null;
             if (!hasNext) {
