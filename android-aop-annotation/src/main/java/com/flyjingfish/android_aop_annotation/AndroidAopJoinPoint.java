@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import kotlin.coroutines.Continuation;
+
 public final class AndroidAopJoinPoint {
     private final Object target;
     private final Class<?> targetClass;
@@ -45,8 +47,8 @@ public final class AndroidAopJoinPoint {
         this.mArgClasses = argClasses;
     }
 
-    public Object joinPointExecute() {
-        ProceedJoinPoint proceedJoinPoint = new ProceedJoinPoint(targetClass, mArgs);
+    public Object joinPointExecute(Continuation continuation) {
+        ProceedJoinPoint proceedJoinPoint = new ProceedJoinPoint(targetClass, mArgs,continuation != null);
         proceedJoinPoint.target = target;
         proceedJoinPoint.setOriginalMethod(originalMethod);
         proceedJoinPoint.setTargetMethod(targetMethod);

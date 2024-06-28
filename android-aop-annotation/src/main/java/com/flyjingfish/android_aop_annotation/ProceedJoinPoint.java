@@ -9,17 +9,19 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+import kotlin.coroutines.Continuation;
+
 /**
  * 切点相关信息类，<a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint">wiki 文档使用说明</a>
  */
 public final class ProceedJoinPoint {
     /**
-     *  <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#args">wiki 文档使用说明</a>
+     * <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#args">wiki 文档使用说明</a>
      */
     @Nullable
-    public Object[] args;
+    public final Object[] args;
     @Nullable
-    private Object[] originalArgs;
+    private final Object[] originalArgs;
     @Nullable
     public Object target;
     @NotNull
@@ -31,47 +33,76 @@ public final class ProceedJoinPoint {
     private OnInvokeListener onInvokeListener;
     private boolean hasNext;
     private final int argCount;
+    private final boolean isSuspend;
+    private Object suspendContinuation;
 
-    ProceedJoinPoint(@NotNull Class<?> targetClass,Object[] args) {
+    ProceedJoinPoint(@NotNull Class<?> targetClass, Object[] args, boolean isSuspend) {
         this.targetClass = targetClass;
-        this.args = args;
-        if (args != null){
-            this.originalArgs = args.clone();
+        Object[] fakeArgs;
+        if (isSuspend && args != null){
+            fakeArgs = new Object[args.length - 1];
+            for (int i = 0; i < args.length - 1; i++) {
+                fakeArgs[i] = args[i];
+            }
+            suspendContinuation = args[args.length - 1];
+        }else {
+            fakeArgs = args;
         }
-        this.argCount = args != null ? args.length : 0;
+        this.args = fakeArgs;
+
+        this.isSuspend = isSuspend;
+        if (args != null) {
+            this.originalArgs = fakeArgs.clone();
+        } else {
+            this.originalArgs = null;
+        }
+        this.argCount = fakeArgs != null ? fakeArgs.length : 0;
     }
 
     /**
      * 调用切点方法内代码
+     *
      * @return 返回切点方法返回值 <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#proceed">wiki 文档使用说明</a>
      */
     @Nullable
-    public Object proceed(){
+    public Object proceed() {
         return proceed(args);
     }
 
     /**
      * 调用切点方法内代码
+     *
      * @param args 切点方法参数数组
      * @return 返回切点方法返回值 <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#proceed">wiki 文档使用说明</a>
      */
     @Nullable
-    public Object proceed(Object... args){
-        this.args = args;
-        if (argCount > 0){
-            if (args == null || args.length != argCount){
+    public Object proceed(Object... args) {
+        if (argCount > 0) {
+            if (args == null || args.length != argCount) {
                 throw new IllegalArgumentException("proceed 所参数个数不对");
             }
         }
+
+        Object[] realArgs;
+        if (isSuspend) {
+            realArgs = new Object[argCount + 1];
+            if (args != null){
+                System.arraycopy(args, 0, realArgs, 0, args.length);
+            }
+            realArgs[argCount] = suspendContinuation;
+        } else {
+            realArgs = args;
+        }
+
         try {
             Object returnValue = null;
-            if (!hasNext){
-                if (targetInvokeMethod != null){
-                    returnValue = targetInvokeMethod.invoke(target,args);
-                }else {
-                    returnValue = targetMethod.invoke(target,args);
+            if (!hasNext) {
+                if (targetInvokeMethod != null) {
+                    returnValue = targetInvokeMethod.invoke(target, realArgs);
+                } else {
+                    returnValue = targetMethod.invoke(target, realArgs);
                 }
-            }else if (onInvokeListener != null){
+            } else if (onInvokeListener != null) {
                 returnValue = onInvokeListener.onInvoke();
             }
             return returnValue;
@@ -83,7 +114,6 @@ public final class ProceedJoinPoint {
     }
 
     /**
-     *
      * @return 切点方法相关信息
      */
     @NotNull
@@ -105,7 +135,6 @@ public final class ProceedJoinPoint {
     }
 
     /**
-     *
      * @return 切点方法所在对象，如果方法为静态的，此值为null
      */
     @Nullable
@@ -114,7 +143,6 @@ public final class ProceedJoinPoint {
     }
 
     /**
-     *
      * @return 切点方法所在类 Class
      */
     @NotNull
@@ -126,7 +154,7 @@ public final class ProceedJoinPoint {
         this.targetClass = targetClass;
     }
 
-    interface OnInvokeListener{
+    interface OnInvokeListener {
         Object onInvoke();
     }
 
@@ -137,8 +165,10 @@ public final class ProceedJoinPoint {
     void setHasNext(boolean hasNext) {
         this.hasNext = hasNext;
     }
+
     /**
      * 和 {@link ProceedJoinPoint#args} 相比，返回的引用地址不同，但数组里边的对象一致
+     *
      * @return 最开始进入方法时的参数  <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#args">wiki 文档使用说明</a>
      */
     @Nullable
