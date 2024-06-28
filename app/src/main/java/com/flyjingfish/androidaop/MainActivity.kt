@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.os.Looper
 import android.util.Log
 import android.view.View
-import android.view.View.OnClickListener
 import androidx.lifecycle.Lifecycle
 import com.flyjingfish.android_aop_core.annotations.CheckNetwork
 import com.flyjingfish.android_aop_core.annotations.CustomIntercept
@@ -15,7 +14,6 @@ import com.flyjingfish.android_aop_core.annotations.IOThread
 import com.flyjingfish.android_aop_core.annotations.MainThread
 import com.flyjingfish.android_aop_core.annotations.OnLifecycle
 import com.flyjingfish.android_aop_core.annotations.Permission
-import com.flyjingfish.android_aop_core.annotations.Scheduled
 import com.flyjingfish.android_aop_core.annotations.SingleClick
 import com.flyjingfish.android_aop_core.annotations.TryCatch
 import com.flyjingfish.android_aop_core.enums.ThreadType
@@ -23,10 +21,10 @@ import com.flyjingfish.androidaop.databinding.ActivityMainBinding
 import com.flyjingfish.androidaop.test.MyOnClickListener
 import com.flyjingfish.androidaop.test.MyOnClickListener2
 import com.flyjingfish.androidaop.test.Round
-import com.flyjingfish.androidaop.test.TestBaseReplace
 import com.flyjingfish.androidaop.test2.StaticClass
 import com.flyjingfish.androidaop.test.TestBean
 import com.flyjingfish.androidaop.test.TestReplace
+import com.flyjingfish.androidaop.test2.MyAnno3
 import com.flyjingfish.test_lib.BaseActivity
 import com.flyjingfish.test_lib.LocaleTransform
 import com.flyjingfish.test_lib.PermissionRejectListener
@@ -39,7 +37,7 @@ import kotlinx.coroutines.withContext
 import java.lang.Thread.sleep
 
 class MainActivity: BaseActivity2(), PermissionRejectListener{
-//    val haha = 1
+    //    val haha = 1
     lateinit var binding:ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -129,12 +127,12 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
 
         val testMatch = TestMatch()
         binding.btnTestMuch.setOnClickListener {
-            testMatch.test2(1,"2")
-
-            LocaleTransform.getLanguage(1)
+//            testMatch.test2(1,"2")
+//
+//            LocaleTransform.getLanguage(1)
 
             GlobalScope.launch {
-                getData2(1)
+//                getData2(1)
                 val arg1 = getData(1)
                 setLogcat("GlobalScope---arg1=$arg1")
             }
@@ -214,14 +212,16 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
         setLogcat("自定义Kotlin 注解切面进入方法")
     }
 
-    suspend fun getData2(num:Int){
+    suspend fun getData2(num:Int):Int{
         return withContext(Dispatchers.IO) {
-            getDelayResult2()
+            getDelayResult2(num)
         }
     }
+
+    @MyAnno3
     suspend fun getData(num:Int) :Int{
         return withContext(Dispatchers.IO) {
-            getDelayResult()
+            getData3(num)
         }
     }
 
@@ -230,9 +230,14 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
         return 200
     }
 
-    fun getDelayResult2(){
+    fun getDelayResult2(num:Int):Int{
         sleep(5000)
+        return num
     }
 
+    suspend fun getData3(num:Int):Int{
+        Log.e("MainActivity","=====getData3=====")
+        return getDelayResult()
+    }
 
 }

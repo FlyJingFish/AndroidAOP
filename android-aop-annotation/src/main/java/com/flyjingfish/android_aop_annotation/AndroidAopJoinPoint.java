@@ -2,7 +2,9 @@ package com.flyjingfish.android_aop_annotation;
 
 
 import com.flyjingfish.android_aop_annotation.base.BasePointCut;
+import com.flyjingfish.android_aop_annotation.base.BasePointCutSuspend;
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
+import com.flyjingfish.android_aop_annotation.base.MatchClassMethodSuspend;
 import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils;
 import com.flyjingfish.android_aop_annotation.utils.InvokeMethod;
 import com.flyjingfish.android_aop_annotation.utils.MethodMap;
@@ -12,6 +14,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import kotlin.coroutines.Continuation;
+import kotlin.jvm.internal.Intrinsics;
 
 public final class AndroidAopJoinPoint {
     private final Object target;
@@ -45,7 +50,10 @@ public final class AndroidAopJoinPoint {
         this.mArgClasses = argClasses;
     }
 
-    public Object joinPointExecute() {
+    private boolean isSuspend;
+
+    public Object joinPointExecute(Continuation continuation) {
+        isSuspend = continuation != null;
         ProceedJoinPoint proceedJoinPoint = new ProceedJoinPoint(targetClass, mArgs);
         proceedJoinPoint.target = target;
         proceedJoinPoint.setOriginalMethod(originalMethod);
@@ -83,9 +91,17 @@ public final class AndroidAopJoinPoint {
                     proceedJoinPoint.setHasNext(iterator.hasNext());
                     Object value;
                     if (nextCutAnnotation.basePointCut != null) {
-                        value = nextCutAnnotation.basePointCut.invoke(proceedJoinPoint, nextCutAnnotation.annotation);
+                        if (isSuspend && nextCutAnnotation.basePointCut instanceof BasePointCutSuspend){
+                            value = ((BasePointCutSuspend<Annotation>) nextCutAnnotation.basePointCut).invokeSuspend(proceedJoinPoint, nextCutAnnotation.annotation,continuation);
+                        }else {
+                            value = nextCutAnnotation.basePointCut.invoke(proceedJoinPoint, nextCutAnnotation.annotation);
+                        }
                     } else {
-                        value = nextCutAnnotation.matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
+                        if (isSuspend && nextCutAnnotation.matchClassMethod instanceof MatchClassMethodSuspend){
+                            value = ((MatchClassMethodSuspend) nextCutAnnotation.matchClassMethod).invokeSuspend(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName(),continuation);
+                        }else {
+                            value = nextCutAnnotation.matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
+                        }
                     }
                     returnValue[0] = value;
                     return value;
@@ -99,12 +115,18 @@ public final class AndroidAopJoinPoint {
         PointCutAnnotation cutAnnotation = iterator.next();
         iterator.remove();
         if (cutAnnotation.basePointCut != null) {
-            returnValue[0] = cutAnnotation.basePointCut.invoke(proceedJoinPoint, cutAnnotation.annotation);
+            if (isSuspend && cutAnnotation.basePointCut instanceof BasePointCutSuspend){
+                returnValue[0] = ((BasePointCutSuspend<Annotation>) cutAnnotation.basePointCut).invokeSuspend(proceedJoinPoint, cutAnnotation.annotation,continuation);
+            }else {
+                returnValue[0] = cutAnnotation.basePointCut.invoke(proceedJoinPoint, cutAnnotation.annotation);
+            }
         } else {
-            returnValue[0] = cutAnnotation.matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
+            if (isSuspend && cutAnnotation.matchClassMethod instanceof MatchClassMethodSuspend){
+                returnValue[0] = ((MatchClassMethodSuspend) cutAnnotation.matchClassMethod).invokeSuspend(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName(),continuation);
+            }else {
+                returnValue[0] = cutAnnotation.matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
+            }
         }
-
-
         return returnValue[0];
     }
 

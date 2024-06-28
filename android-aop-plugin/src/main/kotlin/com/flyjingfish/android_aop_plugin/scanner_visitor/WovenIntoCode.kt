@@ -329,8 +329,10 @@ object WovenIntoCode {
                     }
                 }
 
+                val suspendMethod = returnType.name == "java.lang.Object" && ctClasses[ctClasses.size-1].name == "kotlin.coroutines.Continuation"
+
                 val returnStr = String.format(
-                    ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointExecute()"
+                    ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointExecute(${if (suspendMethod) "(kotlin.coroutines.Continuation)\$$len" else "null" })"
                 )
 
                 val invokeReturnStr:String? = ClassNameToConversions.getReturnInvokeXObject(returnType.name)

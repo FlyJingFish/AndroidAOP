@@ -16,6 +16,7 @@ leakcanary_version = "2.7"
 bcprov-jdk15on-version = "1.68"
 rxpermissions = "0.12"
 rxjava = "3.0.4"
+kotlin = "1.8.0"
 [libraries]
 kotlinpoet = { group = "com.squareup", name = "kotlinpoet", version.ref = "kotlinpoet_version" }
 javapoet = { group = "com.squareup", name = "javapoet", version.ref = "javapoet_version" }
@@ -32,3 +33,5 @@ leakcanary = { group = "com.squareup.leakcanary", name = "leakcanary-android", v
 bcprov-jdk15on = { group = "org.bouncycastle", name = "bcprov-jdk15on", version.ref = "bcprov-jdk15on-version" }
 rxpermissions = { group = "com.github.tbruyelle", name = "rxpermissions", version.ref = "rxpermissions" }
 rxjava = { group = "io.reactivex.rxjava3", name = "rxjava", version.ref = "rxjava" }
+kotlin-stdLib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin" }

@@ -6,6 +6,10 @@ javadoc {
     title = "AndroidAop Annotation ${version} API"
     options.bottom = 'AndroidAop'
 }
+dependencies {
+    compileOnly libs.kotlin.stdLib
+    compileOnly libs.kotlinx.coroutines
+}
 apply from: "$rootDir/gradle/java_base.gradle"
 apply from: "$rootDir/gradle/java_publish.gradle"
 

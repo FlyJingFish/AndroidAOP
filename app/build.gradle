@@ -101,4 +101,5 @@ dependencies {
     }
     debugImplementation libs.leakcanary
     implementation libs.bcprov.jdk15on
+    implementation "com.squareup.retrofit2:retrofit:2.11.0"
 }
