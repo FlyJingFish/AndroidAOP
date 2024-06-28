@@ -18,6 +18,8 @@ import java.util.List;
 import kotlin.coroutines.Continuation;
 import kotlin.jvm.internal.Intrinsics;
 
+import kotlin.coroutines.Continuation;
+
 public final class AndroidAopJoinPoint {
     private final Object target;
     private final Class<?> targetClass;
@@ -54,7 +56,7 @@ public final class AndroidAopJoinPoint {
 
     public Object joinPointExecute(Continuation continuation) {
         isSuspend = continuation != null;
-        ProceedJoinPoint proceedJoinPoint = new ProceedJoinPoint(targetClass, mArgs);
+        ProceedJoinPoint proceedJoinPoint = new ProceedJoinPoint(targetClass, mArgs,isSuspend);
         proceedJoinPoint.target = target;
         proceedJoinPoint.setOriginalMethod(originalMethod);
         proceedJoinPoint.setTargetMethod(targetMethod);

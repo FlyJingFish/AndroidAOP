@@ -54,11 +54,11 @@ object WovenIntoCode {
         val cr = ClassReader(inputStreamBytes)
         val cw = ClassWriter(cr, 0)
         fun visitMethod4Record(access: Int,
-                        name: String,
-                        descriptor: String,
-                        signature: String?,
-                        exceptions: Array<String?>?,
-                        classNameMd5:String ?){
+                               name: String,
+                               descriptor: String,
+                               signature: String?,
+                               exceptions: Array<String?>?,
+                               classNameMd5:String ?){
             methodRecordHashMap.forEach { (_: String, value: MethodRecord) ->
                 val oldMethodName = value.methodName
                 val oldDescriptor = value.descriptor
@@ -140,7 +140,7 @@ object WovenIntoCode {
                     thisHasStaticClock = isHasStaticClock
                     return mv
                 }
-                                                           }, 0)
+            }, 0)
         }
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
             if (value in wovenRecord){
@@ -343,7 +343,7 @@ object WovenIntoCode {
                 }
                 val invokeBody = if (invokeReturnStr == null){
                     "{$invokeStr;"+
-                    "        return null;}"
+                            "        return null;}"
                 }else{
 
                     "{${String.format(invokeReturnStr,invokeStr)};"+
