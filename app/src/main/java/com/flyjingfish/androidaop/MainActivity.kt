@@ -146,7 +146,8 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
 
     @CheckNetwork(toastText = "没有网络呀～～～")
     fun toSecondActivity(){
-        startActivity(Intent(this,SecondActivity::class.java))
+//        startActivity(Intent(this,SecondActivity::class.java))
+        startActivity(Intent(this,ThirdActivity::class.java))
     }
 
     @SingleClick(5000)
