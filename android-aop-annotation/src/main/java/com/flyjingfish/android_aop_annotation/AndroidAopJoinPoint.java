@@ -47,8 +47,11 @@ public final class AndroidAopJoinPoint {
         this.mArgClasses = argClasses;
     }
 
+    private boolean isSuspend;
+
     public Object joinPointExecute(Continuation continuation) {
-        ProceedJoinPoint proceedJoinPoint = new ProceedJoinPoint(targetClass, mArgs,continuation != null);
+        isSuspend = continuation != null;
+        ProceedJoinPoint proceedJoinPoint = new ProceedJoinPoint(targetClass, mArgs,isSuspend);
         proceedJoinPoint.target = target;
         proceedJoinPoint.setOriginalMethod(originalMethod);
         proceedJoinPoint.setTargetMethod(targetMethod);
