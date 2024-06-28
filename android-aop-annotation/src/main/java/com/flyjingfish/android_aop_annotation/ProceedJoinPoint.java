@@ -23,9 +23,9 @@ public final class ProceedJoinPoint {
     @Nullable
     private final Object[] originalArgs;
     @Nullable
-    public Object target;
+    public final Object target;
     @NotNull
-    public Class<?> targetClass;
+    public final Class<?> targetClass;
     private Method targetMethod;
     private InvokeMethod targetInvokeMethod;
     private Method originalMethod;
@@ -36,7 +36,7 @@ public final class ProceedJoinPoint {
     private final boolean isSuspend;
     private Object suspendContinuation;
 
-    ProceedJoinPoint(@NotNull Class<?> targetClass, Object[] args, boolean isSuspend) {
+    ProceedJoinPoint(@NotNull Class<?> targetClass, Object[] args, @Nullable Object target, boolean isSuspend) {
         this.targetClass = targetClass;
         Object[] fakeArgs;
         if (isSuspend && args != null){
@@ -50,8 +50,9 @@ public final class ProceedJoinPoint {
         }
         this.args = fakeArgs;
 
+        this.target = target;
         this.isSuspend = isSuspend;
-        if (args != null) {
+        if (fakeArgs != null) {
             this.originalArgs = fakeArgs.clone();
         } else {
             this.originalArgs = null;
@@ -92,6 +93,10 @@ public final class ProceedJoinPoint {
             realArgs[argCount] = suspendContinuation;
         } else {
             realArgs = args;
+        }
+
+        if (realArgs != null && this.args != null){
+            System.arraycopy(realArgs, 0, this.args, 0, this.args.length);
         }
 
         try {
@@ -148,10 +153,6 @@ public final class ProceedJoinPoint {
     @NotNull
     public Class<?> getTargetClass() {
         return targetClass;
-    }
-
-    void setTargetClass(@NotNull Class<?> targetClass) {
-        this.targetClass = targetClass;
     }
 
     interface OnInvokeListener {
