@@ -44,8 +44,8 @@ class AndroidAopJoinPoint (
     }
 
     private fun getProceedJoinPoint():ProceedJoinPoint{
-        val proceedJoinPoint = ProceedJoinPoint(targetClass!!, mArgs)
-        proceedJoinPoint.target = target
+        val targetAopMethod = AopMethod(originalMethod)
+        val proceedJoinPoint = ProceedJoinPoint(targetClass!!, mArgs,targetAopMethod,target)
         proceedJoinPoint.setOriginalMethod(originalMethod)
         proceedJoinPoint.setTargetJavaMethod(targetMethod)
         proceedJoinPoint.setTargetMethod(invokeMethod)

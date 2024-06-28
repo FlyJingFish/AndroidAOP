@@ -4,7 +4,7 @@ import com.flyjingfish.android_aop_annotation.utils.InvokeMethod
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 
-class ProceedJoinPoint(targetClass: Class<*>, args: Array<Any?>?) {
+class ProceedJoinPoint(targetClass: Class<*>, args: Array<Any?>?,targetMethod: AopMethod,target: Any?) {
     /**
      * [wiki 文档使用说明](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#args)
      */
@@ -12,13 +12,13 @@ class ProceedJoinPoint(targetClass: Class<*>, args: Array<Any?>?) {
     var args: Array<out Any?>?
 
     @JvmField
-    val target: Any? = null
+    val target: Any?
 
     @JvmField
     val targetClass: Class<*>
 
     @JvmField
-    var targetMethod: AopMethod? = null
+    val targetMethod: AopMethod
 
     private var originalArgs: Array<Any?>? = null
     private lateinit var targetJavaMethod: Method
@@ -35,6 +35,8 @@ class ProceedJoinPoint(targetClass: Class<*>, args: Array<Any?>?) {
             originalArgs = args.clone()
         }
         argCount = args?.size ?: 0
+        this.targetMethod = targetMethod
+        this.target = target
     }
 
     /**
@@ -148,7 +150,6 @@ class ProceedJoinPoint(targetClass: Class<*>, args: Array<Any?>?) {
 
     internal fun setOriginalMethod(originalMethod: Method?) {
         this.originalMethod = originalMethod
-        targetMethod = AopMethod(originalMethod)
     }
 
 
