@@ -9,6 +9,10 @@ import kotlinx.coroutines.withContext
 import java.lang.Thread.sleep
 
 class MyAnnoCut4 : BasePointCutSuspend<MyAnno4> {
+    override fun invoke(joinPoint: ProceedJoinPoint, anno: MyAnno4): Any? {
+        Log.e("MyAnnoCut4", "====invoke=====")
+        return super.invoke(joinPoint, anno)
+    }
     override suspend fun invokeSuspend(joinPoint: ProceedJoinPoint, anno: MyAnno4): Any? {
         return withContext(Dispatchers.IO) {
             Log.e("MyAnnoCut4", "====invokeSuspend=====")

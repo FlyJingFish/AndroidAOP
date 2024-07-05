@@ -43,7 +43,7 @@ class ThirdActivity : BaseActivity() {
     fun test(){
         GlobalScope.launch {
 //                getData2(1)
-            val arg1 = getData1(1)
+            val arg1 = getData2(1)
         }
     }
 
@@ -61,8 +61,32 @@ class ThirdActivity : BaseActivity() {
     @MyAnno4
     @MyAnno5
     suspend fun getData2(num:Int) :Int{
+        withContext(Dispatchers.IO) {
+            Log.e("MyAnnoCut","=====getData2=====1")
+        }
+        withContext(Dispatchers.IO) {
+            Log.e("MyAnnoCut","=====getData2=====11")
+        }
         return withContext(Dispatchers.IO) {
-            Log.e("MyAnnoCut","=====getData2=====")
+            Log.e("MyAnnoCut","=====getData2=====2")
+            val num1 = 1
+            val num2 = 2
+            num1 + num2
+        }
+    }
+
+    @MyAnno3
+    @MyAnno4
+    @MyAnno5
+    suspend fun getData2(num:Int,num2:Int) :Int{
+        withContext(Dispatchers.IO) {
+            Log.e("MyAnnoCut","=====getData22=====1")
+        }
+        withContext(Dispatchers.IO) {
+            Log.e("MyAnnoCut","=====getData22=====11")
+        }
+        return withContext(Dispatchers.IO) {
+            Log.e("MyAnnoCut","=====getData22=====2")
             val num1 = 1
             val num2 = 2
             num1 + num2

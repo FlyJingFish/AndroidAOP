@@ -7,15 +7,19 @@ import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethodSuspend;
 import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils;
 import com.flyjingfish.android_aop_annotation.utils.InvokeMethod;
+import com.flyjingfish.android_aop_annotation.utils.KotlinExtensions;
 import com.flyjingfish.android_aop_annotation.utils.MethodMap;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import kotlin.coroutines.Continuation;
+import kotlin.jvm.functions.Function0;
 
 public final class AndroidAopJoinPoint {
     private final Object target;
@@ -30,6 +34,7 @@ public final class AndroidAopJoinPoint {
     private String paramsKey;
     private String methodKey;
     private final String targetClassName;
+    private InvokeMethod invokeMethod;
 
     public AndroidAopJoinPoint(Class<?> clazz, Object target, String originalMethodName, String targetMethodName) {
         this.targetClassName = clazz.getName();
@@ -53,6 +58,19 @@ public final class AndroidAopJoinPoint {
 
     public Object joinPointExecute(Continuation continuation) {
         isSuspend = continuation != null;
+        if (isSuspend && !isStartClass()){
+            Object returnValue = null;
+            if (invokeMethod != null){
+                returnValue = invokeMethod.invoke(target,mArgs);
+            }else if (targetMethod != null){
+                try {
+                    returnValue = targetMethod.invoke(target,mArgs);
+                } catch (IllegalAccessException | InvocationTargetException ignore) {
+                }
+            }
+            return returnValue;
+        }
+
         ProceedJoinPoint proceedJoinPoint = new ProceedJoinPoint(targetClass, mArgs,target,isSuspend);
         proceedJoinPoint.setOriginalMethod(originalMethod);
         proceedJoinPoint.setTargetMethod(targetMethod);
@@ -155,7 +173,7 @@ public final class AndroidAopJoinPoint {
     public void setArgs(Object[] args) {
        setArgs(args,null);
     }
-    private InvokeMethod invokeMethod;
+
     public void setArgs(Object[] args, InvokeMethod invokeMethod) {
         this.mArgs = args;
         this.invokeMethod = invokeMethod;
@@ -223,5 +241,17 @@ public final class AndroidAopJoinPoint {
             }
         }
         return null;
+    }
+
+    private boolean isStartClass() {
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        for (StackTraceElement element : stackTrace) {
+            String fromClassName = element.getClassName();
+            if (fromClassName.startsWith(targetClass.getName() + "$"+ originalMethodName+"$")){
+                return false;
+            }
+
+        }
+        return true;
     }
 }

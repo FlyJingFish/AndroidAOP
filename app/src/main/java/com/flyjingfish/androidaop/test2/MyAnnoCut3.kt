@@ -10,6 +10,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class MyAnnoCut3 : BasePointCutSuspend<MyAnno3> {
+    override fun invoke(joinPoint: ProceedJoinPoint, anno: MyAnno3): Any? {
+        Log.e("MyAnnoCut3", "====invoke=====")
+        return super.invoke(joinPoint, anno)
+    }
+
     override suspend fun invokeSuspend(joinPoint: ProceedJoinPoint, anno: MyAnno3): Any? {
         return withContext(Dispatchers.Main) {
             Log.e("MyAnnoCut3", "====invokeSuspend=====")
