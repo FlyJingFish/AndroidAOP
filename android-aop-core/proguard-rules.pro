@@ -24,7 +24,7 @@
 #-keep class * {
 #    @androidx.annotation.Keep <fields>;
 #}
--keepnames class * implements kotlin.coroutines.Continuation;
+-keepnames class * implements kotlin.coroutines.Continuation
 -keep class * {
     @com.flyjingfish.android_aop_annotation.aop_anno.AopKeep <fields>;
 }
