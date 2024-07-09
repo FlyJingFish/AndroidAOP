@@ -16,18 +16,21 @@ open class ReplaceBaseClassVisitor(
     classVisitor: ClassVisitor
 ) : ClassVisitor(Opcodes.ASM9, classVisitor) {
     lateinit var thisClassName:String
-    private var oldSuperName:String?=null
+    lateinit var clazzName:String
+    lateinit var oldSuperName:String
     var modifyExtendsClassName:String?=null
     var isHasStaticClock = false
     var hasCollect = false
+    var modifyed = false
     override fun visit(
         version: Int,
         access: Int,
         name: String,
         signature: String?,
-        superName: String?,
+        superName: String,
         interfaces: Array<out String>?
     ) {
+        clazzName = name
         oldSuperName = superName
         thisClassName = slashToDotClassName(name)
         hasCollect = WovenInfoUtils.aopCollectClassMap[thisClassName] != null
@@ -67,6 +70,12 @@ open class ReplaceBaseClassVisitor(
         }
         if (modifyExtendsClassName != null && name == "<init>"){
             mv = MethodInitAdapter(mv)
+        }
+        mv = ReplaceInvokeMethodVisitor(mv,clazzName,oldSuperName)
+        mv.onResultListener = object :ReplaceInvokeMethodVisitor.OnResultListener{
+            override fun onBack() {
+                modifyed = true
+            }
         }
         return mv
     }

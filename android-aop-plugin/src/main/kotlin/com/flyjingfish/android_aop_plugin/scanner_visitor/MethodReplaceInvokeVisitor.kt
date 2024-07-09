@@ -14,7 +14,7 @@ open class MethodReplaceInvokeVisitor(
         access: Int,
         name: String,
         signature: String?,
-        superName: String?,
+        superName: String,
         interfaces: Array<out String>?
     ) {
         super.visit(version, access, name, signature, superName, interfaces)

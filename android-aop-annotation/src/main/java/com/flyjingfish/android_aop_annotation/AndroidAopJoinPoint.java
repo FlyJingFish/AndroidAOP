@@ -53,18 +53,6 @@ public final class AndroidAopJoinPoint {
 
     public Object joinPointExecute(Continuation continuation) {
         isSuspend = continuation != null;
-        if (isSuspend && !isStartClass()){
-            Object returnValue = null;
-            if (invokeMethod != null){
-                returnValue = invokeMethod.invoke(target,mArgs);
-            }else if (targetMethod != null){
-                try {
-                    returnValue = targetMethod.invoke(target,mArgs);
-                } catch (IllegalAccessException | InvocationTargetException ignore) {
-                }
-            }
-            return returnValue;
-        }
 
         ProceedJoinPoint proceedJoinPoint = new ProceedJoinPoint(targetClass, mArgs,target,isSuspend);
         proceedJoinPoint.setOriginalMethod(originalMethod);
@@ -224,15 +212,4 @@ public final class AndroidAopJoinPoint {
         return null;
     }
 
-    private boolean isStartClass() {
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        for (StackTraceElement element : stackTrace) {
-            String fromClassName = element.getClassName();
-            if (fromClassName.startsWith(targetClass.getName() + "$"+ originalMethodName+"$")){
-                return false;
-            }
-
-        }
-        return true;
-    }
 }
