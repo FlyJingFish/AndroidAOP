@@ -14,7 +14,7 @@ interface MatchClassMethodSuspend : MatchClassMethod {
      * @param methodName 匹配的方法名，如果是 Lambda 表达式，请看 wiki 文档
      * @return [wiki 文档返回值说明](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%88%87%E7%82%B9%E6%96%B9%E6%B3%95%E8%BF%94%E5%9B%9E%E5%80%BC)
      */
-    suspend fun invokeSuspend(joinPoint: ProceedJoinPoint, methodName: String): Any?
+    suspend fun invokeSuspend(joinPoint: ProceedJoinPoint, methodName: String)
 
     override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
         return joinPoint.proceed()

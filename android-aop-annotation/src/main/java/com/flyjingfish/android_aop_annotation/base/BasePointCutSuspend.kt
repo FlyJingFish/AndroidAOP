@@ -14,7 +14,7 @@ interface BasePointCutSuspend<T : Annotation>:BasePointCut<T> {
      * @param anno 切点设置的注解
      * @return [wiki 文档返回值说明](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%88%87%E7%82%B9%E6%96%B9%E6%B3%95%E8%BF%94%E5%9B%9E%E5%80%BC)
      */
-    suspend fun invokeSuspend(joinPoint: ProceedJoinPoint, anno: T): Any?
+    suspend fun invokeSuspend(joinPoint: ProceedJoinPoint, anno: T)
 
     override fun invoke(joinPoint: ProceedJoinPoint, anno: T): Any? {
         return joinPoint.proceed()

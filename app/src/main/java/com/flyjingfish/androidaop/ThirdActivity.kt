@@ -43,7 +43,8 @@ class ThirdActivity : BaseActivity() {
     fun test(){
         GlobalScope.launch {
 //                getData2(1)
-            val arg1 = getData2(1)
+            val arg1 = getData2(1,3)
+            Log.e("MyAnnoCut","=====arg1=====$arg1")
         }
     }
 
@@ -87,9 +88,7 @@ class ThirdActivity : BaseActivity() {
         }
         return withContext(Dispatchers.IO) {
             Log.e("MyAnnoCut","=====getData22=====2")
-            val num1 = 1
-            val num2 = 2
-            num1 + num2
+            num + num2
         }
     }
 }
