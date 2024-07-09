@@ -628,7 +628,6 @@ object WovenInfoUtils {
                                                   newMethodName: String,
                                                   descriptor: String):Boolean{
         val key = "$className&$newMethodName&$descriptor"
-        printLog("aopMethodCutInnerClassInfoInvokeMethod=$aopMethodCutInnerClassInfoInvokeMethod====className=$className,newMethodName=$newMethodName,descriptor=$descriptor===key=$key")
         return aopMethodCutInnerClassInfoInvokeMethod.contains(key)
     }
 
