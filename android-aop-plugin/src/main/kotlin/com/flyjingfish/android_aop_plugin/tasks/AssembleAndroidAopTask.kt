@@ -5,6 +5,7 @@ import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.scanner_visitor.RegisterMapWovenInfoCode
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ReplaceBaseClassVisitor
+import com.flyjingfish.android_aop_plugin.scanner_visitor.ReplaceInvokeMethodVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import com.flyjingfish.android_aop_plugin.utils.AopTaskUtils
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
@@ -24,8 +25,10 @@ import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.objectweb.asm.ClassReader
+import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.MethodVisitor
+import org.objectweb.asm.Opcodes
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileInputStream
@@ -221,9 +224,68 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                         }
                     }
                 }else{
-                    fun copy(){
+                    fun realCopy(){
                         file.inputStream().use {
                             jarOutput.saveEntry(jarEntryName,it)
+                        }
+                    }
+                    fun copy(){
+                        val clazzName = entryName.replace(_CLASS,"")
+                        if (WovenInfoUtils.isHasAopMethodCutInnerClassInfo(clazzName)){
+                            FileInputStream(file).use { inputs ->
+                                val byteArray = inputs.readAllBytes()
+                                if (byteArray.isNotEmpty()){
+                                    try {
+                                        val cr = ClassReader(byteArray)
+                                        val cw = ClassWriter(ClassWriter.COMPUTE_FRAMES)
+                                        val cv = object : ClassVisitor(Opcodes.ASM9, cw) {
+                                            lateinit var className:String
+                                            lateinit var superClassName:String
+                                            override fun visit(
+                                                version: Int,
+                                                access: Int,
+                                                name: String,
+                                                signature: String?,
+                                                superName: String,
+                                                interfaces: Array<out String>?
+                                            ) {
+                                                className = name
+                                                superClassName = superName
+                                                super.visit(version, access, name, signature, superName, interfaces)
+                                            }
+                                            override fun visitMethod(
+                                                access: Int,
+                                                name: String,
+                                                descriptor: String,
+                                                signature: String?,
+                                                exceptions: Array<String?>?
+                                            ): MethodVisitor {
+                                                val mv = super.visitMethod(
+                                                    access,
+                                                    name,
+                                                    descriptor,
+                                                    signature,
+                                                    exceptions
+                                                )
+                                                return ReplaceInvokeMethodVisitor(mv,className,superClassName)
+                                            }
+                                        }
+                                        cr.accept(cv, ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+
+                                        val newByteArray = cw.toByteArray()
+                                        newByteArray.inputStream().use {
+                                            jarOutput.saveEntry(jarEntryName,it)
+                                        }
+                                    } catch (e: Exception) {
+                                        realCopy()
+                                    }
+                                }else{
+                                    realCopy()
+                                }
+                            }
+
+                        }else{
+                            realCopy()
                         }
                     }
                     val thisClassName = Utils.slashToDotClassName(entryName).replace(_CLASS,"")
@@ -297,7 +359,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                                 exceptions
                                             )
                                             thisHasStaticClock = isHasStaticClock
-                                            return mv
+                                            return ReplaceInvokeMethodVisitor(mv,clazzName,oldSuperName)
                                         }
                                     }
                                     cr.accept(cv, ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
@@ -374,9 +436,68 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             }
                         }
                     } else{
-                        fun copy(){
+                        fun realCopy(){
                             jarFile.getInputStream(jarEntry).use {
                                 jarOutput.saveEntry(entryName,it)
+                            }
+                        }
+                        fun copy(){
+                            val clazzName = entryName.replace(_CLASS,"")
+                            if (WovenInfoUtils.isHasAopMethodCutInnerClassInfo(clazzName)){
+                                jarFile.getInputStream(jarEntry).use { inputs ->
+                                    val byteArray = inputs.readAllBytes()
+                                    if (byteArray.isNotEmpty()){
+                                        try {
+                                            val cr = ClassReader(byteArray)
+                                            val cw = ClassWriter(ClassWriter.COMPUTE_FRAMES)
+                                            val cv = object : ClassVisitor(Opcodes.ASM9, cw) {
+                                                lateinit var className:String
+                                                lateinit var superClassName:String
+                                                override fun visit(
+                                                    version: Int,
+                                                    access: Int,
+                                                    name: String,
+                                                    signature: String?,
+                                                    superName: String,
+                                                    interfaces: Array<out String>?
+                                                ) {
+                                                    className = name
+                                                    superClassName = superName
+                                                    super.visit(version, access, name, signature, superName, interfaces)
+                                                }
+                                                override fun visitMethod(
+                                                    access: Int,
+                                                    name: String,
+                                                    descriptor: String,
+                                                    signature: String?,
+                                                    exceptions: Array<String?>?
+                                                ): MethodVisitor {
+                                                    val mv = super.visitMethod(
+                                                        access,
+                                                        name,
+                                                        descriptor,
+                                                        signature,
+                                                        exceptions
+                                                    )
+                                                    return ReplaceInvokeMethodVisitor(mv,className,superClassName)
+                                                }
+                                            }
+                                            cr.accept(cv, ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+
+                                            val newByteArray = cw.toByteArray()
+                                            newByteArray.inputStream().use {
+                                                jarOutput.saveEntry(entryName,it)
+                                            }
+//                                        newClasses.add(newByteArray)
+                                        } catch (e: Exception) {
+                                            realCopy()
+                                        }
+                                    }else{
+                                        realCopy()
+                                    }
+                                }
+                            }else{
+                                realCopy()
                             }
                         }
                         val thisClassName = Utils.slashToDotClassName(entryName).replace(_CLASS,"")
@@ -450,7 +571,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                                     exceptions
                                                 )
                                                 thisHasStaticClock = isHasStaticClock
-                                                return mv
+                                                return ReplaceInvokeMethodVisitor(mv,clazzName,oldSuperName)
                                             }
                                         }
                                         cr.accept(cv, ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)

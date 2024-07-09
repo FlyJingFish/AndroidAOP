@@ -8,8 +8,10 @@ import com.flyjingfish.android_aop_plugin.beans.AopReplaceCut
 import com.flyjingfish.android_aop_plugin.beans.ClassMethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ClassSuperInfo
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
+import com.flyjingfish.android_aop_plugin.beans.ReplaceInnerClassInfo
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
+import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import org.gradle.api.Project
 import java.io.File
 import java.util.jar.JarFile
@@ -40,6 +42,9 @@ object WovenInfoUtils {
     val aopCollectInfoMap = mutableMapOf<String,AopCollectCut>()
     private val lastAopCollectInfoMap = mutableMapOf<String,AopCollectCut>()
     val aopCollectClassMap = mutableMapOf<String,MutableMap<String,AopCollectClass>?>()
+    private val aopMethodCutInnerClassInfo = mutableMapOf<String,ReplaceInnerClassInfo>()
+    private val aopMethodCutInnerClassInfoClassName = mutableSetOf<String>()
+    private val aopMethodCutInnerClassInfoInvokeMethod = mutableSetOf<String>()
     fun addModifyExtendsClassInfo(targetClassName: String, extendsClassName: String) {
         modifyExtendsClassMap[targetClassName] = extendsClassName
         InitConfig.addModifyClassInfo(targetClassName, extendsClassName)
@@ -189,6 +194,9 @@ object WovenInfoUtils {
         invokeMethodCutCache = null
         aopMethodCuts.clear()
         aopInstances.clear()
+        aopMethodCutInnerClassInfo.clear()
+        aopMethodCutInnerClassInfoClassName.clear()
+        aopMethodCutInnerClassInfoInvokeMethod.clear()
 //        aopCollectClassMap.clear()
         if (!AndroidAopConfig.increment) {
             aopMatchCuts.clear()
@@ -570,4 +578,58 @@ object WovenInfoUtils {
             }
         }
     }
+
+    fun addAopMethodCutInnerClassInfo(className:String,
+                                      oldMethodName: String,
+                                      oldDescriptor: String){
+        val classNameMd5 = Utils.slashToDot(className).computeMD5()
+        val newMethodName = "$oldMethodName$$$classNameMd5${WovenIntoCode.METHOD_SUFFIX}"
+        if (oldDescriptor.endsWith("Lkotlin/coroutines/Continuation;)Ljava/lang/Object;")) {
+            val key = "$className&$oldMethodName&$oldDescriptor"
+            aopMethodCutInnerClassInfo[key] = ReplaceInnerClassInfo(className,oldMethodName,oldDescriptor,newMethodName)
+            aopMethodCutInnerClassInfoClassName.add(className)
+        }
+    }
+
+    fun getAopMethodCutInnerClassInfo(className:String,
+                                      oldMethodName: String,
+                                      oldDescriptor: String,
+                                      innerClassName:String,
+                                      innerSuperClassName:String):ReplaceInnerClassInfo?{
+        return if (innerClassName.startsWith("$className$$oldMethodName")
+            && innerClassName != className
+            && innerSuperClassName != "kotlin/coroutines/jvm/internal/SuspendLambda"){
+            val key = "$className&$oldMethodName&$oldDescriptor"
+            aopMethodCutInnerClassInfo[key]
+        }else{
+            null
+        }
+    }
+
+    fun isHasAopMethodCutInnerClassInfo(className:String):Boolean{
+        for (s in aopMethodCutInnerClassInfoClassName) {
+            if (className.startsWith("$s$")){
+                return true
+            }
+        }
+        return false
+    }
+
+    fun addAopMethodCutInnerClassInfoInvokeMethod(className:String,
+                                                  newMethodName: String,
+                                                  descriptor: String){
+        if (descriptor.endsWith("Lkotlin/coroutines/Continuation;)Ljava/lang/Object;")) {
+            val key = "$className&$newMethodName&$descriptor"
+            aopMethodCutInnerClassInfoInvokeMethod.add(key)
+        }
+    }
+
+    fun isHasAopMethodCutInnerClassInfoInvokeMethod(className:String,
+                                                  newMethodName: String,
+                                                  descriptor: String):Boolean{
+        val key = "$className&$newMethodName&$descriptor"
+        printLog("aopMethodCutInnerClassInfoInvokeMethod=$aopMethodCutInnerClassInfoInvokeMethod====className=$className,newMethodName=$newMethodName,descriptor=$descriptor===key=$key")
+        return aopMethodCutInnerClassInfoInvokeMethod.contains(key)
+    }
+
 }

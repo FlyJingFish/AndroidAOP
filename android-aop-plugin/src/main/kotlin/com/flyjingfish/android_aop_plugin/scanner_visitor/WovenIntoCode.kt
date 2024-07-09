@@ -42,7 +42,7 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 object WovenIntoCode {
-    private const val METHOD_SUFFIX = "\$\$AndroidAOP"
+    const val METHOD_SUFFIX = "\$\$AndroidAOP"
     @Throws(Exception::class)
     fun modifyClass(
         inputStreamBytes: ByteArray?,
@@ -79,7 +79,7 @@ object WovenIntoCode {
                     access: Int,
                     name: String,
                     signature: String?,
-                    superName: String?,
+                    superName: String,
                     interfaces: Array<out String>?
                 ) {
                     super.visit(version, access, name, signature, superName, interfaces)
@@ -114,7 +114,7 @@ object WovenIntoCode {
                     access: Int,
                     name: String,
                     signature: String?,
-                    superName: String?,
+                    superName: String,
                     interfaces: Array<out String>?
                 ) {
                     super.visit(version, access, name, signature, superName, interfaces)
@@ -157,7 +157,7 @@ object WovenIntoCode {
                     access: Int,
                     name: String,
                     signature: String?,
-                    superName: String?,
+                    superName: String,
                     interfaces: Array<out String>?
                 ) {
                     super.visit(version, access, name, signature, superName, interfaces)
@@ -228,9 +228,10 @@ object WovenIntoCode {
                         }else{
                             ACC_PUBLIC + ACC_FINAL
                         }
+                        val newMethodName = "$oldMethodName$$$classNameMd5$METHOD_SUFFIX"
                         var mv: MethodVisitor? = super.visitMethod(
                             newAccess,
-                            "$oldMethodName$$$classNameMd5$METHOD_SUFFIX",
+                            newMethodName,
                             descriptor,
                             signature,
                             exceptions
@@ -239,6 +240,7 @@ object WovenIntoCode {
                         if (hasReplace && mv != null && access.isHasMethodBody()) {
                             mv = MethodReplaceInvokeAdapter(className,"$name$descriptor",mv)
                         }
+                        WovenInfoUtils.addAopMethodCutInnerClassInfoInvokeMethod(className,newMethodName,descriptor)
                         RemoveAnnotation(mv)
                     } else {
                         null

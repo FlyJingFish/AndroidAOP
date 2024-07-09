@@ -21,6 +21,7 @@ import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.isLeaf
 import com.flyjingfish.android_aop_plugin.utils.instanceof
 import com.flyjingfish.android_aop_plugin.utils.isHasMethodBody
 import com.flyjingfish.android_aop_plugin.utils.isStaticMethod
+import com.flyjingfish.android_aop_plugin.utils.printLog
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.Handle
 import org.objectweb.asm.MethodVisitor
@@ -30,6 +31,7 @@ import org.objectweb.asm.commons.Method
 import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.InvokeDynamicInsnNode
 import org.objectweb.asm.tree.MethodNode
+import java.io.File
 import java.util.UUID
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -252,6 +254,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                         methodName.cutInfo[UUID.randomUUID().toString()] = cutInfo
                     }
                     onCallBackMethod?.onBackMethodRecord(methodName)
+                    WovenInfoUtils.addAopMethodCutInnerClassInfo(className,methodname,methoddescriptor)
                 }
             }
 
@@ -326,6 +329,8 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                     )
                     methodRecord.cutInfo[UUID.randomUUID().toString()] = cutInfo
                     onCallBackMethod?.onBackMethodRecord(methodRecord)
+
+                    WovenInfoUtils.addAopMethodCutInnerClassInfo(className,name,descriptor)
                 }
 //                printLog("$aopMatchCut === ${aopMatchCut.isMatchAllMethod()}")
                 if (aopMatchCut.isMatchAllMethod() ){

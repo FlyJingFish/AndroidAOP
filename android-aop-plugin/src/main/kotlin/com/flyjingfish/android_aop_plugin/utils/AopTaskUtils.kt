@@ -270,7 +270,7 @@ object AopTaskUtils {
                 access: Int,
                 name: String,
                 signature: String?,
-                superName: String?,
+                superName: String,
                 interfaces: Array<out String>?
             ) {
                 super.visit(version, access, name, signature, superName, interfaces)
@@ -298,6 +298,9 @@ object AopTaskUtils {
             override fun visitEnd() {
                 super.visitEnd()
                 replaceResult = replaced
+                if (modifyed){
+                    replaceResult = true
+                }
             }
         }
         thisCollectClassName?.let {
@@ -323,7 +326,7 @@ object AopTaskUtils {
                 access: Int,
                 name: String,
                 signature: String?,
-                superName: String?,
+                superName: String,
                 interfaces: Array<out String>?
             ) {
                 super.visit(version, access, name, signature, superName, interfaces)
@@ -347,6 +350,13 @@ object AopTaskUtils {
                 )
                 thisHasStaticClock = isHasStaticClock
                 return mv
+            }
+
+            override fun visitEnd() {
+                super.visitEnd()
+                if (modifyed){
+                    replaceResult = true
+                }
             }
         }
         thisCollectClassName?.let {
