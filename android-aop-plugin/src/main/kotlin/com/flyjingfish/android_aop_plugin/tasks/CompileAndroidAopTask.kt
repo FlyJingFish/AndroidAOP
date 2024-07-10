@@ -117,6 +117,16 @@ class CompileAndroidAopTask(
 
 
                 val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(file.absolutePath)
+                val isSuspend:Boolean
+                val realMethodsRecord: HashMap<String, MethodRecord>? = if (methodsRecord == null){
+                    isSuspend = true
+                    val clazzName = entryName.replace(_CLASS,"")
+                    WovenInfoUtils.getAopMethodCutInnerClassInfoInvokeClassInfo(clazzName)
+                }else {
+                    isSuspend = false
+                    methodsRecord
+                }
+
                 val thisClassName = Utils.slashToDotClassName(entryName).replace(_CLASS,"")
                 val hasCollect = WovenInfoUtils.aopCollectClassMap[thisClassName] != null
                 val outFile = File(tmpCompileDir.absolutePath+"/"+relativePath)
@@ -125,10 +135,10 @@ class CompileAndroidAopTask(
                     val tmpFile = TmpFile(file,outFile)
                     tempFiles.add(tmpFile)
                 }
-                if (methodsRecord != null){
+                if (realMethodsRecord != null){
                     mkOutFile()
                     FileInputStream(file).use { inputs ->
-                        val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),methodsRecord,hasReplace)
+                        val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),realMethodsRecord,hasReplace,isSuspend)
                         byteArray.saveFile(outFile)
                         newClasses.add(byteArray)
                     }

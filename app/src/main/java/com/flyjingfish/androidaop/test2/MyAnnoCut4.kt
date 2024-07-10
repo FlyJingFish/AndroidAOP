@@ -2,7 +2,9 @@ package com.flyjingfish.androidaop.test2
 
 import android.util.Log
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
+import com.flyjingfish.android_aop_annotation.ProceedReturn
 import com.flyjingfish.android_aop_annotation.base.BasePointCutSuspend
+import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener
 import com.flyjingfish.androidaop.MainActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -23,7 +25,13 @@ class MyAnnoCut4 : BasePointCutSuspend<MyAnno4> {
 //            }
             sleep(2000)
             Log.e("MyAnnoCut4", "====invokeSuspend=====2")
-            joinPoint?.proceed()
+            joinPoint.proceed(object : OnSuspendReturnListener {
+                override fun onReturn(proceedReturn: ProceedReturn): Any? {
+                    Log.e("MyAnnoCut4", "====onReturn=====")
+                    return (proceedReturn.proceed() as Int)+100
+                }
+
+            })
         }
 
     }

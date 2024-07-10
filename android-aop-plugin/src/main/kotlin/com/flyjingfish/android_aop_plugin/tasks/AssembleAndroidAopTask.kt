@@ -206,10 +206,19 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
 
                 val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(file.absolutePath)
+                val isSuspend:Boolean
+                val realMethodsRecord: HashMap<String, MethodRecord>? = if (methodsRecord == null){
+                    isSuspend = true
+                    val clazzName = entryName.replace(_CLASS,"")
+                    WovenInfoUtils.getAopMethodCutInnerClassInfoInvokeClassInfo(clazzName)
+                }else {
+                    isSuspend = false
+                    methodsRecord
+                }
                 val jarEntryName: String = relativePath.replace(File.separatorChar, '/')
-                if (methodsRecord != null){
+                if (realMethodsRecord != null){
                     FileInputStream(file).use { inputs ->
-                        val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),methodsRecord,hasReplace)
+                        val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),realMethodsRecord,hasReplace,isSuspend)
                         byteArray.inputStream().use {
                             jarOutput.saveEntry(jarEntryName,it)
                         }
@@ -418,10 +427,18 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     }
 
                     val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(entryName)
-
-                    if (methodsRecord != null){
+                    val isSuspend:Boolean
+                    val realMethodsRecord: HashMap<String, MethodRecord>? = if (methodsRecord == null){
+                        isSuspend = true
+                        val clazzName = entryName.replace(_CLASS,"")
+                        WovenInfoUtils.getAopMethodCutInnerClassInfoInvokeClassInfo(clazzName)
+                    }else {
+                        isSuspend = false
+                        methodsRecord
+                    }
+                    if (realMethodsRecord != null){
                         jarFile.getInputStream(jarEntry).use { inputs ->
-                            val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),methodsRecord,hasReplace)
+                            val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),realMethodsRecord,hasReplace,isSuspend)
                             byteArray.inputStream().use {
                                 jarOutput.saveEntry(entryName,it)
                             }

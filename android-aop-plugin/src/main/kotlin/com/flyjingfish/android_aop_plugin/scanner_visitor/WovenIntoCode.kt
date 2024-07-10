@@ -47,7 +47,8 @@ object WovenIntoCode {
     fun modifyClass(
         inputStreamBytes: ByteArray?,
         methodRecordHashMap: HashMap<String, MethodRecord>,
-        hasReplace:Boolean
+        hasReplace:Boolean,
+        isSuspend:Boolean = false
     ): ByteArray {
         val wovenRecord = mutableListOf<MethodRecord>()
 
@@ -241,7 +242,11 @@ object WovenIntoCode {
                             mv = MethodReplaceInvokeAdapter(className,"$name$descriptor",mv)
                         }
                         WovenInfoUtils.addAopMethodCutInnerClassInfoInvokeMethod(className,newMethodName,descriptor)
-                        RemoveAnnotation(mv)
+                        RemoveAnnotation(mv,className,descriptor,object :RemoveAnnotation.OnResultListener{
+                            override fun onBack() {
+                                value.multipleSuspendClass = true
+                            }
+                        })
                     } else {
                         null
                     }
@@ -332,10 +337,15 @@ object WovenIntoCode {
                 }
 
                 val suspendMethod = returnType.name == "java.lang.Object" && ctClasses[ctClasses.size-1].name == "kotlin.coroutines.Continuation"
-
-                val returnStr = String.format(
-                    ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointExecute(${if (suspendMethod) "(kotlin.coroutines.Continuation)\$$len" else "null" })"
-                )
+                val returnStr = if (isSuspend){
+                    String.format(
+                        ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointReturnExecute()"
+                    )
+                }else{
+                    String.format(
+                        ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointExecute(${if (suspendMethod) "(kotlin.coroutines.Continuation)\$$len" else "null" })"
+                    )
+                }
 
                 val invokeReturnStr:String? = ClassNameToConversions.getReturnInvokeXObject(returnType.name)
                 val invokeStr =if (isStaticMethod){
@@ -359,7 +369,7 @@ object WovenIntoCode {
                 }
                 cp.importPackage(invokeClassName)
                 val argReflect = if (ClassFileUtils.reflectInvokeMethod) "" else ",new $invokeClassName()"
-                val constructor = "$targetClassName.class,${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\"";
+                val constructor = "$targetClassName.class,${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\",${value.multipleSuspendClass}";
                 val body =
                     " {AndroidAopJoinPoint pointCut = new AndroidAopJoinPoint($constructor);\n"+
                             (if (cutClassName != null) "        pointCut.setCutMatchClassName(\"$cutClassName\");\n" else "") +

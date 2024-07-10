@@ -45,6 +45,7 @@ object WovenInfoUtils {
     private val aopMethodCutInnerClassInfo = mutableMapOf<String,ReplaceInnerClassInfo>()
     private val aopMethodCutInnerClassInfoClassName = mutableSetOf<String>()
     private val aopMethodCutInnerClassInfoInvokeMethod = mutableSetOf<String>()
+    private val aopMethodCutInnerClassInfoInvokeClassName = mutableSetOf<String>()
     fun addModifyExtendsClassInfo(targetClassName: String, extendsClassName: String) {
         modifyExtendsClassMap[targetClassName] = extendsClassName
         InitConfig.addModifyClassInfo(targetClassName, extendsClassName)
@@ -197,6 +198,7 @@ object WovenInfoUtils {
         aopMethodCutInnerClassInfo.clear()
         aopMethodCutInnerClassInfoClassName.clear()
         aopMethodCutInnerClassInfoInvokeMethod.clear()
+        aopMethodCutInnerClassInfoInvokeClassName.clear()
 //        aopCollectClassMap.clear()
         if (!AndroidAopConfig.increment) {
             aopMatchCuts.clear()
@@ -631,4 +633,22 @@ object WovenInfoUtils {
         return aopMethodCutInnerClassInfoInvokeMethod.contains(key)
     }
 
+    fun addAopMethodCutInnerClassInfoInvokeClassName(className:String){
+        aopMethodCutInnerClassInfoInvokeClassName.add(className)
+    }
+
+    fun getAopMethodCutInnerClassInfoInvokeClassInfo(className:String): HashMap<String, MethodRecord>?{
+        return if (aopMethodCutInnerClassInfoInvokeClassName.contains(className)){
+            val methodsRecord: HashMap<String, MethodRecord> = HashMap()
+            methodsRecord[className] = MethodRecord("invokeSuspend",
+                "(Ljava/lang/Object;)Ljava/lang/Object;",
+                null)
+//            methodsRecord[className] = MethodRecord("invoke",
+//                "(Lkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;",
+//                null)
+            methodsRecord
+        }else{
+            null
+        }
+    }
 }

@@ -5,11 +5,13 @@ import com.flyjingfish.android_aop_annotation.base.BasePointCut;
 import com.flyjingfish.android_aop_annotation.base.BasePointCutSuspend;
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethodSuspend;
+import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener;
 import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils;
 import com.flyjingfish.android_aop_annotation.utils.InvokeMethod;
 import com.flyjingfish.android_aop_annotation.utils.MethodMap;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -32,13 +34,15 @@ public final class AndroidAopJoinPoint {
     private String methodKey;
     private final String targetClassName;
     private InvokeMethod invokeMethod;
+    private final boolean multipleSuspendClass;
 
-    public AndroidAopJoinPoint(Class<?> clazz, Object target, String originalMethodName, String targetMethodName) {
+    public AndroidAopJoinPoint(Class<?> clazz, Object target, String originalMethodName, String targetMethodName,boolean multipleSuspendClass) {
         this.targetClassName = clazz.getName();
         this.target = target;
         this.originalMethodName = originalMethodName;
         this.targetMethodName = targetMethodName;
         this.targetClass = clazz;
+        this.multipleSuspendClass = multipleSuspendClass;
 
     }
 
@@ -53,10 +57,90 @@ public final class AndroidAopJoinPoint {
 
     private boolean isSuspend;
 
+    private Object getStartSuspendObj(){
+        try {
+            Method method = target.getClass().getMethod("getCompletion");
+            method.setAccessible(true);
+            Object returnValue = method.invoke(target);
+
+            Field field = returnValue.getClass().getField("uCont");
+            field.setAccessible(true);
+            Object uCont = field.get(returnValue);
+
+            Method completionMethod = uCont.getClass().getMethod("getCompletion");
+            completionMethod.setAccessible(true);
+            Object startSuspend = completionMethod.invoke(uCont);
+//            Class bClass=target.getClass();
+//            Field field=bClass.getDeclaredField("this$0");
+//            Object outClass=field.get(target);
+            System.out.println("target="+target+"==hashcode="+System.identityHashCode(target)+"==class="+target.getClass()
+                    +"==returnValue="+System.identityHashCode(returnValue)+"===args1="+System.identityHashCode(startSuspend));
+
+            return startSuspend;
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException |
+                 NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public Object joinPointReturnExecute() {
+
+        ProceedReturn proceedReturn = new ProceedReturn(targetClass, mArgs,target,isSuspend);
+        proceedReturn.setOriginalMethod(originalMethod);
+        proceedReturn.setTargetMethod(targetMethod);
+        proceedReturn.setTargetMethod(invokeMethod);
+        Object[] returnValue = new Object[1];
+        Object startSuspend = getStartSuspendObj();
+
+        final List<OnSuspendReturnListener> basePointCuts = AndroidAopBeanUtils.INSTANCE.getSuspendReturnListeners(startSuspend);
+
+        if (basePointCuts != null && basePointCuts.size() > 0){
+            Iterator<OnSuspendReturnListener> iterator = basePointCuts.iterator();
+            if (basePointCuts.size() > 1) {
+                proceedReturn.setOnInvokeListener(() -> {
+                    if (iterator.hasNext()) {
+                        OnSuspendReturnListener listener = iterator.next();
+                        iterator.remove();
+                        proceedReturn.setHasNext(iterator.hasNext());
+                        Object value = listener.onReturn(proceedReturn);;
+                        returnValue[0] = value;
+                        return value;
+                    }else {
+                        return returnValue[0];
+                    }
+                });
+            }
+
+            proceedReturn.setHasNext(basePointCuts.size() > 1);
+            OnSuspendReturnListener listener = iterator.next();
+            iterator.remove();
+
+            returnValue[0] = listener.onReturn(proceedReturn);
+        }else {
+            returnValue[0] = proceedReturn.proceed();
+        }
+
+        return returnValue[0];
+    }
+
     public Object joinPointExecute(Continuation continuation) {
         isSuspend = continuation != null;
+        if (isSuspend){
 
-        ProceedJoinPoint proceedJoinPoint = new ProceedJoinPoint(targetClass, mArgs,target,isSuspend);
+            try {
+                Method method = continuation.getClass().getMethod("getCompletion");
+                method.setAccessible(true);
+                Object returnValue = method.invoke(continuation);
+
+                System.out.println("continuation="+continuation+"==hashcode="+System.identityHashCode(continuation)+"==class="+continuation.getClass()
+                        +"==returnValue="+System.identityHashCode(returnValue));
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        ProceedJoinPoint proceedJoinPoint = new ProceedJoinPoint(targetClass, mArgs,target,isSuspend,multipleSuspendClass);
         proceedJoinPoint.setOriginalMethod(originalMethod);
         proceedJoinPoint.setTargetMethod(targetMethod);
         proceedJoinPoint.setTargetMethod(invokeMethod);
@@ -92,14 +176,42 @@ public final class AndroidAopJoinPoint {
                     proceedJoinPoint.setHasNext(iterator.hasNext());
                     Object value;
                     if (nextCutAnnotation.basePointCut != null) {
-                        if (isSuspend && nextCutAnnotation.basePointCut instanceof BasePointCutSuspend){
-                            value = ((BasePointCutSuspend<Annotation>) nextCutAnnotation.basePointCut).invokeSuspend(proceedJoinPoint, nextCutAnnotation.annotation,continuation);
+                        if (isSuspend){
+                            if (nextCutAnnotation.basePointCut instanceof BasePointCutSuspend){
+                                value = ((BasePointCutSuspend<Annotation>) nextCutAnnotation.basePointCut).invokeSuspend(proceedJoinPoint, nextCutAnnotation.annotation,continuation);
+                            }else {
+                                try {
+                                    value = nextCutAnnotation.basePointCut.invoke(proceedJoinPoint, nextCutAnnotation.annotation);
+                                } catch (ClassCastException e) {
+                                    String message = e.getMessage();
+                                    if (message == null || !message.contains("kotlin.coroutines.intrinsics.CoroutineSingletons")){
+                                        throw new RuntimeException(e);
+                                    }else {
+                                        throw new RuntimeException("协程函数的切面不可修改返回值，请使用 BasePointCutSuspend");
+//                                        value = proceedJoinPoint.getMethodReturnValue();
+                                    }
+                                }
+                            }
                         }else {
                             value = nextCutAnnotation.basePointCut.invoke(proceedJoinPoint, nextCutAnnotation.annotation);
                         }
                     } else {
-                        if (isSuspend && nextCutAnnotation.matchClassMethod instanceof MatchClassMethodSuspend){
-                            value = ((MatchClassMethodSuspend) nextCutAnnotation.matchClassMethod).invokeSuspend(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName(),continuation);
+                        if (isSuspend){
+                            if (nextCutAnnotation.matchClassMethod instanceof MatchClassMethodSuspend){
+                                value = ((MatchClassMethodSuspend) nextCutAnnotation.matchClassMethod).invokeSuspend(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName(),continuation);
+                            }else {
+                                try {
+                                    value = nextCutAnnotation.matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
+                                } catch (ClassCastException e) {
+                                    String message = e.getMessage();
+                                    if (message == null || !message.contains("kotlin.coroutines.intrinsics.CoroutineSingletons")){
+                                        throw new RuntimeException(e);
+                                    }else {
+                                        throw new RuntimeException("协程函数的切面不可修改返回值，请使用 MatchClassMethodSuspend");
+//                                        value = proceedJoinPoint.getMethodReturnValue();
+                                    }
+                                }
+                            }
                         }else {
                             value = nextCutAnnotation.matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
                         }
@@ -116,14 +228,42 @@ public final class AndroidAopJoinPoint {
         PointCutAnnotation cutAnnotation = iterator.next();
         iterator.remove();
         if (cutAnnotation.basePointCut != null) {
-            if (isSuspend && cutAnnotation.basePointCut instanceof BasePointCutSuspend){
-                returnValue[0] = ((BasePointCutSuspend<Annotation>) cutAnnotation.basePointCut).invokeSuspend(proceedJoinPoint, cutAnnotation.annotation,continuation);
+            if (isSuspend){
+                if (cutAnnotation.basePointCut instanceof BasePointCutSuspend){
+                    returnValue[0] = ((BasePointCutSuspend<Annotation>) cutAnnotation.basePointCut).invokeSuspend(proceedJoinPoint, cutAnnotation.annotation,continuation);
+                }else {
+                    try {
+                        returnValue[0] = cutAnnotation.basePointCut.invoke(proceedJoinPoint, cutAnnotation.annotation);
+                    } catch (ClassCastException e) {
+                        String message = e.getMessage();
+                        if (message == null || !message.contains("kotlin.coroutines.intrinsics.CoroutineSingletons")){
+                            throw new RuntimeException(e);
+                        }else {
+                            throw new RuntimeException("协程函数的切面不可修改返回值，请使用 BasePointCutSuspend");
+//                            returnValue[0] = proceedJoinPoint.getMethodReturnValue();
+                        }
+                    }
+                }
             }else {
                 returnValue[0] = cutAnnotation.basePointCut.invoke(proceedJoinPoint, cutAnnotation.annotation);
             }
         } else {
-            if (isSuspend && cutAnnotation.matchClassMethod instanceof MatchClassMethodSuspend){
-                returnValue[0] = ((MatchClassMethodSuspend) cutAnnotation.matchClassMethod).invokeSuspend(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName(),continuation);
+            if (isSuspend){
+                if (cutAnnotation.matchClassMethod instanceof MatchClassMethodSuspend){
+                    returnValue[0] = ((MatchClassMethodSuspend) cutAnnotation.matchClassMethod).invokeSuspend(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName(),continuation);
+                }else {
+                    try {
+                        returnValue[0] = cutAnnotation.matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
+                    } catch (ClassCastException e) {
+                        String message = e.getMessage();
+                        if (message == null || !message.contains("kotlin.coroutines.intrinsics.CoroutineSingletons")){
+                            throw new RuntimeException(e);
+                        }else {
+                            throw new RuntimeException("协程函数的切面不可修改返回值，请使用 MatchClassMethodSuspend");
+//                            returnValue[0] = proceedJoinPoint.getMethodReturnValue();
+                        }
+                    }
+                }
             }else {
                 returnValue[0] = cutAnnotation.matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
             }

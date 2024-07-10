@@ -5,6 +5,7 @@ import com.flyjingfish.android_aop_annotation.base.BasePointCut
 import com.flyjingfish.android_aop_annotation.base.BasePointCutCreator
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethodCreator
+import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener
 import java.lang.ref.ReferenceQueue
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
@@ -15,6 +16,7 @@ internal object AndroidAopBeanUtils {
     private val mMatchClassMethodMap = ConcurrentHashMap<String, MatchClassMethod?>()
     private val mTargetReferenceMap = ConcurrentHashMap<String, KeyWeakReference<Any>>()
     private val mTargetMethodMap = ConcurrentHashMap<String, MethodMap>()
+    private val mReturnListenerMap = ConcurrentHashMap<Any, MutableList<OnSuspendReturnListener>>()
     private val mTargetKeyReferenceQueue = ReferenceQueue<Any>()
     private val mSingleIO: ExecutorService = Executors.newSingleThreadExecutor()
 
@@ -111,5 +113,18 @@ internal object AndroidAopBeanUtils {
                 mTargetMethodMap.remove(ref.key)
             }
         } while (ref != null)
+    }
+
+    fun addSuspendReturnListener(key:Any,onSuspendReturnListener: OnSuspendReturnListener){
+        var list = mReturnListenerMap[key]
+        if (list == null){
+            list = mutableListOf()
+            mReturnListenerMap[key] = list
+        }
+        list.add(onSuspendReturnListener)
+    }
+
+    fun getSuspendReturnListeners(key:Any):MutableList<OnSuspendReturnListener>?{
+        return mReturnListenerMap[key]
     }
 }

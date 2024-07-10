@@ -34,13 +34,32 @@ class ThirdActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         val binding = ActivityThirdBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        binding.btnInner0.setOnClickListener {
+            test0()
+        }
         binding.btnInner.setOnClickListener {
             test()
         }
+        binding.btnInner2.setOnClickListener {
+            test2()
+        }
+    }
+    fun test0(){
+        GlobalScope.launch {
+//                getData2(1)
+            val arg1 = getData1(1)
+            Log.e("MyAnnoCut","=====arg1=====$arg1")
+        }
+    }
+    fun test(){
+        GlobalScope.launch {
+//                getData2(1)
+            val arg1 = getData2(1)
+            Log.e("MyAnnoCut","=====arg1=====$arg1")
+        }
     }
 
-    fun test(){
+    fun test2(){
         GlobalScope.launch {
 //                getData2(1)
             val arg1 = getData2(1,3)
@@ -48,7 +67,9 @@ class ThirdActivity : BaseActivity() {
         }
     }
 
-
+    @MyAnno3
+    @MyAnno4
+    @MyAnno5
     suspend fun getData1(num:Int) :Int{
 //        val myAnnoCut3 = MyAnnoCut3()
 //        val myAnnoCut4 = MyAnnoCut4()
@@ -58,21 +79,13 @@ class ThirdActivity : BaseActivity() {
 //        myAnnoCut5.invokeSuspend(null,null)
         return getData2(num)
     }
-    @MyAnno3
-    @MyAnno4
-    @MyAnno5
+//    @MyAnno3
+//    @MyAnno4
+//    @MyAnno5
     suspend fun getData2(num:Int) :Int{
-        withContext(Dispatchers.IO) {
-            Log.e("MyAnnoCut","=====getData2=====1")
-        }
-        withContext(Dispatchers.IO) {
-            Log.e("MyAnnoCut","=====getData2=====11")
-        }
         return withContext(Dispatchers.IO) {
             Log.e("MyAnnoCut","=====getData2=====2")
-            val num1 = 1
-            val num2 = 2
-            num1 + num2
+            num
         }
     }
 

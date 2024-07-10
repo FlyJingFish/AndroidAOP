@@ -16,6 +16,9 @@ import com.flyjingfish.test_lib.annotation.MyAnno;
 
 import java.lang.reflect.Method;
 
+import kotlin.coroutines.Continuation;
+import kotlinx.coroutines.BuildersKt;
+
 public class SecondActivity extends BaseActivity2 {
 
     private com.flyjingfish.androidaop.databinding.ActivitySecondBinding binding;
@@ -23,6 +26,7 @@ public class SecondActivity extends BaseActivity2 {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         binding = ActivitySecondBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         binding.btnInner.setOnClickListener((MyOnClickListener2) v -> onSingleClick());

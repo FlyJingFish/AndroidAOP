@@ -2,7 +2,9 @@ package com.flyjingfish.androidaop.test2
 
 import android.util.Log
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
+import com.flyjingfish.android_aop_annotation.ProceedReturn
 import com.flyjingfish.android_aop_annotation.base.BasePointCutSuspend
+import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener
 import com.flyjingfish.androidaop.MainActivity
 import com.flyjingfish.androidaop.MyApp
 import com.flyjingfish.test_lib.ToastUtils
@@ -24,7 +26,13 @@ class MyAnnoCut3 : BasePointCutSuspend<MyAnno3> {
 //                (joinPoint.target as MainActivity).setLogcat("MyAnnoCut3====invokeSuspend=====num=$num")
 //            }
             ToastUtils.makeText(MyApp.INSTANCE,"==MyAnnoCut3==")
-            joinPoint?.proceed()
+            joinPoint.proceed(object :OnSuspendReturnListener{
+                override fun onReturn(proceedReturn: ProceedReturn): Any? {
+                    Log.e("MyAnnoCut3", "====onReturn=====")
+                    return (proceedReturn.proceed() as Int)+100
+                }
+
+            })
         }
 
     }

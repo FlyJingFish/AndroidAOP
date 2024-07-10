@@ -12,12 +12,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:flow_wrapMode="chain"
-        app:constraint_referenced_ids="btn_inner"
+        app:constraint_referenced_ids="btn_inner0,btn_inner,btn_inner2"
         />
+    <Button
+        android:id="@+id/btn_inner0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TestInner0"/>
     <Button
         android:id="@+id/btn_inner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TestInner"/>
+        android:text="TestInner1"/>
+    <Button
+        android:id="@+id/btn_inner2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TestInner2"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

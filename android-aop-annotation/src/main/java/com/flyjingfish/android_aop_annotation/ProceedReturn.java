@@ -1,7 +1,5 @@
 package com.flyjingfish.android_aop_annotation;
 
-import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener;
-import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils;
 import com.flyjingfish.android_aop_annotation.utils.InvokeMethod;
 
 import org.jetbrains.annotations.NotNull;
@@ -9,25 +7,22 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-
-import kotlin.coroutines.Continuation;
 
 /**
  * 切点相关信息类，<a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint">wiki 文档使用说明</a>
  */
-public final class ProceedJoinPoint {
+public final class ProceedReturn {
     /**
      * <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#args">wiki 文档使用说明</a>
      */
     @Nullable
-    public final Object[] args;
+    private final Object[] args;
     @Nullable
     private final Object[] originalArgs;
     @Nullable
-    public final Object target;
+    private final Object target;
     @NotNull
-    public final Class<?> targetClass;
+    private final Class<?> targetClass;
     private Method targetMethod;
     private InvokeMethod targetInvokeMethod;
     private Method originalMethod;
@@ -37,11 +32,8 @@ public final class ProceedJoinPoint {
     private final int argCount;
     private final boolean isSuspend;
     private Object suspendContinuation;
-    private final boolean multipleSuspendClass;
-    private Object returnListenerKey;
-    private Object methodReturnValue;
 
-    ProceedJoinPoint(@NotNull Class<?> targetClass, Object[] args, @Nullable Object target, boolean isSuspend,boolean multipleSuspendClass) {
+    ProceedReturn(@NotNull Class<?> targetClass, Object[] args, @Nullable Object target, boolean isSuspend) {
         this.targetClass = targetClass;
         Object[] fakeArgs;
         if (isSuspend && args != null){
@@ -57,7 +49,6 @@ public final class ProceedJoinPoint {
 
         this.target = target;
         this.isSuspend = isSuspend;
-        this.multipleSuspendClass = multipleSuspendClass;
         if (fakeArgs != null) {
             this.originalArgs = fakeArgs.clone();
         } else {
@@ -84,16 +75,6 @@ public final class ProceedJoinPoint {
      */
     @Nullable
     public Object proceed(Object... args) {
-        return proceed(null,args);
-    }
-
-    @Nullable
-    public Object proceed(OnSuspendReturnListener onSuspendReturnListener) {
-        return proceed(onSuspendReturnListener,args);
-    }
-
-    @Nullable
-    public Object proceed(OnSuspendReturnListener onSuspendReturnListener,Object... args) {
         if (argCount > 0) {
             if (args == null || args.length != argCount) {
                 throw new IllegalArgumentException("proceed 所参数个数不对");
@@ -123,29 +104,8 @@ public final class ProceedJoinPoint {
                 } else {
                     returnValue = targetMethod.invoke(target, realArgs);
                 }
-                methodReturnValue = returnValue;
             } else if (onInvokeListener != null) {
                 returnValue = onInvokeListener.onInvoke();
-            }
-            if (isSuspend && onSuspendReturnListener != null && suspendContinuation != null){
-                Object key = returnListenerKey;
-                if (key == null){
-                    if (multipleSuspendClass){
-                        key = suspendContinuation;
-                        returnListenerKey = key;
-                    }else{
-                        try {
-                            Method method = suspendContinuation.getClass().getMethod("getCompletion");
-                            method.setAccessible(true);
-                            key = method.invoke(suspendContinuation);
-                            returnListenerKey = key;
-                        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-                        }
-                    }
-                }
-                if (key != null){
-                    AndroidAopBeanUtils.INSTANCE.addSuspendReturnListener(key,onSuspendReturnListener);
-                }
             }
             return returnValue;
         } catch (IllegalAccessException e) {
@@ -153,14 +113,6 @@ public final class ProceedJoinPoint {
         } catch (InvocationTargetException e) {
             throw new RuntimeException(e.getTargetException());
         }
-    }
-
-    /**
-     * @return 切点方法相关信息
-     */
-    @NotNull
-    public AopMethod getTargetMethod() {
-        return targetAopMethod;
     }
 
     void setTargetMethod(Method targetMethod) {
@@ -176,22 +128,6 @@ public final class ProceedJoinPoint {
         targetAopMethod = new AopMethod(originalMethod);
     }
 
-    /**
-     * @return 切点方法所在对象，如果方法为静态的，此值为null
-     */
-    @Nullable
-    public Object getTarget() {
-        return target;
-    }
-
-    /**
-     * @return 切点方法所在类 Class
-     */
-    @NotNull
-    public Class<?> getTargetClass() {
-        return targetClass;
-    }
-
     interface OnInvokeListener {
         Object onInvoke();
     }
@@ -204,17 +140,4 @@ public final class ProceedJoinPoint {
         this.hasNext = hasNext;
     }
 
-    /**
-     * 和 {@link ProceedJoinPoint#args} 相比，返回的引用地址不同，但数组里边的对象一致
-     *
-     * @return 最开始进入方法时的参数  <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#args">wiki 文档使用说明</a>
-     */
-    @Nullable
-    public Object[] getOriginalArgs() {
-        return originalArgs;
-    }
-
-    Object getMethodReturnValue() {
-        return methodReturnValue;
-    }
 }
