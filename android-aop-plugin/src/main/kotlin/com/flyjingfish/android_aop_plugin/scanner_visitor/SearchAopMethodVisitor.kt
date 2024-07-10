@@ -303,6 +303,41 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                 }
             }
         }
+
+        private val isSuspend: Boolean
+        private var invokeClassName: String? = null
+        private var invokeClassNameCount = 0
+
+        init {
+            val isSuspendMethod: Boolean =
+            methoddescriptor.endsWith("Lkotlin/coroutines/Continuation;)Ljava/lang/Object;")
+            isSuspend = (isSuspendMethod && !slashToDotClassName(className).instanceof(slashToDotClassName("com/flyjingfish/android_aop_annotation/base/MatchClassMethodSuspend"))
+                    &&!slashToDotClassName(className).instanceof(slashToDotClassName("com/flyjingfish/android_aop_annotation/base/BasePointCutSuspend")))
+        }
+
+
+        override fun visitMethodInsn(
+            opcode: Int,
+            owner: String,
+            name: String,
+            descriptor: String,
+            isInterface: Boolean
+        ) {
+
+            if (isSuspend && name == "<init>" && owner.startsWith("$className$")) {
+                invokeClassName = owner
+                invokeClassNameCount++
+            }
+            super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
+        }
+
+        override fun visitEnd() {
+            super.visitEnd()
+            val suspendClassName = invokeClassName
+            if (isSuspend && suspendClassName != null) {
+                WovenInfoUtils.addAopMethodCutInnerClassInfoInvokeClassName(suspendClassName,invokeClassNameCount)
+            }
+        }
     }
     private fun isBackMethod(access: Int):Boolean{
         return access.isHasMethodBody()

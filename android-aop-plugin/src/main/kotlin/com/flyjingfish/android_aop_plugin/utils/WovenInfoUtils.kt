@@ -46,6 +46,7 @@ object WovenInfoUtils {
     private val aopMethodCutInnerClassInfoClassName = mutableSetOf<String>()
     private val aopMethodCutInnerClassInfoInvokeMethod = mutableSetOf<String>()
     private val aopMethodCutInnerClassInfoInvokeClassName = mutableSetOf<String>()
+    private val aopMethodCutInnerClassInfoInvokeClassNameCount = mutableMapOf<String,Int>()
     fun addModifyExtendsClassInfo(targetClassName: String, extendsClassName: String) {
         modifyExtendsClassMap[targetClassName] = extendsClassName
         InitConfig.addModifyClassInfo(targetClassName, extendsClassName)
@@ -199,6 +200,7 @@ object WovenInfoUtils {
         aopMethodCutInnerClassInfoClassName.clear()
         aopMethodCutInnerClassInfoInvokeMethod.clear()
         aopMethodCutInnerClassInfoInvokeClassName.clear()
+        aopMethodCutInnerClassInfoInvokeClassNameCount.clear()
 //        aopCollectClassMap.clear()
         if (!AndroidAopConfig.increment) {
             aopMatchCuts.clear()
@@ -633,8 +635,9 @@ object WovenInfoUtils {
         return aopMethodCutInnerClassInfoInvokeMethod.contains(key)
     }
 
-    fun addAopMethodCutInnerClassInfoInvokeClassName(className:String){
+    fun addAopMethodCutInnerClassInfoInvokeClassName(className:String,count:Int){
         aopMethodCutInnerClassInfoInvokeClassName.add(className)
+        aopMethodCutInnerClassInfoInvokeClassNameCount[className] = count
     }
 
     fun getAopMethodCutInnerClassInfoInvokeClassInfo(className:String): HashMap<String, MethodRecord>?{
