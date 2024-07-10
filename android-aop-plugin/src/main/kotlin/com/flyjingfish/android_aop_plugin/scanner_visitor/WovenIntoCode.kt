@@ -59,15 +59,17 @@ object WovenIntoCode {
                                descriptor: String,
                                signature: String?,
                                exceptions: Array<String?>?,
-                               classNameMd5:String ?){
+                               classNameMd5:String ?):Boolean{
             methodRecordHashMap.forEach { (_: String, value: MethodRecord) ->
                 val oldMethodName = value.methodName
                 val oldDescriptor = value.descriptor
                 val newMethodName = "$oldMethodName$$$classNameMd5$METHOD_SUFFIX"
                 if (newMethodName == name && oldDescriptor == descriptor){
                     wovenRecord.add(value)
+                    return true
                 }
             }
+            return false
         }
         var thisHasCollect = false
         var thisHasStaticClock = false
@@ -95,7 +97,7 @@ object WovenIntoCode {
                     signature: String?,
                     exceptions: Array<String?>?
                 ): MethodVisitor? {
-                    visitMethod4Record(access, name, descriptor, signature, exceptions, classNameMd5)
+                    val match = visitMethod4Record(access, name, descriptor, signature, exceptions, classNameMd5)
                     val mv = super.visitMethod(
                         access,
                         name,
@@ -104,7 +106,11 @@ object WovenIntoCode {
                         exceptions
                     )
                     thisHasStaticClock = isHasStaticClock
-                    return mv
+                    if (!match){
+                        return SearchSuspendClass(mv,clazzName,descriptor,null)
+                    }else{
+                        return mv
+                    }
                 }
             }, 0)
         }else{
@@ -130,7 +136,7 @@ object WovenIntoCode {
                     signature: String?,
                     exceptions: Array<String?>?
                 ): MethodVisitor? {
-                    visitMethod4Record(access, name, descriptor, signature, exceptions, classNameMd5)
+                    val match = visitMethod4Record(access, name, descriptor, signature, exceptions, classNameMd5)
                     val mv = super.visitMethod(
                         access,
                         name,
@@ -139,7 +145,11 @@ object WovenIntoCode {
                         exceptions
                     )
                     thisHasStaticClock = isHasStaticClock
-                    return mv
+                    if (!match){
+                        return SearchSuspendClass(mv,clazzName,descriptor,null)
+                    }else{
+                        return mv
+                    }
                 }
             }, 0)
         }
@@ -242,7 +252,7 @@ object WovenIntoCode {
                             mv = MethodReplaceInvokeAdapter(className,"$name$descriptor",mv)
                         }
                         WovenInfoUtils.addAopMethodCutInnerClassInfoInvokeMethod(className,newMethodName,descriptor)
-                        RemoveAnnotation(mv,className,descriptor,object :RemoveAnnotation.OnResultListener{
+                        RemoveAnnotation(mv,className,descriptor,object :SearchSuspendClass.OnResultListener {
                             override fun onBack() {
                                 value.multipleSuspendClass = true
                             }
