@@ -1,9 +1,9 @@
-package com.flyjingfish.androidaop
+package com.flyjingfish.test_lib
 
 import android.util.Log
-import com.flyjingfish.androidaop.test2.MyAnno3
-import com.flyjingfish.androidaop.test2.MyAnno4
-import com.flyjingfish.androidaop.test2.MyAnno5
+import com.flyjingfish.test_lib.annotation.MyAnno3
+import com.flyjingfish.test_lib.annotation.MyAnno4
+import com.flyjingfish.test_lib.annotation.MyAnno5
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

@@ -293,7 +293,9 @@ class CompileAndroidAopTask(
 
         allDirectories.forEach { directory ->
             val directoryPath = directory.absolutePath
-            directory.walk().forEach { file ->
+            directory.walk().sortedBy {
+                it.name.length
+            }.forEach { file ->
                 processFile(file,directory,directoryPath)
             }
         }
