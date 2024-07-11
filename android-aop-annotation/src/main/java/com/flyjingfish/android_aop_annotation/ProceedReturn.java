@@ -12,13 +12,7 @@ import java.lang.reflect.Type;
 
 import javax.lang.model.type.WildcardType;
 
-/**
- * 切点相关信息类，<a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint">wiki 文档使用说明</a>
- */
 public final class ProceedReturn {
-    /**
-     * <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#args">wiki 文档使用说明</a>
-     */
     @Nullable
     private final Object[] args;
     @Nullable
@@ -61,23 +55,17 @@ public final class ProceedReturn {
     }
 
     /**
-     * 调用切点方法内代码
+     * 继续执行 suspend 函数的返回值代码块
      *
-     * @return 返回切点方法返回值 <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#proceed">wiki 文档使用说明</a>
+     * @return 返回 suspend 函数的返回值代码块的结果
      */
     @Nullable
     public Object proceed() {
         return proceed(args);
     }
 
-    /**
-     * 调用切点方法内代码
-     *
-     * @param args 切点方法参数数组
-     * @return 返回切点方法返回值 <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#proceed">wiki 文档使用说明</a>
-     */
     @Nullable
-    public Object proceed(Object... args) {
+    private Object proceed(Object... args) {
         if (argCount > 0) {
             if (args == null || args.length != argCount) {
                 throw new IllegalArgumentException("proceed 所参数个数不对");
@@ -142,6 +130,11 @@ public final class ProceedReturn {
         this.hasNext = hasNext;
     }
 
+
+    /**
+     *
+     * @return suspend 函数的返回值类型
+     */
     public Class<?> getReturnType() {
         try {
             if (target != null){

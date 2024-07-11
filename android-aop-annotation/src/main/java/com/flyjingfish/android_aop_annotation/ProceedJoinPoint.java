@@ -85,11 +85,6 @@ public class ProceedJoinPoint {
     }
 
     @Nullable
-    Object proceed(OnSuspendReturnListener onSuspendReturnListener) {
-        return proceed(onSuspendReturnListener,args);
-    }
-
-    @Nullable
     Object proceed(OnSuspendReturnListener onSuspendReturnListener,Object... args) {
         if (argCount > 0) {
             if (args == null || args.length != argCount) {
