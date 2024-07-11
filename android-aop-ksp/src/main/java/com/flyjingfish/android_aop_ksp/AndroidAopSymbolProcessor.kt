@@ -15,6 +15,7 @@ import com.flyjingfish.android_aop_annotation.base.BasePointCut
 import com.flyjingfish.android_aop_annotation.base.BasePointCutCreator
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethodCreator
+import com.flyjingfish.android_aop_annotation.base.MatchClassMethodSuspend
 import com.google.devtools.ksp.containingFile
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.Dependencies
@@ -206,17 +207,26 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
     for (symbol in symbols) {
       var isMatchClassMethod = false
       if (symbol is KSClassDeclaration) {
-        val typeList = symbol.superTypes.toList()
-
-        for (ksTypeReference in typeList) {
-          val superClassName = ksTypeReference.resolve().declaration.packageName.asString() + "." + ksTypeReference
-          if (superClassName == MatchClassMethod::class.java.name) {
-            isMatchClassMethod = true
-          }
+//        val typeList = symbol.superTypes.toList()
+//
+//        for (ksTypeReference in typeList) {
+//          val superClassName = ksTypeReference.resolve().declaration.packageName.asString() + "." + ksTypeReference
+//          val declaration = ksTypeReference.resolve()
+//          if (declaration is KSClassDeclaration){
+//            if (declaration.isSubtype(MatchClassMethod::class.java.name)){
+//              isMatchClassMethod = true
+//            }
+//          }
+////          if (superClassName == MatchClassMethod::class.java.name||superClassName == MatchClassMethodSuspend::class.java.name) {
+////            isMatchClassMethod = true
+////          }
+//        }
+        if (symbol.isSubtype(MatchClassMethod::class.java.name,logger)){
+          isMatchClassMethod = true
         }
       }
       if (!isMatchClassMethod) {
-        throw IllegalArgumentException("注意：$symbol 必须实现 ${MatchClassMethod::class.java.name} 接口")
+        throw IllegalArgumentException("注意：$symbol 必须实现 ${MatchClassMethod::class.java.name} 或 ${MatchClassMethodSuspend::class.java.name} 接口")
       }
 
       val annotationMap = getAnnotation(symbol)
