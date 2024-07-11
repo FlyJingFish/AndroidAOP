@@ -56,7 +56,6 @@ open class SearchSuspendClass(
         super.visitEnd()
         val suspendClassName = invokeClassName
         if (isSuspend && suspendClassName != null) {
-            printLog("RemoveAnnotation==visitEnd==suspendClassName=$suspendClassName")
             WovenInfoUtils.addAopMethodCutInnerClassInfoInvokeClassName(suspendClassName,invokeClassNameCount)
             if (invokeClassNameCount > 1){
                 onResultListener?.onBack()
