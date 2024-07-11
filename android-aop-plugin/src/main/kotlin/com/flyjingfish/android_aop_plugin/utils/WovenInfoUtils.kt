@@ -641,7 +641,7 @@ object WovenInfoUtils {
     }
 
     fun getAopMethodCutInnerClassInfoInvokeClassInfo(className:String): HashMap<String, MethodRecord>?{
-        return if (aopMethodCutInnerClassInfoInvokeClassName.contains(className)){
+        return if (aopMethodCutInnerClassInfo.isNotEmpty() && aopMethodCutInnerClassInfoInvokeClassName.contains(className)){
             val methodsRecord: HashMap<String, MethodRecord> = HashMap()
             methodsRecord[className] = MethodRecord("invokeSuspend",
                 "(Ljava/lang/Object;)Ljava/lang/Object;",
