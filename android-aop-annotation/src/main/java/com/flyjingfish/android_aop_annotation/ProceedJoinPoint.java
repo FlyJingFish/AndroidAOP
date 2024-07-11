@@ -16,7 +16,7 @@ import kotlin.coroutines.Continuation;
 /**
  * 切点相关信息类，<a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint">wiki 文档使用说明</a>
  */
-public final class ProceedJoinPoint {
+public class ProceedJoinPoint {
     /**
      * <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#args">wiki 文档使用说明</a>
      */
@@ -85,12 +85,12 @@ public final class ProceedJoinPoint {
     }
 
     @Nullable
-    public Object proceed(OnSuspendReturnListener onSuspendReturnListener) {
+    Object proceed(OnSuspendReturnListener onSuspendReturnListener) {
         return proceed(onSuspendReturnListener,args);
     }
 
     @Nullable
-    public Object proceed(OnSuspendReturnListener onSuspendReturnListener,Object... args) {
+    Object proceed(OnSuspendReturnListener onSuspendReturnListener,Object... args) {
         if (argCount > 0) {
             if (args == null || args.length != argCount) {
                 throw new IllegalArgumentException("proceed 所参数个数不对");

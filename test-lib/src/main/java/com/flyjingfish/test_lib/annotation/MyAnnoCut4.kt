@@ -2,6 +2,7 @@ package com.flyjingfish.test_lib.annotation
 
 import android.util.Log
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
+import com.flyjingfish.android_aop_annotation.ProceedJoinPointSuspend
 import com.flyjingfish.android_aop_annotation.ProceedReturn
 import com.flyjingfish.android_aop_annotation.base.BasePointCutSuspend
 import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener
@@ -14,7 +15,7 @@ class MyAnnoCut4 : BasePointCutSuspend<MyAnno4> {
         Log.e("MyAnnoCut4", "====invoke=====")
         return super.invoke(joinPoint, anno)
     }
-    override suspend fun invokeSuspend(joinPoint: ProceedJoinPoint, anno: MyAnno4){
+    override suspend fun invokeSuspend(joinPoint: ProceedJoinPointSuspend, anno: MyAnno4){
         withContext(Dispatchers.IO) {
             Log.e("MyAnnoCut4", "====invokeSuspend=====")
 //            if (joinPoint.target is MainActivity) {
