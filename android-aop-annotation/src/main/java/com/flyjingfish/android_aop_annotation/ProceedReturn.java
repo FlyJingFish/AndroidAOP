@@ -147,14 +147,14 @@ public final class ProceedReturn {
             if (target != null){
                 Type[] types = target.getClass().getGenericInterfaces();
                 if (types.length >= 1){
-                    Type type2 = types[0];
-                    if (type2 instanceof ParameterizedType) {
-                        Type[] types1 = ((ParameterizedType) type2).getActualTypeArguments();
-                        if (types1.length>=2){
-                            Type type1 = types1[1];
-                            if (type1 instanceof ParameterizedType){
-                                Type[] types2 = ((ParameterizedType) type1).getActualTypeArguments();
-                                for (Type type : types2) {
+                    Type funtion2Type = types[0];
+                    if (funtion2Type instanceof ParameterizedType) {
+                        Type[] funtion2ArgumentsTypes = ((ParameterizedType) funtion2Type).getActualTypeArguments();
+                        if (funtion2ArgumentsTypes.length>=2){
+                            Type continuationType = funtion2ArgumentsTypes[1];
+                            if (continuationType instanceof ParameterizedType){
+                                Type[] continuationTypeArguments = ((ParameterizedType) continuationType).getActualTypeArguments();
+                                for (Type type : continuationTypeArguments) {
                                     String className = type.toString().replaceAll("\\? super ","");
                                     return Conversions.getClass_(className);
                                 }

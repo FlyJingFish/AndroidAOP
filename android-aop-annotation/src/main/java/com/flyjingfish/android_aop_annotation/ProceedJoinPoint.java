@@ -135,7 +135,7 @@ public final class ProceedJoinPoint {
                         AndroidAopBeanUtils.INSTANCE.addSuspendReturnListener(key2,onSuspendReturnListener);
                         AndroidAopBeanUtils.INSTANCE.saveReturnKey(key1,key2);
                     }
-                } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                } catch (Throwable e) {
                 }
 
             }

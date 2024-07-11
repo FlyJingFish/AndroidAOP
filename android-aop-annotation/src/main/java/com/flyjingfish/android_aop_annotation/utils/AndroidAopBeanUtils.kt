@@ -125,7 +125,10 @@ internal object AndroidAopBeanUtils {
         list.add(onSuspendReturnListener)
     }
 
-    fun getSuspendReturnListeners(key:Any):MutableList<OnSuspendReturnListener>?{
+    fun getSuspendReturnListeners(key:Any?):MutableList<OnSuspendReturnListener>?{
+        if (key == null){
+            return null
+        }
         val listeners = mReturnListenerMap[key]
         if (listeners == null){
             val otherKey = mReturnKeyMap[key]
@@ -141,7 +144,10 @@ internal object AndroidAopBeanUtils {
         mReturnKeyMap[key2] = key1
     }
 
-    fun removeReturnListener(key: Any){
+    fun removeReturnListener(key: Any?){
+        if (key == null){
+            return
+        }
         val otherKey = mReturnKeyMap[key]
         mReturnListenerMap.remove(key)
         otherKey?.let {
