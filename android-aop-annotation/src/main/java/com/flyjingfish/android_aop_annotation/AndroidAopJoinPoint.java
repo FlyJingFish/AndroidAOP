@@ -34,15 +34,13 @@ public final class AndroidAopJoinPoint {
     private String methodKey;
     private final String targetClassName;
     private InvokeMethod invokeMethod;
-    private final boolean multipleSuspendClass;
 
-    public AndroidAopJoinPoint(Class<?> clazz, Object target, String originalMethodName, String targetMethodName,boolean multipleSuspendClass) {
+    public AndroidAopJoinPoint(Class<?> clazz, Object target, String originalMethodName, String targetMethodName) {
         this.targetClassName = clazz.getName();
         this.target = target;
         this.originalMethodName = originalMethodName;
         this.targetMethodName = targetMethodName;
         this.targetClass = clazz;
-        this.multipleSuspendClass = multipleSuspendClass;
 
     }
 
@@ -94,6 +92,7 @@ public final class AndroidAopJoinPoint {
         Object startSuspend = getStartSuspendObj();
 
         final List<OnSuspendReturnListener> basePointCuts = AndroidAopBeanUtils.INSTANCE.getSuspendReturnListeners(startSuspend);
+        AndroidAopBeanUtils.INSTANCE.removeReturnListener(startSuspend);
 
         if (basePointCuts != null && basePointCuts.size() > 0){
             Iterator<OnSuspendReturnListener> iterator = basePointCuts.iterator();
@@ -140,7 +139,7 @@ public final class AndroidAopJoinPoint {
             }
         }
 
-        ProceedJoinPoint proceedJoinPoint = new ProceedJoinPoint(targetClass, mArgs,target,isSuspend,multipleSuspendClass);
+        ProceedJoinPoint proceedJoinPoint = new ProceedJoinPoint(targetClass, mArgs,target,isSuspend);
         proceedJoinPoint.setOriginalMethod(originalMethod);
         proceedJoinPoint.setTargetMethod(targetMethod);
         proceedJoinPoint.setTargetMethod(invokeMethod);

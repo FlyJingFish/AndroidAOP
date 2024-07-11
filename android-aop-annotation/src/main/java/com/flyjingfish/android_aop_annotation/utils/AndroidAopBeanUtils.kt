@@ -17,6 +17,7 @@ internal object AndroidAopBeanUtils {
     private val mTargetReferenceMap = ConcurrentHashMap<String, KeyWeakReference<Any>>()
     private val mTargetMethodMap = ConcurrentHashMap<String, MethodMap>()
     private val mReturnListenerMap = ConcurrentHashMap<Any, MutableList<OnSuspendReturnListener>>()
+    private val mReturnKeyMap = ConcurrentHashMap<Any, Any>()
     private val mTargetKeyReferenceQueue = ReferenceQueue<Any>()
     private val mSingleIO: ExecutorService = Executors.newSingleThreadExecutor()
 
@@ -125,6 +126,29 @@ internal object AndroidAopBeanUtils {
     }
 
     fun getSuspendReturnListeners(key:Any):MutableList<OnSuspendReturnListener>?{
-        return mReturnListenerMap[key]
+        val listeners = mReturnListenerMap[key]
+        if (listeners == null){
+            val otherKey = mReturnKeyMap[key]
+            if (otherKey != null){
+                return mReturnListenerMap[otherKey]
+            }
+        }
+        return listeners
+    }
+
+    fun saveReturnKey(key1: Any,key2: Any){
+        mReturnKeyMap[key1] = key2
+        mReturnKeyMap[key2] = key1
+    }
+
+    fun removeReturnListener(key: Any){
+        val otherKey = mReturnKeyMap[key]
+        mReturnListenerMap.remove(key)
+        otherKey?.let {
+            mReturnListenerMap.remove(it)
+            mReturnKeyMap.remove(it)
+        }
+
+        mReturnKeyMap.remove(key)
     }
 }

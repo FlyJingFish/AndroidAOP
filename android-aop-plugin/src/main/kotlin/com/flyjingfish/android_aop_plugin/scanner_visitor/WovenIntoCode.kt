@@ -369,7 +369,7 @@ object WovenIntoCode {
                 }
                 cp.importPackage(invokeClassName)
                 val argReflect = if (ClassFileUtils.reflectInvokeMethod) "" else ",new $invokeClassName()"
-                val constructor = "$targetClassName.class,${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\",${value.multipleSuspendClass}";
+                val constructor = "$targetClassName.class,${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\""
                 val body =
                     " {AndroidAopJoinPoint pointCut = new AndroidAopJoinPoint($constructor);\n"+
                             (if (cutClassName != null) "        pointCut.setCutMatchClassName(\"$cutClassName\");\n" else "") +

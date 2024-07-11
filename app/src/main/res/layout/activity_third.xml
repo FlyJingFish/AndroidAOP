@@ -12,7 +12,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:flow_wrapMode="chain"
-        app:constraint_referenced_ids="btn_inner0,btn_inner,btn_inner2"
+        app:constraint_referenced_ids="btn_inner0,btn_inner1,btn_inner2,btn_inner3,
+btn_inner4,btn_inner5,btn_inner6,btn_inner7"
         />
     <Button
         android:id="@+id/btn_inner0"
@@ -20,7 +21,7 @@
         android:layout_height="wrap_content"
         android:text="TestInner0"/>
     <Button
-        android:id="@+id/btn_inner"
+        android:id="@+id/btn_inner1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TestInner1"/>
@@ -29,5 +30,33 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TestInner2"/>
+
+    <Button
+        android:id="@+id/btn_inner3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TestInner3"/>
+
+    <Button
+        android:id="@+id/btn_inner4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TestInner4"/>
+    <Button
+        android:id="@+id/btn_inner5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TestInner5"/>
+    <Button
+        android:id="@+id/btn_inner6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TestInner6"/>
+
+    <Button
+        android:id="@+id/btn_inner7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TestInner7"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
