@@ -71,8 +71,8 @@ public final class AndroidAopJoinPoint {
 //            Class bClass=target.getClass();
 //            Field field=bClass.getDeclaredField("this$0");
 //            Object outClass=field.get(target);
-            System.out.println("target="+target+"==hashcode="+System.identityHashCode(target)+"==class="+target.getClass()
-                    +"==returnValue="+System.identityHashCode(returnValue)+"===args1="+System.identityHashCode(startSuspend));
+//            System.out.println("target="+target+"==hashcode="+System.identityHashCode(target)+"==class="+target.getClass()
+//                    +"==returnValue="+System.identityHashCode(returnValue)+"===args1="+System.identityHashCode(startSuspend));
 
             return startSuspend;
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException |
@@ -125,19 +125,19 @@ public final class AndroidAopJoinPoint {
 
     public Object joinPointExecute(Continuation continuation) {
         isSuspend = continuation != null;
-        if (isSuspend){
-
-            try {
-                Method method = continuation.getClass().getMethod("getCompletion");
-                method.setAccessible(true);
-                Object returnValue = method.invoke(continuation);
-
-                System.out.println("continuation="+continuation+"==hashcode="+System.identityHashCode(continuation)+"==class="+continuation.getClass()
-                        +"==returnValue="+System.identityHashCode(returnValue));
-            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }
+//        if (isSuspend){
+//
+//            try {
+//                Method method = continuation.getClass().getMethod("getCompletion");
+//                method.setAccessible(true);
+//                Object returnValue = method.invoke(continuation);
+//
+//                System.out.println("continuation="+continuation+"==hashcode="+System.identityHashCode(continuation)+"==class="+continuation.getClass()
+//                        +"==returnValue="+System.identityHashCode(returnValue));
+//            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
 
         ProceedJoinPoint proceedJoinPoint = new ProceedJoinPoint(targetClass, mArgs,target,isSuspend);
         proceedJoinPoint.setOriginalMethod(originalMethod);
