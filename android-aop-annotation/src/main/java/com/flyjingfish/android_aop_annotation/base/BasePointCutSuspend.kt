@@ -13,7 +13,6 @@ interface BasePointCutSuspend<T : Annotation>:BasePointCut<T> {
      * 使用自定义注解的被 suspend 修饰的方法被调用时回调这个方法,不会回调 [invoke]
      * @param joinPoint 切点相关信息
      * @param anno 切点设置的注解
-     * @return [wiki 文档返回值说明](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%88%87%E7%82%B9%E6%96%B9%E6%B3%95%E8%BF%94%E5%9B%9E%E5%80%BC)
      */
     suspend fun invokeSuspend(joinPoint: ProceedJoinPointSuspend, anno: T)
 
