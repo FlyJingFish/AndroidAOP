@@ -114,6 +114,7 @@ public final class ProceedJoinPoint {
 
         try {
             Object returnValue = null;
+            setReturnListener(onSuspendReturnListener);
             if (!hasNext) {
                 if (targetInvokeMethod != null) {
                     returnValue = targetInvokeMethod.invoke(target, realArgs);
@@ -124,26 +125,30 @@ public final class ProceedJoinPoint {
             } else if (onInvokeListener != null) {
                 returnValue = onInvokeListener.onInvoke();
             }
-            if (isSuspend && onSuspendReturnListener != null && suspendContinuation != null){
-                Object key1 = suspendContinuation;
-                AndroidAopBeanUtils.INSTANCE.addSuspendReturnListener(key1,onSuspendReturnListener);
-                try {
-                    Method method = suspendContinuation.getClass().getMethod("getCompletion");
-                    method.setAccessible(true);
-                    Object key2 = method.invoke(suspendContinuation);
-                    if (key2 != null){
-                        AndroidAopBeanUtils.INSTANCE.addSuspendReturnListener(key2,onSuspendReturnListener);
-                        AndroidAopBeanUtils.INSTANCE.saveReturnKey(key1,key2);
-                    }
-                } catch (Throwable e) {
-                }
 
-            }
             return returnValue;
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
             throw new RuntimeException(e.getTargetException());
+        }
+    }
+
+    private void setReturnListener(OnSuspendReturnListener onSuspendReturnListener){
+        if (isSuspend && onSuspendReturnListener != null && suspendContinuation != null){
+            Object key1 = suspendContinuation;
+            AndroidAopBeanUtils.INSTANCE.addSuspendReturnListener(key1,onSuspendReturnListener);
+            try {
+                Method method = suspendContinuation.getClass().getMethod("getCompletion");
+                method.setAccessible(true);
+                Object key2 = method.invoke(suspendContinuation);
+                if (key2 != null){
+                    AndroidAopBeanUtils.INSTANCE.addSuspendReturnListener(key2,onSuspendReturnListener);
+                    AndroidAopBeanUtils.INSTANCE.saveReturnKey(key1,key2);
+                }
+            } catch (Throwable e) {
+            }
+
         }
     }
 
