@@ -389,14 +389,18 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
         for (directory in ignoreJarClassPaths) {
             val directoryPath = directory.absolutePath
-            directory.walk().forEach { file ->
+            directory.walk().sortedBy {
+                it.name.length
+            }.forEach { file ->
                 processFile(file, directory, directoryPath)
             }
 
         }
         allDirectories.get().forEach { directory ->
             val directoryPath = directory.asFile.absolutePath
-            directory.asFile.walk().forEach { file ->
+            directory.asFile.walk().sortedBy {
+                it.name.length
+            }.forEach { file ->
                 processFile(file,directory.asFile,directoryPath)
             }
         }
@@ -406,16 +410,23 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             }
             val jarFile = JarFile(file.asFile)
             val enumeration = jarFile.entries()
+            val jarEntryList = mutableListOf<JarEntry>()
             while (enumeration.hasMoreElements()) {
                 val jarEntry = enumeration.nextElement()
-                try {
-                    val entryName = jarEntry.name
+                val entryName = jarEntry.name
 //                    if (jarEntry.isDirectory || entryName.isEmpty() || !entryName.endsWith(_CLASS) || entryName.startsWith("META-INF/")) {
 //                        continue
 //                    }
-                    if (jarEntry.isDirectory || entryName.isEmpty() || entryName.startsWith("META-INF/") || "module-info.class" == entryName) {
-                        continue
-                    }
+                if (jarEntry.isDirectory || entryName.isEmpty() || entryName.startsWith("META-INF/") || "module-info.class" == entryName) {
+                    continue
+                }
+                jarEntryList.add(jarEntry)
+            }
+            jarEntryList.sortedBy {
+                it.name.length
+            }.forEach { jarEntry ->
+                try {
+                    val entryName = jarEntry.name
 
                     val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(entryName)
 
