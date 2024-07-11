@@ -7,6 +7,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+
+import javax.lang.model.type.WildcardType;
 
 /**
  * 切点相关信息类，<a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint">wiki 文档使用说明</a>
@@ -26,7 +30,6 @@ public final class ProceedReturn {
     private Method targetMethod;
     private InvokeMethod targetInvokeMethod;
     private Method originalMethod;
-    private AopMethod targetAopMethod;
     private OnInvokeListener onInvokeListener;
     private boolean hasNext;
     private final int argCount;
@@ -125,7 +128,6 @@ public final class ProceedReturn {
 
     void setOriginalMethod(Method originalMethod) {
         this.originalMethod = originalMethod;
-        targetAopMethod = new AopMethod(originalMethod);
     }
 
     interface OnInvokeListener {
@@ -138,6 +140,35 @@ public final class ProceedReturn {
 
     void setHasNext(boolean hasNext) {
         this.hasNext = hasNext;
+    }
+
+    public Class<?> getReturnType() {
+        try {
+            if (target != null){
+                Type[] types = target.getClass().getGenericInterfaces();
+                if (types.length >= 1){
+                    Type type2 = types[0];
+                    if (type2 instanceof ParameterizedType) {
+                        Type[] types1 = ((ParameterizedType) type2).getActualTypeArguments();
+                        if (types1.length>=2){
+                            Type type1 = types1[1];
+                            if (type1 instanceof ParameterizedType){
+                                Type[] types2 = ((ParameterizedType) type1).getActualTypeArguments();
+                                for (Type type : types2) {
+                                    String className = type.toString().replaceAll("\\? super ","");
+                                    return Conversions.getClass_(className);
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+        } catch (Exception e) {
+
+        }
+
+        return targetMethod.getReturnType();
     }
 
 }

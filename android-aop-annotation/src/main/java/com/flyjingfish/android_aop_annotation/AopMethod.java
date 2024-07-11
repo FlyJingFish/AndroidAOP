@@ -2,6 +2,7 @@ package com.flyjingfish.android_aop_annotation;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 /**
@@ -9,9 +10,12 @@ import java.lang.reflect.Type;
  */
 public final class AopMethod {
     private final Method targetMethod;
-
-    AopMethod(Method targetMethod) {
+    private final boolean isSuspend;
+    private final Object suspendContinuation;
+    AopMethod(Method targetMethod,boolean isSuspend,Object suspendContinuation) {
         this.targetMethod = targetMethod;
+        this.isSuspend = isSuspend;
+        this.suspendContinuation = suspendContinuation;
     }
 
     public String getName() {
@@ -31,7 +35,14 @@ public final class AopMethod {
     }
 
     public Class<?>[] getParameterTypes() {
-        return targetMethod.getParameterTypes();
+        Class<?>[] cls = targetMethod.getParameterTypes();
+        if (isSuspend){
+            Class<?>[] newCls = new Class[cls.length - 1];
+            System.arraycopy(cls, 0, newCls, 0, newCls.length);
+            return newCls;
+        }
+
+        return cls;
     }
 
     public Type[] getGenericParameterTypes() {

@@ -165,7 +165,7 @@ public final class ProceedJoinPoint {
 
     void setOriginalMethod(Method originalMethod) {
         this.originalMethod = originalMethod;
-        targetAopMethod = new AopMethod(originalMethod);
+        targetAopMethod = new AopMethod(originalMethod,isSuspend,suspendContinuation);
     }
 
     /**
