@@ -141,11 +141,16 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
 
         val bean = TestReplace()
         bean.test()
+
+        binding.btnDemo3.setOnClickListener { toThirdActivity() }
     }
 
     @CheckNetwork(toastText = "没有网络呀～～～")
     fun toSecondActivity(){
-//        startActivity(Intent(this,SecondActivity::class.java))
+        startActivity(Intent(this,SecondActivity::class.java))
+    }
+
+    private fun toThirdActivity(){
         startActivity(Intent(this,ThirdActivity::class.java))
     }
 
