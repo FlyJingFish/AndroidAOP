@@ -46,7 +46,13 @@ public final class AopMethod {
     }
 
     public Type[] getGenericParameterTypes() {
-        return targetMethod.getGenericParameterTypes();
+        Type[] types = targetMethod.getGenericParameterTypes();
+        if (isSuspend){
+            Type[] newTypes = new Class[types.length - 1];
+            System.arraycopy(types, 0, newTypes, 0, newTypes.length);
+            return newTypes;
+        }
+        return types;
     }
 
     public int getModifiers() {
