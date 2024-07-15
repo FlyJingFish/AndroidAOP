@@ -103,6 +103,7 @@ public final class AndroidAopJoinPoint {
                         }else {
                             value = null;
                         }
+                        value = Conversions.return2Type(proceedReturn.getReturnTypeClassName$android_aop_annotation(), value);
                         returnValue[0] = value;
                         return value;
                     }else {
@@ -123,6 +124,7 @@ public final class AndroidAopJoinPoint {
             for (OnBaseSuspendReturnListener onSuspendReturnListener : basePointCuts) {
                 AndroidAopBeanUtils.INSTANCE.removeIgnoreOther(onSuspendReturnListener);
             }
+            returnValue[0] = Conversions.return2Type(proceedReturn.getReturnTypeClassName$android_aop_annotation(), returnValue[0]);
         }else {
             returnValue[0] = proceedReturn.proceed();
         }

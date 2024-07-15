@@ -200,4 +200,26 @@ public final class Conversions {
 				return "L"+classname+";";
 		}
 	}
+
+	static Object return2Type(String className,Object value){
+		if (className.equals(Integer.class.getName())){
+			return intValue(value);
+		}else if (className.equals(Short.class.getName())){
+			return shortValue(value);
+		}else if (className.equals(Byte.class.getName())){
+			return byteValue(value);
+		}else if (className.equals(Character.class.getName())){
+			return charValue(value);
+		}else if (className.equals(Long.class.getName())){
+			return longValue(value);
+		}else if (className.equals(Float.class.getName())){
+			return floatValue(value);
+		}else if (className.equals(Double.class.getName())){
+			return doubleValue(value);
+		}else if (className.equals(Boolean.class.getName())){
+			return booleanValue(value);
+		}else {
+			return value;
+		}
+	}
 }

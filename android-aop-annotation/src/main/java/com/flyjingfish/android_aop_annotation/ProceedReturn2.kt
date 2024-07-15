@@ -113,6 +113,18 @@ open class ProceedReturn2 (targetClass: Class<*>, args: Array<Any?>?, target: An
      * @return suspend 函数的返回值类型
      */
     fun getReturnType(): Class<*>? {
+        val className = getReturnTypeClassName()
+        if (className.isNotEmpty()){
+            return Conversions.getClass_(className)
+        }
+        return targetMethod!!.returnType
+    }
+
+    /**
+     *
+     * @return suspend 函数的返回值类型
+     */
+    internal fun getReturnTypeClassName(): String {
         try {
             if (target != null) {
                 val types = target.javaClass.genericInterfaces
@@ -125,9 +137,7 @@ open class ProceedReturn2 (targetClass: Class<*>, args: Array<Any?>?, target: An
                             if (continuationType is ParameterizedType) {
                                 val continuationTypeArguments = continuationType.actualTypeArguments
                                 for (type in continuationTypeArguments) {
-                                    val className =
-                                        type.toString().replace("\\? super ".toRegex(), "")
-                                    return Conversions.getClass_(className)
+                                    return type.toString().replace("\\? super ".toRegex(), "")
                                 }
                             }
                         }
@@ -136,6 +146,6 @@ open class ProceedReturn2 (targetClass: Class<*>, args: Array<Any?>?, target: An
             }
         } catch (e: Exception) {
         }
-        return targetMethod!!.returnType
+        return ""
     }
 }
