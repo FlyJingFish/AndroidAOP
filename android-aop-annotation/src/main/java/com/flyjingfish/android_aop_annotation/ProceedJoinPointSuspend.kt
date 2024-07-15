@@ -52,7 +52,6 @@ class ProceedJoinPointSuspend(
         vararg args: Any?
     ): Any? {
         setHasNext(false)
-        setIgnoreOther()
         return super.proceed(onSuspendReturnListener, *args)
     }
 

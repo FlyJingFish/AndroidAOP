@@ -35,7 +35,6 @@ public class ProceedJoinPoint {
     private final boolean isSuspend;
     private Object suspendContinuation;
     private Object methodReturnValue;
-    private boolean ignoreOther = false;
 
     ProceedJoinPoint(@NotNull Class<?> targetClass, Object[] args, @Nullable Object target, boolean isSuspend) {
         this.targetClass = targetClass;
@@ -192,10 +191,6 @@ public class ProceedJoinPoint {
 
     void setHasNext(boolean hasNext) {
         this.hasNext = hasNext;
-    }
-
-    void setIgnoreOther() {
-        this.ignoreOther = true;
     }
 
     /**
