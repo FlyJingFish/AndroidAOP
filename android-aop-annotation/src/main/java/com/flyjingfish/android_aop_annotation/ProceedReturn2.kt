@@ -18,6 +18,7 @@ open class ProceedReturn2 (targetClass: Class<*>, args: Array<Any?>?, target: An
     private var argCount = 0
     private val isSuspend : Boolean
     private var suspendContinuation: Any? = null
+    private var returnType: Class<*>? = null
 
     init {
         this.targetClass = targetClass
@@ -108,16 +109,27 @@ open class ProceedReturn2 (targetClass: Class<*>, args: Array<Any?>?, target: An
         this.hasNext = hasNext
     }
 
+    internal fun setReturnType(className: String?) {
+        if (!className.isNullOrEmpty()){
+            returnType = Conversions.getReturnClass(className)
+        }
+    }
+
     /**
      *
      * @return suspend 函数的返回值类型
      */
     fun getReturnType(): Class<*>? {
+        if (returnType != null){
+            return returnType
+        }
         val className = getReturnTypeClassName()
         if (className.isNotEmpty()){
-            return Conversions.getClass_(className)
+            returnType = Conversions.getClass_(className)
+            return returnType
         }
-        return targetMethod!!.returnType
+        returnType = targetMethod!!.returnType
+        return returnType
     }
 
     /**

@@ -75,9 +75,10 @@ public final class AndroidAopJoinPoint {
 
     }
 
-    public Object joinPointReturnExecute() {
+    public Object joinPointReturnExecute(String returnTypeClassName) {
 
         ProceedReturn proceedReturn = new ProceedReturn(targetClass, mArgs,target,isSuspend);
+        proceedReturn.setReturnType$android_aop_annotation(returnTypeClassName);
         proceedReturn.setOriginalMethod$android_aop_annotation(originalMethod);
         proceedReturn.setTargetMethod$android_aop_annotation(targetMethod);
         proceedReturn.setTargetMethod$android_aop_annotation(invokeMethod);
@@ -103,7 +104,7 @@ public final class AndroidAopJoinPoint {
                         }else {
                             value = null;
                         }
-                        value = Conversions.return2Type(proceedReturn.getReturnTypeClassName$android_aop_annotation(), value);
+                        value = Conversions.return2Type(proceedReturn.getReturnType(), value);
                         returnValue[0] = value;
                         return value;
                     }else {
@@ -124,7 +125,7 @@ public final class AndroidAopJoinPoint {
             for (OnBaseSuspendReturnListener onSuspendReturnListener : basePointCuts) {
                 AndroidAopBeanUtils.INSTANCE.removeIgnoreOther(onSuspendReturnListener);
             }
-            returnValue[0] = Conversions.return2Type(proceedReturn.getReturnTypeClassName$android_aop_annotation(), returnValue[0]);
+            returnValue[0] = Conversions.return2Type(proceedReturn.getReturnType(), returnValue[0]);
         }else {
             returnValue[0] = proceedReturn.proceed();
         }

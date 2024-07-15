@@ -201,25 +201,39 @@ public final class Conversions {
 		}
 	}
 
-	static Object return2Type(String className,Object value){
-		if (className.equals(Integer.class.getName())){
+	static Object return2Type(Class<?> class_,Object value){
+		if (class_==Integer.class){
 			return intValue(value);
-		}else if (className.equals(Short.class.getName())){
+		}else if (class_==Short.class){
 			return shortValue(value);
-		}else if (className.equals(Byte.class.getName())){
+		}else if (class_==Byte.class){
 			return byteValue(value);
-		}else if (className.equals(Character.class.getName())){
+		}else if (class_==Character.class){
 			return charValue(value);
-		}else if (className.equals(Long.class.getName())){
+		}else if (class_==Long.class){
 			return longValue(value);
-		}else if (className.equals(Float.class.getName())){
+		}else if (class_==Float.class){
 			return floatValue(value);
-		}else if (className.equals(Double.class.getName())){
+		}else if (class_==Double.class){
 			return doubleValue(value);
-		}else if (className.equals(Boolean.class.getName())){
+		}else if (class_==Boolean.class){
 			return booleanValue(value);
 		}else {
 			return value;
 		}
+	}
+
+
+	public static Class<?> getReturnClass(String className){
+		try {
+			if (className.startsWith("[")){
+				return Class.forName(className);
+			}else if (className.startsWith("L")){
+				return Class.forName(className.substring(1,className.length()-1));
+			}
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+		return null;
 	}
 }

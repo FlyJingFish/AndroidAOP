@@ -27,7 +27,7 @@ class MyAnnoCut3 : BasePointCutSuspend<MyAnno3> {
 //            ToastUtils.makeText(MyApp.INSTANCE,"==MyAnnoCut3==${joinPoint.targetMethod.returnType}")
             joinPoint.proceed(object : OnSuspendReturnListener {
                 override fun onReturn(proceedReturn: ProceedReturn): Any? {
-                    Log.e("MyAnnoCut3", "====onReturn=====proceed")
+                    Log.e("MyAnnoCut3", "====onReturn=====proceed==type=${proceedReturn.getReturnType()}")
                     val  result = proceedReturn.proceed();
                     Log.e("MyAnnoCut3", "====onReturn=====result=$result")
                     return (result as Int)+100

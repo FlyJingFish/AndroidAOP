@@ -61,6 +61,7 @@ class ThirdActivity : BaseActivity() {
         //间接调用 suspend 中包含切换一个线程的 函数
         GlobalScope.launch {
             val arg1 = getData1(1)
+            getDataArray(1)
             Log.e("MyAnnoCut","=====test0=====$arg1")
         }
     }
@@ -117,6 +118,14 @@ class ThirdActivity : BaseActivity() {
         GlobalScope.launch {
             val arg1 = TestSuspend.getData11(1)
             Log.e("MyAnnoCut","=====test7=====$arg1")
+        }
+    }
+
+    @MyAnno3
+    suspend fun getDataArray(num:Int) :Array<Int>?{
+        return withContext(Dispatchers.IO) {
+            Log.e("MyAnnoCut","=====getDataArray=====2")
+            null
         }
     }
 

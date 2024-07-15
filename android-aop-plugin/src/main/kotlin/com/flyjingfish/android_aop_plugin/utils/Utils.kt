@@ -276,6 +276,29 @@ object Utils {
     fun configJsonFile(project:Project):String{
         return project.buildDir.absolutePath+"/tmp/android-aop/config/androidAopConfig.json"
     }
+
+    private val classnamePattern = Pattern.compile("Lkotlin/coroutines/jvm/internal/SuspendLambda;Lkotlin/jvm/functions/Function2<Lkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation<-.*?>;Ljava/lang/Object;>;")
+    private val classnamePattern1 = Pattern.compile("Lkotlin/coroutines/jvm/internal/SuspendLambda;Lkotlin/jvm/functions/Function2<Lkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation<-.*?")
+
+    fun getType(type: String?): String? {
+        val matcher = classnamePattern.matcher(type)
+        if (matcher.find()) {
+            val type2 = matcher.group()
+            val matcher1 = classnamePattern1.matcher(type2)
+            if (matcher1.find()) {
+                val realType = matcher1.replaceFirst("")
+                val realMatcher = classnamePattern.matcher(realType)
+                val realTypeClass: String
+                realTypeClass = if (realMatcher.find()) {
+                    realMatcher.replaceFirst("")
+                } else {
+                    realType.replace(">;Ljava/lang/Object;>;".toRegex(), "")
+                }
+                return realTypeClass
+            }
+        }
+        return null
+    }
 }
 
 fun printLog(text: String) {
