@@ -122,10 +122,10 @@ class ThirdActivity : BaseActivity() {
     }
 
     @MyAnno3
-    suspend fun getDataArray(num:Int) :Array<Int>?{
+    suspend fun getDataArray(num:Int) :IntArray{
         return withContext(Dispatchers.IO) {
             Log.e("MyAnnoCut","=====getDataArray=====2")
-            null
+            intArrayOf(num)
         }
     }
 

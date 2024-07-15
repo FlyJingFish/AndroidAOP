@@ -165,7 +165,7 @@ object WovenIntoCode {
                     super.visit(version, access, name, signature, superName, interfaces)
                     if (isSuspend){
                         returnClassName = Utils.getType(signature)?.replace("/",".")
-                        printLog("wovenCode === $signature ==== $returnClassName")
+//                        printLog("wovenCode === $signature ==== $returnClassName")
                     }
 //Lkotlin/coroutines/jvm/internal/SuspendLambda;Lkotlin/jvm/functions/Function2<Lkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation<-Ljava/lang/Integer;>;Ljava/lang/Object;>;
                     classNameMd5 = Utils.slashToDot(name).computeMD5()
@@ -345,7 +345,7 @@ object WovenIntoCode {
                 val suspendMethod = returnType.name == "java.lang.Object" && ctClasses[ctClasses.size-1].name == "kotlin.coroutines.Continuation"
                 val returnStr = if (isSuspend){
                     String.format(
-                        ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointReturnExecute(\"$returnClassName\")"
+                        ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointReturnExecute(${if (returnClassName == null) null else "\"$returnClassName\""})"
                     )
                 }else{
                     String.format(

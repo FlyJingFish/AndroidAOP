@@ -117,7 +117,7 @@ open class ProceedReturn2 (targetClass: Class<*>, args: Array<Any?>?, target: An
 
     /**
      *
-     * @return suspend 函数的返回值类型
+     * @return suspend 函数的返回值类型,有可能拿不到实际类型，拿不到时返回 Object 类型
      */
     fun getReturnType(): Class<*>? {
         if (returnType != null){
@@ -136,7 +136,7 @@ open class ProceedReturn2 (targetClass: Class<*>, args: Array<Any?>?, target: An
      *
      * @return suspend 函数的返回值类型
      */
-    internal fun getReturnTypeClassName(): String {
+    private fun getReturnTypeClassName(): String {
         try {
             if (target != null) {
                 val types = target.javaClass.genericInterfaces
