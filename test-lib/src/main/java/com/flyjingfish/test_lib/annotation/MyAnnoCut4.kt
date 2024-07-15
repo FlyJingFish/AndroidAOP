@@ -4,8 +4,9 @@ import android.util.Log
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
 import com.flyjingfish.android_aop_annotation.ProceedJoinPointSuspend
 import com.flyjingfish.android_aop_annotation.ProceedReturn
+import com.flyjingfish.android_aop_annotation.ProceedReturn2
 import com.flyjingfish.android_aop_annotation.base.BasePointCutSuspend
-import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener
+import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.lang.Thread.sleep
@@ -25,14 +26,15 @@ class MyAnnoCut4 : BasePointCutSuspend<MyAnno4> {
 //            }
             sleep(2000)
             Log.e("MyAnnoCut4", "====invokeSuspend=====2")
-            joinPoint.proceed(object : OnSuspendReturnListener {
-                override fun onReturn(proceedReturn: ProceedReturn): Any? {
+            joinPoint.proceedIgnoreOther(object : OnSuspendReturnListener2 {
+                override fun onReturn(proceedReturn: ProceedReturn2): Any? {
+//                    Log.e("MyAnnoCut4", "====onReturn=====proceed")
+//                    val  result = proceedReturn.proceed();
+//                    Log.e("MyAnnoCut4", "====onReturn=====result=$result")
+//                    return (result as Int)+100
                     Log.e("MyAnnoCut4", "====onReturn=====proceed")
-                    val  result = proceedReturn.proceed();
-                    Log.e("MyAnnoCut4", "====onReturn=====result=$result")
-                    return (result as Int)+100
+                    return null
                 }
-
             })
         }
 

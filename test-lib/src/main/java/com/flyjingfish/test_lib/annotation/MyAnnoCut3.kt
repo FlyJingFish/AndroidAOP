@@ -5,8 +5,8 @@ import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
 import com.flyjingfish.android_aop_annotation.ProceedJoinPointSuspend
 import com.flyjingfish.android_aop_annotation.ProceedReturn
 import com.flyjingfish.android_aop_annotation.base.BasePointCutSuspend
+import com.flyjingfish.android_aop_annotation.base.OnBaseSuspendReturnListener
 import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener
-import com.flyjingfish.test_lib.ToastUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -25,7 +25,7 @@ class MyAnnoCut3 : BasePointCutSuspend<MyAnno3> {
 //                (joinPoint.target as MainActivity).setLogcat("MyAnnoCut3====invokeSuspend=====num=$num")
 //            }
 //            ToastUtils.makeText(MyApp.INSTANCE,"==MyAnnoCut3==${joinPoint.targetMethod.returnType}")
-            joinPoint.proceed(object :OnSuspendReturnListener{
+            joinPoint.proceed(object : OnSuspendReturnListener {
                 override fun onReturn(proceedReturn: ProceedReturn): Any? {
                     Log.e("MyAnnoCut3", "====onReturn=====proceed")
                     val  result = proceedReturn.proceed();

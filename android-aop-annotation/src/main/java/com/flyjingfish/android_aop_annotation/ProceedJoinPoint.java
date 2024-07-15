@@ -1,6 +1,6 @@
 package com.flyjingfish.android_aop_annotation;
 
-import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener;
+import com.flyjingfish.android_aop_annotation.base.OnBaseSuspendReturnListener;
 import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils;
 import com.flyjingfish.android_aop_annotation.utils.InvokeMethod;
 
@@ -78,11 +78,11 @@ public class ProceedJoinPoint {
      */
     @Nullable
     public Object proceed(Object... args) {
-        return proceed(null,args);
+        return realProceed(null,args);
     }
 
     @Nullable
-    Object proceed(OnSuspendReturnListener onSuspendReturnListener,Object... args) {
+    Object realProceed(OnBaseSuspendReturnListener onSuspendReturnListener, Object... args) {
         if (argCount > 0) {
             if (args == null || args.length != argCount) {
                 throw new IllegalArgumentException("proceed 所参数个数不对");
@@ -126,7 +126,7 @@ public class ProceedJoinPoint {
         }
     }
 
-    private void setReturnListener(OnSuspendReturnListener onSuspendReturnListener){
+    private void setReturnListener(OnBaseSuspendReturnListener onSuspendReturnListener){
         if (isSuspend && onSuspendReturnListener != null && suspendContinuation != null){
             Object key1 = suspendContinuation;
             AndroidAopBeanUtils.INSTANCE.addSuspendReturnListener(key1,onSuspendReturnListener);

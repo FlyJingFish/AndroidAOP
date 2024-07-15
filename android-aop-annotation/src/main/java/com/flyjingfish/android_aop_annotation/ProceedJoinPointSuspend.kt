@@ -1,6 +1,8 @@
 package com.flyjingfish.android_aop_annotation
 
 import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener
+import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener2
+import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils
 
 class ProceedJoinPointSuspend(
     targetClass: Class<*>,
@@ -26,8 +28,8 @@ class ProceedJoinPointSuspend(
      * @param args 切点方法参数数组
      * @return 返回切点方法返回值 [wiki 文档使用说明](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#proceed)
      */
-    override fun proceed(onSuspendReturnListener: OnSuspendReturnListener, vararg args: Any?): Any? {
-        return super.proceed(onSuspendReturnListener, *args)
+    fun proceed(onSuspendReturnListener: OnSuspendReturnListener, vararg args: Any?): Any? {
+        return super.realProceed(onSuspendReturnListener, *args)
     }
 
     /**
@@ -36,7 +38,7 @@ class ProceedJoinPointSuspend(
      * @param onSuspendReturnListener 设置 suspend 的函数的 返回前的监听，在此可修改返回值
      * @return 返回切点方法返回值 [wiki 文档使用说明](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#proceed)
      */
-    fun proceedIgnoreOther(onSuspendReturnListener: OnSuspendReturnListener): Any? {
+    fun proceedIgnoreOther(onSuspendReturnListener: OnSuspendReturnListener2): Any? {
         return proceedIgnoreOther(onSuspendReturnListener, *args)
     }
 
@@ -48,11 +50,12 @@ class ProceedJoinPointSuspend(
      * @return 返回切点方法返回值 [wiki 文档使用说明](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#proceed)
      */
     fun proceedIgnoreOther(
-        onSuspendReturnListener: OnSuspendReturnListener,
+        onSuspendReturnListener: OnSuspendReturnListener2,
         vararg args: Any?
     ): Any? {
         setHasNext(false)
-        return super.proceed(onSuspendReturnListener, *args)
+        AndroidAopBeanUtils.setIgnoreOther(onSuspendReturnListener)
+        return super.realProceed(onSuspendReturnListener, *args)
     }
 
 }
