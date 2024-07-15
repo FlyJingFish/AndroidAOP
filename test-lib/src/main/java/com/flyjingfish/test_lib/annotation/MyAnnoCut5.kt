@@ -27,6 +27,7 @@ class MyAnnoCut5 : BasePointCutSuspend<MyAnno5> {
             Log.e("MyAnnoCut5", "====invokeSuspend=====2")
             joinPoint.proceed(object : OnSuspendReturnListener {
                 override fun onReturn(proceedReturn: ProceedReturn): Any? {
+                    Log.e("MyAnnoCut5", "====onReturn=====proceed")
                     val  result = proceedReturn.proceed();
                     Log.e("MyAnnoCut5", "====onReturn=====result=$result")
                     return (result as Int)+100
