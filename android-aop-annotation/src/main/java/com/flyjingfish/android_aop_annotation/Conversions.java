@@ -224,7 +224,7 @@ public final class Conversions {
 	}
 
 
-	public static Class<?> getReturnClass(String className){
+	static Class<?> getReturnClass(String className){
 		try {
 			if (className.startsWith("[")){
 				return Class.forName(className);
