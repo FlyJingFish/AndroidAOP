@@ -77,9 +77,9 @@ public final class AndroidAopJoinPoint {
     public Object joinPointReturnExecute() {
 
         ProceedReturn proceedReturn = new ProceedReturn(targetClass, mArgs,target,isSuspend);
-        proceedReturn.setOriginalMethod(originalMethod);
-        proceedReturn.setTargetMethod(targetMethod);
-        proceedReturn.setTargetMethod(invokeMethod);
+        proceedReturn.setOriginalMethod$android_aop_annotation(originalMethod);
+        proceedReturn.setTargetMethod$android_aop_annotation(targetMethod);
+        proceedReturn.setTargetMethod$android_aop_annotation(invokeMethod);
         Object[] returnValue = new Object[1];
         Object startSuspend = getStartSuspendObj();
 
@@ -89,11 +89,11 @@ public final class AndroidAopJoinPoint {
         if (basePointCuts != null && basePointCuts.size() > 0){
             Iterator<OnSuspendReturnListener> iterator = basePointCuts.iterator();
             if (basePointCuts.size() > 1) {
-                proceedReturn.setOnInvokeListener(() -> {
+                proceedReturn.setOnInvokeListener$android_aop_annotation(() -> {
                     if (iterator.hasNext()) {
                         OnSuspendReturnListener listener = iterator.next();
                         iterator.remove();
-                        proceedReturn.setHasNext(iterator.hasNext());
+                        proceedReturn.setHasNext$android_aop_annotation(iterator.hasNext());
                         Object value = listener.onReturn(proceedReturn);;
                         returnValue[0] = value;
                         return value;
@@ -103,7 +103,7 @@ public final class AndroidAopJoinPoint {
                 });
             }
 
-            proceedReturn.setHasNext(basePointCuts.size() > 1);
+            proceedReturn.setHasNext$android_aop_annotation(basePointCuts.size() > 1);
             OnSuspendReturnListener listener = iterator.next();
             iterator.remove();
 

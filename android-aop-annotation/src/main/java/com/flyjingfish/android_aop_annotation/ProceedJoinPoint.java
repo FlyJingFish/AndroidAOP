@@ -9,9 +9,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-
-import kotlin.coroutines.Continuation;
 
 /**
  * 切点相关信息类，<a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint">wiki 文档使用说明</a>
@@ -38,6 +35,7 @@ public class ProceedJoinPoint {
     private final boolean isSuspend;
     private Object suspendContinuation;
     private Object methodReturnValue;
+    private boolean ignoreOther = false;
 
     ProceedJoinPoint(@NotNull Class<?> targetClass, Object[] args, @Nullable Object target, boolean isSuspend) {
         this.targetClass = targetClass;
@@ -194,6 +192,10 @@ public class ProceedJoinPoint {
 
     void setHasNext(boolean hasNext) {
         this.hasNext = hasNext;
+    }
+
+    void setIgnoreOther() {
+        this.ignoreOther = true;
     }
 
     /**
