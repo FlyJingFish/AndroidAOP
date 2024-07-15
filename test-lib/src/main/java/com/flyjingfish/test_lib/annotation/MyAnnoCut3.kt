@@ -25,10 +25,11 @@ class MyAnnoCut3 : BasePointCutSuspend<MyAnno3> {
 //                (joinPoint.target as MainActivity).setLogcat("MyAnnoCut3====invokeSuspend=====num=$num")
 //            }
 //            ToastUtils.makeText(MyApp.INSTANCE,"==MyAnnoCut3==${joinPoint.targetMethod.returnType}")
-            joinPoint.proceedIgnoreOther(object :OnSuspendReturnListener{
+            joinPoint.proceed(object :OnSuspendReturnListener{
                 override fun onReturn(proceedReturn: ProceedReturn): Any? {
-                    Log.e("MyAnnoCut3", "====onReturn=====${proceedReturn.getReturnType()}")
-                    return (proceedReturn.proceed() as Int)+100
+                    val  result = proceedReturn.proceed();
+                    Log.e("MyAnnoCut3", "====onReturn=====result=$result")
+                    return (result as Int)+100
                 }
 
             })
