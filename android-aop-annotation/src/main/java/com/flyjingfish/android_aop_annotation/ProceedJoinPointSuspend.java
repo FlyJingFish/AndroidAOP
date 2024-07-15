@@ -21,7 +21,7 @@ public final class ProceedJoinPointSuspend extends ProceedJoinPoint{
      */
     @Nullable
     public Object proceed(@Nullable OnSuspendReturnListener onSuspendReturnListener) {
-        return super.proceed(onSuspendReturnListener,args);
+        return proceed(onSuspendReturnListener,args);
     }
 
     /**
@@ -33,6 +33,30 @@ public final class ProceedJoinPointSuspend extends ProceedJoinPoint{
      */
     @Nullable
     public Object proceed(@Nullable OnSuspendReturnListener onSuspendReturnListener,Object... args) {
+        return super.proceed(onSuspendReturnListener, args);
+    }
+
+    /**
+     * 调用此方法则直接进入执行切点方法代码的阶段，忽略接下来的切面处理类
+     *
+     * @param onSuspendReturnListener 设置 suspend 的函数的 返回前的监听，在此可修改返回值
+     * @return 返回切点方法返回值 <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#proceed">wiki 文档使用说明</a>
+     */
+    @Nullable
+    public Object proceedIgnoreOther(@Nullable OnSuspendReturnListener onSuspendReturnListener) {
+        return proceedIgnoreOther(onSuspendReturnListener,args);
+    }
+
+    /**
+     * 调用此方法则直接进入执行切点方法代码的阶段，忽略接下来的切面处理类
+     *
+     * @param onSuspendReturnListener 设置 suspend 的函数的 返回前的监听，在此可修改返回值
+     * @param args 切点方法参数数组
+     * @return 返回切点方法返回值 <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#proceed">wiki 文档使用说明</a>
+     */
+    @Nullable
+    public Object proceedIgnoreOther(@Nullable OnSuspendReturnListener onSuspendReturnListener,Object... args) {
+        setHasNext(false);
         return super.proceed(onSuspendReturnListener, args);
     }
 
