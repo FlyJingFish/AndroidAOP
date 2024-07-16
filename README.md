@@ -73,7 +73,7 @@
 
 plugins {
     //必须项 👇 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五的方式二
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.9.6" apply true
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.9.7" apply true
 }
 ```
 
@@ -83,7 +83,7 @@ plugins {
 buildscript {
     dependencies {
         //必须项 👇
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.9.6'
+        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:1.9.7'
     }
 }
 // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五的方式二
@@ -122,7 +122,7 @@ apply plugin: 'android.aop' //最好放在最后一行
 //必须项 👇
 plugins {
     ...
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.9.6"//最好放在最后一行
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.9.7"//最好放在最后一行
 }
 ```
 
@@ -148,17 +148,17 @@ plugins {
 
 dependencies {
     //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.9.6'
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.9.6'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:1.9.7'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:1.9.7'
     
     //必须项 👇如果您项目内已经有了这项不用加也可以
     implementation 'androidx.appcompat:appcompat:1.3.0' // 至少在1.3.0及以上
     
     //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.9.6'
+    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:1.9.7'
     
     //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.9.6'
+    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:1.9.7'
     //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
 }
 ```
