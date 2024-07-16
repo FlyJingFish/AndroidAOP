@@ -164,7 +164,9 @@ internal object AndroidAopBeanUtils {
     }
 
     fun isIgnoreOther(onSuspendReturnListener: OnBaseSuspendReturnListener):Boolean{
-        return mIgnoreOtherMap[onSuspendReturnListener.toString()] ?: false
+        val result = mIgnoreOtherMap[onSuspendReturnListener.toString()] ?: false
+        mIgnoreOtherMap.remove(onSuspendReturnListener.toString())
+        return result
     }
 
     fun removeIgnoreOther(onSuspendReturnListener: OnBaseSuspendReturnListener){

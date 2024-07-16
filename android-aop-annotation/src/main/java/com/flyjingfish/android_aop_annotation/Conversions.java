@@ -232,8 +232,7 @@ public final class Conversions {
 				return Class.forName(className.substring(1,className.length()-1));
 			}
 		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(e);
+			return null;
 		}
-		return null;
 	}
 }
