@@ -281,6 +281,9 @@ object Utils {
     private val classnamePattern1 = Pattern.compile("Lkotlin/coroutines/jvm/internal/SuspendLambda;Lkotlin/jvm/functions/Function2<Lkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation<-.*?")
 
     fun getType(type: String?): String? {
+        if (type == null){
+            return null
+        }
         val matcher = classnamePattern.matcher(type)
         if (matcher.find()) {
             val type2 = matcher.group()
@@ -288,8 +291,7 @@ object Utils {
             if (matcher1.find()) {
                 val realType = matcher1.replaceFirst("")
                 val realMatcher = classnamePattern.matcher(realType)
-                val realTypeClass: String
-                realTypeClass = if (realMatcher.find()) {
+                val realTypeClass: String = if (realMatcher.find()) {
                     realMatcher.replaceFirst("")
                 } else {
                     realType.replace(">;Ljava/lang/Object;>;".toRegex(), "")

@@ -1,13 +1,13 @@
 package com.flyjingfish.android_aop_annotation
 
+import com.flyjingfish.android_aop_annotation.utils.HandlerUtils
 import com.flyjingfish.android_aop_annotation.utils.InvokeMethod
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.lang.reflect.ParameterizedType
 
-open class ProceedReturn2 (targetClass: Class<*>, args: Array<Any?>?, target: Any?, isSuspend: Boolean){
+open class ProceedReturn2 (targetClass: Class<*>, args: Array<Any?>?, target: Any?){
     private val args: Array<Any?>?
-    private var originalArgs: Array<Any?>?
     private val target: Any?
     private val targetClass: Class<*>
     private var targetMethod: Method? = null
@@ -15,32 +15,12 @@ open class ProceedReturn2 (targetClass: Class<*>, args: Array<Any?>?, target: An
     private var originalMethod: Method? = null
     private var onInvokeListener: OnInvokeListener? = null
     private var hasNext = false
-    private var argCount = 0
-    private val isSuspend : Boolean
-    private var suspendContinuation: Any? = null
     private var returnType: Class<*>? = null
 
     init {
         this.targetClass = targetClass
-        val fakeArgs: Array<Any?>?
-        if (isSuspend && args != null) {
-            fakeArgs = arrayOfNulls(args.size - 1)
-            for (i in 0 until args.size - 1) {
-                fakeArgs[i] = args[i]
-            }
-            suspendContinuation = args[args.size - 1]
-        } else {
-            fakeArgs = args
-        }
-        this.args = fakeArgs
+        this.args = args
         this.target = target
-        this.isSuspend = isSuspend
-        if (fakeArgs != null) {
-            originalArgs = fakeArgs.clone()
-        } else {
-            originalArgs = null
-        }
-        argCount = fakeArgs?.size ?: 0
     }
 
     /**
@@ -53,35 +33,29 @@ open class ProceedReturn2 (targetClass: Class<*>, args: Array<Any?>?, target: An
     }
 
     private fun proceed(vararg args: Any?): Any? {
-
-        val realArgs: Array<out Any?>
-        if (isSuspend) {
-            realArgs = arrayOfNulls(argCount + 1)
-            System.arraycopy(args, 0, realArgs, 0, args.size)
-            realArgs[argCount] = suspendContinuation
-
-        } else {
-            realArgs = args
-        }
-        if (this.args != null) {
-            System.arraycopy(realArgs, 0, this.args, 0, this.args.size)
-        }
-        return try {
+        return runCatching {
             var returnValue: Any? = null
             if (!hasNext) {
                 returnValue = if (targetInvokeMethod != null) {
-                    targetInvokeMethod!!.invoke(target, realArgs)
+                    targetInvokeMethod!!.invoke(target, args)
                 } else {
-                    targetMethod!!.invoke(target, *realArgs)
+                    targetMethod!!.invoke(target, *args)
                 }
             } else if (onInvokeListener != null) {
                 returnValue = onInvokeListener!!.onInvoke()
             }
             returnValue
-        } catch (e: IllegalAccessException) {
-            throw RuntimeException(e)
-        } catch (e: InvocationTargetException) {
-            throw RuntimeException(e.targetException)
+        }.getOrElse {
+            HandlerUtils.post {
+                when (it) {
+                    is InvocationTargetException -> {
+                        throw it.targetException
+                    }
+                    else -> {
+                        throw it
+                    }
+                }
+            }
         }
     }
 
@@ -124,7 +98,7 @@ open class ProceedReturn2 (targetClass: Class<*>, args: Array<Any?>?, target: An
             return returnType
         }
         val className = getReturnTypeClassName()
-        if (className.isNotEmpty()){
+        if (!className.isNullOrEmpty()){
             returnType = Conversions.getClass_(className)
             return returnType
         }
@@ -136,8 +110,9 @@ open class ProceedReturn2 (targetClass: Class<*>, args: Array<Any?>?, target: An
      *
      * @return suspend 函数的返回值类型
      */
-    private fun getReturnTypeClassName(): String {
-        try {
+    private fun getReturnTypeClassName(): String? {
+        return runCatching {
+            var className = ""
             if (target != null) {
                 val types = target.javaClass.genericInterfaces
                 if (types.isNotEmpty()) {
@@ -149,15 +124,15 @@ open class ProceedReturn2 (targetClass: Class<*>, args: Array<Any?>?, target: An
                             if (continuationType is ParameterizedType) {
                                 val continuationTypeArguments = continuationType.actualTypeArguments
                                 for (type in continuationTypeArguments) {
-                                    return type.toString().replace("\\? super ".toRegex(), "")
+                                    className = type.toString().replace("\\? super ".toRegex(), "")
+                                    break
                                 }
                             }
                         }
                     }
                 }
             }
-        } catch (e: Exception) {
-        }
-        return ""
+            className
+        }.getOrNull()
     }
 }

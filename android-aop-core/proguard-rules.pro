@@ -37,4 +37,7 @@
 -keep class com.flyjingfish.android_aop_annotation.utils.DebugAndroidAopInit{
    *;
 }
+-keep class com.flyjingfish.android_aop_core.utils.SetHandler{
+   *;
+}
 # AndroidAop必备混淆规则 -----end-----

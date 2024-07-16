@@ -6,14 +6,12 @@ import com.flyjingfish.android_aop_annotation.base.BasePointCutSuspend;
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethodSuspend;
 import com.flyjingfish.android_aop_annotation.base.OnBaseSuspendReturnListener;
-import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener;
-import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener2;
 import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils;
 import com.flyjingfish.android_aop_annotation.utils.InvokeMethod;
 import com.flyjingfish.android_aop_annotation.utils.MethodMap;
+import com.flyjingfish.android_aop_annotation.utils.Utils;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -54,36 +52,16 @@ public final class AndroidAopJoinPoint {
         this.mArgClasses = argClasses;
     }
 
-    private boolean isSuspend;
-
-    private Object getStartSuspendObj(){
-        try {
-            Method method = target.getClass().getMethod("getCompletion");
-            method.setAccessible(true);
-            Object returnValue = method.invoke(target);
-            Field field = returnValue.getClass().getField("uCont");
-            field.setAccessible(true);
-            Object uCont = field.get(returnValue);
-            Method completionMethod = uCont.getClass().getMethod("getCompletion");
-            completionMethod.setAccessible(true);
-
-            return completionMethod.invoke(uCont);
-        } catch (Throwable e) {
-            System.out.println(e.getMessage());
-            return null;
-        }
-
-    }
 
     public Object joinPointReturnExecute(String returnTypeClassName) {
 
-        ProceedReturn proceedReturn = new ProceedReturn(targetClass, mArgs,target,isSuspend);
+        ProceedReturn proceedReturn = new ProceedReturn(targetClass, mArgs,target);
         proceedReturn.setReturnType$android_aop_annotation(returnTypeClassName);
         proceedReturn.setOriginalMethod$android_aop_annotation(originalMethod);
         proceedReturn.setTargetMethod$android_aop_annotation(targetMethod);
         proceedReturn.setTargetMethod$android_aop_annotation(invokeMethod);
         Object[] returnValue = new Object[1];
-        Object startSuspend = getStartSuspendObj();
+        Object startSuspend = Utils.INSTANCE.getStartSuspendObj(target);
 
         final List<OnBaseSuspendReturnListener> basePointCuts = AndroidAopBeanUtils.INSTANCE.getSuspendReturnListeners(startSuspend);
         AndroidAopBeanUtils.INSTANCE.removeReturnListener(startSuspend);
@@ -96,14 +74,7 @@ public final class AndroidAopJoinPoint {
                         OnBaseSuspendReturnListener listener = iterator.next();
                         iterator.remove();
                         proceedReturn.setHasNext$android_aop_annotation(iterator.hasNext());
-                        Object value;
-                        if (AndroidAopBeanUtils.INSTANCE.isIgnoreOther(listener) && listener instanceof OnSuspendReturnListener2){
-                            value = ((OnSuspendReturnListener2) listener).onReturn(proceedReturn);
-                        }else if (listener instanceof OnSuspendReturnListener){
-                            value = ((OnSuspendReturnListener) listener).onReturn(proceedReturn);
-                        }else {
-                            value = null;
-                        }
+                        Object value = Utils.INSTANCE.invokeReturn(proceedReturn,listener);
                         value = Conversions.return2Type(proceedReturn.getReturnType(), value);
                         returnValue[0] = value;
                         return value;
@@ -117,11 +88,7 @@ public final class AndroidAopJoinPoint {
             OnBaseSuspendReturnListener listener = iterator.next();
             iterator.remove();
 
-            if (AndroidAopBeanUtils.INSTANCE.isIgnoreOther(listener) && listener instanceof OnSuspendReturnListener2){
-                returnValue[0] = ((OnSuspendReturnListener2) listener).onReturn(proceedReturn);
-            }else if (listener instanceof OnSuspendReturnListener){
-                returnValue[0] = ((OnSuspendReturnListener) listener).onReturn(proceedReturn);
-            }
+            returnValue[0] = Utils.INSTANCE.invokeReturn(proceedReturn,listener);
             for (OnBaseSuspendReturnListener onSuspendReturnListener : basePointCuts) {
                 AndroidAopBeanUtils.INSTANCE.removeIgnoreOther(onSuspendReturnListener);
             }
@@ -133,7 +100,7 @@ public final class AndroidAopJoinPoint {
     }
 
     public Object joinPointExecute(Continuation continuation) {
-        isSuspend = continuation != null;
+        boolean isSuspend = continuation != null;
 
         ProceedJoinPoint proceedJoinPoint;
         if (isSuspend){
