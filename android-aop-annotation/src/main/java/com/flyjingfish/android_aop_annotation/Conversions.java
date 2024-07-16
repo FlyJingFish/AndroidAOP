@@ -231,8 +231,8 @@ public final class Conversions {
 			}else if (className.startsWith("L")){
 				return Class.forName(className.substring(1,className.length()-1));
 			}
-		} catch (ClassNotFoundException e) {
-			return null;
+		} catch (ClassNotFoundException ignore) {
 		}
+		return null;
 	}
 }
