@@ -12,7 +12,7 @@ enum class MatchType {
      *  - [AndroidAopMatchClassMethod.targetClassName]
      *  - [AndroidAopReplaceClass.value]
      *
-     *  设置的类，包含 [MatchType.DIRECT_EXTENDS],[MatchType.LEAF_EXTENDS]
+     *  设置的类，包含 [DIRECT_EXTENDS],[LEAF_EXTENDS]
      */
     EXTENDS,
 

@@ -10,7 +10,7 @@ enum class CollectType {
      * 表示匹配的是继承自
      *  - [AndroidAopCollectMethod] 注解的函数的参数类型
      *
-     *  设置的类，包含 [CollectType.DIRECT_EXTENDS],[CollectType.LEAF_EXTENDS]
+     *  设置的类，包含 [DIRECT_EXTENDS],[LEAF_EXTENDS]
      */
     EXTENDS,
 
