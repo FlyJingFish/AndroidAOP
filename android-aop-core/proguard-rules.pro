@@ -25,7 +25,7 @@
 #    @androidx.annotation.Keep <fields>;
 #}
 -keep class * implements kotlin.coroutines.Continuation{
-   getCompletion();
+   kotlin.coroutines.Continuation getCompletion();
    <fields>;
 }
 -keep class * {
