@@ -17,7 +17,7 @@
         btn_MainThread,btn_OnLifecycle,btn_TryCatch,
         btn_Permission,btn_CustomIntercept,btn_MatchClassMethod,
         btn_topFun,btn_static_method,btn_static_method2,btn_field_set,
-        btn_field_get,btn_kotlin_anno,btn_test_much,btn_demo3"
+        btn_field_get,btn_kotlin_anno,btn_test_much,btn_demo3,btn_demo4"
         />
     <Button
         android:id="@+id/btn_SingleClick"
@@ -155,6 +155,14 @@
         app:layout_constraintTop_toTopOf="parent"
         android:textAllCaps="false"
         android:text="Demo3"/>
+    <Button
+        android:id="@+id/btn_demo4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textAllCaps="false"
+        android:text="Demo4"/>
     <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"

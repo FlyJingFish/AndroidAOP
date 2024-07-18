@@ -143,6 +143,7 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
         bean.test()
 
         binding.btnDemo3.setOnClickListener { toThirdActivity() }
+        binding.btnDemo4.setOnClickListener { startActivity(Intent(this,FourActivity::class.java)) }
     }
 
     @CheckNetwork(toastText = "没有网络呀～～～")

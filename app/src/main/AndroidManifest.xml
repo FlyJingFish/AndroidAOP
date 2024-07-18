@@ -35,6 +35,8 @@
         </activity>
         <activity android:name=".ThirdActivity">
         </activity>
+        <activity android:name=".FourActivity">
+        </activity>
     </application>
 
 </manifest>
