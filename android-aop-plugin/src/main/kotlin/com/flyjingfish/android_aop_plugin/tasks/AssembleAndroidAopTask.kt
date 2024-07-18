@@ -246,7 +246,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 if (byteArray.isNotEmpty()){
                                     try {
                                         val cr = ClassReader(byteArray)
-                                        val cw = ClassWriter(ClassWriter.COMPUTE_FRAMES)
+                                        val cw = ClassWriter(cr,0)
                                         val cv = object : ClassVisitor(Opcodes.ASM9, cw) {
                                             lateinit var className:String
                                             lateinit var superClassName:String
@@ -279,7 +279,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                                 return ReplaceInvokeMethodVisitor(mv,className,superClassName)
                                             }
                                         }
-                                        cr.accept(cv, ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+                                        cr.accept(cv, 0)
 
                                         val newByteArray = cw.toByteArray()
                                         newByteArray.inputStream().use {
@@ -350,7 +350,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             if (byteArray.isNotEmpty()){
                                 try {
                                     val cr = ClassReader(byteArray)
-                                    val cw = ClassWriter(ClassWriter.COMPUTE_FRAMES)
+                                    val cw = ClassWriter(cr,0)
                                     var thisHasStaticClock = false
                                     val cv = object : ReplaceBaseClassVisitor(cw) {
                                         override fun visitMethod(
@@ -371,7 +371,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                             return ReplaceInvokeMethodVisitor(mv,clazzName,oldSuperName)
                                         }
                                     }
-                                    cr.accept(cv, ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+                                    cr.accept(cv, 0)
 
                                     if (!thisHasStaticClock){
                                         WovenIntoCode.wovenStaticCode(cw, thisClassName)
@@ -477,7 +477,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     if (byteArray.isNotEmpty()){
                                         try {
                                             val cr = ClassReader(byteArray)
-                                            val cw = ClassWriter(ClassWriter.COMPUTE_FRAMES)
+                                            val cw = ClassWriter(cr,0)
                                             val cv = object : ClassVisitor(Opcodes.ASM9, cw) {
                                                 lateinit var className:String
                                                 lateinit var superClassName:String
@@ -510,7 +510,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                                     return ReplaceInvokeMethodVisitor(mv,className,superClassName)
                                                 }
                                             }
-                                            cr.accept(cv, ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+                                            cr.accept(cv, 0)
 
                                             val newByteArray = cw.toByteArray()
                                             newByteArray.inputStream().use {
@@ -581,7 +581,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 if (byteArray.isNotEmpty()){
                                     try {
                                         val cr = ClassReader(byteArray)
-                                        val cw = ClassWriter(ClassWriter.COMPUTE_FRAMES)
+                                        val cw = ClassWriter(cr,0)
                                         var thisHasStaticClock = false
                                         val cv = object : ReplaceBaseClassVisitor(cw) {
                                             override fun visitMethod(
@@ -602,7 +602,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                                 return ReplaceInvokeMethodVisitor(mv,clazzName,oldSuperName)
                                             }
                                         }
-                                        cr.accept(cv, ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+                                        cr.accept(cv, 0)
 
                                         if (!thisHasStaticClock){
                                             WovenIntoCode.wovenStaticCode(cw, thisClassName)

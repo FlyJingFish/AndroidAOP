@@ -259,7 +259,7 @@ object AopTaskUtils {
 
     fun wovenIntoCodeForReplace(byteArray: ByteArray): WovenResult {
         val cr = ClassReader(byteArray)
-        val cw = ClassWriter(ClassWriter.COMPUTE_FRAMES)
+        val cw = ClassWriter(cr,0)
         var thisHasCollect = false
         var thisHasStaticClock = false
         var thisCollectClassName :String ?= null
@@ -309,13 +309,13 @@ object AopTaskUtils {
                 replaceResult = true
             }
         }
-        cr.accept(cv, ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+        cr.accept(cv, 0)
         return WovenResult(cw.toByteArray(),replaceResult)
     }
 
     fun wovenIntoCodeForExtendsClass(byteArray:ByteArray): WovenResult {
         val cr = ClassReader(byteArray)
-        val cw = ClassWriter(ClassWriter.COMPUTE_FRAMES)
+        val cw = ClassWriter(cr,0)
         var thisHasCollect = false
         var thisHasStaticClock = false
         var thisCollectClassName :String ?= null
@@ -366,7 +366,7 @@ object AopTaskUtils {
             }
         }
 
-        cr.accept(cv, ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+        cr.accept(cv, 0)
 
         return WovenResult(cw.toByteArray(),replaceResult)
     }
