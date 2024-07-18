@@ -5,7 +5,10 @@ import com.flyjingfish.android_aop_annotation.base.OnBaseSuspendReturnListener
 import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener
 import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener2
 import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils.isIgnoreOther
+import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 internal object Utils {
     fun getStartSuspendObj(target:Any): Any? {
@@ -35,6 +38,46 @@ internal object Utils {
             HandlerUtils.post {
                 throw it
             }
+        }
+    }
+
+    fun getRealRuntimeException(e :Throwable):RuntimeException{
+        val throwable: Throwable = if (e is InvocationTargetException) {
+            e.targetException
+        } else {
+            e
+        }
+        val stackTrace = throwable.stackTrace
+        stackTrace?.let {
+            for (stackTraceElement in it) {
+                val realMethodName = getRealMethodName(stackTraceElement.methodName)
+                if (realMethodName != stackTraceElement.methodName) {
+                    try {
+                        val field = StackTraceElement::class.java.getDeclaredField("methodName")
+                        field.isAccessible = true
+                        field[stackTraceElement] = realMethodName
+                    } catch (_: Throwable) {
+                    }
+                }
+            }
+        }
+
+        return if (throwable is RuntimeException) {
+            throwable
+        } else {
+            RuntimeException(throwable)
+        }
+    }
+    private val AOPMethodPattern: Pattern = Pattern.compile("\\$\\$.{32}\\$\\\$AndroidAOP$")
+    private fun getRealMethodName(methodName:String?):String?{
+        if (methodName == null){
+            return null
+        }
+        val matcher: Matcher = AOPMethodPattern.matcher(methodName)
+        return if (matcher.find()) {
+            matcher.replaceAll("")
+        }else{
+            methodName;
         }
     }
 }

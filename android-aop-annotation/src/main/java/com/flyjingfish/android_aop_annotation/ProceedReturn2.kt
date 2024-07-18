@@ -2,6 +2,7 @@ package com.flyjingfish.android_aop_annotation
 
 import com.flyjingfish.android_aop_annotation.utils.HandlerUtils
 import com.flyjingfish.android_aop_annotation.utils.InvokeMethod
+import com.flyjingfish.android_aop_annotation.utils.Utils.getRealRuntimeException
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.lang.reflect.ParameterizedType
@@ -47,14 +48,7 @@ open class ProceedReturn2 (targetClass: Class<*>, args: Array<Any?>?, target: An
             returnValue
         }.getOrElse {
             HandlerUtils.post {
-                when (it) {
-                    is InvocationTargetException -> {
-                        throw it.targetException
-                    }
-                    else -> {
-                        throw it
-                    }
-                }
+                throw getRealRuntimeException(it)
             }
         }
     }

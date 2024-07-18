@@ -3,11 +3,11 @@ package com.flyjingfish.android_aop_annotation;
 import com.flyjingfish.android_aop_annotation.base.OnBaseSuspendReturnListener;
 import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils;
 import com.flyjingfish.android_aop_annotation.utils.InvokeMethod;
+import com.flyjingfish.android_aop_annotation.utils.Utils;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -119,10 +119,8 @@ public class ProceedJoinPoint {
             }
 
             return returnValue;
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e.getTargetException());
+        } catch (Throwable e) {
+            throw Utils.INSTANCE.getRealRuntimeException(e);
         }
     }
 

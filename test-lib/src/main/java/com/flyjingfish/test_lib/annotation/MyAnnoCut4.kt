@@ -26,16 +26,7 @@ class MyAnnoCut4 : BasePointCutSuspend<MyAnno4> {
 //            }
             sleep(2000)
             Log.e("MyAnnoCut4", "====invokeSuspend=====2")
-            joinPoint.proceedIgnoreOther(object : OnSuspendReturnListener2 {
-                override fun onReturn(proceedReturn: ProceedReturn2): Any? {
-//                    Log.e("MyAnnoCut4", "====onReturn=====proceed")
-//                    val  result = proceedReturn.proceed();
-//                    Log.e("MyAnnoCut4", "====onReturn=====result=$result")
-//                    return (result as Int)+100
-                    Log.e("MyAnnoCut4", "====onReturn=====proceed")
-                    return null
-                }
-            })
+            joinPoint.proceed()
         }
 
     }
