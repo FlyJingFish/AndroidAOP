@@ -3,7 +3,6 @@ package com.flyjingfish.android_aop_annotation
 import com.flyjingfish.android_aop_annotation.utils.HandlerUtils
 import com.flyjingfish.android_aop_annotation.utils.InvokeMethod
 import com.flyjingfish.android_aop_annotation.utils.Utils.getRealRuntimeException
-import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.lang.reflect.ParameterizedType
 
