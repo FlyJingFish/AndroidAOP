@@ -706,7 +706,7 @@ public class InitCollect2 {
 
 - AndroidAOP 这个库顾名思义就不是 Hook 库，它是致力于打造 AOP 思想的库，所以它只能 Hook 安装包以内的代码
 
-#### 混淆规则
+#### [关于混淆](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%85%B3%E4%BA%8E%E6%B7%B7%E6%B7%86)
 
 > 此资源库自带[混淆规则](https://github.com/FlyJingFish/AndroidAOP/blob/master/android-aop-core/proguard-rules.pro)，并且会自动导入，正常情况下无需手动导入。
 
