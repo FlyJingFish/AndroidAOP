@@ -189,8 +189,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
     private fun wovenIntoCode(){
         WovenInfoUtils.initAllClassName()
-        val includes = AndroidAopConfig.includes
-        val excludes = AndroidAopConfig.excludes
         WovenInfoUtils.makeReplaceMethodInfoUse()
 //        logger.error("getClassMethodRecord="+WovenInfoUtils.classMethodRecords)
         val hasReplace = WovenInfoUtils.hasReplace()
@@ -202,6 +200,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 if (entryName.isEmpty() || entryName.startsWith("META-INF/") || "module-info.class" == entryName) {
                     return
                 }
+                val entryClazzName = entryName.replace(_CLASS,"")
                 val relativePath = directory.toURI().relativize(file.toURI()).path
 
 
@@ -239,8 +238,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                         }
                     }
                     fun copy(){
-                        val clazzName = entryName.replace(_CLASS,"")
-                        if (WovenInfoUtils.isHasAopMethodCutInnerClassInfo(clazzName)){
+                        if (WovenInfoUtils.isHasAopMethodCutInnerClassInfo(entryClazzName)){
                             FileInputStream(file).use { inputs ->
                                 val byteArray = inputs.readAllBytes()
                                 if (byteArray.isNotEmpty()){
@@ -300,11 +298,10 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     val thisClassName = Utils.slashToDotClassName(entryName).replace(_CLASS,"")
                     val hasCollect = WovenInfoUtils.aopCollectClassMap[thisClassName] != null
                     val isClassFile = file.name.endsWith(_CLASS)
-                    val tranEntryName = file.absolutePath.replace("/", ".")
-                        .replace("\\", ".")
-                    val isWovenInfoCode = isClassFile && Utils.isIncludeFilterMatched(tranEntryName, includes) && !Utils.isExcludeFilterMatched(tranEntryName, excludes)
-                    val className = file.absolutePath.replace("$directoryPath/","")
-                    if (isWovenInfoCode && hasReplace && !className.startsWith("kotlinx/") && !className.startsWith("kotlin/")){
+                    val isWovenInfoCode = isClassFile
+                            && Utils.inConfigRules(thisClassName)
+                            && !entryClazzName.startsWith("kotlinx/") && !entryClazzName.startsWith("kotlin/")
+                    if (isWovenInfoCode && hasReplace){
                         FileInputStream(file).use { inputs ->
                             val byteArray = inputs.readAllBytes()
                             if (byteArray.isNotEmpty()){
@@ -321,9 +318,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 copy()
                             }
                         }
-                    }else if (isWovenInfoCode && hasReplaceExtendsClass && !className.startsWith("kotlinx/") && !className.startsWith("kotlin/")){
-                        val clazzName = className.replace(_CLASS,"")
-                        val replaceExtendsClassName = WovenInfoUtils.getModifyExtendsClass(Utils.slashToDotClassName(clazzName))
+                    }else if (isWovenInfoCode && hasReplaceExtendsClass){
+                        val replaceExtendsClassName = WovenInfoUtils.getModifyExtendsClass(Utils.slashToDotClassName(entryClazzName))
                         if (replaceExtendsClassName !=null){
                             FileInputStream(file).use { inputs ->
                                 val byteArray = inputs.readAllBytes()
@@ -436,13 +432,13 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             }.forEach { jarEntry ->
                 try {
                     val entryName = jarEntry.name
+                    val entryClazzName = entryName.replace(_CLASS,"")
 
                     val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(entryName)
                     val isSuspend:Boolean
                     val realMethodsRecord: HashMap<String, MethodRecord>? = if (methodsRecord == null){
                         isSuspend = true
-                        val clazzName = entryName.replace(_CLASS,"")
-                        WovenInfoUtils.getAopMethodCutInnerClassInfoInvokeClassInfo(clazzName)
+                        WovenInfoUtils.getAopMethodCutInnerClassInfoInvokeClassInfo(entryClazzName)
                     }else {
                         isSuspend = false
                         methodsRecord
@@ -470,8 +466,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             }
                         }
                         fun copy(){
-                            val clazzName = entryName.replace(_CLASS,"")
-                            if (WovenInfoUtils.isHasAopMethodCutInnerClassInfo(clazzName)){
+                            if (WovenInfoUtils.isHasAopMethodCutInnerClassInfo(entryClazzName)){
                                 jarFile.getInputStream(jarEntry).use { inputs ->
                                     val byteArray = inputs.readAllBytes()
                                     if (byteArray.isNotEmpty()){
@@ -531,11 +526,11 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                         val thisClassName = Utils.slashToDotClassName(entryName).replace(_CLASS,"")
                         val hasCollect = WovenInfoUtils.aopCollectClassMap[thisClassName] != null
                         val isClassFile = entryName.endsWith(_CLASS)
-                        val tranEntryName = entryName.replace("/", ".")
-                            .replace("\\", ".")
-                        val isWovenInfoCode = isClassFile && Utils.isIncludeFilterMatched(tranEntryName, includes) && !Utils.isExcludeFilterMatched(tranEntryName, excludes)
+                        val isWovenInfoCode = isClassFile
+                                && Utils.inConfigRules(thisClassName)
+                                && !entryName.startsWith("kotlinx/") && !entryName.startsWith("kotlin/")
 
-                        if (isWovenInfoCode && hasReplace && !entryName.startsWith("kotlinx/") && !entryName.startsWith("kotlin/")){
+                        if (isWovenInfoCode && hasReplace){
                             jarFile.getInputStream(jarEntry).use { inputs ->
                                 val byteArray = inputs.readAllBytes()
                                 if (byteArray.isNotEmpty()){
@@ -552,9 +547,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     copy()
                                 }
                             }
-                        }else if(isWovenInfoCode && hasReplaceExtendsClass && !entryName.startsWith("kotlinx/") && !entryName.startsWith("kotlin/")){
-                            val clazzName = entryName.replace(_CLASS,"")
-                            val replaceExtendsClassName = WovenInfoUtils.getModifyExtendsClass(Utils.slashToDotClassName(clazzName))
+                        }else if(isWovenInfoCode && hasReplaceExtendsClass){
+                            val replaceExtendsClassName = WovenInfoUtils.getModifyExtendsClass(Utils.slashToDotClassName(entryClazzName))
                             if (replaceExtendsClassName !=null){
                                 jarFile.getInputStream(jarEntry).use { inputs ->
                                     val byteArray = inputs.readAllBytes()

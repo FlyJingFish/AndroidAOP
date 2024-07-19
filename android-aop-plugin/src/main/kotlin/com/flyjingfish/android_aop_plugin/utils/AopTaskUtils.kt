@@ -133,14 +133,11 @@ object AopTaskUtils {
         }
     }
     fun processFileForSearch(file : File, directory: File, directoryPath:String,addClassMethodRecords:MutableMap<String,ClassMethodRecord>,deleteClassMethodRecords: MutableSet<String>){
-        val includes = AndroidAopConfig.includes
-        val excludes = AndroidAopConfig.excludes
         if (file.isFile) {
             val isClassFile = file.name.endsWith(Utils._CLASS)
-            val tranEntryName = file.absolutePath.replace("/", ".")
-                .replace("\\", ".")
-//                    printLog("tranEntryName="+tranEntryName)
-            if (isClassFile && Utils.isIncludeFilterMatched(tranEntryName, includes) && !Utils.isExcludeFilterMatched(tranEntryName, excludes)) {
+            val entryName = file.absolutePath.replace("$directoryPath/","")
+            val thisClassName = Utils.slashToDotClassName(entryName).replace(Utils._CLASS,"")
+            if (isClassFile && Utils.inConfigRules(thisClassName)) {
                 FileInputStream(file).use { inputs ->
                     val bytes = inputs.readAllBytes()
 
@@ -185,8 +182,6 @@ object AopTaskUtils {
     }
 
     fun processJarForSearch(file : File,addClassMethodRecords:MutableMap<String,ClassMethodRecord>,deleteClassMethodRecords: MutableSet<String>){
-        val includes = AndroidAopConfig.includes
-        val excludes = AndroidAopConfig.excludes
         val jarFile = JarFile(file)
         val enumeration = jarFile.entries()
         while (enumeration.hasMoreElements()) {
@@ -197,10 +192,9 @@ object AopTaskUtils {
                     continue
                 }
                 val isClassFile = entryName.endsWith(Utils._CLASS)
-                val tranEntryName = entryName.replace("/", ".")
-                    .replace("\\", ".")
 //                    printLog("tranEntryName="+tranEntryName)
-                if (isClassFile && Utils.isIncludeFilterMatched(tranEntryName, includes) && !Utils.isExcludeFilterMatched(tranEntryName, excludes)) {
+                val thisClassName = Utils.slashToDotClassName(entryName).replace(Utils._CLASS,"")
+                if (isClassFile && Utils.inConfigRules(thisClassName)) {
 
                     jarFile.getInputStream(jarEntry).use { inputs ->
                         val bytes = inputs.readAllBytes();

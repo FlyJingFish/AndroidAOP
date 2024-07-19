@@ -24,23 +24,29 @@ open class AndroidAopConfig {
     var cutInfoJson = false
 
     /**
-     * 增量加速，有一定增速效果，默认开启，如遇问题，可选择关闭调试
+     * 增量加速，有一定增速效果，默认开启
      */
     var increment = true
     /**
-     * 包含规则
+     * 包含规则,可以精确到直接使用类名
      */
     val includes = mutableListOf<String>()
     /**
-     * 排除规则
+     * 排除规则,可以精确到直接使用类名
      */
     val excludes = mutableListOf<String>()
 
+    /**
+     * 包含规则,可以精确到直接使用类名
+     */
     fun include(vararg filters: String): AndroidAopConfig {
         this.includes.addAll(filters)
         return this
     }
 
+    /**
+     * 排除规则,可以精确到直接使用类名
+     */
     fun exclude(vararg filters: String): AndroidAopConfig {
         this.excludes.addAll(filters)
         return this
@@ -51,12 +57,8 @@ open class AndroidAopConfig {
         AndroidAopConfig.debug = debug
         AndroidAopConfig.includes.clear()
         AndroidAopConfig.excludes.clear()
-        includes.forEach {
-            AndroidAopConfig.includes.add("$it.")
-        }
-        excludes.forEach {
-            AndroidAopConfig.excludes.add("$it.")
-        }
+        AndroidAopConfig.includes.addAll(includes)
+        AndroidAopConfig.excludes.addAll(excludes)
         AndroidAopConfig.excludes.add(Utils.annotationPackage)
         AndroidAopConfig.excludes.add(Utils.corePackage)
         AndroidAopConfig.verifyLeafExtends = verifyLeafExtends

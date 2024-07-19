@@ -99,8 +99,6 @@ class CompileAndroidAopTask(
         AopTaskUtils.searchJoinPointLocationEnd(addClassMethodRecords, deleteClassMethodRecords)
     }
     private fun wovenIntoCode(){
-        val includes = AndroidAopConfig.includes
-        val excludes = AndroidAopConfig.excludes
         WovenInfoUtils.makeReplaceMethodInfoUse()
 //        logger.error("getClassMethodRecord="+WovenInfoUtils.classMethodRecords)
         val hasReplace = WovenInfoUtils.hasReplace()
@@ -113,6 +111,7 @@ class CompileAndroidAopTask(
                 if (entryName.isEmpty() || entryName.startsWith("META-INF/") || "module-info.class" == entryName) {
                     return
                 }
+                val entryClazzName = entryName.replace(_CLASS,"")
                 val relativePath = directory.toURI().relativize(file.toURI()).path
 
 
@@ -147,8 +146,7 @@ class CompileAndroidAopTask(
 //                        file.inputStream().use {
 //                            outFile.saveEntry(it)
 //                        }
-                        val clazzName = entryName.replace(_CLASS,"")
-                        if (WovenInfoUtils.isHasAopMethodCutInnerClassInfo(clazzName)){
+                        if (WovenInfoUtils.isHasAopMethodCutInnerClassInfo(entryClazzName)){
                             FileInputStream(file).use { inputs ->
                                 val byteArray = inputs.readAllBytes()
                                 if (byteArray.isNotEmpty()){
@@ -198,11 +196,10 @@ class CompileAndroidAopTask(
                         }
                     }
                     val isClassFile = file.name.endsWith(_CLASS)
-                    val tranEntryName = file.absolutePath.replace("/", ".")
-                        .replace("\\", ".")
-                    val isWovenInfoCode = isClassFile && Utils.isIncludeFilterMatched(tranEntryName, includes) && !Utils.isExcludeFilterMatched(tranEntryName, excludes)
-                    val className = file.absolutePath.replace("$directoryPath/","")
-                    if (isWovenInfoCode && hasReplace && !className.startsWith("kotlinx/") && !className.startsWith("kotlin/")){
+                    val isWovenInfoCode = isClassFile
+                            && Utils.inConfigRules(thisClassName)
+                            && !entryClazzName.startsWith("kotlinx/") && !entryClazzName.startsWith("kotlin/")
+                    if (isWovenInfoCode && hasReplace){
                         FileInputStream(file).use { inputs ->
                             val byteArray = inputs.readAllBytes()
                             if (byteArray.isNotEmpty()){
@@ -219,9 +216,8 @@ class CompileAndroidAopTask(
                                 copy()
                             }
                         }
-                    }else if (isWovenInfoCode && hasReplaceExtendsClass && !className.startsWith("kotlinx/") && !className.startsWith("kotlin/")){
-                        val clazzName = className.replace(_CLASS,"")
-                        val replaceExtendsClassName = WovenInfoUtils.getModifyExtendsClass(Utils.slashToDotClassName(clazzName))
+                    }else if (isWovenInfoCode && hasReplaceExtendsClass){
+                        val replaceExtendsClassName = WovenInfoUtils.getModifyExtendsClass(Utils.slashToDotClassName(entryClazzName))
                         if (replaceExtendsClassName !=null){
                             FileInputStream(file).use { inputs ->
                                 val byteArray = inputs.readAllBytes()

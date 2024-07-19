@@ -18,9 +18,9 @@ import java.util.zip.ZipInputStream
 
 
 object Utils {
-    const val annotationPackage = "com.flyjingfish.android_aop_annotation."
-    const val corePackage = "com.flyjingfish.android_aop_core."
-    const val JoinAnnoCutUtils = "${annotationPackage}utils.JoinAnnoCutUtils"
+    const val annotationPackage = "com.flyjingfish.android_aop_annotation"
+    const val corePackage = "com.flyjingfish.android_aop_core"
+    const val JoinAnnoCutUtils = "${annotationPackage}.utils.JoinAnnoCutUtils"
     const val _CLASS = ".class"
     const val AOP_CONFIG_END_NAME = "\$\$AndroidAopClass.class"
     const val KEEP_CLASS = "com.flyjingfish.android_aop_annotation.aop_anno.AopKeep"
@@ -35,16 +35,22 @@ object Utils {
         return str.replace("/", ".")
     }
 
-    fun isExcludeFilterMatched(str: String?, filters: List<String>?): Boolean {
+    fun slashToDotClassName(str: String): String {
+        return str.replace("/", ".").replace("$", ".")
+    }
+
+    fun inConfigRules(className: String):Boolean{
+        val includes = AndroidAopConfig.includes
+        val excludes = AndroidAopConfig.excludes
+        return isIncludeFilterMatched(className, includes) && !isExcludeFilterMatched(className, excludes)
+    }
+
+    private fun isExcludeFilterMatched(str: String?, filters: List<String>?): Boolean {
         return isFilterMatched(str, filters, FilterPolicy.EXCLUDE)
     }
 
-    fun isIncludeFilterMatched(str: String?, filters: List<String>?): Boolean {
+    private fun isIncludeFilterMatched(str: String?, filters: List<String>?): Boolean {
         return isFilterMatched(str, filters, FilterPolicy.INCLUDE)
-    }
-
-    fun slashToDotClassName(str: String): String {
-        return str.replace("/", ".").replace("$", ".")
     }
 
     private fun isFilterMatched(
@@ -69,22 +75,29 @@ object Utils {
         return false
     }
 
-    private fun isContained(str: String?, filter: String): Boolean {
+    private fun isContained(str: String?, packageName: String): Boolean {
         if (str == null) {
             return false
         }
 
-        if (str.contains(filter)) {
-            return true
+        val realPackageName = if (packageName.contains("/")) {
+            packageName.replace("/", File.separator)
+        } else if (packageName.contains("\\")) {
+            packageName.replace("\\", File.separator)
         } else {
-            if (filter.contains("/")) {
-                return str.contains(filter.replace("/", File.separator))
-            } else if (filter.contains("\\")) {
-                return str.contains(filter.replace("\\", File.separator))
-            }
+            packageName
         }
 
-        return false
+        return if (str == realPackageName){
+            true
+        }else {
+            val filter = if (realPackageName.endsWith(".")){
+                realPackageName
+            }else {
+                "$realPackageName."
+            }
+            str.contains(filter)
+        }
     }
 
     enum class FilterPolicy {
