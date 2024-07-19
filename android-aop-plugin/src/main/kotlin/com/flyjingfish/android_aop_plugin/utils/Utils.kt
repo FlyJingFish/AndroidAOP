@@ -5,7 +5,6 @@ import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import org.gradle.api.Project
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.commons.Method
-import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -39,17 +38,11 @@ object Utils {
         return str.replace("/", ".").replace("$", ".")
     }
 
-    fun inConfigRules(className: String):Boolean{
-        val includes = AndroidAopConfig.includes
-        val excludes = AndroidAopConfig.excludes
-        return isIncludeFilterMatched(className, includes) && !isExcludeFilterMatched(className, excludes)
-    }
-
-    private fun isExcludeFilterMatched(str: String?, filters: List<String>?): Boolean {
+    fun isExcludeFilterMatched(str: String?, filters: List<String>?): Boolean {
         return isFilterMatched(str, filters, FilterPolicy.EXCLUDE)
     }
 
-    private fun isIncludeFilterMatched(str: String?, filters: List<String>?): Boolean {
+    fun isIncludeFilterMatched(str: String?, filters: List<String>?): Boolean {
         return isFilterMatched(str, filters, FilterPolicy.INCLUDE)
     }
 
@@ -100,7 +93,7 @@ object Utils {
         }
     }
 
-    enum class FilterPolicy {
+    private enum class FilterPolicy {
         INCLUDE,
         EXCLUDE
     }
@@ -384,4 +377,11 @@ fun File.saveEntry(inputStream: InputStream) {
     this.outputStream().use {
         inputStream.copyTo(it)
     }
+}
+
+fun AndroidAopConfig.Companion.inRules(className: String):Boolean{
+    return Utils.isIncludeFilterMatched(className, includes) && !Utils.isExcludeFilterMatched(
+        className,
+        excludes
+    )
 }

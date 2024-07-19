@@ -14,6 +14,7 @@ import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils._CLASS
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.computeMD5
+import com.flyjingfish.android_aop_plugin.utils.inRules
 import com.flyjingfish.android_aop_plugin.utils.isJarSignatureRelatedFiles
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.Directory
@@ -299,7 +300,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     val hasCollect = WovenInfoUtils.aopCollectClassMap[thisClassName] != null
                     val isClassFile = file.name.endsWith(_CLASS)
                     val isWovenInfoCode = isClassFile
-                            && Utils.inConfigRules(thisClassName)
+                            && AndroidAopConfig.inRules(thisClassName)
                             && !entryClazzName.startsWith("kotlinx/") && !entryClazzName.startsWith("kotlin/")
                     if (isWovenInfoCode && hasReplace){
                         FileInputStream(file).use { inputs ->
@@ -527,7 +528,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                         val hasCollect = WovenInfoUtils.aopCollectClassMap[thisClassName] != null
                         val isClassFile = entryName.endsWith(_CLASS)
                         val isWovenInfoCode = isClassFile
-                                && Utils.inConfigRules(thisClassName)
+                                && AndroidAopConfig.inRules(thisClassName)
                                 && !entryName.startsWith("kotlinx/") && !entryName.startsWith("kotlin/")
 
                         if (isWovenInfoCode && hasReplace){

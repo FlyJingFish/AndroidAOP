@@ -14,7 +14,7 @@ import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils._CLASS
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.checkExist
-import com.flyjingfish.android_aop_plugin.utils.printLog
+import com.flyjingfish.android_aop_plugin.utils.inRules
 import com.flyjingfish.android_aop_plugin.utils.saveEntry
 import com.flyjingfish.android_aop_plugin.utils.saveFile
 import org.gradle.api.Project
@@ -197,7 +197,7 @@ class CompileAndroidAopTask(
                     }
                     val isClassFile = file.name.endsWith(_CLASS)
                     val isWovenInfoCode = isClassFile
-                            && Utils.inConfigRules(thisClassName)
+                            && AndroidAopConfig.inRules(thisClassName)
                             && !entryClazzName.startsWith("kotlinx/") && !entryClazzName.startsWith("kotlin/")
                     if (isWovenInfoCode && hasReplace){
                         FileInputStream(file).use { inputs ->

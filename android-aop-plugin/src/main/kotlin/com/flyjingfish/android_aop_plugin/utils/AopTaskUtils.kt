@@ -137,7 +137,7 @@ object AopTaskUtils {
             val isClassFile = file.name.endsWith(Utils._CLASS)
             val entryName = file.absolutePath.replace("$directoryPath/","")
             val thisClassName = Utils.slashToDotClassName(entryName).replace(Utils._CLASS,"")
-            if (isClassFile && Utils.inConfigRules(thisClassName)) {
+            if (isClassFile && AndroidAopConfig.inRules(thisClassName)) {
                 FileInputStream(file).use { inputs ->
                     val bytes = inputs.readAllBytes()
 
@@ -194,7 +194,7 @@ object AopTaskUtils {
                 val isClassFile = entryName.endsWith(Utils._CLASS)
 //                    printLog("tranEntryName="+tranEntryName)
                 val thisClassName = Utils.slashToDotClassName(entryName).replace(Utils._CLASS,"")
-                if (isClassFile && Utils.inConfigRules(thisClassName)) {
+                if (isClassFile && AndroidAopConfig.inRules(thisClassName)) {
 
                     jarFile.getInputStream(jarEntry).use { inputs ->
                         val bytes = inputs.readAllBytes();
