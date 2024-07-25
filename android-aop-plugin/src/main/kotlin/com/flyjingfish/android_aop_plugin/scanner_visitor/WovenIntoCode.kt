@@ -315,7 +315,7 @@ object WovenIntoCode {
 
                 val paramNamesMap: MutableMap<Int,String> =
                     mutableMapOf()
-                val localVarAttr:LocalVariableAttribute? = ctMethod.methodInfo.codeAttribute.getAttribute(LocalVariableAttribute.tag) as LocalVariableAttribute?
+                val localVarAttr:LocalVariableAttribute? = ctMethod.methodInfo.codeAttribute.getAttribute(LocalVariableAttribute.tag) as LocalVariableAttribute? ?: targetMethod.methodInfo.codeAttribute.getAttribute(LocalVariableAttribute.tag) as LocalVariableAttribute?
                 localVarAttr?.let{
                     val length = it.tableLength()
                     if (length > 1){
