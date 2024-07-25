@@ -14,12 +14,14 @@ public final class AopMethod {
     private final Object suspendContinuation;
 
     private final String[] mParamNames;
+    private final Class<?> mReturnType;
 
-    AopMethod(Method targetMethod, boolean isSuspend, Object suspendContinuation, String[] paramNames) {
+    AopMethod(Method targetMethod, boolean isSuspend, Object suspendContinuation, String[] paramNames,Class<?> returnType) {
         this.targetMethod = targetMethod;
         this.isSuspend = isSuspend;
         this.suspendContinuation = suspendContinuation;
         this.mParamNames = paramNames;
+        this.mReturnType = returnType;
     }
 
     public String getName() {
@@ -37,6 +39,9 @@ public final class AopMethod {
     }
 
     public Class<?> getReturnType() {
+        if (mReturnType != null){
+            return mReturnType;
+        }
         return targetMethod.getReturnType();
     }
 

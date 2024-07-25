@@ -7,10 +7,9 @@ import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils
 class ProceedJoinPointSuspend(
     targetClass: Class<*>,
     args: Array<Any?>?,
-    paramNames:Array<String>,
     target: Any?,
     isSuspend: Boolean
-) : ProceedJoinPoint(targetClass, args,paramNames, target, isSuspend) {
+) : ProceedJoinPoint(targetClass, args, target, isSuspend) {
 
     /**
      * 调用切点方法内代码，通过设置 [OnSuspendReturnListener] 可以修改返回值

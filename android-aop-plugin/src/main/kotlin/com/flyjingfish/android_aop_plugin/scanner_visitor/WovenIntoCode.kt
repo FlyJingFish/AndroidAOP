@@ -36,6 +36,8 @@ import org.objectweb.asm.ClassWriter.COMPUTE_FRAMES
 import org.objectweb.asm.ClassWriter.COMPUTE_MAXS
 import org.objectweb.asm.Opcodes.*
 import org.objectweb.asm.commons.AdviceAdapter
+import org.objectweb.asm.signature.SignatureReader
+import org.objectweb.asm.signature.SignatureVisitor
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStream
@@ -56,6 +58,8 @@ object WovenIntoCode {
 
         val cr = ClassReader(inputStreamBytes)
         val cw = ClassWriter(cr, 0)
+        val returnTypeMap = mutableMapOf<String,String>()
+
         fun visitMethod4Record(access: Int,
                                name: String,
                                descriptor: String,
@@ -69,6 +73,76 @@ object WovenIntoCode {
                 if (newMethodName == name && oldDescriptor == descriptor){
                     wovenRecord.add(value)
                 }
+            }
+            val methodName = name
+            val returnTypeKey = name+descriptor
+            if (signature != null && descriptor.endsWith("Lkotlin/coroutines/Continuation;)Ljava/lang/Object;")) {
+                // 处理签名信息
+                val signatureReader = SignatureReader(signature)
+                class GenericTypePrinter : SignatureVisitor(ASM9) {
+                    override fun visitClassType(name: String) {
+                        println("$methodName$descriptor,Parameter type2: " + name.replace('/', '.'))
+                    }
+
+                    override fun visitTypeArgument() {
+                        println("$methodName$descriptor,Type argument2:")
+                        super.visitTypeArgument()
+                    }
+
+                    override fun visitArrayType(): SignatureVisitor {
+                        println("$methodName$descriptor,Array type2:")
+                        return GenericTypePrinter()
+                    }
+                }
+                signatureReader.accept(object : SignatureVisitor(ASM9) {
+                    override fun visitParameterType(): SignatureVisitor {
+                        return GenericTypePrinter()
+                    }
+                })
+//                signatureReader.accept(object : SignatureVisitor(ASM9) {
+//                  override  fun visitParameterType(): SignatureVisitor {
+//                    return object : SignatureVisitor(ASM9) {
+//                        var isSuspendSignature: Boolean = false
+//                        override fun visitClassType(name: String) {
+//                            printLog(
+//                                "$methodName$descriptor,Parameter type: " + name.replace(
+//                                    '/',
+//                                    '.'
+//                                )
+//                            )
+//                            if (name == "kotlin/coroutines/Continuation") {
+//                                isSuspendSignature = true
+//                            }
+//                        }
+//
+//
+//                        override fun visitTypeArgument(wildcard: Char): SignatureVisitor {
+//                            printLog("$methodName$descriptor,Type argument wildcard: $wildcard")
+//                            return object : SignatureVisitor(ASM9) {
+//                                override fun visitClassType(name: String) {
+//                                    printLog(
+//                                        "$methodName$descriptor,Type argument: " + name.replace(
+//                                            '/',
+//                                            '.'
+//                                        )
+//                                    )
+//                                    if (isSuspendSignature && wildcard == '-') {
+//                                        returnTypeMap[returnTypeKey] = name.replace('/', '.')
+//                                    }
+//                                }
+//
+//
+//                            }
+//                        }
+//
+//                        override fun visitParameterType(): SignatureVisitor {
+//                            return GenericTypePrinter()
+//                        }
+//
+//
+//                    }
+//                    }
+//                })
             }
         }
         var thisHasCollect = false
@@ -308,6 +382,7 @@ object WovenIntoCode {
                 //给原有方法增加 @Keep，防止被混淆
                 targetMethod.addKeepClassAnnotation(constPool)
                 ctMethod.addKeepClassAnnotation(constPool)
+
                 val isStaticMethod =
                     Modifier.isStatic(ctMethod.modifiers)
                 val ctClasses = ctMethod.parameterTypes
@@ -373,6 +448,12 @@ object WovenIntoCode {
                 }
 
                 val suspendMethod = returnType.name == "java.lang.Object" && ctClasses[ctClasses.size-1].name == "kotlin.coroutines.Continuation"
+                val returnTypeClassName = if (suspendMethod){
+                    returnTypeMap[oldMethodName+oldDescriptor] ?: (returnTypeMap[targetMethodName+oldDescriptor] ?: returnType.name)
+                }else{
+                    returnType.name
+                }
+
                 val returnStr = if (isSuspend){
                     String.format(
                         ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointReturnExecute(${if (returnClassName == null) null else "\"$returnClassName\""})"
@@ -409,12 +490,11 @@ object WovenIntoCode {
                 val body =
                     " {AndroidAopJoinPoint pointCut = new AndroidAopJoinPoint($constructor);\n"+
                             (if (cutClassName != null) "        pointCut.setCutMatchClassName(\"$cutClassName\");\n" else "") +
-//                            (if (isHasArgs) "        String[] classNames = new String[]{$paramsClassNamesBuffer};\n" else "") +
-//                            (if (isHasArgs) "        pointCut.setArgClassNames(classNames);\n" else "") +
                             "Class[] classes = new Class[]{$paramsClassesBuffer};\n"+
                             "pointCut.setArgClasses(classes);\n"+
                             "String[] paramNames = new String[]{$paramsNamesBuffer};\n"+
                             "pointCut.setParamNames(paramNames);\n"+
+                            "pointCut.setReturnClass($returnTypeClassName.class);\n"+
                             (if (isHasArgs) "        Object[] args = new Object[]{$argsBuffer};\n" else "") +
                             (if (isHasArgs) "        pointCut.setArgs(args$argReflect);\n" else "        pointCut.setArgs(null$argReflect);\n") +
                             "        "+returnStr+";}"
