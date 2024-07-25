@@ -25,6 +25,7 @@ public class ProceedJoinPoint {
     public final Object target;
     @NotNull
     public final Class<?> targetClass;
+    private final String[] mParamNames;
     private Method targetMethod;
     private InvokeMethod targetInvokeMethod;
     private Method originalMethod;
@@ -36,8 +37,9 @@ public class ProceedJoinPoint {
     private Object suspendContinuation;
     private Object methodReturnValue;
 
-    ProceedJoinPoint(@NotNull Class<?> targetClass, Object[] args, @Nullable Object target, boolean isSuspend) {
+    ProceedJoinPoint(@NotNull Class<?> targetClass, Object[] args,String[] paramNames, @Nullable Object target, boolean isSuspend) {
         this.targetClass = targetClass;
+        this.mParamNames = paramNames;
         Object[] fakeArgs;
         if (isSuspend && args != null){
             fakeArgs = new Object[args.length - 1];
@@ -158,7 +160,7 @@ public class ProceedJoinPoint {
 
     void setOriginalMethod(Method originalMethod) {
         this.originalMethod = originalMethod;
-        targetAopMethod = new AopMethod(originalMethod,isSuspend,suspendContinuation);
+        targetAopMethod = new AopMethod(originalMethod,isSuspend,suspendContinuation,mParamNames);
     }
 
     /**

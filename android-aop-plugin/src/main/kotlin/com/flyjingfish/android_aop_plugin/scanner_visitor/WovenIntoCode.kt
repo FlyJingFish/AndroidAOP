@@ -249,13 +249,9 @@ object WovenIntoCode {
                             mv = MethodReplaceInvokeAdapter(className,"$name$descriptor",mv)
                         }
                         WovenInfoUtils.addAopMethodCutInnerClassInfoInvokeMethod(className,newMethodName,descriptor)
-                        RemoveAnnotation(mv,className,name,descriptor,object :SearchSuspendClass.OnResultListener{
+                        RemoveAnnotation(mv,className,descriptor,object :SearchSuspendClass.OnResultListener{
                             override fun onBack() {
                                 value.multipleSuspendClass = true
-                            }
-                        },object :RemoveAnnotation.OnParamsCallback{
-                            override fun onBack(paramNames: List<String>) {
-                                value.paramNames = paramNames
                             }
                         })
                     } else {
@@ -308,31 +304,57 @@ object WovenIntoCode {
 
                 val constPool = ctClass.classFile.constPool
 
+
                 //给原有方法增加 @Keep，防止被混淆
                 targetMethod.addKeepClassAnnotation(constPool)
                 ctMethod.addKeepClassAnnotation(constPool)
-                val paramNames: MutableList<String> =
-                    ArrayList()
-                val attr:LocalVariableAttribute? = ctMethod.methodInfo.codeAttribute.getAttribute(LocalVariableAttribute.tag) as LocalVariableAttribute?
-                attr?.let{
-                    val length = attr.tableLength()
-                    if (length > 1){
-                        for (i in 1..length-1) {
-                            paramNames.add(it.variableName(i))
-                        }
-                    }
-                }
-
-
                 val isStaticMethod =
                     Modifier.isStatic(ctMethod.modifiers)
+                val ctClasses = ctMethod.parameterTypes
+                val len = ctClasses.size
+
+                val paramNamesMap: MutableMap<Int,String> =
+                    mutableMapOf()
+                val localVarAttr:LocalVariableAttribute? = ctMethod.methodInfo.codeAttribute.getAttribute(LocalVariableAttribute.tag) as LocalVariableAttribute?
+                localVarAttr?.let{
+                    val length = it.tableLength()
+                    if (length > 1){
+                        val startIndex = if (isStaticMethod) 0 else 1
+                        for (i in startIndex until length) {
+                            val index = it.index(i)
+                            if (index < len){
+                                paramNamesMap[index] = it.variableName(i)
+                            }
+                        }
+                    }
+
+//                    val paramCount: Int = ctClasses.size
+//                    // 打印方法参数名称
+//                    for (i in 0 until paramCount) {
+//                        val paramName: String = localVarAttr.variableNameByIndex(i + 1) // +1是因为0是"this"指针
+//                        paramNames.add(paramName)
+//                    }
+                }
+
+                val sortedMap = paramNamesMap.entries.sortedBy { it.key }.associate { it.toPair() }
+                val paramsNamesBuffer = StringBuffer()
+                var paramNameIndex = 0
+                val sortedMapSize = sortedMap.size
+                for (entry in sortedMap) {
+                    paramsNamesBuffer.append("\"").append(entry.value).append("\"")
+                    if (paramNameIndex != sortedMapSize - 1) {
+                        paramsNamesBuffer.append(",")
+                    }
+                    paramNameIndex++
+                }
+
+                printLog("targetClassName=$targetClassName,oldMethodName=$oldMethodName,oldDescriptor=$oldDescriptor,paramNames=$paramNamesMap")
                 val argsBuffer = StringBuffer()
 
                 val paramsClassNamesBuffer = StringBuffer()
                 val paramsClassesBuffer = StringBuffer()
-                val ctClasses = ctMethod.parameterTypes
                 val returnType = ctMethod.returnType
-                val len = ctClasses.size
+
                 // 非静态的成员函数的第一个参数是this
                 val pos =  1
                 val isHasArgs = len > 0
@@ -356,7 +378,7 @@ object WovenIntoCode {
                         invokeBuffer.append(",")
                     }
                 }
-                printLog("targetClassName=$targetClassName,oldMethodName=$oldMethodName,oldDescriptor=$oldDescriptor,paramNames=$paramNames")
+
                 val suspendMethod = returnType.name == "java.lang.Object" && ctClasses[ctClasses.size-1].name == "kotlin.coroutines.Continuation"
                 val returnStr = if (isSuspend){
                     String.format(
@@ -398,6 +420,8 @@ object WovenIntoCode {
 //                            (if (isHasArgs) "        pointCut.setArgClassNames(classNames);\n" else "") +
                             "Class[] classes = new Class[]{$paramsClassesBuffer};\n"+
                             "pointCut.setArgClasses(classes);\n"+
+                            "String[] paramNames = new String[]{$paramsNamesBuffer};\n"+
+                            "pointCut.setParamNames(paramNames);\n"+
                             (if (isHasArgs) "        Object[] args = new Object[]{$argsBuffer};\n" else "") +
                             (if (isHasArgs) "        pointCut.setArgs(args$argReflect);\n" else "        pointCut.setArgs(null$argReflect);\n") +
                             "        "+returnStr+";}"

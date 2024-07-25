@@ -43,6 +43,12 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         Log.e("MainActivity","onCreate")
+        val map = mapOf(1 to "num1",0 to "num")
+        println(map)
+        val sortedMap = map.entries.sortedBy { it.key }.associate { it.toPair() }
+
+        println(sortedMap) // 输出: {a=1, b=2, c=3}
+        println(sortedMap.values.toTypedArray()) // 输出: {a=1, b=2, c=3}
 //        binding.btnSingleClick.setOnClickListener{
 //            onSingleClick()
 //        }

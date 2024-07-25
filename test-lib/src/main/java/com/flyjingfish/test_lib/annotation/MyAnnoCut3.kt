@@ -18,7 +18,8 @@ class MyAnnoCut3 : BasePointCutSuspend<MyAnno3> {
 
     override suspend fun invokeSuspend(joinPoint: ProceedJoinPointSuspend, anno: MyAnno3) {
         withContext(Dispatchers.Main) {
-            Log.e("MyAnnoCut3", "====invokeSuspend=====${joinPoint.targetMethod.returnType}")
+
+            Log.e("MyAnnoCut3", "====invokeSuspend=====${joinPoint.targetMethod.returnType}=parameterNames=${joinPoint.targetMethod.parameterNames.toList()}")
 //            if (joinPoint.target is MainActivity) {
 //                (joinPoint.target as MainActivity).setLogcat("MyAnnoCut3====invokeSuspend=====")
 //                val num = (joinPoint.target as MainActivity).getData2(1)

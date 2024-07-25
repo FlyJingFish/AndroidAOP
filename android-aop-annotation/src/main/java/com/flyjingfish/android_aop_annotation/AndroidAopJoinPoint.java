@@ -24,6 +24,7 @@ public final class AndroidAopJoinPoint {
     private final Class<?> targetClass;
     private Object[] mArgs;
     private Class<?>[] mArgClasses;
+    private String[] mParamNames;
     private final String targetMethodName;
     private final String originalMethodName;
     private Method targetMethod;
@@ -52,6 +53,9 @@ public final class AndroidAopJoinPoint {
         this.mArgClasses = argClasses;
     }
 
+    public void setParamNames(String[] paramNames) {
+        this.mParamNames = paramNames;
+    }
 
     public Object joinPointReturnExecute(String returnTypeClassName) {
 
@@ -104,9 +108,9 @@ public final class AndroidAopJoinPoint {
 
         ProceedJoinPoint proceedJoinPoint;
         if (isSuspend){
-            proceedJoinPoint = new ProceedJoinPointSuspend(targetClass, mArgs,target,true);
+            proceedJoinPoint = new ProceedJoinPointSuspend(targetClass, mArgs,mParamNames,target,true);
         }else {
-            proceedJoinPoint = new ProceedJoinPoint(targetClass, mArgs,target,false);
+            proceedJoinPoint = new ProceedJoinPoint(targetClass, mArgs,mParamNames,target,false);
         }
 
         proceedJoinPoint.setOriginalMethod(originalMethod);
