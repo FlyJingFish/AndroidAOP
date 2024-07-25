@@ -28,6 +28,7 @@ import javassist.NotFoundException
 import javassist.bytecode.AnnotationsAttribute
 import javassist.bytecode.AttributeInfo
 import javassist.bytecode.ConstPool
+import javassist.bytecode.LocalVariableAttribute
 import javassist.bytecode.annotation.Annotation
 import org.gradle.api.Project
 import org.objectweb.asm.*
@@ -248,9 +249,13 @@ object WovenIntoCode {
                             mv = MethodReplaceInvokeAdapter(className,"$name$descriptor",mv)
                         }
                         WovenInfoUtils.addAopMethodCutInnerClassInfoInvokeMethod(className,newMethodName,descriptor)
-                        RemoveAnnotation(mv,className,descriptor,object :SearchSuspendClass.OnResultListener{
+                        RemoveAnnotation(mv,className,name,descriptor,object :SearchSuspendClass.OnResultListener{
                             override fun onBack() {
                                 value.multipleSuspendClass = true
+                            }
+                        },object :RemoveAnnotation.OnParamsCallback{
+                            override fun onBack(paramNames: List<String>) {
+                                value.paramNames = paramNames
                             }
                         })
                     } else {
@@ -306,9 +311,19 @@ object WovenIntoCode {
                 //给原有方法增加 @Keep，防止被混淆
                 targetMethod.addKeepClassAnnotation(constPool)
                 ctMethod.addKeepClassAnnotation(constPool)
+                val paramNames: MutableList<String> =
+                    ArrayList()
+                val attr:LocalVariableAttribute? = ctMethod.methodInfo.codeAttribute.getAttribute(LocalVariableAttribute.tag) as LocalVariableAttribute?
+                attr?.let{
+                    val length = attr.tableLength()
+                    if (length > 1){
+                        for (i in 1..length-1) {
+                            paramNames.add(it.variableName(i))
+                        }
+                    }
+                }
 
-//                val paramNames: MutableList<String> =
-//                    ArrayList()
+
                 val isStaticMethod =
                     Modifier.isStatic(ctMethod.modifiers)
                 val argsBuffer = StringBuffer()
@@ -341,7 +356,7 @@ object WovenIntoCode {
                         invokeBuffer.append(",")
                     }
                 }
-
+                printLog("targetClassName=$targetClassName,oldMethodName=$oldMethodName,oldDescriptor=$oldDescriptor,paramNames=$paramNames")
                 val suspendMethod = returnType.name == "java.lang.Object" && ctClasses[ctClasses.size-1].name == "kotlin.coroutines.Continuation"
                 val returnStr = if (isSuspend){
                     String.format(
