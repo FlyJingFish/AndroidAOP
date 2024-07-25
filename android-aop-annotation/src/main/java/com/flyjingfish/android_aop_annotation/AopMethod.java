@@ -27,6 +27,12 @@ public final class AopMethod {
     }
 
     public String[] getParameterNames() {
+        if (isSuspend){
+            String[] newNames = new String[mParamNames.length - 1];
+            System.arraycopy(mParamNames, 0, newNames, 0, newNames.length);
+            return newNames;
+        }
+
         return mParamNames;
     }
 

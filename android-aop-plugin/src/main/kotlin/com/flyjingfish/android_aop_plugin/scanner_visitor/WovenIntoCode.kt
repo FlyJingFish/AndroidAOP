@@ -320,20 +320,13 @@ object WovenIntoCode {
                     val length = it.tableLength()
                     if (length > 1){
                         val startIndex = if (isStaticMethod) 0 else 1
-                        for (i in startIndex until length) {
+                        for (i in 0 until length) {
                             val index = it.index(i)
-                            if (index < len){
+                            if (index in startIndex..len){
                                 paramNamesMap[index] = it.variableName(i)
                             }
                         }
                     }
-
-//                    val paramCount: Int = ctClasses.size
-//                    // 打印方法参数名称
-//                    for (i in 0 until paramCount) {
-//                        val paramName: String = localVarAttr.variableNameByIndex(i + 1) // +1是因为0是"this"指针
-//                        paramNames.add(paramName)
-//                    }
                 }
 
                 val sortedMap = paramNamesMap.entries.sortedBy { it.key }.associate { it.toPair() }
@@ -348,7 +341,7 @@ object WovenIntoCode {
                     paramNameIndex++
                 }
 
-                printLog("targetClassName=$targetClassName,oldMethodName=$oldMethodName,oldDescriptor=$oldDescriptor,paramNames=$paramNamesMap")
+//                printLog("targetClassName=$targetClassName,oldMethodName=$oldMethodName,oldDescriptor=$oldDescriptor,paramNames=$paramNamesMap")
                 val argsBuffer = StringBuffer()
 
                 val paramsClassNamesBuffer = StringBuffer()
