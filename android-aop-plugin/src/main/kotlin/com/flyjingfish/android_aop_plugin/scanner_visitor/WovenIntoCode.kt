@@ -89,6 +89,21 @@ object WovenIntoCode {
                         super.visitTypeArgument()
                     }
 
+                    override fun visitTypeArgument(wildcard: Char): SignatureVisitor {
+//                            return object : SignatureVisitor(ASM9) {
+//                                override fun visitClassType(name: String) {
+//                                    printLog(
+//                                        "$methodName$descriptor,Type argument2: " + name.replace(
+//                                            '/',
+//                                            '.'
+//                                        )
+//                                    )
+//                                }
+//
+//
+//                            }
+                        return GenericTypePrinter()
+                    }
                     override fun visitArrayType(): SignatureVisitor {
                         println("$methodName$descriptor,Array type2:")
                         return GenericTypePrinter()
