@@ -41,9 +41,7 @@ public class ProceedJoinPoint {
         Object[] fakeArgs;
         if (isSuspend && args != null){
             fakeArgs = new Object[args.length - 1];
-            for (int i = 0; i < args.length - 1; i++) {
-                fakeArgs[i] = args[i];
-            }
+            System.arraycopy(args, 0, fakeArgs, 0, args.length - 1);
             suspendContinuation = args[args.length - 1];
         }else {
             fakeArgs = args;
