@@ -195,7 +195,8 @@ android {
 }
 ```
 > [!TIP]\
-> **合理使用 include 和 exclude 可提高编译速度，建议直接使用 include 设置你项目的相关包名（包括 app 和自定义 module 的）**
+> **include 和 exclude支持精确设置为一个类**<br>
+> **合理使用 include 和 exclude 可提高编译速度，建议直接使用 include 设置你项目的相关包名（包括 app 和自定义 module 的）**<br>
 > **@AndroidAopMatchClassMethod 和 @AndroidAopCollectMethod 如果没有设置 LEAF_EXTENDS,就主动设置 verifyLeafExtends 为 false 也可以提速**
 
 > [!CAUTION]\
