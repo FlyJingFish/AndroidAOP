@@ -33,7 +33,13 @@ data class AopMatchCut(val baseClassName:String, val methodNames:Array<String>,v
     }
 
     fun isMatchPackageNameFor(className:String):Boolean{
+        if (!isMatchPackageName()){
+            return false
+        }
         val matchPackageName = getMatchPackageName()
+        if ((matchPackageName.replace(".","")).isEmpty()){
+            return false
+        }
         val filter = if (matchPackageName.endsWith(".")){
             matchPackageName
         }else {
