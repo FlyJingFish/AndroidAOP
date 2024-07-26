@@ -39,7 +39,7 @@ data class AopMatchCut(val baseClassName:String, val methodNames:Array<String>,v
         }else {
             "$matchPackageName."
         }
-        return className.contains(filter)
+        return className.startsWith(filter)
     }
 
     private fun getMatchPackageName():String{

@@ -89,7 +89,7 @@ object Utils {
             }else {
                 "$realPackageName."
             }
-            str.contains(filter)
+            str.startsWith(filter)
         }
     }
 
