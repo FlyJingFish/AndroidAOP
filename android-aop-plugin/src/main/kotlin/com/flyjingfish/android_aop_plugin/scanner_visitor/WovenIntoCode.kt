@@ -58,7 +58,7 @@ object WovenIntoCode {
 
         val cr = ClassReader(inputStreamBytes)
         val cw = ClassWriter(cr, 0)
-        val returnTypeMap = mutableMapOf<String,String>()
+        val returnTypeMap = mutableMapOf<String,String?>()
 
         fun visitMethod4Record(access: Int,
                                name: String,
@@ -74,90 +74,12 @@ object WovenIntoCode {
                     wovenRecord.add(value)
                 }
             }
-            val methodName = name
-            val returnTypeKey = name+descriptor
+
+
             if (signature != null && descriptor.endsWith("Lkotlin/coroutines/Continuation;)Ljava/lang/Object;")) {
-                // 处理签名信息
-                val signatureReader = SignatureReader(signature)
-                class GenericTypePrinter : SignatureVisitor(ASM9) {
-                    override fun visitClassType(name: String) {
-                        println("$methodName$descriptor,Parameter type2: " + name.replace('/', '.'))
-                    }
-
-                    override fun visitTypeArgument() {
-                        println("$methodName$descriptor,Type argument2:")
-                        super.visitTypeArgument()
-                    }
-
-                    override fun visitTypeArgument(wildcard: Char): SignatureVisitor {
-//                            return object : SignatureVisitor(ASM9) {
-//                                override fun visitClassType(name: String) {
-//                                    printLog(
-//                                        "$methodName$descriptor,Type argument2: " + name.replace(
-//                                            '/',
-//                                            '.'
-//                                        )
-//                                    )
-//                                }
-//
-//
-//                            }
-                        return GenericTypePrinter()
-                    }
-                    override fun visitArrayType(): SignatureVisitor {
-                        println("$methodName$descriptor,Array type2:")
-                        return GenericTypePrinter()
-                    }
-                }
-                signatureReader.accept(object : SignatureVisitor(ASM9) {
-                    override fun visitParameterType(): SignatureVisitor {
-                        return GenericTypePrinter()
-                    }
-                })
-//                signatureReader.accept(object : SignatureVisitor(ASM9) {
-//                  override  fun visitParameterType(): SignatureVisitor {
-//                    return object : SignatureVisitor(ASM9) {
-//                        var isSuspendSignature: Boolean = false
-//                        override fun visitClassType(name: String) {
-//                            printLog(
-//                                "$methodName$descriptor,Parameter type: " + name.replace(
-//                                    '/',
-//                                    '.'
-//                                )
-//                            )
-//                            if (name == "kotlin/coroutines/Continuation") {
-//                                isSuspendSignature = true
-//                            }
-//                        }
-//
-//
-//                        override fun visitTypeArgument(wildcard: Char): SignatureVisitor {
-//                            printLog("$methodName$descriptor,Type argument wildcard: $wildcard")
-//                            return object : SignatureVisitor(ASM9) {
-//                                override fun visitClassType(name: String) {
-//                                    printLog(
-//                                        "$methodName$descriptor,Type argument: " + name.replace(
-//                                            '/',
-//                                            '.'
-//                                        )
-//                                    )
-//                                    if (isSuspendSignature && wildcard == '-') {
-//                                        returnTypeMap[returnTypeKey] = name.replace('/', '.')
-//                                    }
-//                                }
-//
-//
-//                            }
-//                        }
-//
-//                        override fun visitParameterType(): SignatureVisitor {
-//                            return GenericTypePrinter()
-//                        }
-//
-//
-//                    }
-//                    }
-//                })
+                val returnTypeKey = name+descriptor
+                val returnTypeClassName :String? = Utils.getSuspendMethodType(signature)
+                returnTypeMap[returnTypeKey] = returnTypeClassName
             }
         }
         var thisHasCollect = false
@@ -254,7 +176,7 @@ object WovenIntoCode {
                 ) {
                     super.visit(version, access, name, signature, superName, interfaces)
                     if (isSuspend){
-                        returnClassName = Utils.getType(signature)?.replace("/",".")
+                        returnClassName = Utils.getSuspendClassType(signature)
 //                        printLog("wovenCode === $signature ==== $returnClassName")
                     }
 //Lkotlin/coroutines/jvm/internal/SuspendLambda;Lkotlin/jvm/functions/Function2<Lkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation<-Ljava/lang/Integer;>;Ljava/lang/Object;>;
@@ -471,7 +393,7 @@ object WovenIntoCode {
 
                 val returnStr = if (isSuspend){
                     String.format(
-                        ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointReturnExecute(${if (returnClassName == null) null else "\"$returnClassName\""})"
+                        ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointReturnExecute(${if (returnClassName == null) null else "$returnClassName.class"})"
                     )
                 }else{
                     String.format(

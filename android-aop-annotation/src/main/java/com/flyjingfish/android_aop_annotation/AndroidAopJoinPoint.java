@@ -62,7 +62,7 @@ public final class AndroidAopJoinPoint {
         this.mReturnClass = returnClass;
     }
 
-    public Object joinPointReturnExecute(String returnTypeClassName) {
+    public Object joinPointReturnExecute(Class returnTypeClassName) {
 
         ProceedReturn proceedReturn = new ProceedReturn(targetClass, mArgs,target);
         proceedReturn.setReturnType$android_aop_annotation(returnTypeClassName);
@@ -121,7 +121,7 @@ public final class AndroidAopJoinPoint {
         proceedJoinPoint.setOriginalMethod(originalMethod);
         proceedJoinPoint.setTargetMethod(targetMethod);
         proceedJoinPoint.setTargetMethod(invokeMethod);
-        proceedJoinPoint.setAopMethod(new AopMethod(originalMethod,isSuspend,continuation,mParamNames,mReturnClass));
+        proceedJoinPoint.setAopMethod(new AopMethod(originalMethod,isSuspend,continuation,mParamNames,mArgClasses,mReturnClass));
         Annotation[] annotations = originalMethod.getAnnotations();
         Object[] returnValue = new Object[1];
 

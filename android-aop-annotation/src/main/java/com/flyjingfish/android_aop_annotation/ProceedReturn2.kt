@@ -76,10 +76,8 @@ open class ProceedReturn2 (targetClass: Class<*>, args: Array<Any?>?, target: An
         this.hasNext = hasNext
     }
 
-    internal fun setReturnType(className: String?) {
-        if (!className.isNullOrEmpty()){
-            returnType = Conversions.getReturnClass(className)
-        }
+    internal fun setReturnType(clazz: Class<*>?) {
+        returnType = clazz
     }
 
     /**

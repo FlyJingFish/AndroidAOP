@@ -15,12 +15,14 @@ public final class AopMethod {
 
     private final String[] mParamNames;
     private final Class<?> mReturnType;
+    private final Class<?>[] mParamClasses;
 
-    AopMethod(Method targetMethod, boolean isSuspend, Object suspendContinuation, String[] paramNames,Class<?> returnType) {
+    AopMethod(Method targetMethod, boolean isSuspend, Object suspendContinuation, String[] paramNames,Class<?>[] paramClasses,Class<?> returnType) {
         this.targetMethod = targetMethod;
         this.isSuspend = isSuspend;
         this.suspendContinuation = suspendContinuation;
         this.mParamNames = paramNames;
+        this.mParamClasses = paramClasses;
         this.mReturnType = returnType;
     }
 
@@ -54,7 +56,12 @@ public final class AopMethod {
     }
 
     public Class<?>[] getParameterTypes() {
-        Class<?>[] cls = targetMethod.getParameterTypes();
+        Class<?>[] cls;
+        if (mParamClasses != null){
+            cls = mParamClasses;
+        }else {
+            cls = targetMethod.getParameterTypes();
+        }
         if (isSuspend){
             Class<?>[] newCls = new Class[cls.length - 1];
             System.arraycopy(cls, 0, newCls, 0, newCls.length);

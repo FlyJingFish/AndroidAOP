@@ -286,10 +286,21 @@ object Utils {
     private val classnamePattern = Pattern.compile("Lkotlin/coroutines/jvm/internal/SuspendLambda;Lkotlin/jvm/functions/Function2<Lkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation<-.*?>;Ljava/lang/Object;>;")
     private val classnamePattern1 = Pattern.compile("Lkotlin/coroutines/jvm/internal/SuspendLambda;Lkotlin/jvm/functions/Function2<Lkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation<-.*?")
 
-    fun getType(type: String?): String? {
+    fun getSuspendClassType(type: String?): String? {
+        return getType(type,classnamePattern,classnamePattern1,">;Ljava/lang/Object;>;")
+    }
+
+    private val signatureClassnamePattern = Pattern.compile("\\(.*?kotlin/coroutines/Continuation<-.*?>;\\)Ljava/lang/Object;")
+    private val signatureClassnamePattern1 = Pattern.compile("\\(.*?kotlin/coroutines/Continuation<-.*?")
+    fun getSuspendMethodType(type: String?): String? {
+        return getType(type,signatureClassnamePattern,signatureClassnamePattern1,">;\\)Ljava/lang/Object;")
+    }
+
+    private fun getType(type: String?, classnamePattern:Pattern, classnamePattern1:Pattern, replaceText:String): String? {
         if (type == null){
             return null
         }
+        var className :String? = null
         val matcher = classnamePattern.matcher(type)
         if (matcher.find()) {
             val type2 = matcher.group()
@@ -300,12 +311,48 @@ object Utils {
                 val realTypeClass: String = if (realMatcher.find()) {
                     realMatcher.replaceFirst("")
                 } else {
-                    realType.replace(">;Ljava/lang/Object;>;".toRegex(), "")
+                    realType.replace(replaceText.toRegex(), "")
                 }
-                return realTypeClass
+                className = realTypeClass
             }
         }
-        return null
+        if (className != null){
+            className = getSeeClassName(className)
+        }
+        return className
+    }
+    private fun getSeeClassName(className: String): String {
+        return if (classnameArrayPattern.matcher(className).find()) {
+            getArrayClazzName(className)
+        } else {
+            className.substring(1).replace("/",".").replace(";","")
+        }
+    }
+
+    private val classnameArrayPattern = Pattern.compile("\\[")
+    private fun getArrayClazzName(classname: String): String {
+        val subStr = "["
+        var count = 0
+        var index = 0
+        while (classname.indexOf(subStr, index).also { index = it } != -1) {
+            index += subStr.length
+            count++
+        }
+        return getTypeInternal(classnameArrayPattern.matcher(classname).replaceAll(""))+"[]".repeat(count)
+    }
+
+    private fun getTypeInternal(classname: String): String {
+        return when (classname) {
+            "Z" -> "boolean"
+            "C" -> "char"
+            "B" -> "byte"
+            "S" -> "short"
+            "I" -> "int"
+            "F" -> "float"
+            "J" -> "long"
+            "D" -> "double"
+            else -> classname.substring(1).replace("/",".").replace(";","")
+        }
     }
 }
 
