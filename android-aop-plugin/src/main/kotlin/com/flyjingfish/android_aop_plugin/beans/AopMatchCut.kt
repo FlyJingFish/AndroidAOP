@@ -1,5 +1,7 @@
 package com.flyjingfish.android_aop_plugin.beans
 
+import java.util.regex.Pattern
+
 data class AopMatchCut(val baseClassName:String, val methodNames:Array<String>,val cutClassName:String,val matchType:String = "EXTENDS",val excludeClass:Array<String>?) {
     enum class MatchType{
         EXTENDS,SELF,DIRECT_EXTENDS,LEAF_EXTENDS
@@ -23,6 +25,30 @@ data class AopMatchCut(val baseClassName:String, val methodNames:Array<String>,v
         } else if (other.excludeClass != null) return false
 
         return true
+    }
+    private val AllClassnamePattern = Pattern.compile(".\\*$")
+    fun isMatchPackageName():Boolean{
+        val fanMatcher = AllClassnamePattern.matcher(baseClassName)
+        return matchType == MatchType.SELF.name && fanMatcher.find()
+    }
+
+    fun isMatchPackageNameFor(className:String):Boolean{
+        val matchPackageName = getMatchPackageName()
+        val filter = if (matchPackageName.endsWith(".")){
+            matchPackageName
+        }else {
+            "$matchPackageName."
+        }
+        return className.contains(filter)
+    }
+
+    private fun getMatchPackageName():String{
+        val fanMatcher = AllClassnamePattern.matcher(baseClassName)
+        return if (fanMatcher.find()){
+            fanMatcher.replaceAll("")
+        }else{
+            baseClassName
+        }
     }
 
     override fun hashCode(): Int {

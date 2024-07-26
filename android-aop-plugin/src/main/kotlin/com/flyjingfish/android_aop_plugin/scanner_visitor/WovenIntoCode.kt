@@ -295,7 +295,13 @@ object WovenIntoCode {
             val oldMethodName = value.methodName
             val targetMethodName = "$oldMethodName$$${targetClassName.computeMD5()}$METHOD_SUFFIX"
             val oldDescriptor = value.descriptor
-            val cutClassName = value.cutClassName
+            val cutClassNameArray = StringBuilder()
+            value.cutClassName.toList().forEachIndexed { index, item ->
+                cutClassNameArray.append("\"").append(item).append("\"")
+                if (index != value.cutClassName.size - 1) {
+                    cutClassNameArray.append(",")
+                }
+            }
             val invokeClassName = "${targetClassName}\$Invoke${(targetMethodName+oldDescriptor).computeMD5()}"
 //            if (value in wovenRecord){
 ////                WovenInfoUtils.checkNoneInvokeClass(invokeClassName)
@@ -427,7 +433,8 @@ object WovenIntoCode {
                 val constructor = "$targetClassName.class,${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\""
                 val body =
                     " {AndroidAopJoinPoint pointCut = new AndroidAopJoinPoint($constructor);\n"+
-                            (if (cutClassName != null) "        pointCut.setCutMatchClassName(\"$cutClassName\");\n" else "") +
+                            "String[] cutClassNames = new String[]{$cutClassNameArray};\n"+
+                            "pointCut.setCutMatchClassNames(cutClassNames);\n"+
                             "Class[] classes = new Class[]{$paramsClassesBuffer};\n"+
                             "pointCut.setArgClasses(classes);\n"+
                             "String[] paramNames = new String[]{$paramsNamesBuffer};\n"+

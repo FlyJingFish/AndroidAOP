@@ -160,7 +160,11 @@ object WovenInfoUtils {
         val key = classMethodRecord.methodName.methodName + classMethodRecord.methodName.descriptor
         val oldRecord = methodsRecord[key]
         if (methodsRecord.contains(key)) {
-            if (!classMethodRecord.methodName.cutClassName.isNullOrEmpty()) {
+            if (classMethodRecord.methodName.cutClassName.isNotEmpty()) {
+                methodsRecord[key]?.cutClassName?.addAll(classMethodRecord.methodName.cutClassName)
+                methodsRecord[key]?.cutClassName?.let {
+                    classMethodRecord.methodName.cutClassName.addAll(it)
+                }
                 methodsRecord[key] = classMethodRecord.methodName
             }
         } else {
@@ -644,8 +648,7 @@ object WovenInfoUtils {
         return if (aopMethodCutInnerClassInfo.isNotEmpty() && aopMethodCutInnerClassInfoInvokeClassName.contains(className)){
             val methodsRecord: HashMap<String, MethodRecord> = HashMap()
             methodsRecord[className] = MethodRecord("invokeSuspend",
-                "(Ljava/lang/Object;)Ljava/lang/Object;",
-                null)
+                "(Ljava/lang/Object;)Ljava/lang/Object;")
 //            methodsRecord[className] = MethodRecord("invoke",
 //                "(Lkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;",
 //                null)

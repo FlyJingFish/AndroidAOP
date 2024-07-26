@@ -3,7 +3,7 @@ package com.flyjingfish.android_aop_plugin.beans
 data class MethodRecord(
     val methodName: String,
     val descriptor: String,
-    val cutClassName: String?,
+    val cutClassName:MutableSet<String> = mutableSetOf(),
     val lambda: Boolean = false,
     val cutInfo: MutableMap<String, CutInfo> = mutableMapOf(),
     var multipleSuspendClass: Boolean = false

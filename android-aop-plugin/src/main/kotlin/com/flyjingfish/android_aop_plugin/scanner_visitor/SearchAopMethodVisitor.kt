@@ -1,6 +1,9 @@
 package com.flyjingfish.android_aop_plugin.scanner_visitor
 
 
+import com.flyjingfish.android_aop_annotation.base.BasePointCut
+import com.flyjingfish.android_aop_annotation.base.MatchClassMethod
+import com.flyjingfish.android_aop_annotation.base.MatchClassMethodCreator
 import com.flyjingfish.android_aop_plugin.beans.AopCollectClass
 import com.flyjingfish.android_aop_plugin.beans.AopCollectCut
 import com.flyjingfish.android_aop_plugin.beans.AopMatchCut
@@ -144,6 +147,29 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
         }
         //        logger.error("className="+className+",superName="+superName+",interfaces="+ Arrays.asList(interfaces));
         WovenInfoUtils.aopMatchCuts.forEach { (_: String?, aopMatchCut: AopMatchCut) ->
+            if (aopMatchCut.isMatchPackageName()){
+                val clsName = slashToDotClassName(className)
+                if (aopMatchCut.isMatchPackageNameFor(clsName)){
+                    val excludeClazz = aopMatchCut.excludeClass
+                    var exclude = false
+                    if (excludeClazz != null) {
+                        for (clazz in excludeClazz) {
+                            if (clsName == slashToDotClassName(clazz)) {
+                                exclude = true
+                                break
+                            }
+                        }
+                    }
+                    if (!exclude && !className.endsWith("\$\$AndroidAopClass")){
+                        val isInstanceofMatchClassMethod = clsName.instanceof(MatchClassMethod::class.java.name)
+                        val isInstanceofBasePointCut = clsName.instanceof(BasePointCut::class.java.name)
+                        if (!isInstanceofMatchClassMethod && !isInstanceofBasePointCut) {
+                            aopMatchCuts.add(aopMatchCut)
+                        }
+                    }
+                }
+                return@forEach
+            }
             if (AopMatchCut.MatchType.SELF.name != aopMatchCut.matchType) {
                 val excludeClazz = aopMatchCut.excludeClass
                 var exclude = false
@@ -352,7 +378,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                     val methodRecord = MethodRecord(
                         name,
                         descriptor,
-                        aopMatchCut.cutClassName
+                        mutableSetOf(aopMatchCut.cutClassName)
                     )
                     val cutInfo = CutInfo(
                         "匹配切面",
@@ -391,7 +417,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
             }
         }
         val myMethodVisitor = MyMethodVisitor(
-            access, name, descriptor, signature, exceptions, MethodRecord(name, descriptor, null)
+            access, name, descriptor, signature, exceptions, MethodRecord(name, descriptor)
         )
         methods.add(myMethodVisitor)
         return myMethodVisitor
@@ -446,7 +472,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                             val methodRecord = MethodRecord(
                                 lambdaName,
                                 lambdaDesc,
-                                aopMatchCut.cutClassName
+                                mutableSetOf(aopMatchCut.cutClassName)
                             )
                             onCallBackMethod?.onDeleteMethodRecord(methodRecord)
                         }
@@ -481,7 +507,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                                         val methodRecord = MethodRecord(
                                             lambdaName,
                                             lambdaDesc,
-                                            aopMatchCut.cutClassName,
+                                            mutableSetOf(aopMatchCut.cutClassName),
                                             true
                                         )
                                         methodRecord.cutInfo[UUID.randomUUID().toString()] = cutInfo

@@ -30,7 +30,7 @@ public final class AndroidAopJoinPoint {
     private final String originalMethodName;
     private Method targetMethod;
     private Method originalMethod;
-    private String cutMatchClassName;
+    private String[] cutMatchClassNames;
     private String paramsKey;
     private String methodKey;
     private final String targetClassName;
@@ -46,8 +46,11 @@ public final class AndroidAopJoinPoint {
     }
 
 
-    public void setCutMatchClassName(String cutMatchClassName) {
-        this.cutMatchClassName = cutMatchClassName;
+//    public void setCutMatchClassName(String cutMatchClassName) {
+//        this.cutMatchClassName = cutMatchClassName;
+//    }
+    public void setCutMatchClassNames(String[] cutMatchClassNames) {
+        this.cutMatchClassNames = cutMatchClassNames;
     }
 
     public void setArgClasses(Class[] argClasses) {
@@ -138,10 +141,14 @@ public final class AndroidAopJoinPoint {
             }
         }
 
-        if (cutMatchClassName != null && AndroidAopBeanUtils.INSTANCE.getMatchClassCreator(cutMatchClassName) != null) {
-            MatchClassMethod matchClassMethod = AndroidAopBeanUtils.INSTANCE.getMatchClassMethod(proceedJoinPoint, cutMatchClassName,targetClassName,methodKey);
-            PointCutAnnotation pointCutAnnotation = new PointCutAnnotation(matchClassMethod);
-            basePointCuts.add(pointCutAnnotation);
+        if (cutMatchClassNames != null) {
+            for (String cutMatchClassName : cutMatchClassNames) {
+                if (AndroidAopBeanUtils.INSTANCE.getMatchClassCreator(cutMatchClassName) != null){
+                    MatchClassMethod matchClassMethod = AndroidAopBeanUtils.INSTANCE.getMatchClassMethod(proceedJoinPoint, cutMatchClassName,targetClassName,methodKey);
+                    PointCutAnnotation pointCutAnnotation = new PointCutAnnotation(matchClassMethod);
+                    basePointCuts.add(pointCutAnnotation);
+                }
+            }
         }
         Iterator<PointCutAnnotation> iterator = basePointCuts.iterator();
 
