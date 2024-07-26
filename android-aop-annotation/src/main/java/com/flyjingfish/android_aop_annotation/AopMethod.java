@@ -1,9 +1,12 @@
 package com.flyjingfish.android_aop_annotation;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 此类持有执行方法的反射信息，且进行过缓存了，可放心使用
@@ -52,6 +55,26 @@ public final class AopMethod {
     }
 
     public Type getGenericReturnType() {
+        if (isSuspend){
+            Type[] types = targetMethod.getGenericParameterTypes();
+            Type types1 = types[types.length-1];
+            if (types1 instanceof ParameterizedType){
+                Type[] realTypes = ((ParameterizedType) types1).getActualTypeArguments();
+                if (realTypes.length > 0) {
+                    Type continuationType = realTypes[0];
+                    try {
+                        Field field = continuationType.getClass().getDeclaredField("superBound");
+                        field.setAccessible(true);
+                        Object superBoundObj = field.get(continuationType);
+                        Field typesField= superBoundObj.getClass().getDeclaredField("types");
+                        typesField.setAccessible(true);
+                        List<Type> typesList= (List<Type>) typesField.get(superBoundObj);
+                        return typesList.get(0);
+                    } catch (Throwable e) {
+                    }
+                }
+            }
+        }
         return targetMethod.getGenericReturnType();
     }
 

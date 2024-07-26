@@ -80,6 +80,7 @@ object WovenIntoCode {
                 val returnTypeKey = name+descriptor
                 val returnTypeClassName :String? = Utils.getSuspendMethodType(signature)
                 returnTypeMap[returnTypeKey] = returnTypeClassName
+//                printLog("signature=$signature")
             }
         }
         var thisHasCollect = false

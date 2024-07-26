@@ -318,6 +318,10 @@ object Utils {
         }
         if (className != null){
             className = getSeeClassName(className)
+            val fanMatcher = fanClassnamePattern.matcher(className)
+            if (fanMatcher.find()) {
+                className = fanMatcher.replaceAll("")
+            }
         }
         return className
     }
@@ -330,6 +334,8 @@ object Utils {
     }
 
     private val classnameArrayPattern = Pattern.compile("\\[")
+    private val fanClassnamePattern = Pattern.compile("<.*?>$")
+    private val fanClassnamePattern2 = Pattern.compile("<.*?>;$")
     private fun getArrayClazzName(classname: String): String {
         val subStr = "["
         var count = 0
@@ -338,7 +344,14 @@ object Utils {
             index += subStr.length
             count++
         }
-        return getTypeInternal(classnameArrayPattern.matcher(classname).replaceAll(""))+"[]".repeat(count)
+        val realClassName = classnameArrayPattern.matcher(classname).replaceAll("")
+        val matcher = fanClassnamePattern2.matcher(realClassName)
+        val clazzName = if (matcher.find()) {
+            matcher.replaceAll("")
+        }else{
+            realClassName
+        }
+        return getTypeInternal(clazzName)+"[]".repeat(count)
     }
 
     private fun getTypeInternal(classname: String): String {
