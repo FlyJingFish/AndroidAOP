@@ -146,25 +146,27 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
         }
         //        logger.error("className="+className+",superName="+superName+",interfaces="+ Arrays.asList(interfaces));
         WovenInfoUtils.aopMatchCuts.forEach { (_: String?, aopMatchCut: AopMatchCut) ->
-            if (aopMatchCut.isMatchPackageName()){
-                val clsName = slashToDotClassName(className)
-                if (aopMatchCut.isMatchPackageNameFor(clsName)){
-                    val excludeClazz = aopMatchCut.excludeClass
-                    var exclude = false
-                    if (excludeClazz != null) {
-                        for (clazz in excludeClazz) {
-                            if (clsName == slashToDotClassName(clazz)) {
-                                exclude = true
-                                break
+            if (aopMatchCut.isPackageName()){
+                if (aopMatchCut.isMatchPackageName()){
+                    val clsName = slashToDotClassName(className)
+                    if (aopMatchCut.isMatchPackageNameFor(clsName)){
+                        val excludeClazz = aopMatchCut.excludeClass
+                        var exclude = false
+                        if (excludeClazz != null) {
+                            for (clazz in excludeClazz) {
+                                if (clsName == slashToDotClassName(clazz)) {
+                                    exclude = true
+                                    break
+                                }
                             }
                         }
-                    }
-                    if (!exclude && !className.endsWith("\$\$AndroidAopClass")){
-                        val isExtendMatchClassMethod = clsName.instanceof(MatchClassMethod::class.java.name)
-                        val isExtendBasePointCut = clsName.instanceof(BasePointCut::class.java.name)
-                        val isExtendInvokeMethod = clsName.instanceof(InvokeMethod::class.java.name)
-                        if (!isExtendMatchClassMethod && !isExtendBasePointCut && !isExtendInvokeMethod) {
-                            aopMatchCuts.add(aopMatchCut)
+                        if (!exclude && !className.endsWith("\$\$AndroidAopClass")){
+                            val isExtendMatchClassMethod = clsName.instanceof(MatchClassMethod::class.java.name)
+                            val isExtendBasePointCut = clsName.instanceof(BasePointCut::class.java.name)
+                            val isExtendInvokeMethod = clsName.instanceof(InvokeMethod::class.java.name)
+                            if (!isExtendMatchClassMethod && !isExtendBasePointCut && !isExtendInvokeMethod) {
+                                aopMatchCuts.add(aopMatchCut)
+                            }
                         }
                     }
                 }

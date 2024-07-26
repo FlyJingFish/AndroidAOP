@@ -28,8 +28,12 @@ data class AopMatchCut(val baseClassName:String, val methodNames:Array<String>,v
     }
     private val AllClassnamePattern = Pattern.compile(".\\*$")
     fun isMatchPackageName():Boolean{
+        return matchType == MatchType.SELF.name && isPackageName()
+    }
+
+    fun isPackageName():Boolean{
         val fanMatcher = AllClassnamePattern.matcher(baseClassName)
-        return matchType == MatchType.SELF.name && fanMatcher.find()
+        return fanMatcher.find()
     }
 
     fun isMatchPackageNameFor(className:String):Boolean{
