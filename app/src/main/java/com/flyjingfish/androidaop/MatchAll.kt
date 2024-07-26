@@ -9,12 +9,11 @@ import com.flyjingfish.android_aop_annotation.enums.MatchType
 @AndroidAopMatchClassMethod(
     targetClassName = "com.flyjingfish.androidaop.*",
     methodName = ["*"],
-    type = MatchType.SELF,
-    excludeClasses = ["com.flyjingfish.androidaop.databinding.ActivityMainBinding"]
+    type = MatchType.SELF
 )
 class MatchAll : MatchClassMethod {
     override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
-        Log.e("MatchMainAllMethod", "AllMethod======" + methodName);
+        Log.e("MatchAll", "methodName======$methodName");
         return joinPoint.proceed()
     }
 }

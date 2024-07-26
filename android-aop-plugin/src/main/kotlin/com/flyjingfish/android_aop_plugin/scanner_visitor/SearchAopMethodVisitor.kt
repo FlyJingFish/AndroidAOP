@@ -3,7 +3,7 @@ package com.flyjingfish.android_aop_plugin.scanner_visitor
 
 import com.flyjingfish.android_aop_annotation.base.BasePointCut
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod
-import com.flyjingfish.android_aop_annotation.base.MatchClassMethodCreator
+import com.flyjingfish.android_aop_annotation.utils.InvokeMethod
 import com.flyjingfish.android_aop_plugin.beans.AopCollectClass
 import com.flyjingfish.android_aop_plugin.beans.AopCollectCut
 import com.flyjingfish.android_aop_plugin.beans.AopMatchCut
@@ -14,6 +14,7 @@ import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils.getMethodInfo
+import com.flyjingfish.android_aop_plugin.utils.Utils.isAOPMethod
 import com.flyjingfish.android_aop_plugin.utils.Utils.slashToDot
 import com.flyjingfish.android_aop_plugin.utils.Utils.slashToDotClassName
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
@@ -24,7 +25,6 @@ import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.isLeaf
 import com.flyjingfish.android_aop_plugin.utils.instanceof
 import com.flyjingfish.android_aop_plugin.utils.isHasMethodBody
 import com.flyjingfish.android_aop_plugin.utils.isStaticMethod
-import com.flyjingfish.android_aop_plugin.utils.printLog
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.Handle
 import org.objectweb.asm.MethodVisitor
@@ -34,7 +34,6 @@ import org.objectweb.asm.commons.Method
 import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.InvokeDynamicInsnNode
 import org.objectweb.asm.tree.MethodNode
-import java.io.File
 import java.util.UUID
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -161,9 +160,10 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                         }
                     }
                     if (!exclude && !className.endsWith("\$\$AndroidAopClass")){
-                        val isInstanceofMatchClassMethod = clsName.instanceof(MatchClassMethod::class.java.name)
-                        val isInstanceofBasePointCut = clsName.instanceof(BasePointCut::class.java.name)
-                        if (!isInstanceofMatchClassMethod && !isInstanceofBasePointCut) {
+                        val isExtendMatchClassMethod = clsName.instanceof(MatchClassMethod::class.java.name)
+                        val isExtendBasePointCut = clsName.instanceof(BasePointCut::class.java.name)
+                        val isExtendInvokeMethod = clsName.instanceof(InvokeMethod::class.java.name)
+                        if (!isExtendMatchClassMethod && !isExtendBasePointCut && !isExtendInvokeMethod) {
                             aopMatchCuts.add(aopMatchCut)
                         }
                     }
@@ -269,7 +269,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
     ) {
         override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor? {
 //            logger.error("AnnotationMethodScanner MyMethodVisitor type: " + descriptor);
-            if (isContainAnno(descriptor)) {
+            if (isContainAnno(descriptor) && !isAOPMethod(methodname)) {
                 if (isBackMethod(access)) {
                     val aopMethodCut = getAnnoInfo(descriptor)
                     if (aopMethodCut != null){
@@ -372,7 +372,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
         access: Int, name: String, descriptor: String,
         signature: String?, exceptions: Array<String?>?
     ): MethodVisitor {
-        if ("<init>" != name && "<clinit>" != name && aopMatchCuts.size > 0 && isBackMethod(access)) {
+        if ("<init>" != name && "<clinit>" != name && aopMatchCuts.size > 0 && isBackMethod(access) && !isAOPMethod(name)) {
             for (aopMatchCut in aopMatchCuts) {
                 fun addMatchMethodCut(){
                     val methodRecord = MethodRecord(
@@ -394,7 +394,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                     WovenInfoUtils.addAopMethodCutInnerClassInfo(className,name,descriptor)
                 }
 //                printLog("$aopMatchCut === ${aopMatchCut.isMatchAllMethod()}")
-                if (aopMatchCut.isMatchAllMethod() ){
+                if (aopMatchCut.isMatchAllMethod()){
                     addMatchMethodCut()
                 }else{
                     for (methodName in aopMatchCut.methodNames) {
@@ -482,7 +482,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                 WovenInfoUtils.aopMatchCuts.forEach { (_: String?, aopMatchCut: AopMatchCut) ->
                     if (AopMatchCut.MatchType.SELF.name != aopMatchCut.matchType && aopMatchCut.methodNames.size == 1) {
                         for ((name, descriptor, clsName, originalClassName, lambdaName, lambdaDesc) in lambdaMethodList) {
-                            if ("<init>" != name && "<clinit>" != name && "<init>" != lambdaName && "<clinit>" != lambdaName){
+                            if ("<init>" != name && "<clinit>" != name && "<init>" != lambdaName && "<clinit>" != lambdaName && !isAOPMethod(name)){
                                 val isDirectExtends =
                                     slashToDotClassName(aopMatchCut.baseClassName) == clsName
                                 var isMatch = false

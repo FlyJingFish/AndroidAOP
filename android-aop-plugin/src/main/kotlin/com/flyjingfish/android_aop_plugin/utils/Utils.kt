@@ -367,6 +367,11 @@ object Utils {
             else -> classname.substring(1).replace("/",".").replace(";","")
         }
     }
+    private val AOPMethodPattern: Pattern = Pattern.compile("\\$\\$.{32}\\$\\\$AndroidAOP$")
+    fun isAOPMethod(methodName: String):Boolean{
+        val matcher: Matcher = AOPMethodPattern.matcher(methodName)
+        return matcher.find()
+    }
 }
 
 fun printLog(text: String) {

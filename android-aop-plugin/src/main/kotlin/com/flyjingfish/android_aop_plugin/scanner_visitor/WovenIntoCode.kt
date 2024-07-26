@@ -65,11 +65,11 @@ object WovenIntoCode {
                                descriptor: String,
                                signature: String?,
                                exceptions: Array<String?>?,
-                               classNameMd5:String ?){
+                               className:String ){
             methodRecordHashMap.forEach { (_: String, value: MethodRecord) ->
                 val oldMethodName = value.methodName
                 val oldDescriptor = value.descriptor
-                val newMethodName = "$oldMethodName$$$classNameMd5$METHOD_SUFFIX"
+                val newMethodName = "$oldMethodName$$${(Utils.slashToDot(className)+descriptor).computeMD5()}$METHOD_SUFFIX"
                 if (newMethodName == name && oldDescriptor == descriptor){
                     wovenRecord.add(value)
                 }
@@ -88,7 +88,6 @@ object WovenIntoCode {
         var thisCollectClassName :String ?= null
         if (hasReplace){
             cr.accept(object :MethodReplaceInvokeVisitor(cw){
-                var classNameMd5:String ?= null
                 override fun visit(
                     version: Int,
                     access: Int,
@@ -98,7 +97,6 @@ object WovenIntoCode {
                     interfaces: Array<out String>?
                 ) {
                     super.visit(version, access, name, signature, superName, interfaces)
-                    classNameMd5 = Utils.slashToDot(name).computeMD5()
                     thisHasCollect = hasCollect
                     thisCollectClassName = thisClassName
                 }
@@ -109,7 +107,7 @@ object WovenIntoCode {
                     signature: String?,
                     exceptions: Array<String?>?
                 ): MethodVisitor? {
-                    visitMethod4Record(access, name, descriptor, signature, exceptions, classNameMd5)
+                    visitMethod4Record(access, name, descriptor, signature, exceptions, className)
                     val mv = super.visitMethod(
                         access,
                         name,
@@ -123,7 +121,6 @@ object WovenIntoCode {
             }, 0)
         }else{
             cr.accept(object : ReplaceBaseClassVisitor(cw) {
-                var classNameMd5:String ?= null
                 override fun visit(
                     version: Int,
                     access: Int,
@@ -133,7 +130,6 @@ object WovenIntoCode {
                     interfaces: Array<out String>?
                 ) {
                     super.visit(version, access, name, signature, superName, interfaces)
-                    classNameMd5 = Utils.slashToDot(name).computeMD5()
                     thisHasCollect = hasCollect
                     thisCollectClassName = thisClassName
                 }
@@ -144,7 +140,7 @@ object WovenIntoCode {
                     signature: String?,
                     exceptions: Array<String?>?
                 ): MethodVisitor? {
-                    visitMethod4Record(access, name, descriptor, signature, exceptions, classNameMd5)
+                    visitMethod4Record(access, name, descriptor, signature, exceptions, clazzName)
                     val mv = super.visitMethod(
                         access,
                         name,
@@ -165,7 +161,6 @@ object WovenIntoCode {
 //            val targetMethodName = oldMethodName + METHOD_SUFFIX
             val oldDescriptor = value.descriptor
             cr.accept(object : ReplaceBaseClassVisitor(cw) {
-                var classNameMd5:String ?= null
                 lateinit var className: String
                 override fun visit(
                     version: Int,
@@ -181,7 +176,6 @@ object WovenIntoCode {
 //                        printLog("wovenCode === $signature ==== $returnClassName")
                     }
 //Lkotlin/coroutines/jvm/internal/SuspendLambda;Lkotlin/jvm/functions/Function2<Lkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation<-Ljava/lang/Integer;>;Ljava/lang/Object;>;
-                    classNameMd5 = Utils.slashToDot(name).computeMD5()
                     className = name
                 }
                 override fun visitAnnotation(
@@ -248,7 +242,7 @@ object WovenIntoCode {
                         }else{
                             ACC_PUBLIC + ACC_FINAL
                         }
-                        val newMethodName = "$oldMethodName$$$classNameMd5$METHOD_SUFFIX"
+                        val newMethodName = "$oldMethodName$$${(Utils.slashToDot(className)+descriptor).computeMD5()}$METHOD_SUFFIX"
                         var mv: MethodVisitor? = super.visitMethod(
                             newAccess,
                             newMethodName,
@@ -293,8 +287,8 @@ object WovenIntoCode {
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
             val targetClassName = ctClass.name
             val oldMethodName = value.methodName
-            val targetMethodName = "$oldMethodName$$${targetClassName.computeMD5()}$METHOD_SUFFIX"
             val oldDescriptor = value.descriptor
+            val targetMethodName = "$oldMethodName$$${(targetClassName+oldDescriptor).computeMD5()}$METHOD_SUFFIX"
             val cutClassNameArray = StringBuilder()
             value.cutClassName.toList().forEachIndexed { index, item ->
                 cutClassNameArray.append("\"").append(item).append("\"")

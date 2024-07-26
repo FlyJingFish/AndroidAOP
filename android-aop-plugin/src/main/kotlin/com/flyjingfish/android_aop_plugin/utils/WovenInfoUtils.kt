@@ -60,6 +60,7 @@ object WovenInfoUtils {
                 throw IllegalArgumentException("${mutableEntry.value} 不能继承 ${mutableEntry.key}，或者其继承类不可以继承 ${mutableEntry.key}")
             }
         }
+//        printLog("classMethodRecords=$classMethodRecords")
     }
     fun hasModifyExtendsClass():Boolean{
         return modifyExtendsClassMap.isNotEmpty()
