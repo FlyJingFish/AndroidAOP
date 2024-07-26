@@ -2,6 +2,7 @@ package com.flyjingfish.android_aop_annotation
 
 import com.flyjingfish.android_aop_annotation.utils.HandlerUtils
 import com.flyjingfish.android_aop_annotation.utils.InvokeMethod
+import com.flyjingfish.android_aop_annotation.AopMethod
 import com.flyjingfish.android_aop_annotation.utils.Utils.getRealRuntimeException
 import java.lang.reflect.Method
 import java.lang.reflect.ParameterizedType
@@ -82,8 +83,9 @@ open class ProceedReturn2 (targetClass: Class<*>, args: Array<Any?>?, target: An
 
     /**
      *
-     * @return suspend 函数的返回值类型,有可能拿不到实际类型，拿不到时返回 Object 类型
+     * @return suspend 函数的返回值类型,有可能拿不到实际类型，拿不到时返回 Object 类型,请使用 [ProceedJoinPoint.targetMethod]并通过[AopMethod.getReturnType]获取
      */
+    @Deprecated("这个方法即将删除，请使用 ProceedJoinPoint 的 targetMethod.returnType", ReplaceWith("joinPoint.targetMethod.returnType"))
     fun getReturnType(): Class<*>? {
         if (returnType != null){
             return returnType

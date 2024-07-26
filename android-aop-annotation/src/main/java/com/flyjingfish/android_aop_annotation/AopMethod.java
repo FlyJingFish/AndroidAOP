@@ -40,6 +40,10 @@ public final class AopMethod {
         return mParamNames;
     }
 
+    /**
+     *
+     * @return 如果切点函数是 suspend 函数并且返回类型是基本数据类型，会自动转化为包装类型
+     */
     public Class<?> getReturnType() {
         if (mReturnType != null){
             return mReturnType;

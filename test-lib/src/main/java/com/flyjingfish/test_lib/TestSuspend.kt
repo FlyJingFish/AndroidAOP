@@ -45,10 +45,10 @@ object TestSuspend {
     @MyAnno3
     @MyAnno4
     @MyAnno5
-    suspend fun getData2(num:Int,num2:Int) :IntArray{
+    suspend fun getData2(num:Int,num2:Int) :Int{
         return withContext(Dispatchers.IO) {
             Log.e("MyAnnoCut","=====getData22=====2")
-            intArrayOf(num,num2)
+            num+num2
         }
     }
 
