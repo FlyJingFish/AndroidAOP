@@ -11,6 +11,7 @@ gson = "2.10.1"
 core-ktx = "1.6.1"
 junit = "4.13.2"
 appcompat = "1.6.1"
+annotation = "1.3.0"
 material = "1.6.0"
 leakcanary_version = "2.7"
 bcprov-jdk15on-version = "1.68"
@@ -28,6 +29,7 @@ gradle = { group = "com.android.tools.build", name = "gradle", version.ref = "gr
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 leakcanary = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanary_version" }
 bcprov-jdk15on = { group = "org.bouncycastle", name = "bcprov-jdk15on", version.ref = "bcprov-jdk15on-version" }
