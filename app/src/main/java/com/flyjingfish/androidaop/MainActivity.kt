@@ -23,12 +23,14 @@ import com.flyjingfish.androidaop.test.MyOnClickListener2
 import com.flyjingfish.androidaop.test.Round
 import com.flyjingfish.androidaop.test2.StaticClass
 import com.flyjingfish.androidaop.test.TestBean
+import com.flyjingfish.test_lib.mycut.TestParams
 import com.flyjingfish.androidaop.test.TestReplace
 import com.flyjingfish.test_lib.annotation.MyAnno3
 import com.flyjingfish.test_lib.BaseActivity
 import com.flyjingfish.test_lib.PermissionRejectListener
 import com.flyjingfish.test_lib.TestMatch
 import com.flyjingfish.test_lib.annotation.MyAnno2
+import com.flyjingfish.test_lib.mycut.TestParams2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -127,7 +129,7 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
         }
 
         binding.btnKotlinAnno.setOnClickListener {
-            onMyAnno2()
+            onMyAnno2(1,2)
         }
 
         val testMatch = TestMatch()
@@ -220,7 +222,7 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
     }
 
     @MyAnno2
-    fun onMyAnno2(){
+    fun onMyAnno2(@TestParams("lala")@TestParams2("hehe") num: Int,num2: Int){
         setLogcat("自定义Kotlin 注解切面进入方法")
     }
 

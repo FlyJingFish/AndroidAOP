@@ -1,12 +1,13 @@
 package com.flyjingfish.android_aop_annotation;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.flyjingfish.android_aop_annotation.base.OnBaseSuspendReturnListener;
 import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils;
 import com.flyjingfish.android_aop_annotation.utils.InvokeMethod;
 import com.flyjingfish.android_aop_annotation.utils.Utils;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 
@@ -23,7 +24,7 @@ public class ProceedJoinPoint {
     private final Object[] originalArgs;
     @Nullable
     public final Object target;
-    @NotNull
+    @NonNull
     public final Class<?> targetClass;
     private Method targetMethod;
     private InvokeMethod targetInvokeMethod;
@@ -36,7 +37,7 @@ public class ProceedJoinPoint {
     private Object suspendContinuation;
     private Object methodReturnValue;
 
-    ProceedJoinPoint(@NotNull Class<?> targetClass, Object[] args, @Nullable Object target, boolean isSuspend) {
+    ProceedJoinPoint(@NonNull Class<?> targetClass, Object[] args, @Nullable Object target, boolean isSuspend) {
         this.targetClass = targetClass;
         Object[] fakeArgs;
         if (isSuspend && args != null){
@@ -143,7 +144,7 @@ public class ProceedJoinPoint {
     /**
      * @return 切点方法相关信息
      */
-    @NotNull
+    @NonNull
     public AopMethod getTargetMethod() {
         return targetAopMethod;
     }
@@ -175,7 +176,7 @@ public class ProceedJoinPoint {
     /**
      * @return 切点方法所在类 Class
      */
-    @NotNull
+    @NonNull
     public Class<?> getTargetClass() {
         return targetClass;
     }

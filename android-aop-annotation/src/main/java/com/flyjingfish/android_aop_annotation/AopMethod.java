@@ -1,11 +1,13 @@
 package com.flyjingfish.android_aop_annotation;
 
+import androidx.annotation.RequiresApi;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -118,5 +120,24 @@ public final class AopMethod {
 
     public <T extends Annotation> T getAnnotation(Class<T> var1) {
         return targetMethod.getAnnotation(var1);
+    }
+    @RequiresApi(api = 26)
+    public Parameter[] getParameters() {
+        Parameter[] parameters = targetMethod.getParameters();
+        if (isSuspend && parameters.length > 0){
+            Parameter[] newParameters = new Parameter[parameters.length - 1];
+            System.arraycopy(parameters, 0, newParameters, 0, newParameters.length);
+            return newParameters;
+        }
+        return parameters;
+    }
+    public Annotation[][] getParameterAnnotations() {
+        Annotation[][] parameterAnnotations = targetMethod.getParameterAnnotations();
+        if (isSuspend && parameterAnnotations.length > 0){
+            Annotation[][] newParameterAnnotations = new Annotation[parameterAnnotations.length - 1][];
+            System.arraycopy(parameterAnnotations, 0, newParameterAnnotations, 0, newParameterAnnotations.length);
+            return newParameterAnnotations;
+        }
+        return parameterAnnotations;
     }
 }

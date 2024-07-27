@@ -39,7 +39,8 @@ class ProceedJoinPointSuspend(
      * @return 返回切点方法返回值 [wiki 文档使用说明](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#proceed)
      */
     fun proceedIgnoreOther(onSuspendReturnListener: OnSuspendReturnListener2): Any? {
-        return proceedIgnoreOther(onSuspendReturnListener, *args)
+        setExt(onSuspendReturnListener)
+        return super.realProceed(onSuspendReturnListener, *args)
     }
 
     /**
@@ -53,9 +54,12 @@ class ProceedJoinPointSuspend(
         onSuspendReturnListener: OnSuspendReturnListener2,
         vararg args: Any?
     ): Any? {
-        setHasNext(false)
-        AndroidAopBeanUtils.setIgnoreOther(onSuspendReturnListener)
+        setExt(onSuspendReturnListener)
         return super.realProceed(onSuspendReturnListener, *args)
     }
 
+    private fun setExt(onSuspendReturnListener: OnSuspendReturnListener2){
+        setHasNext(false)
+        AndroidAopBeanUtils.setIgnoreOther(onSuspendReturnListener)
+    }
 }
