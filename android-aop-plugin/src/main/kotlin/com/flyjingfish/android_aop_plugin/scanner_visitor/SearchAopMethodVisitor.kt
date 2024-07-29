@@ -37,6 +37,7 @@ import org.objectweb.asm.tree.MethodNode
 import java.util.UUID
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import kotlin.coroutines.Continuation
 
 
 class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
@@ -164,7 +165,8 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                             val isExtendMatchClassMethod = clsName.instanceof(MatchClassMethod::class.java.name)
                             val isExtendBasePointCut = clsName.instanceof(BasePointCut::class.java.name)
                             val isExtendInvokeMethod = clsName.instanceof(InvokeMethod::class.java.name)
-                            if (!isExtendMatchClassMethod && !isExtendBasePointCut && !isExtendInvokeMethod) {
+                            val isExtendContinuation = clsName.instanceof(Continuation::class.java.name)
+                            if (!isExtendMatchClassMethod && !isExtendBasePointCut && !isExtendInvokeMethod && !isExtendContinuation) {
                                 aopMatchCuts.add(aopMatchCut)
                             }
                         }

@@ -10,26 +10,30 @@ import com.flyjingfish.test_lib.ToastUtils
 import com.flyjingfish.test_lib.annotation.MyAnno2
 
 class MyAnnoCut2 : BasePointCut<MyAnno2> {
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun invoke(joinPoint: ProceedJoinPoint, anno: MyAnno2): Any? {
-        val params = joinPoint.targetMethod.parameters
-        for (parameter in params) {
-            Log.e("MyAnnoCut2" , "Parameter: "+parameter.name)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val params =  joinPoint.targetMethod.parameters
+            for (parameter in params) {
+                Log.e("MyAnnoCut2" , "Parameter: "+parameter.name)
 
-            // 获取并打印参数的注解
+                // 获取并打印参数的注解
 
-            // 获取并打印参数的注解
-            val annotations: Array<Annotation> = parameter.annotations
-            for (annotation in annotations) {
-                if (annotation is TestParams) {
-                    Log.e("MyAnnoCut2" , "Annotation value1: "+annotation.value)
-                }else if (annotation is TestParams2) {
-                    Log.e("MyAnnoCut2" , "Annotation value1: "+annotation.value)
+                // 获取并打印参数的注解
+                val annotations: Array<Annotation> = parameter.annotations
+                for (annotation in annotations) {
+                    if (annotation is TestParams) {
+                        Log.e("MyAnnoCut2" , "Annotation value1: "+annotation.value)
+                    }else if (annotation is TestParams2) {
+                        Log.e("MyAnnoCut2" , "Annotation value1: "+annotation.value)
+                    }
                 }
             }
         }
+
         val parameterAnnotations = joinPoint.targetMethod.parameterAnnotations
         Log.e("MyAnnoCut2" , "parameterAnnotations: "+parameterAnnotations.size)
+        val declaringClass = joinPoint.targetMethod.declaringClass
+        Log.e("MyAnnoCut2" , "parameterAnnotations: $declaringClass")
         for (parameterAnnotation in parameterAnnotations) {
             for (annotation in parameterAnnotation) {
                 if (annotation is TestParams) {

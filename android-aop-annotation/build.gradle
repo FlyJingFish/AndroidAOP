@@ -7,7 +7,7 @@ javadoc {
     options.bottom = 'AndroidAop'
 }
 dependencies {
-    compileOnly (libs.annotation)
+    compileOnly libs.annotation
 }
 apply from: "$rootDir/gradle/java_base.gradle"
 apply from: "$rootDir/gradle/java_publish.gradle"
