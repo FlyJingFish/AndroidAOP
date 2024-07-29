@@ -16,7 +16,7 @@ internal class AopMethodImpl(
      private val mReturnType: Class<*>,
 ): AopMethod {
 
-    override fun getName(): String? {
+    override fun getName(): String {
         return targetMethod.name
     }
 
@@ -55,18 +55,18 @@ internal class AopMethodImpl(
         return targetMethod.genericReturnType
     }
 
-    override fun getDeclaringClass(): Class<*>? {
+    override fun getDeclaringClass(): Class<*> {
         return targetMethod.declaringClass
     }
 
-    override fun getParameterTypes(): Array<Class<*>>? {
+    override fun getParameterTypes(): Array<Class<*>> {
         if (isSuspend) {
             return mParamClasses.copyOfRange(0,mParamClasses.size - 1)
         }
         return mParamClasses
     }
 
-    override fun getGenericParameterTypes(): Array<Type>? {
+    override fun getGenericParameterTypes(): Array<Type> {
         val types = targetMethod.genericParameterTypes
         if (isSuspend) {
             return types.copyOfRange(0,types.size - 1)
@@ -82,12 +82,12 @@ internal class AopMethodImpl(
         return targetMethod.annotations
     }
 
-    override fun <T : Annotation?> getAnnotation(annotationClass: Class<T>): T {
+    override fun <T : Annotation> getAnnotation(annotationClass: Class<T>): T {
         return targetMethod.getAnnotation(annotationClass)
     }
 
     @RequiresApi(api = 26)
-    override fun getParameters(): Array<Parameter?> {
+    override fun getParameters(): Array<Parameter> {
         val parameters = targetMethod.parameters
         if (isSuspend && parameters.isNotEmpty()) {
             return parameters.copyOfRange(0,parameters.size - 1)
