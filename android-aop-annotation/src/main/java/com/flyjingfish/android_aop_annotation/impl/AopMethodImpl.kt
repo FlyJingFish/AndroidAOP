@@ -8,98 +8,101 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
 internal class AopMethodImpl(
-     private val targetMethod: Method,
-     private val isSuspend:Boolean,
-     private val suspendContinuation: Any?,
-     private val mParamNames: Array<String>,
-     private val mParamClasses: Array<Class<*>>,
-     private val mReturnType: Class<*>,
-): AopMethod {
+    private val targetMethod: Method,
+    private val isSuspend: Boolean,
+    private val suspendContinuation: Any?,
+    private val mParamNames: Array<String>,
+    private val mParamClasses: Array<Class<*>>,
+    private val mReturnType: Class<*>,
+) : AopMethod {
 
-    override fun getName(): String {
-        return targetMethod.name
-    }
+    override val name: String
+        get() = targetMethod.name
 
-    override fun getParameterNames(): Array<String> {
-        if (isSuspend && mParamNames.isNotEmpty()) {
-            return mParamNames.copyOfRange(0,mParamNames.size - 1)
+    override val parameterNames: Array<String>
+        get() {
+            if (isSuspend && mParamNames.isNotEmpty()) {
+                return mParamNames.copyOfRange(0, mParamNames.size - 1)
+            }
+            return mParamNames
         }
-        return mParamNames
-    }
 
-    override fun getReturnType(): Class<*> {
-        return mReturnType
-    }
+    override val returnType: Class<*>
+        get() = mReturnType
 
-    override fun getGenericReturnType(): Type {
-        if (isSuspend) {
-            val types = targetMethod.genericParameterTypes
-            val types1 = types[types.size - 1]
-            if (types1 is ParameterizedType) {
-                val realTypes = types1.actualTypeArguments
-                if (realTypes.isNotEmpty()) {
-                    val continuationType = realTypes[0]
-                    try {
-                        val field = continuationType.javaClass.getDeclaredField("superBound")
-                        field.isAccessible = true
-                        val superBoundObj = field[continuationType]
-                        val typesField = superBoundObj.javaClass.getDeclaredField("types")
-                        typesField.isAccessible = true
-                        val typesList = typesField[superBoundObj] as List<Type>
-                        return typesList[0]
-                    } catch (e: Throwable) {
+    override val genericReturnType: Type
+        get() {
+            if (isSuspend) {
+                val types = targetMethod.genericParameterTypes
+                val types1 = types[types.size - 1]
+                if (types1 is ParameterizedType) {
+                    val realTypes = types1.actualTypeArguments
+                    if (realTypes.isNotEmpty()) {
+                        val continuationType = realTypes[0]
+                        try {
+                            val field = continuationType.javaClass.getDeclaredField("superBound")
+                            field.isAccessible = true
+                            val superBoundObj = field[continuationType]
+                            val typesField = superBoundObj.javaClass.getDeclaredField("types")
+                            typesField.isAccessible = true
+                            val typesList = typesField[superBoundObj] as List<Type>
+                            return typesList[0]
+                        } catch (e: Throwable) {
+                        }
                     }
                 }
             }
+            return targetMethod.genericReturnType
         }
-        return targetMethod.genericReturnType
-    }
 
-    override fun getDeclaringClass(): Class<*> {
-        return targetMethod.declaringClass
-    }
+    override val declaringClass: Class<*>
+        get() = targetMethod.declaringClass
 
-    override fun getParameterTypes(): Array<Class<*>> {
-        if (isSuspend) {
-            return mParamClasses.copyOfRange(0,mParamClasses.size - 1)
+    override val parameterTypes: Array<Class<*>>
+        get() {
+            if (isSuspend) {
+                return mParamClasses.copyOfRange(0, mParamClasses.size - 1)
+            }
+            return mParamClasses
         }
-        return mParamClasses
-    }
 
-    override fun getGenericParameterTypes(): Array<Type> {
-        val types = targetMethod.genericParameterTypes
-        if (isSuspend) {
-            return types.copyOfRange(0,types.size - 1)
+    override val genericParameterTypes: Array<Type>
+        get() {
+            val types = targetMethod.genericParameterTypes
+            if (isSuspend) {
+                return types.copyOfRange(0, types.size - 1)
+            }
+            return types
         }
-        return types
-    }
 
-    override fun getModifiers(): Int {
-        return targetMethod.modifiers
-    }
+    override val modifiers: Int
+        get() = targetMethod.modifiers
 
-    override fun getAnnotations(): Array<Annotation> {
-        return targetMethod.annotations
-    }
+    override val annotations: Array<Annotation>
+        get() = targetMethod.annotations
+
 
     override fun <T : Annotation> getAnnotation(annotationClass: Class<T>): T {
         return targetMethod.getAnnotation(annotationClass)
     }
 
-    @RequiresApi(api = 26)
-    override fun getParameters(): Array<Parameter> {
-        val parameters = targetMethod.parameters
-        if (isSuspend && parameters.isNotEmpty()) {
-            return parameters.copyOfRange(0,parameters.size - 1)
+    override val parameters: Array<Parameter>
+        @RequiresApi(api = 26)
+        get() {
+            val parameters = targetMethod.parameters
+            if (isSuspend && parameters.isNotEmpty()) {
+                return parameters.copyOfRange(0, parameters.size - 1)
+            }
+            return parameters
         }
-        return parameters
-    }
 
-    override fun getParameterAnnotations(): Array<Array<Annotation>> {
-        val parameterAnnotations = targetMethod.parameterAnnotations
-        if (isSuspend && parameterAnnotations.isNotEmpty()) {
-            return parameterAnnotations.copyOfRange(0,parameterAnnotations.size - 1)
+    override val parameterAnnotations: Array<Array<Annotation>>
+        get() {
+            val parameterAnnotations = targetMethod.parameterAnnotations
+            if (isSuspend && parameterAnnotations.isNotEmpty()) {
+                return parameterAnnotations.copyOfRange(0, parameterAnnotations.size - 1)
+            }
+            return parameterAnnotations
         }
-        return parameterAnnotations
-    }
+
 }
