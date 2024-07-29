@@ -34,8 +34,15 @@ public class ProceedJoinPoint {
     private OnInvokeListener onInvokeListener;
     private boolean hasNext;
 
-    ProceedJoinPoint(@NonNull Class<?> targetClass, Object[] args, @Nullable Object target, boolean isSuspend,Method targetMethod,InvokeMethod invokeMethod,AopMethod aopMethod) {
+    ProceedJoinPoint(@NonNull Class<?> targetClass, Object[] args, @Nullable Object target, boolean isSuspend,
+                     Method targetMethod,InvokeMethod invokeMethod,AopMethod aopMethod) {
         this.targetClass = targetClass;
+        this.target = target;
+        this.isSuspend = isSuspend;
+        this.targetMethod = targetMethod;
+        this.targetInvokeMethod = invokeMethod;
+        this.targetAopMethod = aopMethod;
+
         Object[] fakeArgs;
         if (isSuspend && args != null){
             fakeArgs = new Object[args.length - 1];
@@ -47,17 +54,12 @@ public class ProceedJoinPoint {
         }
         this.args = fakeArgs;
 
-        this.target = target;
-        this.isSuspend = isSuspend;
         if (fakeArgs != null) {
             this.originalArgs = fakeArgs.clone();
         } else {
             this.originalArgs = null;
         }
         this.argCount = fakeArgs != null ? fakeArgs.length : 0;
-        this.targetMethod = targetMethod;
-        this.targetInvokeMethod = invokeMethod;
-        this.targetAopMethod = aopMethod;
     }
 
     /**
