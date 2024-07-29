@@ -30,6 +30,8 @@ class MyAnnoCut2 : BasePointCut<MyAnno2> {
         }
         val parameterAnnotations = joinPoint.targetMethod.parameterAnnotations
         Log.e("MyAnnoCut2" , "parameterAnnotations: "+parameterAnnotations.size)
+        val declaringClass = joinPoint.targetMethod.declaringClass
+        Log.e("MyAnnoCut2" , "parameterAnnotations: $declaringClass")
         for (parameterAnnotation in parameterAnnotations) {
             for (annotation in parameterAnnotation) {
                 if (annotation is TestParams) {

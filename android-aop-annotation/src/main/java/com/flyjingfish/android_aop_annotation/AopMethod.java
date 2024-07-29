@@ -3,141 +3,79 @@ package com.flyjingfish.android_aop_annotation;
 import androidx.annotation.RequiresApi;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.List;
 
 /**
  * 此类持有执行方法的反射信息，且进行过缓存了，可放心使用
  */
-public final class AopMethod {
-    private final Method targetMethod;
-    private final boolean isSuspend;
-    private final Object suspendContinuation;
-
-    private final String[] mParamNames;
-    private final Class<?> mReturnType;
-    private final Class<?>[] mParamClasses;
-
-    AopMethod(Method targetMethod, boolean isSuspend, Object suspendContinuation, String[] paramNames,Class<?>[] paramClasses,Class<?> returnType) {
-        this.targetMethod = targetMethod;
-        this.isSuspend = isSuspend;
-        this.suspendContinuation = suspendContinuation;
-        this.mParamNames = paramNames;
-        this.mParamClasses = paramClasses;
-        this.mReturnType = returnType;
-    }
-
-    public String getName() {
-        return targetMethod.getName();
-    }
-
-    public String[] getParameterNames() {
-        if (isSuspend && mParamNames.length > 0){
-            String[] newNames = new String[mParamNames.length - 1];
-            System.arraycopy(mParamNames, 0, newNames, 0, newNames.length);
-            return newNames;
-        }
-
-        return mParamNames;
-    }
+public interface AopMethod {
 
     /**
-     *
-     * @return 如果切点函数是 suspend 函数并且返回类型是基本数据类型，会自动转化为包装类型
+     * @return 切点方法名称
      */
-    public Class<?> getReturnType() {
-        if (mReturnType != null){
-            return mReturnType;
-        }
-        return targetMethod.getReturnType();
-    }
+    String getName();
 
-    public Type getGenericReturnType() {
-        if (isSuspend){
-            Type[] types = targetMethod.getGenericParameterTypes();
-            Type types1 = types[types.length-1];
-            if (types1 instanceof ParameterizedType){
-                Type[] realTypes = ((ParameterizedType) types1).getActualTypeArguments();
-                if (realTypes.length > 0) {
-                    Type continuationType = realTypes[0];
-                    try {
-                        Field field = continuationType.getClass().getDeclaredField("superBound");
-                        field.setAccessible(true);
-                        Object superBoundObj = field.get(continuationType);
-                        Field typesField= superBoundObj.getClass().getDeclaredField("types");
-                        typesField.setAccessible(true);
-                        List<Type> typesList= (List<Type>) typesField.get(superBoundObj);
-                        return typesList.get(0);
-                    } catch (Throwable e) {
-                    }
-                }
-            }
-        }
-        return targetMethod.getGenericReturnType();
-    }
+    /**
+     * @return 切点方法参数所有的变量名
+     */
+    String[] getParameterNames();
 
-    public Class<?> getDeclaringClass() {
-        return targetMethod.getDeclaringClass();
-    }
+    /**
+     * 如果切点函数是 suspend 函数并且返回类型是基本数据类型，会自动转化为包装类型
+     *
+     * @return 返回值类型，抹除了泛型信息
+     */
+    Class<?> getReturnType();
 
-    public Class<?>[] getParameterTypes() {
-        Class<?>[] cls;
-        if (mParamClasses != null){
-            cls = mParamClasses;
-        }else {
-            cls = targetMethod.getParameterTypes();
-        }
-        if (isSuspend){
-            Class<?>[] newCls = new Class[cls.length - 1];
-            System.arraycopy(cls, 0, newCls, 0, newCls.length);
-            return newCls;
-        }
+    /**
+     * 如果切点函数是 suspend 函数并且返回类型是基本数据类型，会自动转化为包装类型
+     *
+     * @return 返回值类型，包含泛型信息
+     */
+    Type getGenericReturnType();
 
-        return cls;
-    }
+    /**
+     * @return 返回方法所在的类 class 对象
+     */
+    Class<?> getDeclaringClass();
 
-    public Type[] getGenericParameterTypes() {
-        Type[] types = targetMethod.getGenericParameterTypes();
-        if (isSuspend){
-            Type[] newTypes = new Class[types.length - 1];
-            System.arraycopy(types, 0, newTypes, 0, newTypes.length);
-            return newTypes;
-        }
-        return types;
-    }
+    /**
+     * @return 方法参数的所有类型信息，抹除了泛型信息
+     */
+    Class<?>[] getParameterTypes();
 
-    public int getModifiers() {
-        return targetMethod.getModifiers();
-    }
+    /**
+     * @return 方法参数的所有类型信息，包含泛型信息
+     */
+    Type[] getGenericParameterTypes();
 
-    public Annotation[] getAnnotations() {
-        return targetMethod.getAnnotations();
-    }
+    /**
+     * @return 返回一个整数，该整数是描述字段、方法或构造函数的修饰符的位掩码
+     */
+    int getModifiers();
 
-    public <T extends Annotation> T getAnnotation(Class<T> var1) {
-        return targetMethod.getAnnotation(var1);
-    }
+    /**
+     * @return 返回此方法上的所有注解的数组
+     */
+    Annotation[] getAnnotations();
+
+    /**
+     * @param annotationClass 指定类型的注解的 class 对象
+     * @return 返回此方法上指定类型的注解
+     */
+    <T extends Annotation> T getAnnotation(Class<T> annotationClass);
+
+    /**
+     * @return 返回方法的参数信息的数组
+     */
     @RequiresApi(api = 26)
-    public Parameter[] getParameters() {
-        Parameter[] parameters = targetMethod.getParameters();
-        if (isSuspend && parameters.length > 0){
-            Parameter[] newParameters = new Parameter[parameters.length - 1];
-            System.arraycopy(parameters, 0, newParameters, 0, newParameters.length);
-            return newParameters;
-        }
-        return parameters;
-    }
-    public Annotation[][] getParameterAnnotations() {
-        Annotation[][] parameterAnnotations = targetMethod.getParameterAnnotations();
-        if (isSuspend && parameterAnnotations.length > 0){
-            Annotation[][] newParameterAnnotations = new Annotation[parameterAnnotations.length - 1][];
-            System.arraycopy(parameterAnnotations, 0, newParameterAnnotations, 0, newParameterAnnotations.length);
-            return newParameterAnnotations;
-        }
-        return parameterAnnotations;
-    }
+    Parameter[] getParameters();
+
+    /**
+     * 返回的长度和参数个数一样，如果参数上没有注解，则对应下标位置的数组长度为0
+     *
+     * @return 返回方法参数上注解
+     */
+    Annotation[][] getParameterAnnotations();
 }

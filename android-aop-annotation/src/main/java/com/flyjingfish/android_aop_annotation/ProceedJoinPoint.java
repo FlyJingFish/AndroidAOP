@@ -28,7 +28,6 @@ public class ProceedJoinPoint {
     public final Class<?> targetClass;
     private Method targetMethod;
     private InvokeMethod targetInvokeMethod;
-    private Method originalMethod;
     private AopMethod targetAopMethod;
     private OnInvokeListener onInvokeListener;
     private boolean hasNext;
@@ -155,10 +154,6 @@ public class ProceedJoinPoint {
 
     void setTargetMethod(InvokeMethod targetMethod) {
         this.targetInvokeMethod = targetMethod;
-    }
-
-    void setOriginalMethod(Method originalMethod) {
-        this.originalMethod = originalMethod;
     }
 
     void setAopMethod(AopMethod aopMethod) {

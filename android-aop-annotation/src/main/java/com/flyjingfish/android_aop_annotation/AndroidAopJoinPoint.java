@@ -6,6 +6,7 @@ import com.flyjingfish.android_aop_annotation.base.BasePointCutSuspend;
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethodSuspend;
 import com.flyjingfish.android_aop_annotation.base.OnBaseSuspendReturnListener;
+import com.flyjingfish.android_aop_annotation.impl.AopMethodImpl;
 import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils;
 import com.flyjingfish.android_aop_annotation.utils.InvokeMethod;
 import com.flyjingfish.android_aop_annotation.utils.MethodMap;
@@ -121,10 +122,9 @@ public final class AndroidAopJoinPoint {
             proceedJoinPoint = new ProceedJoinPoint(targetClass, mArgs,target,false);
         }
 
-        proceedJoinPoint.setOriginalMethod(originalMethod);
         proceedJoinPoint.setTargetMethod(targetMethod);
         proceedJoinPoint.setTargetMethod(invokeMethod);
-        proceedJoinPoint.setAopMethod(new AopMethod(originalMethod,isSuspend,continuation,mParamNames,mArgClasses,mReturnClass));
+        proceedJoinPoint.setAopMethod(new AopMethodImpl(originalMethod,isSuspend,continuation,mParamNames,mArgClasses,mReturnClass));
         Annotation[] annotations = originalMethod.getAnnotations();
         Object[] returnValue = new Object[1];
 
