@@ -4,13 +4,18 @@ import com.flyjingfish.android_aop_annotation.base.OnBaseSuspendReturnListener
 import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener
 import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener2
 import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils
+import com.flyjingfish.android_aop_annotation.utils.InvokeMethod
+import java.lang.reflect.Method
 
 class ProceedJoinPointSuspend(
     targetClass: Class<*>,
     args: Array<Any?>?,
     target: Any?,
-    isSuspend: Boolean
-) : ProceedJoinPoint(targetClass, args, target, isSuspend) {
+    isSuspend: Boolean,
+    targetMethod: Method,
+    invokeMethod: InvokeMethod,
+    aopMethod:AopMethod
+) : ProceedJoinPoint(targetClass, args, target, isSuspend,targetMethod, invokeMethod, aopMethod) {
 
     /**
      * 调用切点方法内代码，通过设置 [OnSuspendReturnListener] 可以修改返回值

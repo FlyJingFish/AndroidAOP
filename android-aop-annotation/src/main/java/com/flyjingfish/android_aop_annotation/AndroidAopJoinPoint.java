@@ -117,15 +117,13 @@ public final class AndroidAopJoinPoint {
         boolean isSuspend = continuation != null;
 
         ProceedJoinPoint proceedJoinPoint;
+        AopMethod aopMethod = new AopMethodImpl(originalMethod,isSuspend,continuation,mParamNames,mArgClasses,mReturnClass);
         if (isSuspend){
-            proceedJoinPoint = new ProceedJoinPointSuspend(targetClass, mArgs,target,true);
+            proceedJoinPoint = new ProceedJoinPointSuspend(targetClass, mArgs,target,true,targetMethod,invokeMethod,aopMethod);
         }else {
-            proceedJoinPoint = new ProceedJoinPoint(targetClass, mArgs,target,false);
+            proceedJoinPoint = new ProceedJoinPoint(targetClass, mArgs,target,false,targetMethod,invokeMethod,aopMethod);
         }
 
-        proceedJoinPoint.setTargetMethod(targetMethod);
-        proceedJoinPoint.setTargetMethod(invokeMethod);
-        proceedJoinPoint.setAopMethod(new AopMethodImpl(originalMethod,isSuspend,continuation,mParamNames,mArgClasses,mReturnClass));
         Annotation[] annotations = originalMethod.getAnnotations();
         Object[] returnValue = new Object[1];
 
