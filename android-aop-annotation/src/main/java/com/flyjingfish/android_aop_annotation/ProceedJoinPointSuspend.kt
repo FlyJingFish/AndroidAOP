@@ -1,5 +1,6 @@
 package com.flyjingfish.android_aop_annotation
 
+import com.flyjingfish.android_aop_annotation.base.OnBaseSuspendReturnListener
 import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener
 import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener2
 import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils
@@ -18,7 +19,7 @@ class ProceedJoinPointSuspend(
      * @return 返回切点方法返回值 [wiki 文档使用说明](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#proceed)
      */
     fun proceed(onSuspendReturnListener: OnSuspendReturnListener): Any? {
-        return proceed(onSuspendReturnListener, *args)
+        return super.realProceed(onSuspendReturnListener, *args)
     }
 
     /**
@@ -58,7 +59,7 @@ class ProceedJoinPointSuspend(
         return super.realProceed(onSuspendReturnListener, *args)
     }
 
-    private fun setExt(onSuspendReturnListener: OnSuspendReturnListener2){
+    private fun setExt(onSuspendReturnListener: OnBaseSuspendReturnListener){
         setHasNext(false)
         AndroidAopBeanUtils.setIgnoreOther(onSuspendReturnListener)
     }

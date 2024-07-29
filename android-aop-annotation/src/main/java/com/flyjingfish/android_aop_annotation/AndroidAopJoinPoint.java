@@ -7,6 +7,7 @@ import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethodSuspend;
 import com.flyjingfish.android_aop_annotation.base.OnBaseSuspendReturnListener;
 import com.flyjingfish.android_aop_annotation.impl.AopMethodImpl;
+import com.flyjingfish.android_aop_annotation.impl.ProceedReturnImpl;
 import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils;
 import com.flyjingfish.android_aop_annotation.utils.InvokeMethod;
 import com.flyjingfish.android_aop_annotation.utils.MethodMap;
@@ -68,7 +69,7 @@ public final class AndroidAopJoinPoint {
 
     public Object joinPointReturnExecute(Class returnTypeClassName) {
 
-        ProceedReturn proceedReturn = new ProceedReturn(targetClass, mArgs,target);
+        ProceedReturnImpl proceedReturn = new ProceedReturnImpl(targetClass, mArgs,target);
         proceedReturn.setReturnType$android_aop_annotation(returnTypeClassName);
         proceedReturn.setOriginalMethod$android_aop_annotation(originalMethod);
         proceedReturn.setTargetMethod$android_aop_annotation(targetMethod);

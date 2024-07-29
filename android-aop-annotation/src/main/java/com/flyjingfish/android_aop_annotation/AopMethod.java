@@ -61,8 +61,10 @@ public interface AopMethod {
     Annotation[] getAnnotations();
 
     /**
+     *
      * @param annotationClass 指定类型的注解的 class 对象
      * @return 返回此方法上指定类型的注解
+     * @param <T> 具体泛型信息
      */
     <T extends Annotation> T getAnnotation(Class<T> annotationClass);
 
