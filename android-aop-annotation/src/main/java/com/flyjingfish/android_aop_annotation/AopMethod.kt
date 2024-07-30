@@ -61,7 +61,7 @@ interface AopMethod {
      * @return 返回此方法上指定类型的注解
      * @param <T> 具体泛型信息
     </T> */
-    fun <T : Annotation> getAnnotation(annotationClass: Class<T>): T
+    fun <T : Annotation> getAnnotation(annotationClass: Class<T>): T?
 
     /**
      * @return 返回方法的参数信息的数组
