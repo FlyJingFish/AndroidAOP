@@ -10,7 +10,7 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod
  */
 interface MatchClassMethodSuspend : MatchClassMethod {
     /**
-     * 匹配到的被 suspend 修饰的方法被调用时将会回调这个方法,不会回调 [invoke]
+     * 匹配到的被 suspend 修饰的方法被调用时将会回调这个方法,否则还是回调 [invoke]
      *
      * 并且注意最好在实现方法内使用 withContext 等函数包裹您的代码，否则可能有Bug
      *
@@ -21,6 +21,10 @@ interface MatchClassMethodSuspend : MatchClassMethod {
      */
     suspend fun invokeSuspend(joinPoint: ProceedJoinPointSuspend, methodName: String)
 
+
+    /**
+     * 如果匹配到的函数包含非suspend函数，那么也应该重写此函数，否则会直接往后执行
+     */
     override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
         return joinPoint.proceed()
     }

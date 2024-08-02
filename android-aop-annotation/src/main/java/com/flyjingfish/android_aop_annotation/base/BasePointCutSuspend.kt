@@ -10,7 +10,7 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopPointCut
  */
 interface BasePointCutSuspend<T : Annotation>:BasePointCut<T> {
     /**
-     * 使用自定义注解的被 suspend 修饰的方法被调用时回调这个方法,不会回调 [invoke]
+     * 使用自定义注解的被 suspend 修饰的方法被调用时回调这个方法,否则还是回调 [invoke]
      *
      * 并且注意最好在实现方法内使用 withContext 等函数包裹您的代码，否则可能有Bug
      *
@@ -20,6 +20,9 @@ interface BasePointCutSuspend<T : Annotation>:BasePointCut<T> {
      */
     suspend fun invokeSuspend(joinPoint: ProceedJoinPointSuspend, anno: T)
 
+    /**
+     * 如果注解的函数是非suspend函数，那么也应该重写此函数，否则会直接往后执行
+     */
     override fun invoke(joinPoint: ProceedJoinPoint, anno: T): Any? {
         return joinPoint.proceed()
     }
