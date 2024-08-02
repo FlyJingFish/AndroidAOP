@@ -7,6 +7,7 @@ import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethodSuspend;
 import com.flyjingfish.android_aop_annotation.base.OnBaseSuspendReturnListener;
 import com.flyjingfish.android_aop_annotation.impl.AopMethodImpl;
+import com.flyjingfish.android_aop_annotation.impl.JoinPoint;
 import com.flyjingfish.android_aop_annotation.impl.ProceedReturnImpl;
 import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils;
 import com.flyjingfish.android_aop_annotation.utils.InvokeMethod;
@@ -119,9 +120,9 @@ public final class AndroidAopJoinPoint {
         ProceedJoinPoint proceedJoinPoint;
         AopMethod aopMethod = new AopMethodImpl(originalMethod,isSuspend,continuation,mParamNames,mArgClasses,mReturnClass);
         if (isSuspend){
-            proceedJoinPoint = new ProceedJoinPointSuspend(targetClass, mArgs,target,true,targetMethod,invokeMethod,aopMethod);
+            proceedJoinPoint = JoinPoint.INSTANCE.getJoinPointSuspend(targetClass, mArgs,target,true,targetMethod,invokeMethod,aopMethod);
         }else {
-            proceedJoinPoint = new ProceedJoinPoint(targetClass, mArgs,target,false,targetMethod,invokeMethod,aopMethod);
+            proceedJoinPoint = JoinPoint.INSTANCE.getJoinPoint(targetClass, mArgs,target,false,targetMethod,invokeMethod,aopMethod);
         }
 
         Annotation[] annotations = originalMethod.getAnnotations();
@@ -153,11 +154,11 @@ public final class AndroidAopJoinPoint {
 
 
         if (basePointCuts.size() > 1) {
-            proceedJoinPoint.setOnInvokeListener(() -> {
+            JoinPoint.INSTANCE.setOnInvokeListener(proceedJoinPoint,() -> {
                 if (iterator.hasNext()) {
                     PointCutAnnotation nextCutAnnotation = iterator.next();
                     iterator.remove();
-                    proceedJoinPoint.setHasNext(iterator.hasNext());
+                    JoinPoint.INSTANCE.setHasNext(proceedJoinPoint,iterator.hasNext());
                     Object value;
                     if (nextCutAnnotation.basePointCut != null) {
                         if (isSuspend){
@@ -208,7 +209,7 @@ public final class AndroidAopJoinPoint {
             });
         }
 
-        proceedJoinPoint.setHasNext(basePointCuts.size() > 1);
+        JoinPoint.INSTANCE.setHasNext(proceedJoinPoint,basePointCuts.size() > 1);
         PointCutAnnotation cutAnnotation = iterator.next();
         iterator.remove();
         if (cutAnnotation.basePointCut != null) {

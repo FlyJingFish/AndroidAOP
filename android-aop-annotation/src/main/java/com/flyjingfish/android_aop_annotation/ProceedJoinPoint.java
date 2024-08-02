@@ -13,54 +13,12 @@ import java.lang.reflect.Method;
 /**
  * 切点相关信息类，<a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint">wiki 文档使用说明</a>
  */
-public class ProceedJoinPoint {
+public interface ProceedJoinPoint {
     /**
      * <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#args">wiki 文档使用说明</a>
      */
     @Nullable
-    public final Object[] args;
-    @Nullable
-    private final Object[] originalArgs;
-    @Nullable
-    public final Object target;
-    @NonNull
-    public final Class<?> targetClass;
-    private final Method targetMethod;
-    private final InvokeMethod targetInvokeMethod;
-    private final AopMethod targetAopMethod;
-    private final int argCount;
-    private final boolean isSuspend;
-    private final Object suspendContinuation;
-    private OnInvokeListener onInvokeListener;
-    private boolean hasNext;
-
-    ProceedJoinPoint(@NonNull Class<?> targetClass, Object[] args, @Nullable Object target, boolean isSuspend,
-                     Method targetMethod,InvokeMethod invokeMethod,AopMethod aopMethod) {
-        this.targetClass = targetClass;
-        this.target = target;
-        this.isSuspend = isSuspend;
-        this.targetMethod = targetMethod;
-        this.targetInvokeMethod = invokeMethod;
-        this.targetAopMethod = aopMethod;
-
-        Object[] fakeArgs;
-        if (isSuspend && args != null){
-            fakeArgs = new Object[args.length - 1];
-            System.arraycopy(args, 0, fakeArgs, 0, args.length - 1);
-            suspendContinuation = args[args.length - 1];
-        }else {
-            fakeArgs = args;
-            suspendContinuation = null;
-        }
-        this.args = fakeArgs;
-
-        if (fakeArgs != null) {
-            this.originalArgs = fakeArgs.clone();
-        } else {
-            this.originalArgs = null;
-        }
-        this.argCount = fakeArgs != null ? fakeArgs.length : 0;
-    }
+    Object[] getArgs();
 
     /**
      * 调用切点方法内代码
@@ -68,9 +26,7 @@ public class ProceedJoinPoint {
      * @return 返回切点方法返回值 <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#proceed">wiki 文档使用说明</a>
      */
     @Nullable
-    public Object proceed() {
-        return proceed(args);
-    }
+    Object proceed();
 
     /**
      * 调用切点方法内代码
@@ -79,114 +35,33 @@ public class ProceedJoinPoint {
      * @return 返回切点方法返回值 <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#proceed">wiki 文档使用说明</a>
      */
     @Nullable
-    public Object proceed(Object... args) {
-        return realProceed(null,args);
-    }
+    Object proceed(Object... args);
 
     /**
      * @return 切点方法相关信息
      */
     @NonNull
-    public AopMethod getTargetMethod() {
-        return targetAopMethod;
-    }
+    AopMethod getTargetMethod();
 
     /**
      * @return 切点方法所在对象，如果方法为静态的，此值为null
      */
     @Nullable
-    public Object getTarget() {
-        return target;
-    }
+    Object getTarget();
 
     /**
      * @return 切点方法所在类 Class
      */
     @NonNull
-    public Class<?> getTargetClass() {
-        return targetClass;
-    }
+    Class<?> getTargetClass();
 
     /**
-     * 和 {@link ProceedJoinPoint#args} 相比，返回的引用地址不同，但数组里边的对象一致
+     * 和 {@link ProceedJoinPoint#getArgs()} 相比，返回的引用地址不同，但数组里边的对象一致
      *
      * @return 最开始进入方法时的参数  <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#args">wiki 文档使用说明</a>
      */
     @Nullable
-    public Object[] getOriginalArgs() {
-        return originalArgs;
-    }
+    Object[] getOriginalArgs();
 
 
-    @Nullable
-    Object realProceed(OnBaseSuspendReturnListener onSuspendReturnListener, Object... args) {
-        if (argCount > 0) {
-            if (args == null || args.length != argCount) {
-                throw new IllegalArgumentException("proceed 所参数个数不对");
-            }
-        }
-
-        Object[] realArgs;
-        if (isSuspend) {
-            realArgs = new Object[argCount + 1];
-            if (args != null){
-                System.arraycopy(args, 0, realArgs, 0, args.length);
-            }
-            realArgs[argCount] = suspendContinuation;
-        } else {
-            realArgs = args;
-        }
-
-        if (realArgs != null && this.args != null){
-            System.arraycopy(realArgs, 0, this.args, 0, this.args.length);
-        }
-
-        try {
-            Object returnValue = null;
-            setReturnListener(onSuspendReturnListener);
-            if (!hasNext) {
-                if (targetInvokeMethod != null) {
-                    returnValue = targetInvokeMethod.invoke(target, realArgs);
-                } else {
-                    returnValue = targetMethod.invoke(target, realArgs);
-                }
-            } else if (onInvokeListener != null) {
-                returnValue = onInvokeListener.onInvoke();
-            }
-
-            return returnValue;
-        } catch (Throwable e) {
-            throw Utils.INSTANCE.getRealRuntimeException(e);
-        }
-    }
-
-    private void setReturnListener(OnBaseSuspendReturnListener onSuspendReturnListener){
-        if (isSuspend && onSuspendReturnListener != null && suspendContinuation != null){
-            Object key1 = suspendContinuation;
-            AndroidAopBeanUtils.INSTANCE.addSuspendReturnListener(key1,onSuspendReturnListener);
-            try {
-                Method method = suspendContinuation.getClass().getMethod("getCompletion");
-                method.setAccessible(true);
-                Object key2 = method.invoke(suspendContinuation);
-                if (key2 != null){
-                    AndroidAopBeanUtils.INSTANCE.addSuspendReturnListener(key2,onSuspendReturnListener);
-                    AndroidAopBeanUtils.INSTANCE.saveReturnKey(key1,key2);
-                }
-            } catch (Throwable ignored) {
-            }
-
-        }
-    }
-
-    interface OnInvokeListener {
-        Object onInvoke();
-    }
-
-    void setOnInvokeListener(OnInvokeListener onInvokeListener) {
-        this.onInvokeListener = onInvokeListener;
-    }
-
-    void setHasNext(boolean hasNext) {
-        this.hasNext = hasNext;
-    }
 }
