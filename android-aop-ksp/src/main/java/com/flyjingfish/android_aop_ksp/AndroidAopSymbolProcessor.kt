@@ -649,24 +649,24 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
   private val javaPattern: Pattern = Pattern.compile("<\\? extends .*?>")
   private val javaPattern1: Pattern = Pattern.compile("<\\? super .*?>")
 
-  fun checkJavaType(type: String): Boolean {
+  private fun checkJavaType(type: String): Boolean {
     val matcher: Matcher = javaPattern.matcher(type)
     return matcher.find()
   }
 
-  fun checkJavaType1(type: String): Boolean {
+  private fun checkJavaType1(type: String): Boolean {
     val matcher: Matcher = javaPattern1.matcher(type)
     return matcher.find()
   }
 
   private val kotlinPattern: Pattern = Pattern.compile("<out .*?>")
   private val kotlinPattern1: Pattern = Pattern.compile("<in .*?>")
-  fun checkKotlinType(type: String): Boolean {
+  private fun checkKotlinType(type: String): Boolean {
     val matcher: Matcher = kotlinPattern.matcher(type)
     return matcher.find()
   }
 
-  fun checkKotlinType1(type: String): Boolean {
+  private fun checkKotlinType1(type: String): Boolean {
     val matcher: Matcher = kotlinPattern1.matcher(type)
     return matcher.find()
   }

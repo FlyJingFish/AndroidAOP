@@ -129,7 +129,8 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
         }
 
         binding.btnKotlinAnno.setOnClickListener {
-            onMyAnno2(1,2)
+            onMyAnno2(1,2,3,4,5,6,7,8,9,10,
+                11,12,13,15,15,16,17,18,19,20)
         }
 
         val testMatch = TestMatch()
@@ -222,8 +223,12 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
     }
 
     @MyAnno2
-    fun onMyAnno2(@TestParams("lala")@TestParams2("hehe") num: Int,num2: Int){
-        setLogcat("自定义Kotlin 注解切面进入方法")
+    fun onMyAnno2(@TestParams("lala")@TestParams2("hehe") num1: Int,num2: Long,num3: Long,num4: Int,num5: Int,
+                  num6: Int,num7: Int,num8: Int,num9: Int,num10: Int,
+                  num11: Int,num12: Int,num13: Int,num14: Int,num15: Int,
+                  num16: Int,num17: Int,num18: Int,num19: Int,num20: Int){
+        val num100 = num1+num5
+        setLogcat("自定义Kotlin 注解切面进入方法,$num100")
     }
 
     suspend fun getData2(num:Int):Int{

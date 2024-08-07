@@ -28,7 +28,6 @@ import javassist.NotFoundException
 import javassist.bytecode.AnnotationsAttribute
 import javassist.bytecode.AttributeInfo
 import javassist.bytecode.ConstPool
-import javassist.bytecode.LocalVariableAttribute
 import javassist.bytecode.annotation.Annotation
 import org.gradle.api.Project
 import org.objectweb.asm.*
@@ -36,8 +35,6 @@ import org.objectweb.asm.ClassWriter.COMPUTE_FRAMES
 import org.objectweb.asm.ClassWriter.COMPUTE_MAXS
 import org.objectweb.asm.Opcodes.*
 import org.objectweb.asm.commons.AdviceAdapter
-import org.objectweb.asm.signature.SignatureReader
-import org.objectweb.asm.signature.SignatureVisitor
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStream
@@ -278,12 +275,15 @@ object WovenIntoCode {
 
         val cp = ClassPoolUtils.getNewClassPool()
 //        val cp = ClassPool.getDefault();
+        val newClassByte = cw.toByteArray()
         val byteArrayInputStream: InputStream =
-            ByteArrayInputStream(cw.toByteArray())
+            ByteArrayInputStream(newClassByte)
         val ctClass = cp.makeClass(byteArrayInputStream)
         cp.importPackage(JOIN_POINT_CLASS)
         cp.importPackage(CONVERSIONS_CLASS)
         cp.importPackage(KEEP_CLASS)
+        val methodParamNamesScanner = MethodParamNamesScanner(newClassByte)
+
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
             val targetClassName = ctClass.name
             val oldMethodName = value.methodName
@@ -326,32 +326,19 @@ object WovenIntoCode {
                 val ctClasses = ctMethod.parameterTypes
                 val len = ctClasses.size
 
-                val paramNamesMap: MutableMap<Int,String> =
-                    mutableMapOf()
-                val localVarAttr:LocalVariableAttribute? = ctMethod.methodInfo.codeAttribute.getAttribute(LocalVariableAttribute.tag) as LocalVariableAttribute? ?: targetMethod.methodInfo.codeAttribute.getAttribute(LocalVariableAttribute.tag) as LocalVariableAttribute?
-                localVarAttr?.let{
-                    val length = it.tableLength()
-                    if (length > 1){
-                        val startIndex = if (isStaticMethod) 0 else 1
-                        for (i in 0 until length) {
-                            val index = it.index(i)
-                            if (index in startIndex..len){
-                                paramNamesMap[index] = it.variableName(i)
-                            }
-                        }
-                    }
-                }
-
-                val sortedMap = paramNamesMap.entries.sortedBy { it.key }.associate { it.toPair() }
+                val argNameList = methodParamNamesScanner.getParamNames(
+                    targetMethodName,
+                    oldDescriptor,
+                    len
+                )
+//                printLog("oldMethodName=$oldMethodName,oldDescriptor=$oldDescriptor,nameList=$argNameList")
                 val paramsNamesBuffer = StringBuffer()
-                var paramNameIndex = 0
-                val sortedMapSize = sortedMap.size
-                for (entry in sortedMap) {
-                    paramsNamesBuffer.append("\"").append(entry.value).append("\"")
+                val sortedMapSize = argNameList.size
+                for ((paramNameIndex, argName) in argNameList.withIndex()) {
+                    paramsNamesBuffer.append("\"").append(argName).append("\"")
                     if (paramNameIndex != sortedMapSize - 1) {
                         paramsNamesBuffer.append(",")
                     }
-                    paramNameIndex++
                 }
 
 //                printLog("targetClassName=$targetClassName,oldMethodName=$oldMethodName,oldDescriptor=$oldDescriptor,paramNames=$paramNamesMap")

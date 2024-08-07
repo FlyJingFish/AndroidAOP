@@ -82,7 +82,7 @@ internal class AopMethodImpl(
         get() = targetMethod.annotations
 
 
-    override fun <T : Annotation> getAnnotation(annotationClass: Class<T>): T {
+    override fun <T : Annotation> getAnnotation(annotationClass: Class<T>): T? {
         return targetMethod.getAnnotation(annotationClass)
     }
 

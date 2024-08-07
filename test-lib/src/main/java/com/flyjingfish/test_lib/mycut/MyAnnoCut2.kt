@@ -30,6 +30,9 @@ class MyAnnoCut2 : BasePointCut<MyAnno2> {
             }
         }
 
+        val paramsNames = joinPoint.targetMethod.parameterNames.toList()
+        Log.e("MyAnnoCut2" , "paramsNames: $paramsNames")
+
         val parameterAnnotations = joinPoint.targetMethod.parameterAnnotations
         Log.e("MyAnnoCut2" , "parameterAnnotations: "+parameterAnnotations.size)
         val declaringClass = joinPoint.targetMethod.declaringClass
