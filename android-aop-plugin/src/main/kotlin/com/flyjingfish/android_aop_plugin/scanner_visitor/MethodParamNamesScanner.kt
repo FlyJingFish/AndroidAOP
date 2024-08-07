@@ -1,5 +1,6 @@
 package com.flyjingfish.android_aop_plugin.scanner_visitor
 
+import com.flyjingfish.android_aop_plugin.utils.printLog
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.MethodNode
@@ -12,8 +13,7 @@ class MethodParamNamesScanner(inputStreamBytes: ByteArray) {
     init {
         val cr = ClassReader(inputStreamBytes)
         val cn = ClassNode()
-        cr.accept(cn, ClassReader.EXPAND_FRAMES) // 建议EXPAND_FRAMES
-        // ASM树接口形式访问
+        cr.accept(cn, ClassReader.EXPAND_FRAMES)
         val methods = cn.methods
         this.methods = methods
     }
@@ -35,14 +35,13 @@ class MethodParamNamesScanner(inputStreamBytes: ByteArray) {
         for (i in methods.indices) {
             val varNames: MutableList<LocalVariable> = ArrayList()
             val method = methods[i]
-            // 验证方法签名
             if (method.desc == desc && method.name == name) {
                 val localVariables = method.localVariables
                 for (l in localVariables.indices) {
                     val varName = localVariables[l].name
                     // index-记录了正确的方法本地变量索引。(方法本地变量顺序可能会被打乱。而index记录了原始的顺序)
                     val index = localVariables[l].index
-                    if ("this" != varName) // 非静态方法,第一个参数是this
+                    if ("this" != varName)
                         varNames.add(LocalVariable(index, varName))
                 }
                 val tmpArr = varNames.toTypedArray()
@@ -63,8 +62,8 @@ class MethodParamNamesScanner(inputStreamBytes: ByteArray) {
      */
     private class LocalVariable(var index: Int, var name: String) :
         Comparable<LocalVariable> {
-        override fun compareTo(o: LocalVariable): Int {
-            return index - o.index
+        override fun compareTo(other: LocalVariable): Int {
+            return index - other.index
         }
     }
 
