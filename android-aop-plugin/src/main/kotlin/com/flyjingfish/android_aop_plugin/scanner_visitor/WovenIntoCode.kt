@@ -297,6 +297,7 @@ object WovenIntoCode {
 ////                WovenInfoUtils.checkNoneInvokeClass(invokeClassName)
 //                return@forEach
 //            }
+            val newMethodBody : String ?= null
             try {
                 val ctMethod =
                     getCtMethod(ctClass, oldMethodName, oldDescriptor)
@@ -412,7 +413,7 @@ object WovenIntoCode {
                 cp.importPackage(invokeClassName)
                 val argReflect = if (ClassFileUtils.reflectInvokeMethod) "" else ",new $invokeClassName()"
                 val constructor = "$targetClassName.class,${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\""
-                val body =
+                val newMethodBody =
                     " {AndroidAopJoinPoint pointCut = new AndroidAopJoinPoint($constructor);\n"+
                             "String[] cutClassNames = new String[]{$cutClassNameArray};\n"+
                             "pointCut.setCutMatchClassNames(cutClassNames);\n"+
@@ -424,11 +425,13 @@ object WovenIntoCode {
                             (if (isHasArgs) "        Object[] args = new Object[]{$argsBuffer};\n" else "") +
                             (if (isHasArgs) "        pointCut.setArgs(args$argReflect);\n" else "        pointCut.setArgs(null$argReflect);\n") +
                             "        "+returnStr+";}"
-                ctMethod.setBody(body)
+                ctMethod.setBody(newMethodBody)
                 InitConfig.putCutInfo(value)
             } catch (e: NotFoundException) {
                 throw RuntimeException(e)
             } catch (e: CannotCompileException) {
+                printLog("newMethodBody=$newMethodBody")
+                ClassFileUtils.deleteInvokeClass(invokeClassName)
                 throw RuntimeException(e)
             }
         }

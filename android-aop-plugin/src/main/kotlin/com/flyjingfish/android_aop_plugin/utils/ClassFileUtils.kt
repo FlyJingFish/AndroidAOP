@@ -61,6 +61,7 @@ object ClassFileUtils {
             } catch (e: NotFoundException) {
                 throw RuntimeException(e)
             } catch (e: CannotCompileException) {
+                printLog("invokeBody=$invokeBody")
                 throw RuntimeException(e)
             }
             val classByteData = ctClass.toBytecode()
@@ -124,5 +125,23 @@ object ClassFileUtils {
         mv.visitEnd()
 
         cw.toByteArray().saveFile(outFile)
+    }
+
+    fun deleteInvokeClass(className:String) {
+        if (reflectInvokeMethod){
+            return
+        }
+        val iterator = invokeClasses.iterator()
+        while (iterator.hasNext()){
+            val item = iterator.next();
+            if (item.packageName == className){
+                iterator.remove()
+                break
+            }
+        }
+        outputCacheDir?.let {
+            File(it.absolutePath + "/" +Utils.dotToSlash(className)+".class").delete()
+        }
+        File(outputDir.absolutePath + "/" +Utils.dotToSlash(className)+".class").delete()
     }
 }

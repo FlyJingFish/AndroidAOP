@@ -201,77 +201,174 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 if (entryName.isEmpty() || entryName.startsWith("META-INF/") || "module-info.class" == entryName) {
                     return
                 }
-                val entryClazzName = entryName.replace(_CLASS,"")
-                val relativePath = directory.toURI().relativize(file.toURI()).path
-                val thisClassName = Utils.slashToDotClassName(entryName).replace(_CLASS,"")
-                val isClassFile = file.name.endsWith(_CLASS)
-                val isWovenInfoCode = isClassFile
-                        && AndroidAopConfig.inRules(thisClassName)
-                        && !entryClazzName.startsWith("kotlinx/") && !entryClazzName.startsWith("kotlin/")
+                try {
+                    val entryClazzName = entryName.replace(_CLASS,"")
+                    val relativePath = directory.toURI().relativize(file.toURI()).path
+                    val thisClassName = Utils.slashToDotClassName(entryName).replace(_CLASS,"")
+                    val isClassFile = file.name.endsWith(_CLASS)
+                    val isWovenInfoCode = isClassFile
+                            && AndroidAopConfig.inRules(thisClassName)
+                            && !entryClazzName.startsWith("kotlinx/") && !entryClazzName.startsWith("kotlin/")
 
-                val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(file.absolutePath)
-                val isSuspend:Boolean
-                val realMethodsRecord: HashMap<String, MethodRecord>? = if (methodsRecord == null && isWovenInfoCode){
-                    isSuspend = true
-                    val clazzName = entryName.replace(_CLASS,"")
-                    WovenInfoUtils.getAopMethodCutInnerClassInfoInvokeClassInfo(clazzName)
-                }else {
-                    isSuspend = false
-                    methodsRecord
-                }
-                val jarEntryName: String = relativePath.replace(File.separatorChar, '/')
-                if (realMethodsRecord != null){
-                    FileInputStream(file).use { inputs ->
-                        val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),realMethodsRecord,hasReplace,isSuspend)
-                        byteArray.inputStream().use {
-                            jarOutput.saveEntry(jarEntryName,it)
-                        }
-                        newClasses.add(byteArray)
+                    val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(file.absolutePath)
+                    val isSuspend:Boolean
+                    val realMethodsRecord: HashMap<String, MethodRecord>? = if (methodsRecord == null && isWovenInfoCode){
+                        isSuspend = true
+                        val clazzName = entryName.replace(_CLASS,"")
+                        WovenInfoUtils.getAopMethodCutInnerClassInfoInvokeClassInfo(clazzName)
+                    }else {
+                        isSuspend = false
+                        methodsRecord
                     }
-                }else if (Utils.dotToSlash(Utils.JoinAnnoCutUtils) + _CLASS == entryName) {
-                    FileInputStream(file).use { inputs ->
-                        val originInject = inputs.readAllBytes()
-                        val resultByteArray = RegisterMapWovenInfoCode().execute(originInject.inputStream())
-                        resultByteArray.inputStream().use {
-                            jarOutput.saveEntry(entryName,it)
-                        }
-                    }
-                }else{
+                    val jarEntryName: String = relativePath.replace(File.separatorChar, '/')
                     fun realCopy(){
                         file.inputStream().use {
                             jarOutput.saveEntry(jarEntryName,it)
                         }
                     }
-                    fun copy(){
-                        if (WovenInfoUtils.isHasAopMethodCutInnerClassInfo(entryClazzName)){
+                    if (realMethodsRecord != null){
+                        FileInputStream(file).use { inputs ->
+                            val byteArray = try {
+                                WovenIntoCode.modifyClass(inputs.readAllBytes(),realMethodsRecord,hasReplace,isSuspend)
+                            } catch (e: Exception) {
+                                realCopy()
+                                if (isSuspend){
+                                    logger.error("Merge directory error1 entry:[${entryName}], error message:$e,如果这个类是包含必须的切点类，请到Github联系作者")
+                                }else{
+                                    logger.error("Merge directory error1 entry:[${entryName}], error message:$e,通常情况下你需要先重启Android Studio,然后clean一下项目即可，如果还有问题请到Github联系作者")
+                                }
+                                null
+                            }
+                            byteArray?.let { bytes ->
+                                bytes.inputStream().use {
+                                    jarOutput.saveEntry(jarEntryName,it)
+                                }
+                                newClasses.add(bytes)
+                            }
+                        }
+                    }else if (Utils.dotToSlash(Utils.JoinAnnoCutUtils) + _CLASS == entryName) {
+                        FileInputStream(file).use { inputs ->
+                            val originInject = inputs.readAllBytes()
+                            val resultByteArray = RegisterMapWovenInfoCode().execute(originInject.inputStream())
+                            resultByteArray.inputStream().use {
+                                jarOutput.saveEntry(entryName,it)
+                            }
+                        }
+                    }else{
+                        fun copy(){
+                            if (WovenInfoUtils.isHasAopMethodCutInnerClassInfo(entryClazzName)){
+                                FileInputStream(file).use { inputs ->
+                                    val byteArray = inputs.readAllBytes()
+                                    if (byteArray.isNotEmpty()){
+                                        try {
+                                            val cr = ClassReader(byteArray)
+                                            val cw = ClassWriter(cr,0)
+                                            val cv = object : ClassVisitor(Opcodes.ASM9, cw) {
+                                                lateinit var className:String
+                                                lateinit var superClassName:String
+                                                override fun visit(
+                                                    version: Int,
+                                                    access: Int,
+                                                    name: String,
+                                                    signature: String?,
+                                                    superName: String,
+                                                    interfaces: Array<out String>?
+                                                ) {
+                                                    className = name
+                                                    superClassName = superName
+                                                    super.visit(version, access, name, signature, superName, interfaces)
+                                                }
+                                                override fun visitMethod(
+                                                    access: Int,
+                                                    name: String,
+                                                    descriptor: String,
+                                                    signature: String?,
+                                                    exceptions: Array<String?>?
+                                                ): MethodVisitor {
+                                                    val mv = super.visitMethod(
+                                                        access,
+                                                        name,
+                                                        descriptor,
+                                                        signature,
+                                                        exceptions
+                                                    )
+                                                    return ReplaceInvokeMethodVisitor(mv,className,superClassName)
+                                                }
+                                            }
+                                            cr.accept(cv, 0)
+
+                                            val newByteArray = cw.toByteArray()
+                                            newByteArray.inputStream().use {
+                                                jarOutput.saveEntry(jarEntryName,it)
+                                            }
+                                        } catch (e: Exception) {
+                                            realCopy()
+                                        }
+                                    }else{
+                                        realCopy()
+                                    }
+                                }
+
+                            }else{
+                                realCopy()
+                            }
+                        }
+                        val hasCollect = WovenInfoUtils.aopCollectClassMap[thisClassName] != null
+                        if (isWovenInfoCode && hasReplace){
+                            FileInputStream(file).use { inputs ->
+                                val byteArray = inputs.readAllBytes()
+                                if (byteArray.isNotEmpty()){
+                                    try {
+                                        val newByteArray = AopTaskUtils.wovenIntoCodeForReplace(byteArray)
+                                        newByteArray.byteArray.inputStream().use {
+                                            jarOutput.saveEntry(jarEntryName,it)
+                                        }
+    //                                    newClasses.add(newByteArray)
+                                    } catch (e: Exception) {
+                                        copy()
+                                    }
+                                }else{
+                                    copy()
+                                }
+                            }
+                        }else if (isWovenInfoCode && hasReplaceExtendsClass){
+                            val replaceExtendsClassName = WovenInfoUtils.getModifyExtendsClass(Utils.slashToDotClassName(entryClazzName))
+                            if (replaceExtendsClassName !=null){
+                                FileInputStream(file).use { inputs ->
+                                    val byteArray = inputs.readAllBytes()
+                                    if (byteArray.isNotEmpty()){
+                                        try {
+                                            val newByteArray = AopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
+                                            newByteArray.byteArray.inputStream().use {
+                                                jarOutput.saveEntry(jarEntryName,it)
+                                            }
+    //                                        newClasses.add(newByteArray)
+                                        } catch (e: Exception) {
+                                            copy()
+                                        }
+                                    }else{
+                                        copy()
+                                    }
+                                }
+                            }else{
+                                copy()
+                            }
+                        }else if (hasCollect) {
                             FileInputStream(file).use { inputs ->
                                 val byteArray = inputs.readAllBytes()
                                 if (byteArray.isNotEmpty()){
                                     try {
                                         val cr = ClassReader(byteArray)
                                         val cw = ClassWriter(cr,0)
-                                        val cv = object : ClassVisitor(Opcodes.ASM9, cw) {
-                                            lateinit var className:String
-                                            lateinit var superClassName:String
-                                            override fun visit(
-                                                version: Int,
-                                                access: Int,
-                                                name: String,
-                                                signature: String?,
-                                                superName: String,
-                                                interfaces: Array<out String>?
-                                            ) {
-                                                className = name
-                                                superClassName = superName
-                                                super.visit(version, access, name, signature, superName, interfaces)
-                                            }
+                                        var thisHasStaticClock = false
+                                        val cv = object : ReplaceBaseClassVisitor(cw) {
                                             override fun visitMethod(
                                                 access: Int,
                                                 name: String,
                                                 descriptor: String,
                                                 signature: String?,
                                                 exceptions: Array<String?>?
-                                            ): MethodVisitor {
+                                            ): MethodVisitor? {
                                                 val mv = super.visitMethod(
                                                     access,
                                                     name,
@@ -279,57 +376,21 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                                     signature,
                                                     exceptions
                                                 )
-                                                return ReplaceInvokeMethodVisitor(mv,className,superClassName)
+                                                thisHasStaticClock = isHasStaticClock
+                                                return ReplaceInvokeMethodVisitor(mv,clazzName,oldSuperName)
                                             }
                                         }
                                         cr.accept(cv, 0)
+
+                                        if (!thisHasStaticClock){
+                                            WovenIntoCode.wovenStaticCode(cw, thisClassName)
+                                        }
 
                                         val newByteArray = cw.toByteArray()
                                         newByteArray.inputStream().use {
                                             jarOutput.saveEntry(jarEntryName,it)
                                         }
-                                    } catch (e: Exception) {
-                                        realCopy()
-                                    }
-                                }else{
-                                    realCopy()
-                                }
-                            }
-
-                        }else{
-                            realCopy()
-                        }
-                    }
-                    val hasCollect = WovenInfoUtils.aopCollectClassMap[thisClassName] != null
-                    if (isWovenInfoCode && hasReplace){
-                        FileInputStream(file).use { inputs ->
-                            val byteArray = inputs.readAllBytes()
-                            if (byteArray.isNotEmpty()){
-                                try {
-                                    val newByteArray = AopTaskUtils.wovenIntoCodeForReplace(byteArray)
-                                    newByteArray.byteArray.inputStream().use {
-                                        jarOutput.saveEntry(jarEntryName,it)
-                                    }
-//                                    newClasses.add(newByteArray)
-                                } catch (e: Exception) {
-                                    copy()
-                                }
-                            }else{
-                                copy()
-                            }
-                        }
-                    }else if (isWovenInfoCode && hasReplaceExtendsClass){
-                        val replaceExtendsClassName = WovenInfoUtils.getModifyExtendsClass(Utils.slashToDotClassName(entryClazzName))
-                        if (replaceExtendsClassName !=null){
-                            FileInputStream(file).use { inputs ->
-                                val byteArray = inputs.readAllBytes()
-                                if (byteArray.isNotEmpty()){
-                                    try {
-                                        val newByteArray = AopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
-                                        newByteArray.byteArray.inputStream().use {
-                                            jarOutput.saveEntry(jarEntryName,it)
-                                        }
-//                                        newClasses.add(newByteArray)
+    //                                    newClasses.add(newByteArray)
                                     } catch (e: Exception) {
                                         copy()
                                     }
@@ -340,54 +401,9 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                         }else{
                             copy()
                         }
-                    }else if (hasCollect) {
-                        FileInputStream(file).use { inputs ->
-                            val byteArray = inputs.readAllBytes()
-                            if (byteArray.isNotEmpty()){
-                                try {
-                                    val cr = ClassReader(byteArray)
-                                    val cw = ClassWriter(cr,0)
-                                    var thisHasStaticClock = false
-                                    val cv = object : ReplaceBaseClassVisitor(cw) {
-                                        override fun visitMethod(
-                                            access: Int,
-                                            name: String,
-                                            descriptor: String,
-                                            signature: String?,
-                                            exceptions: Array<String?>?
-                                        ): MethodVisitor? {
-                                            val mv = super.visitMethod(
-                                                access,
-                                                name,
-                                                descriptor,
-                                                signature,
-                                                exceptions
-                                            )
-                                            thisHasStaticClock = isHasStaticClock
-                                            return ReplaceInvokeMethodVisitor(mv,clazzName,oldSuperName)
-                                        }
-                                    }
-                                    cr.accept(cv, 0)
-
-                                    if (!thisHasStaticClock){
-                                        WovenIntoCode.wovenStaticCode(cw, thisClassName)
-                                    }
-
-                                    val newByteArray = cw.toByteArray()
-                                    newByteArray.inputStream().use {
-                                        jarOutput.saveEntry(jarEntryName,it)
-                                    }
-//                                    newClasses.add(newByteArray)
-                                } catch (e: Exception) {
-                                    copy()
-                                }
-                            }else{
-                                copy()
-                            }
-                        }
-                    }else{
-                        copy()
                     }
+                } catch (e: Exception) {
+                    logger.error("Merge directory error2 entry:[${entryName}], error message:$e,通常情况下你需要先重启Android Studio,然后clean一下项目即可，如果还有问题请到Github联系作者")
                 }
             }
         }
@@ -448,14 +464,30 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                         methodsRecord
                     }
 
-
+                    fun realCopy(){
+                        jarFile.getInputStream(jarEntry).use {
+                            jarOutput.saveEntry(entryName,it)
+                        }
+                    }
                     if (realMethodsRecord != null){
                         jarFile.getInputStream(jarEntry).use { inputs ->
-                            val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),realMethodsRecord,hasReplace,isSuspend)
-                            byteArray.inputStream().use {
-                                jarOutput.saveEntry(entryName,it)
+                            val byteArray = try {
+                                WovenIntoCode.modifyClass(inputs.readAllBytes(),realMethodsRecord,hasReplace,isSuspend)
+                            } catch (e: Exception) {
+                                realCopy()
+                                if (isSuspend){
+                                    logger.error("Merge jar error1 entry:[${jarEntry.name}], error message:$e,如果这个类是包含必须的切点类，请到Github联系作者")
+                                }else{
+                                    logger.error("Merge jar error1 entry:[${jarEntry.name}], error message:$e,通常情况下你需要先重启Android Studio,然后clean一下项目即可，如果还有问题请到Github联系作者")
+                                }
+                                null
                             }
-                            newClasses.add(byteArray)
+                            byteArray?.let {
+                                it.inputStream().use {
+                                    jarOutput.saveEntry(entryName,it)
+                                }
+                                newClasses.add(it)
+                            }
                         }
                     }else if (Utils.dotToSlash(Utils.JoinAnnoCutUtils) + _CLASS == entryName) {
                         jarFile.getInputStream(jarEntry).use { inputs ->
@@ -466,11 +498,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             }
                         }
                     } else{
-                        fun realCopy(){
-                            jarFile.getInputStream(jarEntry).use {
-                                jarOutput.saveEntry(entryName,it)
-                            }
-                        }
                         fun copy(){
                             if (WovenInfoUtils.isHasAopMethodCutInnerClassInfo(entryClazzName)){
                                 jarFile.getInputStream(jarEntry).use { inputs ->
@@ -624,8 +651,9 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
 
                 } catch (e: Exception) {
+//                    e.printStackTrace()
 //                    throw RuntimeException("Merge jar error entry:[${jarEntry.name}], error message:$e,通常情况下你需要先重启Android Studio,然后clean一下项目即可，如果还有问题请到Github联系作者")
-                    logger.error("Merge jar error entry:[${jarEntry.name}], error message:$e,通常情况下你需要先重启Android Studio,然后clean一下项目即可，如果还有问题请到Github联系作者")
+                    logger.error("Merge jar error2 entry:[${jarEntry.name}], error message:$e,通常情况下你需要先重启Android Studio,然后clean一下项目即可，如果还有问题请到Github联系作者")
                 }
             }
             jarFile.close()
