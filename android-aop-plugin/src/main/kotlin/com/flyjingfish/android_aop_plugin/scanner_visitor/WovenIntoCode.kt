@@ -252,11 +252,7 @@ object WovenIntoCode {
                             mv = MethodReplaceInvokeAdapter(className,"$name$descriptor",mv)
                         }
                         WovenInfoUtils.addAopMethodCutInnerClassInfoInvokeMethod(className,newMethodName,descriptor)
-                        RemoveAnnotation(mv,className,descriptor,object :SearchSuspendClass.OnResultListener{
-                            override fun onBack() {
-                                value.multipleSuspendClass = true
-                            }
-                        })
+                        RemoveAnnotation(mv)
                     } else {
                         null
                     }
@@ -307,10 +303,14 @@ object WovenIntoCode {
                 val targetMethod =
                     getCtMethod(ctClass, targetMethodName, oldDescriptor)
                 if (ctMethod == null){
-                    printLog("------ctMethod ${oldMethodName}${oldDescriptor} 方法找不到了-----")
+                    if (!isSuspend){
+                        printLog("------ctMethod ${targetClassName}${oldMethodName}${oldDescriptor} 方法找不到了-----")
+                    }
                     return@forEach
                 }else if (targetMethod == null){
-                    printLog("------targetMethod ${targetMethodName}${oldDescriptor} 方法找不到了-----")
+                    if (!isSuspend){
+                        printLog("------targetMethod ${targetClassName}${targetMethodName}${oldDescriptor} 方法找不到了-----")
+                    }
                     return@forEach
                 }
 

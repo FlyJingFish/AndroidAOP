@@ -5,8 +5,7 @@ data class MethodRecord(
     val descriptor: String,
     val cutClassName:MutableSet<String> = mutableSetOf(),
     val lambda: Boolean = false,
-    val cutInfo: MutableMap<String, CutInfo> = mutableMapOf(),
-    var multipleSuspendClass: Boolean = false
+    val cutInfo: MutableMap<String, CutInfo> = mutableMapOf()
 ) {
     fun getKey(): String {
         return methodName + descriptor + cutClassName + lambda

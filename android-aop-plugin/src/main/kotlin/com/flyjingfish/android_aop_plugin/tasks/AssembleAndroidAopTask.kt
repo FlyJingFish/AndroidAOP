@@ -203,11 +203,15 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 }
                 val entryClazzName = entryName.replace(_CLASS,"")
                 val relativePath = directory.toURI().relativize(file.toURI()).path
-
+                val thisClassName = Utils.slashToDotClassName(entryName).replace(_CLASS,"")
+                val isClassFile = file.name.endsWith(_CLASS)
+                val isWovenInfoCode = isClassFile
+                        && AndroidAopConfig.inRules(thisClassName)
+                        && !entryClazzName.startsWith("kotlinx/") && !entryClazzName.startsWith("kotlin/")
 
                 val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(file.absolutePath)
                 val isSuspend:Boolean
-                val realMethodsRecord: HashMap<String, MethodRecord>? = if (methodsRecord == null){
+                val realMethodsRecord: HashMap<String, MethodRecord>? = if (methodsRecord == null && isWovenInfoCode){
                     isSuspend = true
                     val clazzName = entryName.replace(_CLASS,"")
                     WovenInfoUtils.getAopMethodCutInnerClassInfoInvokeClassInfo(clazzName)
@@ -296,12 +300,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             realCopy()
                         }
                     }
-                    val thisClassName = Utils.slashToDotClassName(entryName).replace(_CLASS,"")
                     val hasCollect = WovenInfoUtils.aopCollectClassMap[thisClassName] != null
-                    val isClassFile = file.name.endsWith(_CLASS)
-                    val isWovenInfoCode = isClassFile
-                            && AndroidAopConfig.inRules(thisClassName)
-                            && !entryClazzName.startsWith("kotlinx/") && !entryClazzName.startsWith("kotlin/")
                     if (isWovenInfoCode && hasReplace){
                         FileInputStream(file).use { inputs ->
                             val byteArray = inputs.readAllBytes()
@@ -434,16 +433,22 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 try {
                     val entryName = jarEntry.name
                     val entryClazzName = entryName.replace(_CLASS,"")
-
+                    val thisClassName = Utils.slashToDotClassName(entryName).replace(_CLASS,"")
+                    val isClassFile = entryName.endsWith(_CLASS)
+                    val isWovenInfoCode = isClassFile
+                            && AndroidAopConfig.inRules(thisClassName)
+                            && !entryName.startsWith("kotlinx/") && !entryName.startsWith("kotlin/")
                     val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(entryName)
                     val isSuspend:Boolean
-                    val realMethodsRecord: HashMap<String, MethodRecord>? = if (methodsRecord == null){
+                    val realMethodsRecord: HashMap<String, MethodRecord>? = if (methodsRecord == null && isWovenInfoCode){
                         isSuspend = true
                         WovenInfoUtils.getAopMethodCutInnerClassInfoInvokeClassInfo(entryClazzName)
                     }else {
                         isSuspend = false
                         methodsRecord
                     }
+
+
                     if (realMethodsRecord != null){
                         jarFile.getInputStream(jarEntry).use { inputs ->
                             val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),realMethodsRecord,hasReplace,isSuspend)
@@ -524,12 +529,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 realCopy()
                             }
                         }
-                        val thisClassName = Utils.slashToDotClassName(entryName).replace(_CLASS,"")
                         val hasCollect = WovenInfoUtils.aopCollectClassMap[thisClassName] != null
-                        val isClassFile = entryName.endsWith(_CLASS)
-                        val isWovenInfoCode = isClassFile
-                                && AndroidAopConfig.inRules(thisClassName)
-                                && !entryName.startsWith("kotlinx/") && !entryName.startsWith("kotlin/")
 
                         if (isWovenInfoCode && hasReplace){
                             jarFile.getInputStream(jarEntry).use { inputs ->

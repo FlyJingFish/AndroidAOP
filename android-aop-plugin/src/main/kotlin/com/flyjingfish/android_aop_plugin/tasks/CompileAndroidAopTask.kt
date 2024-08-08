@@ -114,10 +114,15 @@ class CompileAndroidAopTask(
                 val entryClazzName = entryName.replace(_CLASS,"")
                 val relativePath = directory.toURI().relativize(file.toURI()).path
 
+                val thisClassName = Utils.slashToDotClassName(entryName).replace(_CLASS,"")
+                val isClassFile = file.name.endsWith(_CLASS)
+                val isWovenInfoCode = isClassFile
+                        && AndroidAopConfig.inRules(thisClassName)
+                        && !entryClazzName.startsWith("kotlinx/") && !entryClazzName.startsWith("kotlin/")
 
                 val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(file.absolutePath)
                 val isSuspend:Boolean
-                val realMethodsRecord: HashMap<String, MethodRecord>? = if (methodsRecord == null){
+                val realMethodsRecord: HashMap<String, MethodRecord>? = if (methodsRecord == null && isWovenInfoCode){
                     isSuspend = true
                     val clazzName = entryName.replace(_CLASS,"")
                     WovenInfoUtils.getAopMethodCutInnerClassInfoInvokeClassInfo(clazzName)
@@ -126,7 +131,7 @@ class CompileAndroidAopTask(
                     methodsRecord
                 }
 
-                val thisClassName = Utils.slashToDotClassName(entryName).replace(_CLASS,"")
+
                 val hasCollect = WovenInfoUtils.aopCollectClassMap[thisClassName] != null
                 val outFile = File(tmpCompileDir.absolutePath+"/"+relativePath)
                 fun mkOutFile(){
@@ -195,10 +200,7 @@ class CompileAndroidAopTask(
                             }
                         }
                     }
-                    val isClassFile = file.name.endsWith(_CLASS)
-                    val isWovenInfoCode = isClassFile
-                            && AndroidAopConfig.inRules(thisClassName)
-                            && !entryClazzName.startsWith("kotlinx/") && !entryClazzName.startsWith("kotlin/")
+
                     if (isWovenInfoCode && hasReplace){
                         FileInputStream(file).use { inputs ->
                             val byteArray = inputs.readAllBytes()
