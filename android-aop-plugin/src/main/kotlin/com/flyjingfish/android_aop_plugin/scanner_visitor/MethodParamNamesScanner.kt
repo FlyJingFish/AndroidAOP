@@ -44,9 +44,6 @@ class MethodParamNamesScanner(inputStreamBytes: ByteArray) {
                     val index = localVariables[l].index
                     if ("this" != varName)
                         varNames[index] = (LocalVariable(index, varName))
-                    if (name.contains("getData22")){
-                        printLog("name=$name,desc=$desc,size=$size,varName=$varName,index=$index")
-                    }
                 }
 
                 val sortedMap = varNames.entries.sortedBy { it.key }.associate { it.toPair() }
