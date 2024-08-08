@@ -140,8 +140,14 @@ object ClassFileUtils {
             }
         }
         outputCacheDir?.let {
-            File(it.absolutePath + "/" +Utils.dotToSlash(className)+".class").delete()
+            val file = File(it.absolutePath + "/" +Utils.dotToSlash(className)+".class")
+            if (file.exists()){
+                file.delete()
+            }
         }
-        File(outputDir.absolutePath + "/" +Utils.dotToSlash(className)+".class").delete()
+        val file = File(outputDir.absolutePath + "/" +Utils.dotToSlash(className)+".class")
+        if (file.exists()){
+            file.delete()
+        }
     }
 }
