@@ -5,6 +5,7 @@ import org.objectweb.asm.ClassReader
 import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.MethodNode
 import java.util.Arrays
+import kotlin.math.min
 
 
 class MethodParamNamesScanner(inputStreamBytes: ByteArray) {
@@ -33,7 +34,7 @@ class MethodParamNamesScanner(inputStreamBytes: ByteArray) {
     ): List<String> {
         val list: MutableList<String> = ArrayList()
         for (i in methods.indices) {
-            val varNames: MutableList<LocalVariable> = ArrayList()
+            val varNames = mutableMapOf<Int,LocalVariable>()
             val method = methods[i]
             if (method.desc == desc && method.name == name) {
                 val localVariables = method.localVariables
@@ -42,12 +43,18 @@ class MethodParamNamesScanner(inputStreamBytes: ByteArray) {
                     // index-记录了正确的方法本地变量索引。(方法本地变量顺序可能会被打乱。而index记录了原始的顺序)
                     val index = localVariables[l].index
                     if ("this" != varName)
-                        varNames.add(LocalVariable(index, varName))
+                        varNames[index] = (LocalVariable(index, varName))
                 }
-                val tmpArr = varNames.toTypedArray()
-                // 根据index来重排序，以确保正确的顺序
-                Arrays.sort(tmpArr)
-                for (j in 0 until size) {
+
+                val sortedMap = varNames.entries.sortedBy { it.key }.associate { it.toPair() }
+
+                val tmpArr = mutableListOf<LocalVariable>()
+                for (entry in sortedMap.entries) {
+                    tmpArr.add(entry.value)
+                }
+
+                val len = min(tmpArr.size , size)
+                for (j in 0 until len) {
                     list.add(tmpArr[j].name)
                 }
                 break

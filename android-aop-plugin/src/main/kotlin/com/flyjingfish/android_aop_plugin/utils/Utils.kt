@@ -2,6 +2,7 @@ package com.flyjingfish.android_aop_plugin.utils
 
 import com.flyjingfish.android_aop_plugin.beans.MatchMethodInfo
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
+import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import org.gradle.api.Project
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.commons.Method
@@ -25,6 +26,7 @@ object Utils {
     const val KEEP_CLASS = "com.flyjingfish.android_aop_annotation.aop_anno.AopKeep"
     const val JOIN_POINT_CLASS = "com.flyjingfish.android_aop_annotation.AndroidAopJoinPoint"
     const val CONVERSIONS_CLASS = "com.flyjingfish.android_aop_annotation.Conversions"
+    const val METHOD_SUFFIX = "\$\$AndroidAOP"
 
     fun dotToSlash(str: String): String {
         return str.replace(".", "/")
@@ -371,6 +373,10 @@ object Utils {
     fun isAOPMethod(methodName: String):Boolean{
         val matcher: Matcher = AOPMethodPattern.matcher(methodName)
         return matcher.find()
+    }
+
+    fun getTargetMethodName(oldMethodName:String,className:String,descriptor:String):String{
+        return "$oldMethodName$$${(slashToDot(className)+descriptor).computeMD5()}${METHOD_SUFFIX}"
     }
 }
 
