@@ -42,7 +42,6 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 object WovenIntoCode {
-    const val METHOD_SUFFIX = "\$\$AndroidAOP"
     @Throws(Exception::class)
     fun modifyClass(
         inputStreamBytes: ByteArray?,
@@ -66,9 +65,10 @@ object WovenIntoCode {
             methodRecordHashMap.forEach { (_: String, value: MethodRecord) ->
                 val oldMethodName = value.methodName
                 val oldDescriptor = value.descriptor
-                val newMethodName = "$oldMethodName$$${(Utils.slashToDot(className)+descriptor).computeMD5()}$METHOD_SUFFIX"
+                val newMethodName = Utils.getTargetMethodName(oldMethodName, className, descriptor)
                 if (newMethodName == name && oldDescriptor == descriptor){
                     wovenRecord.add(value)
+                    WovenInfoUtils.addAopMethodCutInnerClassInfoInvokeMethod(className,newMethodName,descriptor)
                 }
             }
 
@@ -239,7 +239,7 @@ object WovenIntoCode {
                         }else{
                             ACC_PUBLIC + ACC_FINAL
                         }
-                        val newMethodName = "$oldMethodName$$${(Utils.slashToDot(className)+descriptor).computeMD5()}$METHOD_SUFFIX"
+                        val newMethodName = Utils.getTargetMethodName(oldMethodName, className, descriptor)
                         var mv: MethodVisitor? = super.visitMethod(
                             newAccess,
                             newMethodName,
@@ -288,7 +288,7 @@ object WovenIntoCode {
             val targetClassName = ctClass.name
             val oldMethodName = value.methodName
             val oldDescriptor = value.descriptor
-            val targetMethodName = "$oldMethodName$$${(targetClassName+oldDescriptor).computeMD5()}$METHOD_SUFFIX"
+            val targetMethodName = Utils.getTargetMethodName(oldMethodName,targetClassName,oldDescriptor)
             val cutClassNameArray = StringBuilder()
             value.cutClassName.toList().forEachIndexed { index, item ->
                 cutClassNameArray.append("\"").append(item).append("\"")

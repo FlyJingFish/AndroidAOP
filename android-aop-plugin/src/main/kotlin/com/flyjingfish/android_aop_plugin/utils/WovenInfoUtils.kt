@@ -591,8 +591,7 @@ object WovenInfoUtils {
     fun addAopMethodCutInnerClassInfo(className:String,
                                       oldMethodName: String,
                                       oldDescriptor: String){
-        val classNameMd5 = Utils.slashToDot(className).computeMD5()
-        val newMethodName = "$oldMethodName$$$classNameMd5${WovenIntoCode.METHOD_SUFFIX}"
+        val newMethodName = Utils.getTargetMethodName(oldMethodName,className,oldDescriptor)
         if (oldDescriptor.endsWith("Lkotlin/coroutines/Continuation;)Ljava/lang/Object;")) {
             val key = "$className&$oldMethodName&$oldDescriptor"
             aopMethodCutInnerClassInfo[key] = ReplaceInnerClassInfo(className,oldMethodName,oldDescriptor,newMethodName)
