@@ -10,6 +10,7 @@ import com.flyjingfish.android_aop_plugin.scanner_visitor.MethodReplaceInvokeVis
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ReplaceBaseClassVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.SearchAOPConfigVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.SearchAopMethodVisitor
+import com.flyjingfish.android_aop_plugin.scanner_visitor.SuspendReturnScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import org.gradle.api.Project
 import org.objectweb.asm.ClassReader
@@ -176,6 +177,19 @@ object AopTaskUtils {
             if (file.absolutePath.endsWith(Utils._CLASS)){
                 val className = file.absolutePath.replace("$directoryPath/","").replace(".class","")
                 WovenInfoUtils.addExtendsReplace(Utils.slashToDot(className))
+
+                val isAopCutClass = WovenInfoUtils.isAopMethodCutClass(className) || WovenInfoUtils.isAopMatchCutClass(className)
+                if (isAopCutClass){
+                    FileInputStream(file).use { inputs ->
+                        val bytes = inputs.readAllBytes()
+                        if (bytes.isNotEmpty()){
+                            val classReader = ClassReader(bytes)
+                            classReader.accept(
+                                SuspendReturnScanner(), 0)
+                        }
+                    }
+                }
+
             }
         }
 
@@ -231,6 +245,18 @@ object AopTaskUtils {
                 if (entryName.endsWith(Utils._CLASS)){
                     val className = entryName.replace(".class","")
                     WovenInfoUtils.addExtendsReplace(Utils.slashToDot(className))
+
+                    val isAopCutClass = WovenInfoUtils.isAopMethodCutClass(className) || WovenInfoUtils.isAopMatchCutClass(className)
+                    if (isAopCutClass){
+                        jarFile.getInputStream(jarEntry).use { inputs ->
+                            val bytes = inputs.readAllBytes()
+                            if (bytes.isNotEmpty()){
+                                val classReader = ClassReader(bytes)
+                                classReader.accept(
+                                    SuspendReturnScanner(), 0)
+                            }
+                        }
+                    }
                 }
             } catch (e: Exception) {
                 printLog("Merge jar error entry:[${jarEntry.name}], error message:$e")
