@@ -8,6 +8,7 @@ open class MethodReplaceInvokeVisitor(
     classVisitor: ClassVisitor
 ) : ReplaceBaseClassVisitor(classVisitor) {
     lateinit var className: String
+    lateinit var superName: String
     var replaced = false
     override fun visit(
         version: Int,
@@ -19,6 +20,7 @@ open class MethodReplaceInvokeVisitor(
     ) {
         super.visit(version, access, name, signature, superName, interfaces)
         className = name
+        this.superName = superName
     }
     override fun visitMethod(
         access: Int,
@@ -30,7 +32,7 @@ open class MethodReplaceInvokeVisitor(
         var mv: MethodVisitor? = super.visitMethod(access, name, descriptor, signature, exceptions)
 
         if (mv != null && access.isHasMethodBody()) {
-            mv = MethodReplaceInvokeAdapter(className,"$name$descriptor",mv)
+            mv = MethodReplaceInvokeAdapter(className,superName,"$name$descriptor",mv)
             mv.onResultListener = object : MethodReplaceInvokeAdapter.OnResultListener{
                 override fun onBack() {
                     replaced = true

@@ -6,7 +6,8 @@ data class ReplaceMethodInfo(
     var oldMethodDesc: String,
     var newOwner: String,
     var newMethodName: String,
-    var newMethodDesc: String
+    var newMethodDesc: String,
+    var isConstructor:Boolean = false
 ){
     fun getReplaceKey():String{
         return oldOwner + oldMethodName + oldMethodDesc

@@ -255,6 +255,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
     companion object {
         const val REPLACE_POINT =
             "Lcom/flyjingfish/android_aop_annotation/anno/AndroidAopReplaceMethod"
+        val initClassnamePattern = Pattern.compile("<init>\\(.*?\\)")
     }
     open inner class MyMethodVisitor
         (
@@ -314,7 +315,15 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                 val name = methodname
                 if (!name.isNullOrEmpty()){
                     try {
-                        val methodInfo = getMethodInfo(name)
+                        val fanMatcher = initClassnamePattern.matcher(name)
+                        val newName = if (name.startsWith("<init>") && fanMatcher.find()){
+                            replaceMethodInfo.isConstructor = true
+                            "void $name"
+                        }else{
+                            name
+                        }
+
+                        val methodInfo = getMethodInfo(newName)
                         if (methodInfo != null && methodInfo.checkAvailable()){
                             val methodText = methodInfo.returnType + " " + methodInfo.name + methodInfo.paramTypes
 
@@ -322,7 +331,20 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                             replaceMethodInfo.oldMethodName = method.name
                             replaceMethodInfo.oldMethodDesc = method.descriptor
                             if (replaceMethodInfo.checkAvailable()){
-                                onCallBackMethod?.onBackReplaceMethodInfo(replaceMethodInfo)
+                                if (replaceMethodInfo.isConstructor){
+                                    val returnType = Type.getReturnType(replaceMethodInfo.newMethodDesc)
+                                    val returnTypeClassName = returnType.descriptor
+                                    val paramsTypes = Type.getArgumentTypes(replaceMethodInfo.newMethodDesc)
+                                    val paramType0 : Type? = if (paramsTypes.size == 1){
+                                        paramsTypes[0]
+                                    }else null
+
+                                    if (returnTypeClassName.startsWith("L") && returnTypeClassName.endsWith(";") && paramType0?.className == slashToDotClassName(replaceMethodInfo.oldOwner)){
+                                        onCallBackMethod?.onBackReplaceMethodInfo(replaceMethodInfo)
+                                    }
+                                }else{
+                                    onCallBackMethod?.onBackReplaceMethodInfo(replaceMethodInfo)
+                                }
                             }
                         }
 
