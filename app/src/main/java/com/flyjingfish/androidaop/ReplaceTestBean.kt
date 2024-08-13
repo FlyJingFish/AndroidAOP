@@ -7,6 +7,13 @@ import com.flyjingfish.androidaop.test.TestBean
 
 @AndroidAopReplaceClass("com.flyjingfish.androidaop.test.TestBean")
 object ReplaceTestBean {
+
+    @AndroidAopReplaceMethod("<init>()")
+    @JvmStatic
+    fun getTestBean(testBean: TestBean) : TestBean{
+        return TestBean()
+    }
+
     @AndroidAopReplaceMethod("void setName(java.lang.String)")
     @JvmStatic
     fun setName(testBean: TestBean, name: String) {

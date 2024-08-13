@@ -6,6 +6,7 @@ import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.scanner_visitor.RegisterMapWovenInfoCode
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ReplaceBaseClassVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ReplaceInvokeMethodVisitor
+import com.flyjingfish.android_aop_plugin.scanner_visitor.SuspendReturnScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import com.flyjingfish.android_aop_plugin.utils.AopTaskUtils
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
@@ -70,6 +71,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         ClassFileUtils.outputDir = File(Utils.aopTransformTempDir(project,variant))
         ClassFileUtils.clear()
         ClassFileUtils.outputDir.deleteRecursively()
+        SuspendReturnScanner.hasSuspendReturn = false
         jarOutput = JarOutputStream(BufferedOutputStream(FileOutputStream(output.get().asFile)))
         val scanTimeCost = measureTimeMillis {
             scanFile()
@@ -212,7 +214,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
                     val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(file.absolutePath)
                     val isSuspend:Boolean
-                    val realMethodsRecord: HashMap<String, MethodRecord>? = if (methodsRecord == null && isWovenInfoCode){
+                    val realMethodsRecord: HashMap<String, MethodRecord>? = if (methodsRecord == null && SuspendReturnScanner.hasSuspendReturn && isWovenInfoCode){
                         isSuspend = true
                         val clazzName = entryName.replace(_CLASS,"")
                         WovenInfoUtils.getAopMethodCutInnerClassInfoInvokeClassInfo(clazzName)
@@ -456,7 +458,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             && !entryName.startsWith("kotlinx/") && !entryName.startsWith("kotlin/")
                     val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(entryName)
                     val isSuspend:Boolean
-                    val realMethodsRecord: HashMap<String, MethodRecord>? = if (methodsRecord == null && isWovenInfoCode){
+                    val realMethodsRecord: HashMap<String, MethodRecord>? = if (methodsRecord == null && SuspendReturnScanner.hasSuspendReturn && isWovenInfoCode){
                         isSuspend = true
                         WovenInfoUtils.getAopMethodCutInnerClassInfoInvokeClassInfo(entryClazzName)
                     }else {

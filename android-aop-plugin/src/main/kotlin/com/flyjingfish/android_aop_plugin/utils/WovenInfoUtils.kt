@@ -132,6 +132,15 @@ object WovenInfoUtils {
         aopMethodCuts[info.anno] = info
     }
 
+    fun isAopMethodCutClass(className: String):Boolean{
+        for (aopMethodCut in aopMethodCuts) {
+            if (Utils.slashToDotClassName(className).contains(aopMethodCut.value.cutClassName)){
+                return true
+            }
+        }
+        return false
+    }
+
     fun addAopInstance(key: String,className: String) {
         aopInstances[key] = className
     }
@@ -150,7 +159,14 @@ object WovenInfoUtils {
         //baseClassName -> cutClassName 防止被覆盖
         aopMatchCuts[info.cutClassName] = info
     }
-
+    fun isAopMatchCutClass(className: String):Boolean{
+        for (aopMatchCut in aopMatchCuts) {
+            if (aopMatchCut.key.contains(Utils.slashToDotClassName(className))){
+                return true
+            }
+        }
+        return false
+    }
     fun addClassMethodRecords(classMethodRecord: ClassMethodRecord) {
         var methodsRecord: HashMap<String, MethodRecord>? =
             classMethodRecords[classMethodRecord.classFile]

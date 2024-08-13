@@ -7,8 +7,17 @@ import com.flyjingfish.android_aop_core.annotations.SingleClick;
 import com.flyjingfish.test_lib.annotation.MyAnno;
 
 public class TestMatch{
-    public void test1(){
+    public int label = 0;
 
+    public TestMatch() {
+    }
+
+    public TestMatch(int label) {
+        this.label = label;
+    }
+
+    public void test1(){
+        Log.e("test1","label="+label);
     }
     public void test2(){
 

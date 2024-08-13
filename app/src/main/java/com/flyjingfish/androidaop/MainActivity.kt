@@ -29,6 +29,7 @@ import com.flyjingfish.test_lib.annotation.MyAnno3
 import com.flyjingfish.test_lib.BaseActivity
 import com.flyjingfish.test_lib.PermissionRejectListener
 import com.flyjingfish.test_lib.TestMatch
+import com.flyjingfish.test_lib.TestMatch2
 import com.flyjingfish.test_lib.annotation.MyAnno2
 import com.flyjingfish.test_lib.mycut.TestParams2
 import kotlinx.coroutines.Dispatchers
@@ -133,9 +134,9 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
                 11,12,13,15,15,16,17,18,19,20)
         }
 
-        val testMatch = TestMatch()
+        TestMatch2(1).test1()
+        TestMatch2().test1()
         binding.btnTestMuch.setOnClickListener {
-//            testMatch.test2(1,"2")
 //
 //            LocaleTransform.getLanguage(1)
 

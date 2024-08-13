@@ -1,6 +1,7 @@
 package com.flyjingfish.android_aop_processor;
 
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopCollectMethod;
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceNew;
 import com.flyjingfish.android_aop_annotation.aop_anno.AopClass;
 import com.flyjingfish.android_aop_annotation.aop_anno.AopCollectMethod;
 import com.flyjingfish.android_aop_annotation.aop_anno.AopMatchClassMethod;
@@ -26,6 +27,7 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -69,6 +71,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
         set.add(AndroidAopMatchClassMethod.class.getCanonicalName());
         set.add(AndroidAopReplaceClass.class.getCanonicalName());
         set.add(AndroidAopReplaceMethod.class.getCanonicalName());
+        set.add(AndroidAopReplaceNew.class.getCanonicalName());
         set.add(AndroidAopModifyExtendsClass.class.getCanonicalName());
         set.add(AndroidAopCollectMethod.class.getCanonicalName());
         return set;
@@ -103,7 +106,8 @@ public class AndroidAopProcessor extends AbstractProcessor {
 
         processPointCut(set, roundEnvironment);
         processMatch(set, roundEnvironment);
-        processReplaceMethod(set, roundEnvironment);
+        processReplaceMethod(set, roundEnvironment,AndroidAopReplaceMethod.class);
+        processReplaceMethod(set, roundEnvironment,AndroidAopReplaceNew.class);
         processReplace(set, roundEnvironment);
         processModifyExtendsClass(set, roundEnvironment);
         processCollectMethod(set, roundEnvironment);
@@ -337,8 +341,8 @@ public class AndroidAopProcessor extends AbstractProcessor {
         }
     }
 
-    private void processReplaceMethod(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
-        Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(AndroidAopReplaceMethod.class);
+    private void processReplaceMethod(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment,Class<? extends Annotation> var1) {
+        Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(var1);
         for (Element element : elements) {
             Name name1 = element.getSimpleName();
             boolean isStatic = false;

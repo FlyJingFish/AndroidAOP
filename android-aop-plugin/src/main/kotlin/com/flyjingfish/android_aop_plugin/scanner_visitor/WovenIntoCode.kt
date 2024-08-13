@@ -249,7 +249,7 @@ object WovenIntoCode {
                         )
 
                         if (hasReplace && mv != null && access.isHasMethodBody()) {
-                            mv = MethodReplaceInvokeAdapter(className,"$name$descriptor",mv)
+                            mv = MethodReplaceInvokeAdapter(className,oldSuperName,"$name$descriptor",mv)
                         }
                         WovenInfoUtils.addAopMethodCutInnerClassInfoInvokeMethod(className,newMethodName,descriptor)
                         RemoveAnnotation(mv)
