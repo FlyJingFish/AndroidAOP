@@ -6,6 +6,7 @@ import com.flyjingfish.android_aop_plugin.beans.TmpFile
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ReplaceBaseClassVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ReplaceInvokeMethodVisitor
+import com.flyjingfish.android_aop_plugin.scanner_visitor.SuspendReturnScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import com.flyjingfish.android_aop_plugin.utils.AopTaskUtils
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
@@ -15,6 +16,7 @@ import com.flyjingfish.android_aop_plugin.utils.Utils._CLASS
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.checkExist
 import com.flyjingfish.android_aop_plugin.utils.inRules
+import com.flyjingfish.android_aop_plugin.utils.printLog
 import com.flyjingfish.android_aop_plugin.utils.saveEntry
 import com.flyjingfish.android_aop_plugin.utils.saveFile
 import org.gradle.api.Project
@@ -47,6 +49,7 @@ class CompileAndroidAopTask(
         ClassFileUtils.outputDir = output
         ClassFileUtils.outputCacheDir = File(Utils.aopCompileTempInvokeDir(project, variantName))
         ClassFileUtils.clear()
+        SuspendReturnScanner.hasSuspendReturn = false
         println("AndroidAOP woven info code start")
         val scanTimeCost = measureTimeMillis {
             scanFile()
@@ -122,7 +125,7 @@ class CompileAndroidAopTask(
 
                 val methodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(file.absolutePath)
                 val isSuspend:Boolean
-                val realMethodsRecord: HashMap<String, MethodRecord>? = if (methodsRecord == null && isWovenInfoCode){
+                val realMethodsRecord: HashMap<String, MethodRecord>? = if (methodsRecord == null && SuspendReturnScanner.hasSuspendReturn && isWovenInfoCode){
                     isSuspend = true
                     val clazzName = entryName.replace(_CLASS,"")
                     WovenInfoUtils.getAopMethodCutInnerClassInfoInvokeClassInfo(clazzName)
