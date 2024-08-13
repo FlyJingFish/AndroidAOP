@@ -5,6 +5,7 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopModifyExtendsClass
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopPointCut
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceClass
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethod
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceNew
 import com.flyjingfish.android_aop_annotation.aop_anno.AopClass
 import com.flyjingfish.android_aop_annotation.aop_anno.AopCollectMethod
 import com.flyjingfish.android_aop_annotation.aop_anno.AopMatchClassMethod
@@ -68,7 +69,8 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
 //    logger.error("---------AndroidAopSymbolProcessor---------")
     val ret1 = processPointCut(resolver)
     val ret2 = processMatch(resolver)
-    processReplaceMethod(resolver)
+    processReplaceMethod(resolver,AndroidAopReplaceMethod::class.qualifiedName!!)
+    processReplaceMethod(resolver,AndroidAopReplaceNew::class.qualifiedName!!)
     val ret3 = processReplace(resolver)
     val ret4 = processModifyExtendsClass(resolver)
     val ret5 = processCollectMethod(resolver)
@@ -378,7 +380,41 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
     return symbols.filter { !it.validate() }.toList()
   }
 
-  private fun processReplaceMethod(resolver: Resolver): List<KSAnnotated> {
+  private fun processReplaceMethod(resolver: Resolver,qualifiedName :String): List<KSAnnotated> {
+    val symbols :Sequence<KSAnnotated> =
+      resolver.getSymbolsWithAnnotation(qualifiedName)
+    for (symbol in symbols) {
+      val annotationMap = getAnnotation(symbol)
+
+      if (symbol.origin == Origin.KOTLIN){
+        if (!annotationMap.containsKey("@JvmStatic")){
+          var className = "${(symbol as KSFunctionDeclaration).packageName.asString()}."
+          var parent = symbol.parent
+          while (parent !is KSFile){
+            className = "$className$parent."
+            parent = parent?.parent
+          }
+          throw IllegalArgumentException("注意：函数$className${symbol} 必须添加 @JvmStatic 注解")
+        }
+
+      }else if (symbol.origin == Origin.JAVA){
+        if (symbol is KSFunctionDeclaration){
+          if (symbol.functionKind != FunctionKind.STATIC){
+            var className = "${symbol.packageName.asString()}."
+            var parent = symbol.parent
+            while (parent !is KSFile){
+              className = "$className$parent."
+              parent = parent?.parent
+            }
+            throw IllegalArgumentException("注意：方法$className${symbol} 必须是静态方法")
+          }
+        }
+      }
+    }
+    return symbols.filter { !it.validate() }.toList()
+  }
+
+  private fun processReplaceNew(resolver: Resolver): List<KSAnnotated> {
     val symbols :Sequence<KSAnnotated> =
       resolver.getSymbolsWithAnnotation(AndroidAopReplaceMethod::class.qualifiedName!!)
     for (symbol in symbols) {
@@ -411,6 +447,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
     }
     return symbols.filter { !it.validate() }.toList()
   }
+
 
   private fun processModifyExtendsClass(resolver: Resolver): List<KSAnnotated> {
     val symbols :Sequence<KSAnnotated> =

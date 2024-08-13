@@ -137,7 +137,6 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
         TestMatch2(1).test1()
         TestMatch2().test1()
         binding.btnTestMuch.setOnClickListener {
-//            testMatch.test2(1,"2")
 //
 //            LocaleTransform.getLanguage(1)
 
