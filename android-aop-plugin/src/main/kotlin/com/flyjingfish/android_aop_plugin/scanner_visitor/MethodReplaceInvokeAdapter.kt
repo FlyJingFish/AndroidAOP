@@ -16,13 +16,22 @@ class MethodReplaceInvokeAdapter(private val className:String,private val superN
         fun onBack()
     }
     var onResultListener : OnResultListener ?= null
-    override fun visitMethodInsn(
-        opcode: Int,
-        owner: String,
-        name: String,
-        descriptor: String,
-        isInterface: Boolean
-    ) {
+
+
+    override fun visitTypeInsn(opcode: Int, type: String) {
+        if (opcode == Opcodes.NEW) {
+            val replaceMethodInfo = getReplaceInfo(type, "<init>", "")
+            if (replaceMethodInfo != null && replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW && replaceMethodInfo.newClassName.isNotEmpty()){
+                super.visitTypeInsn(opcode, replaceMethodInfo.newClassName)
+                return
+            }
+        }
+        super.visitTypeInsn(opcode, type)
+    }
+
+    private fun getReplaceInfo(owner: String,
+                        name: String,
+                        descriptor: String):ReplaceMethodInfo?{
         val key = owner + name + descriptor
         var replaceMethodInfo = WovenInfoUtils.getReplaceMethodInfoUse(key)
         var isReplaceClass = false
@@ -36,9 +45,39 @@ class MethodReplaceInvokeAdapter(private val className:String,private val superN
         }else{
             isReplaceClass = replaceMethodInfo.oldOwner == owner && replaceMethodInfo.oldMethodName == name && replaceMethodInfo.oldMethodDesc == descriptor
         }
+        return if (isReplaceClass){
+            replaceMethodInfo
+        }else {
+            null
+        }
+    }
+
+    override fun visitMethodInsn(
+        opcode: Int,
+        owner: String,
+        name: String,
+        descriptor: String,
+        isInterface: Boolean
+    ) {
+        var replaceMethodInfo = getReplaceInfo(owner, name, "")
+        var isReplaceClass = replaceMethodInfo != null
+        if (!isReplaceClass){
+            val methodReplaceMethodInfo = getReplaceInfo(owner, name, descriptor)
+            if (methodReplaceMethodInfo != null && methodReplaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW && methodReplaceMethodInfo.newClassName.isNotEmpty()){
+                replaceMethodInfo = methodReplaceMethodInfo
+            }
+            isReplaceClass = replaceMethodInfo != null
+        }
+
         if (isReplaceClass && replaceMethodInfo != null
             && (!className.contains(replaceMethodInfo.newOwner) || methodNameDesc != "${replaceMethodInfo.newMethodName}${replaceMethodInfo.newMethodDesc}")) {
-            val shouldReplace: Boolean = if (replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.INIT||replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW) {
+            val shouldReplace: Boolean = if (replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW){
+                if (isConstructorMethod){
+                    !(owner == superName && name == "<init>")
+                }else{
+                    "" == replaceMethodInfo.oldMethodDesc
+                }
+            }else if (replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.INIT) {
                 if (isConstructorMethod){
                     !(owner == superName && name == "<init>")
                 }else{
@@ -50,10 +89,10 @@ class MethodReplaceInvokeAdapter(private val className:String,private val superN
                 descriptor.replace("(", "(L${replaceMethodInfo.oldOwner};") == replaceMethodInfo.newMethodDesc
             }
             if (shouldReplace) {
-                if (replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.INIT) {
-                    super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
-                }else if (replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW && replaceMethodInfo.isCallNew()) {
+                if (replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW && replaceMethodInfo.isCallNew()) {
                     super.visitMethodInsn(opcode, replaceMethodInfo.newClassName, name, descriptor, isInterface)
+                }else if (replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.INIT) {
+                    super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
                 }
                 InitConfig.addReplaceMethodInfo(replaceMethodInfo)
                 if (replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW && !replaceMethodInfo.isCallNew()){

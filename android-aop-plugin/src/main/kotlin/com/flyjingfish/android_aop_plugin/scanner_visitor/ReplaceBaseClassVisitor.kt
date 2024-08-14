@@ -33,7 +33,7 @@ open class ReplaceBaseClassVisitor(
         clazzName = name
         oldSuperName = superName
         thisClassName = slashToDotClassName(name)
-        hasCollect = WovenInfoUtils.aopCollectClassMap[thisClassName] != null
+        hasCollect = WovenInfoUtils.getAopCollectClassMap()[thisClassName] != null
         val replaceExtendsClassName = WovenInfoUtils.getModifyExtendsClass(slashToDotClassName(name))
         val newReplaceExtendsClassName = replaceExtendsClassName?.let {
             WovenInfoUtils.getClassString(
@@ -85,6 +85,7 @@ open class ReplaceBaseClassVisitor(
 
         override fun visitInsn(opcode: Int) {
             if (opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN) {
+                modifyed = true
                 val className = "$thisClassName\$Inner${thisClassName.computeMD5()}"
                 mv.visitTypeInsn(NEW, dotToSlash(className));
                 mv.visitInsn(DUP);//压入栈
@@ -115,6 +116,7 @@ open class ReplaceBaseClassVisitor(
         ) {
             val extendClass = modifyExtendsClassName
             if (name == "<init>" && oldSuperName == owner && extendClass != null && hasConstructor(slashToDot(extendClass),descriptor)) {
+                modifyed = true
                 super.visitMethodInsn(opcode, extendClass, name, descriptor, isInterface)
             } else {
                 super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)

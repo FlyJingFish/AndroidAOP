@@ -315,7 +315,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 realCopy()
                             }
                         }
-                        val hasCollect = WovenInfoUtils.aopCollectClassMap[thisClassName] != null
+                        val hasCollect = WovenInfoUtils.getAopCollectClassMap()[thisClassName] != null
                         if (isWovenInfoCode && hasReplace){
                             FileInputStream(file).use { inputs ->
                                 val byteArray = inputs.readAllBytes()
@@ -558,7 +558,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 realCopy()
                             }
                         }
-                        val hasCollect = WovenInfoUtils.aopCollectClassMap[thisClassName] != null
+                        val hasCollect = WovenInfoUtils.getAopCollectClassMap()[thisClassName] != null
 
                         if (isWovenInfoCode && hasReplace){
                             jarFile.getInputStream(jarEntry).use { inputs ->

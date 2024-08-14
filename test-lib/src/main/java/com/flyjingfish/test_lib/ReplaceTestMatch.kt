@@ -9,9 +9,10 @@ import com.flyjingfish.test_lib.TestMatch
 
 @AndroidAopReplaceClass(value = "com.flyjingfish.test_lib.TestMatch",type = MatchType.EXTENDS)
 object ReplaceTestMatch {
-    @AndroidAopReplaceNew("<init>()")
+    @AndroidAopReplaceNew
     @JvmStatic
-    fun newTestMatch2(testBean: TestMatch3){
+    fun newTestMatch2(testBean: TestMatch3):TestMatch3{
+        return testBean
     }
 
     @AndroidAopReplaceMethod("<init>(int)")

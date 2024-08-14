@@ -15,7 +15,7 @@ object ClassPoolUtils {
     fun initClassPool():ClassPool {
         val classPool = ClassPool(null)
         classPool.appendSystemPath()
-        for (classPath in WovenInfoUtils.classPaths) {
+        for (classPath in WovenInfoUtils.getClassPaths()) {
             try {
                 classPool.appendClassPath(classPath)
             } catch (_: NotFoundException) {
@@ -28,7 +28,7 @@ object ClassPoolUtils {
     fun getNewClassPool(): ClassPool {
         val classPool = ClassPool(null)
         classPool.appendSystemPath()
-        for (classPath in WovenInfoUtils.classPaths) {
+        for (classPath in WovenInfoUtils.getClassPaths()) {
             try {
                 classPool.appendClassPath(classPath)
             } catch (_: NotFoundException) {

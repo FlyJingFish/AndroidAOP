@@ -505,7 +505,7 @@ object WovenIntoCode {
         //生成静态方法
         mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, "<clinit>", "()V", null, null)
         //生成静态方法中的字节码指令
-        val map: HashMap<String, String> = WovenInfoUtils.aopInstances
+        val map: HashMap<String, String> = WovenInfoUtils.getAopInstances()
         if (map.isNotEmpty()) {
             map.forEach { (key, value) ->
                 RegisterMapWovenInfoCode.registerCreators(mv,key, value)
@@ -529,7 +529,7 @@ object WovenIntoCode {
 
     fun createCollectClass(output:File) {
         val classPool = ClassPoolUtils.getNewClassPool()
-        WovenInfoUtils.aopCollectClassMap.forEach {(key,value) ->
+        WovenInfoUtils.getAopCollectClassMap().forEach {(key,value) ->
             if (value == null){
                 return@forEach
             }

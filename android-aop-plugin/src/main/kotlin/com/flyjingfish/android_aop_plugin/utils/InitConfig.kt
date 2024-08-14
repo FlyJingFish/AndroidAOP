@@ -150,7 +150,7 @@ object InitConfig {
                 }
             }
             val allReplaceMethodInfo = mutableMapOf<String, ReplaceMethodInfo>()
-            allReplaceMethodInfo.putAll(WovenInfoUtils.replaceMethodInfoMapUse)
+            allReplaceMethodInfo.putAll(WovenInfoUtils.getReplaceMethodInfoMapUse())
             val replaceCutMap = mutableMapOf<String,CutReplaceClassMap>()
             for (replaceMethodInfo in replaceMethodInfoMap) {
                 var cutJson = replaceCutMap[replaceMethodInfo.value.getReplaceJsonKey()]

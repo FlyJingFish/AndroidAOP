@@ -95,7 +95,7 @@ class RegisterMapWovenInfoCode {
 
         override fun visitInsn(opcode: Int) {
             if (opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN) {
-                val map: HashMap<String, String> = WovenInfoUtils.aopInstances
+                val map: HashMap<String, String> = WovenInfoUtils.getAopInstances()
                 if (map.isNotEmpty()) {
                     map.forEach { (key, value) ->
                         if (match){

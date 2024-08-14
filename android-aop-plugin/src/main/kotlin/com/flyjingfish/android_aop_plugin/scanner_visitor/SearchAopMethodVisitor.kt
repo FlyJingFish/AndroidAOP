@@ -72,7 +72,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
             }
         }
         val isAbstractClass = access and Opcodes.ACC_ABSTRACT != 0
-        WovenInfoUtils.aopCollectInfoMap.forEach{(_,aopCollectCut) ->
+        WovenInfoUtils.getAopCollectInfoMap().forEach{(_,aopCollectCut) ->
             val find = if (aopCollectCut.regex.isNotEmpty()){
                 val classnameArrayPattern: Pattern = Pattern.compile(aopCollectCut.regex)
                 val matcher: Matcher = classnameArrayPattern.matcher(slashToDot(className))
@@ -146,7 +146,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
             }
         }
         //        logger.error("className="+className+",superName="+superName+",interfaces="+ Arrays.asList(interfaces));
-        WovenInfoUtils.aopMatchCuts.forEach { (_: String?, aopMatchCut: AopMatchCut) ->
+        WovenInfoUtils.getAopMatchCuts().forEach { (_: String?, aopMatchCut: AopMatchCut) ->
             if (aopMatchCut.isPackageName()){
                 if (aopMatchCut.isMatchPackageName()){
                     val clsName = slashToDotClassName(className)
@@ -299,8 +299,28 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                 )
                 if (descriptor.contains(NEW_POINT)){
                     replaceMethodInfo.replaceType = ReplaceMethodInfo.ReplaceType.NEW
+                    val returnType = Type.getReturnType(replaceMethodInfo.newMethodDesc)
+                    val returnTypeDescriptor = returnType.descriptor
+                    val returnTypeClassName = returnType.className
+                    val paramsTypes = Type.getArgumentTypes(replaceMethodInfo.newMethodDesc)
+                    val paramType0 : Type? = if (paramsTypes.size == 1){
+                        paramsTypes[0]
+                    }else null
+
+                    val paramType0Descriptor = paramType0?.descriptor ?:""
+                    val paramType0ClassName = paramType0?.className ?:""
+
+                    if (paramType0Descriptor.startsWith("L")
+                        && paramType0Descriptor.endsWith(";")
+                        && (paramType0ClassName == slashToDotClassName(replaceMethodInfo.oldOwner) || paramType0ClassName.instanceof(slashToDotClassName(replaceMethodInfo.oldOwner)))
+                        && (returnTypeDescriptor == "V" || (returnTypeDescriptor.startsWith("L") && returnTypeDescriptor.endsWith(";") && (returnTypeClassName == slashToDotClassName(replaceMethodInfo.oldOwner) || returnTypeClassName.instanceof(slashToDotClassName(replaceMethodInfo.oldOwner)))))){
+                        replaceMethodInfo.oldMethodName = "<init>"
+                        replaceMethodInfo.newClassName = paramType0Descriptor.substring(1,paramType0Descriptor.length - 1)
+                        onCallBackMethod?.onBackReplaceMethodInfo(replaceMethodInfo)
+                    }
+                }else{
+                    return ReplaceMethodVisitor(replaceMethodInfo)
                 }
-                return ReplaceMethodVisitor(replaceMethodInfo)
             }
             return super.visitAnnotation(descriptor, visible)
         }
@@ -340,28 +360,19 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                             if (replaceMethodInfo.checkAvailable()){
                                 if (replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.INIT){
                                     val returnType = Type.getReturnType(replaceMethodInfo.newMethodDesc)
-                                    val returnTypeClassName = returnType.descriptor
+                                    val returnTypeDescriptor = returnType.descriptor
+                                    val returnTypeClassName = returnType.className
                                     val paramsTypes = Type.getArgumentTypes(replaceMethodInfo.newMethodDesc)
                                     val paramType0 : Type? = if (paramsTypes.size == 1){
                                         paramsTypes[0]
                                     }else null
 
-                                    if (returnTypeClassName.startsWith("L") && returnTypeClassName.endsWith(";") && paramType0?.className == slashToDotClassName(replaceMethodInfo.oldOwner)){
+                                    if (returnTypeDescriptor.startsWith("L") && returnTypeDescriptor.endsWith(";")
+                                        && paramType0?.className == slashToDotClassName(replaceMethodInfo.oldOwner)
+                                        && (returnTypeClassName == slashToDotClassName(replaceMethodInfo.oldOwner) || returnTypeClassName.instanceof(slashToDotClassName(replaceMethodInfo.oldOwner)))){
                                         onCallBackMethod?.onBackReplaceMethodInfo(replaceMethodInfo)
                                     }
-                                }else if (replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW){
-                                    val paramsTypes = Type.getArgumentTypes(replaceMethodInfo.newMethodDesc)
-                                    val paramType0 : Type? = if (paramsTypes.size == 1){
-                                        paramsTypes[0]
-                                    }else null
-
-                                    val paramType0ClassName = paramType0?.descriptor ?:""
-
-                                    if (paramType0ClassName.startsWith("L") && paramType0ClassName.endsWith(";")){
-                                        replaceMethodInfo.newClassName = paramType0ClassName.substring(1,paramType0ClassName.length - 1)
-                                        onCallBackMethod?.onBackReplaceMethodInfo(replaceMethodInfo)
-                                    }
-                                }else{
+                                } else{
                                     onCallBackMethod?.onBackReplaceMethodInfo(replaceMethodInfo)
                                 }
                             }
@@ -524,7 +535,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                     }
                 }
 
-                WovenInfoUtils.aopMatchCuts.forEach { (_: String?, aopMatchCut: AopMatchCut) ->
+                WovenInfoUtils.getAopMatchCuts().forEach { (_: String?, aopMatchCut: AopMatchCut) ->
                     if (AopMatchCut.MatchType.SELF.name != aopMatchCut.matchType && aopMatchCut.methodNames.size == 1) {
                         for ((name, descriptor, clsName, originalClassName, lambdaName, lambdaDesc) in lambdaMethodList) {
                             if ("<init>" != name && "<clinit>" != name && "<init>" != lambdaName && "<clinit>" != lambdaName && !isAOPMethod(name)){
