@@ -323,13 +323,15 @@ object AopTaskUtils {
                 }
             }
         }
+
+        cr.accept(cv, 0)
+
         thisCollectClassName?.let {
             if (thisHasCollect && !thisHasStaticClock){
                 WovenIntoCode.wovenStaticCode(cw, it)
                 replaceResult = true
             }
         }
-        cr.accept(cv, 0)
         return WovenResult(cw.toByteArray(),replaceResult)
     }
 
@@ -379,14 +381,15 @@ object AopTaskUtils {
                 }
             }
         }
+
+        cr.accept(cv, 0)
+
         thisCollectClassName?.let {
             if (thisHasCollect && !thisHasStaticClock){
                 WovenIntoCode.wovenStaticCode(cw, it)
                 replaceResult = true
             }
         }
-
-        cr.accept(cv, 0)
 
         return WovenResult(cw.toByteArray(),replaceResult)
     }

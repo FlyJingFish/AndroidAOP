@@ -60,7 +60,7 @@ public class InitCollect2 {
         Log.e("InitCollect2","----collectAndroidAopClassRegexClazz----"+sub);
     }
 
-    @MyAnno
+//    @MyAnno
     public static void init(Application application){
         Log.e("InitCollect2","----init----");
         for (SubApplication2 collect : collects) {
