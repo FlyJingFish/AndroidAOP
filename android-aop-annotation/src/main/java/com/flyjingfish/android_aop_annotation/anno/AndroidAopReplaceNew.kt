@@ -10,6 +10,4 @@ package com.flyjingfish.android_aop_annotation.anno
     AnnotationTarget.PROPERTY_SETTER
 )
 @Retention(AnnotationRetention.BINARY)
-annotation class AndroidAopReplaceNew(
-    val value: String
-)
+annotation class AndroidAopReplaceNew

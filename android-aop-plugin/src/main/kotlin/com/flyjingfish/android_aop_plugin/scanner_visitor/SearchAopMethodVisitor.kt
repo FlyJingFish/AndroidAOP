@@ -299,8 +299,28 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                 )
                 if (descriptor.contains(NEW_POINT)){
                     replaceMethodInfo.replaceType = ReplaceMethodInfo.ReplaceType.NEW
+                    val returnType = Type.getReturnType(replaceMethodInfo.newMethodDesc)
+                    val returnTypeDescriptor = returnType.descriptor
+                    val returnTypeClassName = returnType.className
+                    val paramsTypes = Type.getArgumentTypes(replaceMethodInfo.newMethodDesc)
+                    val paramType0 : Type? = if (paramsTypes.size == 1){
+                        paramsTypes[0]
+                    }else null
+
+                    val paramType0Descriptor = paramType0?.descriptor ?:""
+                    val paramType0ClassName = paramType0?.className ?:""
+
+                    if (paramType0Descriptor.startsWith("L")
+                        && paramType0Descriptor.endsWith(";")
+                        && (paramType0ClassName == slashToDotClassName(replaceMethodInfo.oldOwner) || paramType0ClassName.instanceof(slashToDotClassName(replaceMethodInfo.oldOwner)))
+                        && (returnTypeDescriptor == "V" || (returnTypeDescriptor.startsWith("L") && returnTypeDescriptor.endsWith(";") && (returnTypeClassName == slashToDotClassName(replaceMethodInfo.oldOwner) || returnTypeClassName.instanceof(slashToDotClassName(replaceMethodInfo.oldOwner)))))){
+                        replaceMethodInfo.oldMethodName = "<init>"
+                        replaceMethodInfo.newClassName = paramType0Descriptor.substring(1,paramType0Descriptor.length - 1)
+                        onCallBackMethod?.onBackReplaceMethodInfo(replaceMethodInfo)
+                    }
+                }else{
+                    return ReplaceMethodVisitor(replaceMethodInfo)
                 }
-                return ReplaceMethodVisitor(replaceMethodInfo)
             }
             return super.visitAnnotation(descriptor, visible)
         }
@@ -341,29 +361,18 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                                 if (replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.INIT){
                                     val returnType = Type.getReturnType(replaceMethodInfo.newMethodDesc)
                                     val returnTypeDescriptor = returnType.descriptor
+                                    val returnTypeClassName = returnType.className
                                     val paramsTypes = Type.getArgumentTypes(replaceMethodInfo.newMethodDesc)
                                     val paramType0 : Type? = if (paramsTypes.size == 1){
                                         paramsTypes[0]
                                     }else null
 
-                                    if (returnTypeDescriptor.startsWith("L") && returnTypeDescriptor.endsWith(";") && paramType0?.className == slashToDotClassName(replaceMethodInfo.oldOwner)){
+                                    if (returnTypeDescriptor.startsWith("L") && returnTypeDescriptor.endsWith(";")
+                                        && paramType0?.className == slashToDotClassName(replaceMethodInfo.oldOwner)
+                                        && (returnTypeClassName == slashToDotClassName(replaceMethodInfo.oldOwner) || returnTypeClassName.instanceof(slashToDotClassName(replaceMethodInfo.oldOwner)))){
                                         onCallBackMethod?.onBackReplaceMethodInfo(replaceMethodInfo)
                                     }
-                                }else if (replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW){
-                                    val returnType = Type.getReturnType(replaceMethodInfo.newMethodDesc)
-                                    val returnTypeDescriptor = returnType.descriptor
-                                    val paramsTypes = Type.getArgumentTypes(replaceMethodInfo.newMethodDesc)
-                                    val paramType0 : Type? = if (paramsTypes.size == 1){
-                                        paramsTypes[0]
-                                    }else null
-
-                                    val paramType0ClassName = paramType0?.descriptor ?:""
-
-                                    if (paramType0ClassName.startsWith("L") && paramType0ClassName.endsWith(";") && (returnTypeDescriptor == "V" || (returnTypeDescriptor.startsWith("L") && returnTypeDescriptor.endsWith(";")))){
-                                        replaceMethodInfo.newClassName = paramType0ClassName.substring(1,paramType0ClassName.length - 1)
-                                        onCallBackMethod?.onBackReplaceMethodInfo(replaceMethodInfo)
-                                    }
-                                }else{
+                                } else{
                                     onCallBackMethod?.onBackReplaceMethodInfo(replaceMethodInfo)
                                 }
                             }
