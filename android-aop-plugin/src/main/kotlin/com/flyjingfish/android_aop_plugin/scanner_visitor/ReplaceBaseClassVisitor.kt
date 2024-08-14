@@ -33,7 +33,7 @@ open class ReplaceBaseClassVisitor(
         clazzName = name
         oldSuperName = superName
         thisClassName = slashToDotClassName(name)
-        hasCollect = WovenInfoUtils.aopCollectClassMap[thisClassName] != null
+        hasCollect = WovenInfoUtils.getAopCollectClassMap()[thisClassName] != null
         val replaceExtendsClassName = WovenInfoUtils.getModifyExtendsClass(slashToDotClassName(name))
         val newReplaceExtendsClassName = replaceExtendsClassName?.let {
             WovenInfoUtils.getClassString(

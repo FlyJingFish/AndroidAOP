@@ -135,7 +135,7 @@ class CompileAndroidAopTask(
                 }
 
 
-                val hasCollect = WovenInfoUtils.aopCollectClassMap[thisClassName] != null
+                val hasCollect = WovenInfoUtils.getAopCollectClassMap()[thisClassName] != null
                 val outFile = File(tmpCompileDir.absolutePath+"/"+relativePath)
                 fun mkOutFile(){
                     outFile.checkExist()

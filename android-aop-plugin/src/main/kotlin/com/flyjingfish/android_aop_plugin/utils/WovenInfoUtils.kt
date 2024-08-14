@@ -14,16 +14,17 @@ import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import org.gradle.api.Project
 import java.io.File
+import java.util.concurrent.CopyOnWriteArraySet
 import java.util.jar.JarFile
 
 object WovenInfoUtils {
     var isCompile = false
-    var aopMethodCuts: HashMap<String, AopMethodCut> = HashMap()
-    var aopInstances: HashMap<String, String> = HashMap()
-    var aopMatchCuts: HashMap<String, AopMatchCut> = HashMap()
+    private var aopMethodCuts: HashMap<String, AopMethodCut> = HashMap()
+    private var aopInstances: HashMap<String, String> = HashMap()
+    private var aopMatchCuts: HashMap<String, AopMatchCut> = HashMap()
     private var lastAopMatchCuts: HashMap<String, AopMatchCut> = HashMap()
-    var classPaths: HashSet<String> = HashSet()
-    var baseClassPaths: HashSet<String> = HashSet()
+    private var classPaths: CopyOnWriteArraySet<String> = CopyOnWriteArraySet()
+    private var baseClassPaths: CopyOnWriteArraySet<String> = CopyOnWriteArraySet()
     private var classNameMap: HashMap<String, String> = HashMap()
     private var baseClassNameMap: HashMap<String, String> = HashMap()
     private var classSuperListMap = HashMap<String, ClassSuperInfo>()
@@ -36,17 +37,40 @@ object WovenInfoUtils {
     private val invokeMethodMap = HashMap<String, String>()
     private val replaceMethodMap = HashMap<String, String>()
     private val replaceMethodInfoMap = HashMap<String, HashMap<String, ReplaceMethodInfo>>()
-    val replaceMethodInfoMapUse = HashMap<String, ReplaceMethodInfo>()
+    private val replaceMethodInfoMapUse = HashMap<String, ReplaceMethodInfo>()
     private val modifyExtendsClassMap = HashMap<String, String>()
     private val allClassName = mutableSetOf<String>()
-    val aopCollectInfoMap = mutableMapOf<String,AopCollectCut>()
+    private val aopCollectInfoMap = mutableMapOf<String,AopCollectCut>()
     private val lastAopCollectInfoMap = mutableMapOf<String,AopCollectCut>()
-    val aopCollectClassMap = mutableMapOf<String,MutableMap<String,AopCollectClass>?>()
+    private val aopCollectClassMap = mutableMapOf<String,MutableMap<String,AopCollectClass>?>()
     private val aopMethodCutInnerClassInfo = mutableMapOf<String,ReplaceInnerClassInfo>()
     private val aopMethodCutInnerClassInfoClassName = mutableSetOf<String>()
     private val aopMethodCutInnerClassInfoInvokeMethod = mutableSetOf<String>()
     private val aopMethodCutInnerClassInfoInvokeClassName = mutableSetOf<String>()
     private val aopMethodCutInnerClassInfoInvokeClassNameCount = mutableMapOf<String,Int>()
+    fun getClassPaths():CopyOnWriteArraySet<String>{
+        return classPaths
+    }
+
+    fun getReplaceMethodInfoMapUse():HashMap<String, ReplaceMethodInfo>{
+        return replaceMethodInfoMapUse
+    }
+
+    fun getAopCollectInfoMap(): Map<String, AopCollectCut> {
+        return aopCollectInfoMap
+    }
+
+    fun getAopCollectClassMap(): Map<String,MutableMap<String,AopCollectClass>?>{
+        return aopCollectClassMap
+    }
+
+    fun getAopInstances():HashMap<String, String>{
+        return aopInstances
+    }
+
+    fun getAopMatchCuts(): HashMap<String, AopMatchCut>{
+        return aopMatchCuts
+    }
     fun addModifyExtendsClassInfo(targetClassName: String, extendsClassName: String) {
         modifyExtendsClassMap[targetClassName] = extendsClassName
         InitConfig.addModifyClassInfo(targetClassName, extendsClassName)

@@ -72,7 +72,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
             }
         }
         val isAbstractClass = access and Opcodes.ACC_ABSTRACT != 0
-        WovenInfoUtils.aopCollectInfoMap.forEach{(_,aopCollectCut) ->
+        WovenInfoUtils.getAopCollectInfoMap().forEach{(_,aopCollectCut) ->
             val find = if (aopCollectCut.regex.isNotEmpty()){
                 val classnameArrayPattern: Pattern = Pattern.compile(aopCollectCut.regex)
                 val matcher: Matcher = classnameArrayPattern.matcher(slashToDot(className))
@@ -146,7 +146,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
             }
         }
         //        logger.error("className="+className+",superName="+superName+",interfaces="+ Arrays.asList(interfaces));
-        WovenInfoUtils.aopMatchCuts.forEach { (_: String?, aopMatchCut: AopMatchCut) ->
+        WovenInfoUtils.getAopMatchCuts().forEach { (_: String?, aopMatchCut: AopMatchCut) ->
             if (aopMatchCut.isPackageName()){
                 if (aopMatchCut.isMatchPackageName()){
                     val clsName = slashToDotClassName(className)
@@ -535,7 +535,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                     }
                 }
 
-                WovenInfoUtils.aopMatchCuts.forEach { (_: String?, aopMatchCut: AopMatchCut) ->
+                WovenInfoUtils.getAopMatchCuts().forEach { (_: String?, aopMatchCut: AopMatchCut) ->
                     if (AopMatchCut.MatchType.SELF.name != aopMatchCut.matchType && aopMatchCut.methodNames.size == 1) {
                         for ((name, descriptor, clsName, originalClassName, lambdaName, lambdaDesc) in lambdaMethodList) {
                             if ("<init>" != name && "<clinit>" != name && "<init>" != lambdaName && "<clinit>" != lambdaName && !isAOPMethod(name)){
