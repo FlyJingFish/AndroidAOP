@@ -59,12 +59,12 @@ class MethodReplaceInvokeAdapter(private val className:String,private val superN
         descriptor: String,
         isInterface: Boolean
     ) {
-        var replaceMethodInfo = getReplaceInfo(owner, name, descriptor)
+        var replaceMethodInfo = getReplaceInfo(owner, name, "")
         var isReplaceClass = replaceMethodInfo != null
         if (!isReplaceClass){
-            val newReplaceMethodInfo = getReplaceInfo(owner, name, "")
-            if (newReplaceMethodInfo != null && newReplaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW && newReplaceMethodInfo.newClassName.isNotEmpty()){
-                replaceMethodInfo = newReplaceMethodInfo
+            val methodReplaceMethodInfo = getReplaceInfo(owner, name, descriptor)
+            if (methodReplaceMethodInfo != null && methodReplaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW && methodReplaceMethodInfo.newClassName.isNotEmpty()){
+                replaceMethodInfo = methodReplaceMethodInfo
             }
             isReplaceClass = replaceMethodInfo != null
         }
