@@ -15,16 +15,17 @@ object ReplaceTestMatch {
         return testBean
     }
 
-    @AndroidAopReplaceMethod("<init>(int)")
-    @JvmStatic
-    fun getTestBean(testBean: TestMatch) : TestMatch{
-        return TestMatch(2)
-    }
+//    @AndroidAopReplaceMethod("<init>(int)")
+//    @JvmStatic
+//    fun getTestBean(testBean: TestMatch) : TestMatch{
+//        return TestMatch(2)
+//    }
 
     @AndroidAopReplaceMethod("void test1()")
     @JvmStatic
-    fun test1(testBean: TestMatch) {
-        Log.e("test1","ReplaceTestMatch==label="+testBean.label)
+    fun test1(testBean: Any) {
+        Log.e("test1","ReplaceTestMatch=${testBean.javaClass.name}===label="+(testBean as TestMatch3).label)
+
     }
 
 }

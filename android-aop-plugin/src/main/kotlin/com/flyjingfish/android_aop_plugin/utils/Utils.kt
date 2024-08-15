@@ -378,6 +378,15 @@ object Utils {
     fun getTargetMethodName(oldMethodName:String,className:String,descriptor:String):String{
         return "$oldMethodName$$${(slashToDot(className)+descriptor).computeMD5()}${METHOD_SUFFIX}"
     }
+
+    fun getRealMethodName(methodName:String):String{
+        val matcher: Matcher = AOPMethodPattern.matcher(methodName)
+        return if (matcher.find()) {
+            matcher.replaceAll("")
+        }else{
+            methodName
+        }
+    }
 }
 
 fun printLog(text: String) {

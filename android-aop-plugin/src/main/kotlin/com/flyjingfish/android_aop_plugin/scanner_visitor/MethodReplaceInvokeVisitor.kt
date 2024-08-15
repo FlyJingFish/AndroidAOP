@@ -32,7 +32,7 @@ open class MethodReplaceInvokeVisitor(
         var mv: MethodVisitor? = super.visitMethod(access, name, descriptor, signature, exceptions)
 
         if (mv != null && access.isHasMethodBody()) {
-            mv = MethodReplaceInvokeAdapter(className,superName,"$name$descriptor",mv)
+            mv = MethodReplaceInvokeAdapter(className,superName,name,descriptor,mv)
             mv.onResultListener = object : MethodReplaceInvokeAdapter.OnResultListener{
                 override fun onBack() {
                     replaced = true
