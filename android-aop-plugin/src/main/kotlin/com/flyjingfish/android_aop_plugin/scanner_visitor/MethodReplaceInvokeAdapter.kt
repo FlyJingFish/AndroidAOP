@@ -2,15 +2,17 @@ package com.flyjingfish.android_aop_plugin.scanner_visitor
 
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
+import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 
 
 class MethodReplaceInvokeAdapter(private val className:String,private val superName: String,
-                                 private val methodNameDesc:String, methodVisitor: MethodVisitor?) :
+                                 private val methodName:String,private val methodDesc:String, methodVisitor: MethodVisitor?) :
     MethodVisitor(Opcodes.ASM9, methodVisitor) {
-    val isConstructorMethod = methodNameDesc.startsWith("<init>(")
+    private val methodNameDesc = Utils.getRealMethodName(methodName)+methodDesc
+    private val isConstructorMethod = methodNameDesc.startsWith("<init>(")
 
     interface OnResultListener{
         fun onBack()
@@ -60,10 +62,10 @@ class MethodReplaceInvokeAdapter(private val className:String,private val superN
         isInterface: Boolean
     ) {
         var replaceMethodInfo = getReplaceInfo(owner, name, "")
-        var isReplaceClass = replaceMethodInfo != null
+        var isReplaceClass = replaceMethodInfo != null && replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW && replaceMethodInfo.newClassName.isNotEmpty()
         if (!isReplaceClass){
             val methodReplaceMethodInfo = getReplaceInfo(owner, name, descriptor)
-            if (methodReplaceMethodInfo != null && methodReplaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW && methodReplaceMethodInfo.newClassName.isNotEmpty()){
+            if (methodReplaceMethodInfo != null){
                 replaceMethodInfo = methodReplaceMethodInfo
             }
             isReplaceClass = replaceMethodInfo != null
@@ -86,7 +88,7 @@ class MethodReplaceInvokeAdapter(private val className:String,private val superN
             } else if (opcode == Opcodes.INVOKESTATIC) {
                 descriptor == replaceMethodInfo.newMethodDesc
             } else {
-                descriptor.replace("(", "(L${replaceMethodInfo.oldOwner};") == replaceMethodInfo.newMethodDesc
+                descriptor.replace("(", "(L${replaceMethodInfo.oldOwner};") == replaceMethodInfo.newMethodDesc || descriptor.replace("(", "(Ljava/lang/Object;") == replaceMethodInfo.newMethodDesc
             }
             if (shouldReplace) {
                 if (replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW && replaceMethodInfo.isCallNew()) {

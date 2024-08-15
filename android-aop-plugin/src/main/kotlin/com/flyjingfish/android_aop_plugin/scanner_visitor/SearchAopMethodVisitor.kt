@@ -312,8 +312,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
 
                     if (paramType0Descriptor.startsWith("L")
                         && paramType0Descriptor.endsWith(";")
-                        && (paramType0ClassName == slashToDotClassName(replaceMethodInfo.oldOwner) || paramType0ClassName.instanceof(slashToDotClassName(replaceMethodInfo.oldOwner)))
-                        && (returnTypeDescriptor == "V" || (returnTypeDescriptor.startsWith("L") && returnTypeDescriptor.endsWith(";") && (returnTypeClassName == slashToDotClassName(replaceMethodInfo.oldOwner) || returnTypeClassName.instanceof(slashToDotClassName(replaceMethodInfo.oldOwner)))))){
+                        && (returnTypeDescriptor == "V" || (returnTypeDescriptor.startsWith("L") && returnTypeDescriptor.endsWith(";")))){
                         replaceMethodInfo.oldMethodName = "<init>"
                         replaceMethodInfo.newClassName = paramType0Descriptor.substring(1,paramType0Descriptor.length - 1)
                         onCallBackMethod?.onBackReplaceMethodInfo(replaceMethodInfo)

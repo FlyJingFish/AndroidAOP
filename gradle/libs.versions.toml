@@ -19,6 +19,7 @@ rxpermissions = "0.12"
 rxjava = "3.0.4"
 kotlin = "1.8.0"
 [libraries]
+kotlinpoet-ksp = { group = "com.squareup", name = "kotlinpoet-ksp", version.ref = "kotlinpoet_version" }
 kotlinpoet = { group = "com.squareup", name = "kotlinpoet", version.ref = "kotlinpoet_version" }
 javapoet = { group = "com.squareup", name = "javapoet", version.ref = "javapoet_version" }
 ksp-api = { group = "com.google.devtools.ksp", name = "symbol-processing-api", version.ref = "ksp" }
