@@ -35,6 +35,8 @@
 
 **10、本库不是基于 AspectJ 实现的，织入代码量极少，侵入性极低**
 
+**11、丰富完善的使用文档助你完全理解本库的使用规则[点此前往wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki)**
+
 
 #### [点此下载apk,也可扫下边二维码下载](https://github.com/FlyJingFish/AndroidAOP/blob/master/apk/release/app-release.apk?raw=true)
 
