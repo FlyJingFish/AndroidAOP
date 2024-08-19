@@ -394,7 +394,7 @@ AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
 
 ## 此外本库也同样支持让你自己做切面，实现起来非常简单！
 
-### 本库通过以下五种注解，实现自定义切面
+### 本库通过以下五种注解，实现自定义切面（[下文是大致讲解，详细点此查看](https://github.com/FlyJingFish/AndroidAOP/wiki)）
 
 - @AndroidAopPointCut 是为方法加注解的切面
 - @AndroidAopMatchClassMethod 是匹配类的方法的切面
