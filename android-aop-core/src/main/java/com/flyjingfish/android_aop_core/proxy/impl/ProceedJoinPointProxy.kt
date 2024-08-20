@@ -25,7 +25,7 @@ internal open class ProceedJoinPointProxy(private val joinPoint: ProceedJoinPoin
         proxyTarget = if (proxyAopMethod.type != ProxyType.STATIC_METHOD){
             joinPoint.args?.get(0)
         }else{
-            null
+            joinPoint.target
         }
 
         val args = joinPoint.args

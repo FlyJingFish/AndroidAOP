@@ -49,7 +49,13 @@ internal class ProxyAopMethod(private val aopMethod: AopMethod,val type: ProxyTy
             }
         }
     override val modifiers: Int
-        get() = throw IllegalArgumentException("不支持此操作")
+        get() {
+            if (type != null){
+                throw IllegalArgumentException("不支持此操作")
+            }else{
+                return aopMethod.modifiers
+            }
+        }
     override val annotations: Array<Annotation>
         get() = aopMethod.annotations
 
