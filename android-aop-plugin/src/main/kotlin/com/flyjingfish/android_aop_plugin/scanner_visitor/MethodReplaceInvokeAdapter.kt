@@ -13,6 +13,7 @@ class MethodReplaceInvokeAdapter(private val className:String,private val superN
     MethodVisitor(Opcodes.ASM9, methodVisitor) {
     private val methodNameDesc = Utils.getRealMethodName(methodName)+methodDesc
     private val isConstructorMethod = methodNameDesc.startsWith("<init>(")
+    private val canReplaceMethod = !(superName == "kotlin/coroutines/jvm/internal/ContinuationImpl" && methodNameDesc == "invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;" )
 
     interface OnResultListener{
         fun onBack()
@@ -100,16 +101,20 @@ class MethodReplaceInvokeAdapter(private val className:String,private val superN
                 if (replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW && !replaceMethodInfo.isCallNew()){
                     super.visitMethodInsn(opcode, replaceMethodInfo.newClassName, name, descriptor, isInterface)
                 }else{
-                    // 注意，最后一个参数是false，会不会太武断呢？
-                    super.visitMethodInsn(
-                        Opcodes.INVOKESTATIC,
-                        replaceMethodInfo.newOwner,
-                        replaceMethodInfo.newMethodName,
-                        replaceMethodInfo.newMethodDesc,
-                        false
-                    )
+                    if (canReplaceMethod){
+                        // 注意，最后一个参数是false，会不会太武断呢？
+                        super.visitMethodInsn(
+                            Opcodes.INVOKESTATIC,
+                            replaceMethodInfo.newOwner,
+                            replaceMethodInfo.newMethodName,
+                            replaceMethodInfo.newMethodDesc,
+                            false
+                        )
+                        onResultListener?.onBack()
+                    }else {
+                        super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
+                    }
                 }
-                onResultListener?.onBack()
             } else {
                 super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
             }
