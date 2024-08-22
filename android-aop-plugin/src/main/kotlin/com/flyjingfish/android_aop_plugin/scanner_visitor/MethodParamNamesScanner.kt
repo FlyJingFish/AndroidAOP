@@ -1,10 +1,8 @@
 package com.flyjingfish.android_aop_plugin.scanner_visitor
 
-import com.flyjingfish.android_aop_plugin.utils.printLog
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.MethodNode
-import java.util.Arrays
 import kotlin.math.min
 
 
@@ -58,6 +56,11 @@ class MethodParamNamesScanner(inputStreamBytes: ByteArray) {
                     list.add(tmpArr[j].name)
                 }
                 break
+            }
+        }
+        if (size > 0 && list.isEmpty()) {
+            for (i in 0 until size) {
+                list.add("var$i")
             }
         }
         return list
