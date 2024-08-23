@@ -35,7 +35,7 @@ class MethodParamNamesScanner(inputStreamBytes: ByteArray) {
             val varNames = mutableMapOf<Int,LocalVariable>()
             val method = methods[i]
             if (method.desc == desc && method.name == name) {
-                val localVariables = method.localVariables
+                val localVariables = method.localVariables ?: continue
                 for (l in localVariables.indices) {
                     val varName = localVariables[l].name
                     // index-记录了正确的方法本地变量索引。(方法本地变量顺序可能会被打乱。而index记录了原始的顺序)
