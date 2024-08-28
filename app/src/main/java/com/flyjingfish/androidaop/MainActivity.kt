@@ -169,6 +169,8 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
     fun onSingleClick(){
         Log.e("MainActivity","onSingleClick")
         setLogcat("@SingleClick 5000毫秒内只能点击一次")
+
+        NativeUtils.getInstance().hello_jni()
     }
 
     @DoubleClick(300)

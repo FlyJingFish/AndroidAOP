@@ -84,6 +84,18 @@ android {
         exclude 'META-INF/kotlinx_coroutines_core.version'
     }
 
+//    sourceSets {
+//        main {
+//            // 设置 JNI 库的路径
+//            jniLibs.srcDirs = ['../libs']
+//        }
+//    }
+    externalNativeBuild {
+        ndkBuild {
+            //表示构建androidJNI的Android.mk的所在路径
+            path '../jni/Android.mk'
+        }
+    }
 }
 
 dependencies {
