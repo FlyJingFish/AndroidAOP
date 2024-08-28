@@ -91,6 +91,10 @@ android {
 //        }
 //    }
     externalNativeBuild {
+//        cmake {
+//            path "../jni/CMakeLists.txt"  // 指定 CMakeLists.txt 文件路径
+//            version "3.22.1"  // 选择你使用的 CMake 版本
+//        }
         ndkBuild {
             //表示构建androidJNI的Android.mk的所在路径
             path '../jni/Android.mk'

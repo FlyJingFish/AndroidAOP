@@ -21,22 +21,22 @@ import com.flyjingfish.androidaop.databinding.ActivityMainBinding
 import com.flyjingfish.androidaop.test.MyOnClickListener
 import com.flyjingfish.androidaop.test.MyOnClickListener2
 import com.flyjingfish.androidaop.test.Round
-import com.flyjingfish.androidaop.test2.StaticClass
 import com.flyjingfish.androidaop.test.TestBean
-import com.flyjingfish.test_lib.mycut.TestParams
 import com.flyjingfish.androidaop.test.TestReplace
-import com.flyjingfish.test_lib.annotation.MyAnno3
+import com.flyjingfish.androidaop.test2.StaticClass
 import com.flyjingfish.test_lib.BaseActivity
 import com.flyjingfish.test_lib.PermissionRejectListener
-import com.flyjingfish.test_lib.TestMatch
 import com.flyjingfish.test_lib.TestMatch2
 import com.flyjingfish.test_lib.annotation.MyAnno2
+import com.flyjingfish.test_lib.annotation.MyAnno3
+import com.flyjingfish.test_lib.mycut.TestParams
 import com.flyjingfish.test_lib.mycut.TestParams2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.lang.Thread.sleep
+
 
 class MainActivity: BaseActivity2(), PermissionRejectListener{
     //    val haha = 1
@@ -45,6 +45,7 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        NativeUtils.getInstance().context = this
         Log.e("MainActivity","onCreate")
         val map = mapOf(1 to "num1",0 to "num")
         println(map)
@@ -167,7 +168,7 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
 
     @SingleClick(5000)
     fun onSingleClick(){
-        Log.e("MainActivity","onSingleClick")
+        Log.e("MainActivity","onSingleClick,imid="+ getIMEI(this))
         setLogcat("@SingleClick 5000毫秒内只能点击一次")
 
         NativeUtils.getInstance().hello_jni()
@@ -176,6 +177,15 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
     @DoubleClick(300)
     fun onDoubleClick(){
         setLogcat("@DoubleClick 300毫秒内点击两次才可进入")
+        try {
+            // 试图使用反射调用方法
+            val clazz = Class.forName("com.flyjingfish.androidaop.ReflectExample")
+            val method = clazz.getDeclaredMethod("sayHello",String::class.java)
+            method.isAccessible = true
+            method.invoke(clazz.newInstance(),"HAHA")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     @IOThread(ThreadType.MultipleIO)

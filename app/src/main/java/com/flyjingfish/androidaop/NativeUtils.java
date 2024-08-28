@@ -1,5 +1,8 @@
 package com.flyjingfish.androidaop;
 
+import android.content.Context;
+import android.telephony.TelephonyManager;
+
 public class NativeUtils {
 
 
@@ -18,5 +21,13 @@ public class NativeUtils {
     // 加载 C++ 编写的库
     static {
         System.loadLibrary("OBOJni"); // 库名需与 Android.mk 中的 LOCAL_MODULE 相同
+    }
+
+
+    public Context context;
+
+
+    public TelephonyManager getTelephonyManager() {
+        return (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
     }
 }
