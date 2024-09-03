@@ -170,7 +170,8 @@ dependencies {
 
 ### 四、在 app 的build.gradle添加 androidAopConfig 配置项（此步为可选配置项）
 
-- 1、相关开发配置
+- 相关开发配置
+
 ```gradle
 plugins {
     ...
