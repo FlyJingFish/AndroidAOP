@@ -547,22 +547,9 @@ class MatchOnClick : MatchClassMethod {
 
 **⚠️注意：如果子类没有该方法，则切面无效**
 
-#### 匹配切面实用场景：
-
-- 例如你想做退出登陆逻辑时可以使用上边这个，只要在页面内跳转就可以检测是否需要退出登陆
-
-- 又或者你想在三方库某个方法上设置切面，可以直接设置对应类名，对应方法，然后 type = MatchType.SELF，这样可以侵入三方库的代码，当然这么做记得修改上文提到的 androidAopConfig 的配置
-
-
 #### 三、**@AndroidAopReplaceClass** 是做替换方法调用的
 
-@AndroidAopReplaceClass 和 @AndroidAopReplaceMethod 配合使用
-
-- **注意这种方式和前两种的有着本质的区别，前两种关注的是方法的执行，并且会自动保留可以执行原有逻辑的方法（即[ProceedJoinPoint](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)）；**
-- **这个关注的是方法的调用，是将所有调用的地方替换为您设置的类的静态方法，并且不会自动保留执行原有逻辑的方法**
-- **_这个方式的优点在于“相当于”可以监测到某些系统方法（android.jar里的代码）的调用，前两者不具备这个特点，所以如果不是基于此种需求，建议使用 [@AndroidAopMatchClassMethod](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)_**
-
-**替换方法调用详细使用方法，[点此看wiki详细使用文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopReplaceClass)**
+此方式是对 @AndroidAopMatchClassMethod 的一个补充，[点此看wiki详细说明文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopReplaceClass)
 
 - Java写法
 ```java
@@ -616,13 +603,10 @@ object ReplaceLog {
 [如果函数是 suspend 修饰的，点此看详细说明](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopReplaceClass#%E5%A6%82%E6%9E%9C%E8%A2%AB%E6%9B%BF%E6%8D%A2%E5%87%BD%E6%95%B0%E6%98%AF-suspend-%E4%BF%AE%E9%A5%B0%E7%9A%84%E9%82%A3%E4%B9%88%E4%BD%A0%E5%8F%AA%E8%83%BD%E7%94%A8kotlin%E4%BB%A3%E7%A0%81%E6%9D%A5%E5%86%99%E5%B9%B6%E4%B8%94%E6%9B%BF%E6%8D%A2%E5%87%BD%E6%95%B0%E4%B9%9F%E8%A6%81%E8%A2%AB-suspend-%E4%BF%AE%E9%A5%B0)
 
 
-#### 四、**@AndroidAopModifyExtendsClass** 是修改目标类的继承类[详细使用方式](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopModifyExtendsClass)
+#### 四、**@AndroidAopModifyExtendsClass** 是修改目标类的继承类
 
-通常是在某个类的继承关系中替换掉其中一层，然后重写一些函数，在重写的函数中加入一些你想加的逻辑代码，起到监听、改写原有逻辑的作用
+通常是在某个类的继承关系中替换掉其中一层，然后重写一些函数，在重写的函数中加入一些你想加的逻辑代码，起到监听、改写原有逻辑的作用，[详细使用方式](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopModifyExtendsClass)
 
-如下例所示，就是要把 ```AppCompatImageView``` 的继承类替换成 ```ReplaceImageView```
-
-应用场景：非侵入式地实现监控大图加载的功能
 
 ```java
 @AndroidAopModifyExtendsClass("androidx.appcompat.widget.AppCompatImageView")
@@ -646,9 +630,11 @@ public class ReplaceImageView extends ImageView {
 }
 ```
 
-#### 五、**@AndroidAopCollectMethod** 是收集继承类[详细使用方式](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopCollectMethod)
+该例就是要把 ```AppCompatImageView``` 的继承类替换成 ```ReplaceImageView```
 
-使用起来极其简单，示例代码已经说明了
+#### 五、**@AndroidAopCollectMethod** 是收集继承类
+
+使用起来极其简单，示例代码已经说明了[详细使用方式](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopCollectMethod)
 
 - Kotlin
 
