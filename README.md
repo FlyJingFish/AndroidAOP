@@ -362,11 +362,13 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
 ```
 
 - @CheckNetwork 使用此注解你可以配合以下设置
-权限是必须加的
+
+  - 权限是必须加的
 ```xml
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 ```
-以下设置为可选设置项
+  - 以下设置为可选设置项
+
 ```java
 AndroidAop.INSTANCE.setOnCheckNetworkListener(new OnCheckNetworkListener() {
     @Nullable
@@ -376,14 +378,14 @@ AndroidAop.INSTANCE.setOnCheckNetworkListener(new OnCheckNetworkListener() {
     }
 });
 ```
-在使用时 invokeListener 设置为true，即可进入上边回调
+  - 在使用时 invokeListener 设置为true，即可进入上边回调
 ```kotlin
 @CheckNetwork(invokeListener = true)
 fun toSecondActivity(){
     startActivity(Intent(this,SecondActivity::class.java))
 }
 ```
-另外内置 Toast 可以让你接管（意思不是说你自己写的 Toast 会走这个回调，而是这个库使用 Toast 时会回调这里）
+  - 另外内置 Toast 可以让你接管（意思不是说你自己写的 Toast 会走这个回调，而是这个库使用 Toast 时会回调这里）
 ```java
 AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
     @Override
@@ -393,7 +395,7 @@ AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
 });
 ```
 
-👆上边的监听，最好放到你的 application 中
+👆以上所有的的监听，最好放到你的 application 中
 
 ## 此外本库也同样支持让你自己做切面，实现起来非常简单！
 
