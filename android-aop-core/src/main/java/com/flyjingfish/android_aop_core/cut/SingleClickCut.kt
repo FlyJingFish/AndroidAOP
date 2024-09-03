@@ -18,11 +18,11 @@ internal class SingleClickCut : ClickCut<SingleClick>() {
         val targetView = view
         if (targetView != null) {
             if (isSingleClick(targetView, anno.value)) {
-                joinPoint.proceed()
+                return joinPoint.proceed()
             }
         }else{
             if (isSingleClick(anno.value)) {
-                joinPoint.proceed()
+                return joinPoint.proceed()
             }
         }
         return null

@@ -9,16 +9,14 @@ import com.flyjingfish.android_aop_core.utils.Utils
 
 internal class TryCatchCut : BasePointCut<TryCatch> {
     override fun invoke(joinPoint: ProceedJoinPoint, anno: TryCatch): Any? {
-        var result: Any?
-        try {
-            result = joinPoint.proceed()
+        return try {
+            joinPoint.proceed()
         } catch (e: Throwable) {
             var flag: String = anno.value
             if (TextUtils.isEmpty(flag)) {
                 flag = Utils.getMethodName(joinPoint)
             }
-            result =  AndroidAop.getOnThrowableListener()?.handleThrowable(flag, e,anno)
+            AndroidAop.getOnThrowableListener()?.handleThrowable(flag, e,anno)
         }
-        return result
     }
 }

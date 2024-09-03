@@ -126,6 +126,7 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
         val round = Round()
         binding.btnFieldGet.setOnClickListener {
             val name = testBean.name
+            Log.e("testBean","name=${name}")
             round.setRunnable(Runnable {  })
         }
 

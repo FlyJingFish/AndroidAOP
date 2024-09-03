@@ -23,7 +23,7 @@ internal class MainThreadCut : BasePointCut<MainThread> {
                 }
                 joinPoint.proceed()
             }
-            return null
+            null
         }
 
     }

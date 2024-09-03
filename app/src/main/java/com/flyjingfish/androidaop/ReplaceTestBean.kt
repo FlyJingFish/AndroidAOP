@@ -11,7 +11,9 @@ object ReplaceTestBean {
     @AndroidAopReplaceMethod("<init>()")
     @JvmStatic
     fun getTestBean(testBean: TestBean) : TestBean{
-        return TestBean()
+        val testBean = TestBean()
+        testBean.name = "replacedTestBean"
+        return testBean
     }
 
     @AndroidAopReplaceMethod("void setName(java.lang.String)")

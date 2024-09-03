@@ -18,11 +18,11 @@ internal class DoubleClickCut : ClickCut<DoubleClick>() {
         val targetView = view
         if (targetView != null) {
             if (isDoubleClick(targetView, anno.value)) {
-                joinPoint.proceed()
+                return joinPoint.proceed()
             }
         }else{
             if (isDoubleClick(anno.value)) {
-                joinPoint.proceed()
+                return joinPoint.proceed()
             }
         }
         return null
