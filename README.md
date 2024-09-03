@@ -362,7 +362,7 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
 ```
 
 - @CheckNetwork 使用此注解你可以配合以下设置
-
+-
   - 权限是必须加的
 ```xml
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
