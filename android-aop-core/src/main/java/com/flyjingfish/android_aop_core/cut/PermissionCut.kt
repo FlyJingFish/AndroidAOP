@@ -2,7 +2,6 @@ package com.flyjingfish.android_aop_core.cut
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import com.flyjingfish.android_aop_annotation.AopMethod
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
 import com.flyjingfish.android_aop_annotation.ProceedJoinPointSuspend
 import com.flyjingfish.android_aop_annotation.base.BasePointCutSuspend
@@ -57,37 +56,6 @@ internal class PermissionCut : BasePointCutSuspend<Permission> {
                 }
             }
 
-        }
-    }
-
-
-    internal inner class ProceedJoinPointProxy(private val joinPoint: ProceedJoinPoint): ProceedJoinPoint {
-        override fun getArgs(): Array<Any?>? {
-            return joinPoint.args
-        }
-
-        override fun proceed(): Any? {
-            throw UnsupportedOperationException("PermissionCut ProceedJoinPointSuspend can't call proceed")
-        }
-
-        override fun proceed(vararg args: Any?): Any? {
-            throw UnsupportedOperationException("PermissionCut ProceedJoinPointSuspend can't call proceed")
-        }
-
-        override fun getTargetMethod(): AopMethod {
-            return joinPoint.targetMethod
-        }
-
-        override fun getTarget(): Any? {
-            return joinPoint.target
-        }
-
-        override fun getTargetClass(): Class<*> {
-            return joinPoint.targetClass
-        }
-
-        override fun getOriginalArgs(): Array<Any?>? {
-            return joinPoint.originalArgs
         }
     }
 }
