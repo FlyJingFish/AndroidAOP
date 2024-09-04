@@ -87,10 +87,10 @@ internal class OnLifecycleCut : BasePointCutSuspend<OnLifecycle> {
                     if (arg1 is LifecycleOwner){
                         addObserver(arg1,countDownLatch, annotation)
                     }else{
-                        joinPoint.proceed()
+                        countDownLatch.countDown()
                     }
                 }else{
-                    joinPoint.proceed()
+                    countDownLatch.countDown()
                 }
             }
         }
