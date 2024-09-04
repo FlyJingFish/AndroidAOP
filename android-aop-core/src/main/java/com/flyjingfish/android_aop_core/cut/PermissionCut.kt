@@ -18,20 +18,18 @@ internal class PermissionCut : BasePointCutSuspend<Permission> {
         if (AndroidAop.getOnPermissionsInterceptListener() == null){
             return joinPoint.proceed()
         }
-        AndroidAop.getOnPermissionsInterceptListener()?.requestPermission(joinPoint,anno,object : OnRequestPermissionListener{
-            override fun onCall(isResult: Boolean) {
-                if (isResult){
-                    val target = joinPoint.target
-                    if (target is LifecycleOwner){
-                        if (target.lifecycle.currentState == Lifecycle.State.DESTROYED){
-                            return
-                        }
+        AndroidAop.getOnPermissionsInterceptListener()?.requestPermission(joinPoint,anno
+        ) { isResult ->
+            if (isResult) {
+                val target = joinPoint.target
+                if (target is LifecycleOwner){
+                    if (target.lifecycle.currentState == Lifecycle.State.DESTROYED){
+                        return@requestPermission
                     }
-                    joinPoint.proceed()
                 }
+                joinPoint.proceed()
             }
-
-        })
+        }
         return null
     }
 
