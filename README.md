@@ -235,17 +235,17 @@ plugins {
 
 - 2、在**根目录**的 `gradle.properties` 添加如下设置
 
-  ```properties
-  androidAop.debugMode=true //设置为 true 走您项目当前的打包方式 ，false 则为全量打包方式，不写默认false
-  ```
+```properties
+androidAop.debugMode=true //设置为 true 走您项目当前的打包方式 ，false 则为全量打包方式，不写默认false
+```
 > [!CAUTION]\
 > **⚠️⚠️⚠️请注意设置为 true 时编译速度会变快但部分功能将失效，只会为设置的 module 织入 aop 代码，三方jar包 不会织入代码，因此打正式包时请注意关闭此项配置并clean项目**
 
 - 3、在**根目录**的 `gradle.properties` 添加如下设置
 
-  ```properties
-  androidAop.debugMode.variantOnlyDebug = true //默认不写这项就是true
-  ```
+```properties
+androidAop.debugMode.variantOnlyDebug = true //默认不写这项就是true
+```
 > [!TIP]\
 > **这项不写默认就是true**，请注意设置为 true 时 release 包会忽略 `androidAop.debugMode = true` 的设置自动走全量打包方式，设为 false 时则没有这种效果
 
@@ -253,10 +253,10 @@ plugins {
 
 - 4、在**根目录**的 `gradle.properties` 添加如下设置（选填，追求极致可以配置这项）
 
-  ```properties
-  androidAop.reflectInvokeMethod = true //设置为 true 反射执行切面方法 ，不写默认 false
-  androidAop.reflectInvokeMethod.variantOnlyDebug = true // 设置为 true 则只会在 debug 下才有效，不写默认false
-  ```
+```properties
+androidAop.reflectInvokeMethod = true //设置为 true 反射执行切面方法 ，不写默认 false
+androidAop.reflectInvokeMethod.variantOnlyDebug = true // 设置为 true 则只会在 debug 下才有效，不写默认false
+```
 > [!TIP]\
 > 1、反射执行切面方法会加快打包速度<br>
 > 2、请注意`androidAop.reflectInvokeMethod.variantOnlyDebug` 设置为 true 时 release 包会忽略 `androidAop.reflectInvokeMethod = true` 的设置自动不走反射，设为 false 时则没有这种效果（不写默认false）<br>
