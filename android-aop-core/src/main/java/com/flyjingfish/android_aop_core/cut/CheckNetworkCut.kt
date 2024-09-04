@@ -13,12 +13,12 @@ internal class CheckNetworkCut : BasePointCut<CheckNetwork> {
     override fun invoke(joinPoint: ProceedJoinPoint, anno: CheckNetwork): Any? {
         return when (anno.invokeListener) {
             true -> {
-                when (AndroidAop.getOnCheckNetworkListener()) {
+                when (val onCheckNetworkListener = AndroidAop.getOnCheckNetworkListener()) {
                     null -> {
                         joinPoint.proceed()
                     }
                     else -> {
-                        AndroidAop.getOnCheckNetworkListener()?.invoke(
+                        onCheckNetworkListener.invoke(
                             joinPoint,
                             anno,
                             NetworkUtils.isConnectedAvailableNetwork(AndroidAopContentProvider.appContext)

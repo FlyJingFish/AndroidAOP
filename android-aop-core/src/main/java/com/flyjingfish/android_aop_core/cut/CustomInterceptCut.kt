@@ -10,12 +10,12 @@ internal class CustomInterceptCut : BasePointCut<CustomIntercept> {
         joinPoint: ProceedJoinPoint,
         anno: CustomIntercept
     ): Any? {
-        return when (AndroidAop.getOnCustomInterceptListener()) {
+        return when (val onCustomInterceptListener = AndroidAop.getOnCustomInterceptListener()) {
             null -> {
                 joinPoint.proceed()
             }
             else -> {
-                AndroidAop.getOnCustomInterceptListener()?.invoke(joinPoint, anno)
+                onCustomInterceptListener.invoke(joinPoint, anno)
             }
         }
     }

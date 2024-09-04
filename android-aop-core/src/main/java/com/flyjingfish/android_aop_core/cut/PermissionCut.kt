@@ -15,15 +15,15 @@ import java.util.concurrent.CountDownLatch
 
 internal class PermissionCut : BasePointCutSuspend<Permission> {
     override fun invoke(joinPoint: ProceedJoinPoint, anno: Permission): Any? {
-        if (AndroidAop.getOnPermissionsInterceptListener() == null){
-            return joinPoint.proceed()
-        }
-        AndroidAop.getOnPermissionsInterceptListener()?.requestPermission(joinPoint,anno
+        val onPermissionsInterceptListener = AndroidAop.getOnPermissionsInterceptListener()
+            ?: return joinPoint.proceed()
+        onPermissionsInterceptListener.requestPermission(
+            joinPoint, anno
         ) { isResult ->
             if (isResult) {
                 val target = joinPoint.target
-                if (target is LifecycleOwner){
-                    if (target.lifecycle.currentState == Lifecycle.State.DESTROYED){
+                if (target is LifecycleOwner) {
+                    if (target.lifecycle.currentState == Lifecycle.State.DESTROYED) {
                         return@requestPermission
                     }
                 }
@@ -34,29 +34,30 @@ internal class PermissionCut : BasePointCutSuspend<Permission> {
     }
 
     override suspend fun invokeSuspend(joinPoint: ProceedJoinPointSuspend, anno: Permission) {
-        if (AndroidAop.getOnPermissionsInterceptListener() == null){
-            joinPoint.proceed()
-        }else{
-            withContext(Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
+            val onPermissionsInterceptListener = AndroidAop.getOnPermissionsInterceptListener()
+            if (onPermissionsInterceptListener == null) {
+                joinPoint.proceed()
+            } else {
                 val countDownLatch = CountDownLatch(1)
                 var isPermissionResult = false
-                AppExecutors.mainThread().execute{
-                    AndroidAop.getOnPermissionsInterceptListener()?.requestPermission(joinPoint,anno
+                AppExecutors.mainThread().execute {
+                    onPermissionsInterceptListener.requestPermission(
+                        joinPoint, anno
                     ) { isResult ->
                         isPermissionResult = isResult
                         countDownLatch.countDown()
                     }
                 }
                 countDownLatch.await()
-                if (isPermissionResult){
+                if (isPermissionResult) {
                     joinPoint.proceed()
-                }else{
+                } else {
                     joinPoint.proceedIgnoreOther { null }
                 }
             }
+
         }
-
-
     }
 
 }
