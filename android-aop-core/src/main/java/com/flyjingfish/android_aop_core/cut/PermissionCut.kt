@@ -62,10 +62,6 @@ internal class PermissionCut : BasePointCutSuspend<Permission> {
 
 
     internal inner class ProceedJoinPointProxy(private val joinPoint: ProceedJoinPoint): ProceedJoinPoint {
-        private val countDownLatch = CountDownLatch(1)
-        fun await() {
-            countDownLatch.await()
-        }
         override fun getArgs(): Array<Any?>? {
             return joinPoint.args
         }
