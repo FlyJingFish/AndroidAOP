@@ -287,79 +287,79 @@ androidAop.reflectInvokeMethod.variantOnlyDebug = true // 设置为 true 则只�
   - **1、@OnLifecycle 加到的方法所属对象必须是属于直接或间接继承自 FragmentActivity 或 Fragment的方法才有用，或者注解方法的对象实现 LifecycleOwner 也可以**
   - 2、如果第1点不符合的情况下，可以给切面方法第一个参数设置为第1点的类型，在调用切面方法传入也是可以的，例如：
 
-    ```java
-    public class StaticClass {
-        @SingleClick(5000)
-        @OnLifecycle(Lifecycle.Event.ON_RESUME)
-        public static void onStaticPermission(MainActivity activity, int maxSelect , ThirdActivity.OnPhotoSelectListener back){
-            back.onBack();
-        }
-    
+```java
+public class StaticClass {
+    @SingleClick(5000)
+    @OnLifecycle(Lifecycle.Event.ON_RESUME)
+    public static void onStaticPermission(MainActivity activity, int maxSelect , ThirdActivity.OnPhotoSelectListener back){
+        back.onBack();
     }
-    ```
+
+}
+```
 
 - @TryCatch 使用此注解你可以设置以下设置（非必须）
-  ```java
-  AndroidAop.INSTANCE.setOnThrowableListener(new OnThrowableListener() {
-      @Nullable
-      @Override
-      public Object handleThrowable(@NonNull String flag, @Nullable Throwable throwable,TryCatch tryCatch) {
-          // TODO: 2023/11/11 发生异常可根据你当时传入的flag作出相应处理，如果需要改写返回值，则在 return 处返回即可
-          return 3;
-      }
-  });
-  ```
+```java
+AndroidAop.INSTANCE.setOnThrowableListener(new OnThrowableListener() {
+    @Nullable
+    @Override
+    public Object handleThrowable(@NonNull String flag, @Nullable Throwable throwable,TryCatch tryCatch) {
+        // TODO: 2023/11/11 发生异常可根据你当时传入的flag作出相应处理，如果需要改写返回值，则在 return 处返回即可
+        return 3;
+    }
+});
+```
 
 - @Permission 使用此注解必须配合以下设置（⚠️此步为必须设置的，否则是没效果的）
 
 💡💡💡[完善使用启示](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%88%87%E9%9D%A2%E5%90%AF%E7%A4%BA#4%E7%9B%B8%E4%BF%A1%E5%A4%A7%E5%AE%B6%E5%9C%A8%E4%BD%BF%E7%94%A8%E6%9D%83%E9%99%90-permission-%E6%97%B6%E5%8F%AF%E8%83%BD%E4%BC%9A%E6%83%B3%E7%8E%B0%E5%9C%A8%E5%8F%AA%E6%9C%89%E8%8E%B7%E5%BE%97%E6%9D%83%E9%99%90%E8%BF%9B%E5%85%A5%E6%96%B9%E6%B3%95%E8%80%8C%E6%B2%A1%E6%9C%89%E6%97%A0%E6%9D%83%E9%99%90%E7%9A%84%E5%9B%9E%E8%B0%83%E4%B8%8B%E8%BE%B9%E4%BE%8B%E5%AD%90%E6%95%99%E4%BD%A0%E6%80%8E%E4%B9%88%E5%81%9A)
 
-  ```java
-  AndroidAop.INSTANCE.setOnPermissionsInterceptListener(new OnPermissionsInterceptListener() {
-      @SuppressLint("CheckResult")
-      @Override
-      public void requestPermission(@NonNull ProceedJoinPoint joinPoint, @NonNull Permission permission, @NonNull OnRequestPermissionListener call) {
-          Object target = joinPoint.getTarget();
-          String[] permissions = permission.value();
-          if (target instanceof FragmentActivity){
-              RxPermissions rxPermissions = new RxPermissions((FragmentActivity) target);
-              rxPermissions.requestEach(permissions)
-                  .subscribe(permissionResult -> {
-                      call.onCall(permissionResult.granted);
-                      if (!permissionResult.granted && target instanceof PermissionRejectListener) {
-                          ((PermissionRejectListener) target).onReject(permission,permissionResult);
-                      }
-                  });
-          }else if (target instanceof Fragment){
-              RxPermissions rxPermissions = new RxPermissions((Fragment) target);
-              rxPermissions.requestEach(permissions)
-                  .subscribe(permissionResult -> {
-                      call.onCall(permissionResult.granted);
-                      if (!permissionResult.granted && target instanceof PermissionRejectListener) {
-                          ((PermissionRejectListener) target).onReject(permission,permissionResult);
-                      }
-                  });
-          }else {
-              // TODO: target 不是 FragmentActivity 或 Fragment ，说明注解所在方法不在其中，请自行处理这种情况
-              // 建议：切点方法第一个参数可以设置为 FragmentActivity 或 Fragment ，然后 joinPoint.args[0] 就可以拿到
-          }
-      }
-  });
-  ```
+```java
+AndroidAop.INSTANCE.setOnPermissionsInterceptListener(new OnPermissionsInterceptListener() {
+    @SuppressLint("CheckResult")
+    @Override
+    public void requestPermission(@NonNull ProceedJoinPoint joinPoint, @NonNull Permission permission, @NonNull OnRequestPermissionListener call) {
+        Object target = joinPoint.getTarget();
+        String[] permissions = permission.value();
+        if (target instanceof FragmentActivity){
+            RxPermissions rxPermissions = new RxPermissions((FragmentActivity) target);
+            rxPermissions.requestEach(permissions)
+                .subscribe(permissionResult -> {
+                    call.onCall(permissionResult.granted);
+                    if (!permissionResult.granted && target instanceof PermissionRejectListener) {
+                        ((PermissionRejectListener) target).onReject(permission,permissionResult);
+                    }
+                });
+        }else if (target instanceof Fragment){
+            RxPermissions rxPermissions = new RxPermissions((Fragment) target);
+            rxPermissions.requestEach(permissions)
+                .subscribe(permissionResult -> {
+                    call.onCall(permissionResult.granted);
+                    if (!permissionResult.granted && target instanceof PermissionRejectListener) {
+                        ((PermissionRejectListener) target).onReject(permission,permissionResult);
+                    }
+                });
+        }else {
+            // TODO: target 不是 FragmentActivity 或 Fragment ，说明注解所在方法不在其中，请自行处理这种情况
+            // 建议：切点方法第一个参数可以设置为 FragmentActivity 或 Fragment ，然后 joinPoint.args[0] 就可以拿到
+        }
+    }
+});
+```
 
 - @CustomIntercept 使用此注解你必须配合以下设置（⚠️此步为必须设置的，否则还有什么意义呢？）
-  ```java
-  AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener() {
-      @Nullable
-      @Override
-      public Object invoke(@NonNull ProceedJoinPoint joinPoint, @NonNull CustomIntercept customIntercept) {
-          // TODO: 2023/11/11 在此写你的逻辑 在合适的地方调用 joinPoint.proceed()，
-          //  joinPoint.proceed(args)可以修改方法传入的参数，如果需要改写返回值，则在 return 处返回即可
-  
-          return null;
-      }
-  });
-  ```
+```java
+AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener() {
+    @Nullable
+    @Override
+    public Object invoke(@NonNull ProceedJoinPoint joinPoint, @NonNull CustomIntercept customIntercept) {
+        // TODO: 2023/11/11 在此写你的逻辑 在合适的地方调用 joinPoint.proceed()，
+        //  joinPoint.proceed(args)可以修改方法传入的参数，如果需要改写返回值，则在 return 处返回即可
+
+        return null;
+    }
+});
+```
 
 - @CheckNetwork 使用此注解你可以配合以下设置
 
