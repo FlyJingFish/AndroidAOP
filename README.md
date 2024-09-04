@@ -287,16 +287,16 @@ androidAop.reflectInvokeMethod.variantOnlyDebug = true // 设置为 true 则只�
   - **1、@OnLifecycle 加到的方法所属对象必须是属于直接或间接继承自 FragmentActivity 或 Fragment的方法才有用，或者注解方法的对象实现 LifecycleOwner 也可以**
   - 2、如果第1点不符合的情况下，可以给切面方法第一个参数设置为第1点的类型，在调用切面方法传入也是可以的，例如：
 
-```java
-public class StaticClass {
-    @SingleClick(5000)
-    @OnLifecycle(Lifecycle.Event.ON_RESUME)
-    public static void onStaticPermission(MainActivity activity, int maxSelect , ThirdActivity.OnPhotoSelectListener back){
-        back.onBack();
+    ```java
+    public class StaticClass {
+        @SingleClick(5000)
+        @OnLifecycle(Lifecycle.Event.ON_RESUME)
+        public static void onStaticPermission(MainActivity activity, int maxSelect , ThirdActivity.OnPhotoSelectListener back){
+            back.onBack();
+        }
+    
     }
-
-}
-```
+    ```
 
 - @TryCatch 使用此注解你可以设置以下设置（非必须）
 ```java
