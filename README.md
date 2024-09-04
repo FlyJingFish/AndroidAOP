@@ -71,46 +71,46 @@
 
 - 新版本
 
-```gradle
-
-plugins {
-    //必须项 👇 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五的方式二
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.1.2" apply true
-}
-```
+  ```gradle
+  
+  plugins {
+      //必须项 👇 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五的方式二
+      id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.1.2" apply true
+  }
+  ```
 
 - 或者老版本
 
-```gradle
-buildscript {
-    dependencies {
-        //必须项 👇
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.1.2'
-    }
-}
-// 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五的方式二
-apply plugin: "android.aop"
-```
+  ```gradle
+  buildscript {
+      dependencies {
+          //必须项 👇
+          classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.1.2'
+      }
+  }
+  // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五的方式二
+  apply plugin: "android.aop"
+  ```
 
 2、在 **app** 的 ```build.gradle``` 添加
 
 
 - 新版本
 
-```gradle
-//必须项 👇
-plugins {
-    ...
-    id 'android.aop'//最好放在最后一行
-}
-```
+  ```gradle
+  //必须项 👇
+  plugins {
+      ...
+      id 'android.aop'//最好放在最后一行
+  }
+  ```
 
 - 或者老版本
 
-```gradle
-//必须项 👇
-apply plugin: 'android.aop' //最好放在最后一行
-```
+  ```gradle
+  //必须项 👇
+  apply plugin: 'android.aop' //最好放在最后一行
+  ```
 
 > [!CAUTION]\
 > **⚠️⚠️⚠️`id 'android.aop'` 这句尽量放在最后一行，尤其是必须在 `id 'com.android.application'` 或 `id 'com.android.library'` 的后边**
@@ -120,50 +120,50 @@ apply plugin: 'android.aop' //最好放在最后一行
 
 - 直接在 **app** 的 ```build.gradle``` 添加
 
-```gradle
-//必须项 👇
-plugins {
-    ...
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.1.2"//最好放在最后一行
-}
-```
+  ```gradle
+  //必须项 👇
+  plugins {
+      ...
+      id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.1.2"//最好放在最后一行
+  }
+  ```
 
 ### 二、如果你需要自定义切面，并且代码是 ```Kotlin``` (非必须)
 
 - 在 **项目根目录** 的 ```build.gradle``` 里依赖插件
 
-```gradle
-plugins {
-    //非必须项 👇，如果需要自定义切面，并且使用 android-aop-ksp 这个库的话需要配置 ，下边版本号根据你项目的 Kotlin 版本决定
-    id 'com.google.devtools.ksp' version '1.8.0-1.0.9' apply false
-}
-```
+  ```gradle
+  plugins {
+      //非必须项 👇，如果需要自定义切面，并且使用 android-aop-ksp 这个库的话需要配置 ，下边版本号根据你项目的 Kotlin 版本决定
+      id 'com.google.devtools.ksp' version '1.8.0-1.0.9' apply false
+  }
+  ```
 [Kotlin 和 KSP Github 的匹配版本号列表](https://github.com/google/ksp/releases)
 
 ### 三、引入依赖库(必须)
 
-```gradle
-plugins {
-    //非必须项 👇，如果需要自定义切面，并且使用 android-aop-ksp 这个库的话需要配置 
-    id 'com.google.devtools.ksp'
-}
-
-dependencies {
-    //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:2.1.2'
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:2.1.2'
-    
-    //必须项 👇如果您项目内已经有了这项不用加也可以
-    implementation 'androidx.appcompat:appcompat:1.3.0' // 至少在1.3.0及以上
-    
-    //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.1.2'
-    
-    //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:2.1.2'
-    //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
-}
-```
+  ```gradle
+  plugins {
+      //非必须项 👇，如果需要自定义切面，并且使用 android-aop-ksp 这个库的话需要配置 
+      id 'com.google.devtools.ksp'
+  }
+  
+  dependencies {
+      //必须项 👇
+      implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:2.1.2'
+      implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:2.1.2'
+      
+      //必须项 👇如果您项目内已经有了这项不用加也可以
+      implementation 'androidx.appcompat:appcompat:1.3.0' // 至少在1.3.0及以上
+      
+      //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
+      ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.1.2'
+      
+      //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
+      annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:2.1.2'
+      //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
+  }
+  ```
 
 > [!TIP]\
 > 提示：ksp 或 annotationProcessor只能扫描当前 module ，在哪个 module 中有自定义切面代码就加在哪个 module，**但是自定义的切面代码是全局生效的**；必须依赖项可以通过 api 方式只加到公共 module 上
@@ -235,17 +235,17 @@ plugins {
 
 - 2、在**根目录**的 `gradle.properties` 添加如下设置
 
-```properties
-androidAop.debugMode=true //设置为 true 走您项目当前的打包方式 ，false 则为全量打包方式，不写默认false
-```
+  ```properties
+  androidAop.debugMode=true //设置为 true 走您项目当前的打包方式 ，false 则为全量打包方式，不写默认false
+  ```
 > [!CAUTION]\
 > **⚠️⚠️⚠️请注意设置为 true 时编译速度会变快但部分功能将失效，只会为设置的 module 织入 aop 代码，三方jar包 不会织入代码，因此打正式包时请注意关闭此项配置并clean项目**
 
 - 3、在**根目录**的 `gradle.properties` 添加如下设置
 
-```properties
-androidAop.debugMode.variantOnlyDebug = true //默认不写这项就是true
-```
+  ```properties
+  androidAop.debugMode.variantOnlyDebug = true //默认不写这项就是true
+  ```
 > [!TIP]\
 > **这项不写默认就是true**，请注意设置为 true 时 release 包会忽略 `androidAop.debugMode = true` 的设置自动走全量打包方式，设为 false 时则没有这种效果
 
@@ -253,10 +253,10 @@ androidAop.debugMode.variantOnlyDebug = true //默认不写这项就是true
 
 - 4、在**根目录**的 `gradle.properties` 添加如下设置（选填，追求极致可以配置这项）
 
-```properties
-androidAop.reflectInvokeMethod = true //设置为 true 反射执行切面方法 ，不写默认 false
-androidAop.reflectInvokeMethod.variantOnlyDebug = true // 设置为 true 则只会在 debug 下才有效，不写默认false
-```
+  ```properties
+  androidAop.reflectInvokeMethod = true //设置为 true 反射执行切面方法 ，不写默认 false
+  androidAop.reflectInvokeMethod.variantOnlyDebug = true // 设置为 true 则只会在 debug 下才有效，不写默认false
+  ```
 > [!TIP]\
 > 1、反射执行切面方法会加快打包速度<br>
 > 2、请注意`androidAop.reflectInvokeMethod.variantOnlyDebug` 设置为 true 时 release 包会忽略 `androidAop.reflectInvokeMethod = true` 的设置自动不走反射，设为 false 时则没有这种效果（不写默认false）<br>
