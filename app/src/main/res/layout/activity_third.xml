@@ -13,7 +13,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:flow_wrapMode="chain"
         app:constraint_referenced_ids="btn_inner0,btn_inner1,btn_inner2,btn_inner3,
-btn_inner4,btn_inner5,btn_inner6,btn_inner7"
+btn_inner4,btn_inner5,btn_inner6,btn_inner7,
+btn_SingleClick,btn_DoubleClick,btn_Permission,btn_OnLifecycle"
         />
     <Button
         android:id="@+id/btn_inner0"
@@ -59,4 +60,38 @@ btn_inner4,btn_inner5,btn_inner6,btn_inner7"
         android:layout_height="wrap_content"
         android:text="TestInner7"/>
 
+    <Button
+        android:id="@+id/btn_SingleClick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textAllCaps="false"
+        android:text="\@SingleClick"/>
+    <Button
+        android:id="@+id/btn_DoubleClick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textAllCaps="false"
+        android:text="\@DoubleClick"/>
+
+    <Button
+        android:id="@+id/btn_OnLifecycle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textAllCaps="false"
+        android:text="\@OnLifecycle"/>
+
+    <Button
+        android:id="@+id/btn_Permission"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textAllCaps="false"
+        android:text="\@Permission"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

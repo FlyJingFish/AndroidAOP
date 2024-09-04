@@ -1,20 +1,27 @@
 package com.flyjingfish.androidaop
 
+import android.Manifest
 import android.os.Bundle
 import android.util.Log
+import androidx.lifecycle.Lifecycle
+import com.flyjingfish.android_aop_core.annotations.DoubleClick
+import com.flyjingfish.android_aop_core.annotations.OnLifecycle
+import com.flyjingfish.android_aop_core.annotations.Permission
 import com.flyjingfish.android_aop_core.annotations.SingleClick
 import com.flyjingfish.androidaop.databinding.ActivityThirdBinding
 import com.flyjingfish.test_lib.annotation.MyAnno3
 import com.flyjingfish.test_lib.annotation.MyAnno4
 import com.flyjingfish.test_lib.annotation.MyAnno5
 import com.flyjingfish.test_lib.BaseActivity
+import com.flyjingfish.test_lib.PermissionRejectListener
 import com.flyjingfish.test_lib.TestSuspend
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.lang.Thread.sleep
 
-class ThirdActivity : BaseActivity() {
+class ThirdActivity : BaseActivity() , PermissionRejectListener {
     companion object{
         fun start(activity: MainActivity,listener:OnPhotoSelectListener?){
             start(activity,1,listener)
@@ -55,6 +62,32 @@ class ThirdActivity : BaseActivity() {
         }
         binding.btnInner7.setOnClickListener {
             test7()
+        }
+
+        binding.btnSingleClick.setOnClickListener {
+            GlobalScope.launch {
+                val result = onSingleClick()
+                Log.e("SuspendReturn","=====onSingleClick=====$result")
+            }
+
+        }
+        binding.btnDoubleClick.setOnClickListener {
+            GlobalScope.launch {
+                val result = onDoubleClick()
+                Log.e("SuspendReturn","=====onDoubleClick=====$result")
+            }
+        }
+        binding.btnPermission.setOnClickListener {
+            GlobalScope.launch {
+                val result = onPermission()
+                Log.e("SuspendReturn","=====onPermission=====$result,${result.size}")
+            }
+        }
+        binding.btnOnLifecycle.setOnClickListener {
+            GlobalScope.launch {
+                val result = onLifecycle()
+                Log.e("SuspendReturn","=====onLifecycle=====${result}")
+            }
         }
     }
     fun test0(){
@@ -187,5 +220,40 @@ class ThirdActivity : BaseActivity() {
             Log.e("MyAnnoCut","=====getData22=====2")
             num + num2
         }
+    }
+
+
+    @SingleClick(5000)
+    suspend fun onSingleClick():ClickType?{
+        return withContext(Dispatchers.IO) {
+            sleep(2000)
+            ClickType.SINGLE
+        }
+    }
+
+    @DoubleClick(300)
+    suspend fun onDoubleClick():ClickType?{
+        return withContext(Dispatchers.IO) {
+            sleep(2000)
+            ClickType.DOUBLE
+        }
+    }
+
+    @OnLifecycle(Lifecycle.Event.ON_STOP)
+    suspend fun onLifecycle():Int{
+        return withContext(Dispatchers.IO) {
+            sleep(2000)
+            200
+        }
+    }
+
+    @Permission(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    suspend fun onPermission():List<Int>{
+        return withContext(Dispatchers.Main) {
+            listOf(1,2)
+        }
+    }
+
+    override fun onReject(permission: Permission, permissionResult: com.tbruyelle.rxpermissions3.Permission) {
     }
 }
