@@ -287,116 +287,116 @@ androidAop.reflectInvokeMethod.variantOnlyDebug = true // 设置为 true 则只�
   - **1、@OnLifecycle 加到的方法所属对象必须是属于直接或间接继承自 FragmentActivity 或 Fragment的方法才有用，或者注解方法的对象实现 LifecycleOwner 也可以**
   - 2、如果第1点不符合的情况下，可以给切面方法第一个参数设置为第1点的类型，在调用切面方法传入也是可以的，例如：
 
-```java
-public class StaticClass {
-    @SingleClick(5000)
-    @OnLifecycle(Lifecycle.Event.ON_RESUME)
-    public static void onStaticPermission(MainActivity activity, int maxSelect , ThirdActivity.OnPhotoSelectListener back){
-        back.onBack();
+    ```java
+    public class StaticClass {
+        @SingleClick(5000)
+        @OnLifecycle(Lifecycle.Event.ON_RESUME)
+        public static void onStaticPermission(MainActivity activity, int maxSelect , ThirdActivity.OnPhotoSelectListener back){
+            back.onBack();
+        }
+    
     }
-
-}
-```
+    ```
 
 - @TryCatch 使用此注解你可以设置以下设置（非必须）
-```java
-AndroidAop.INSTANCE.setOnThrowableListener(new OnThrowableListener() {
-    @Nullable
-    @Override
-    public Object handleThrowable(@NonNull String flag, @Nullable Throwable throwable,TryCatch tryCatch) {
-        // TODO: 2023/11/11 发生异常可根据你当时传入的flag作出相应处理，如果需要改写返回值，则在 return 处返回即可
-        return 3;
-    }
-});
-```
+  ```java
+  AndroidAop.INSTANCE.setOnThrowableListener(new OnThrowableListener() {
+      @Nullable
+      @Override
+      public Object handleThrowable(@NonNull String flag, @Nullable Throwable throwable,TryCatch tryCatch) {
+          // TODO: 2023/11/11 发生异常可根据你当时传入的flag作出相应处理，如果需要改写返回值，则在 return 处返回即可
+          return 3;
+      }
+  });
+  ```
 
 - @Permission 使用此注解必须配合以下设置（⚠️此步为必须设置的，否则是没效果的）
 
 💡💡💡[完善使用启示](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%88%87%E9%9D%A2%E5%90%AF%E7%A4%BA#4%E7%9B%B8%E4%BF%A1%E5%A4%A7%E5%AE%B6%E5%9C%A8%E4%BD%BF%E7%94%A8%E6%9D%83%E9%99%90-permission-%E6%97%B6%E5%8F%AF%E8%83%BD%E4%BC%9A%E6%83%B3%E7%8E%B0%E5%9C%A8%E5%8F%AA%E6%9C%89%E8%8E%B7%E5%BE%97%E6%9D%83%E9%99%90%E8%BF%9B%E5%85%A5%E6%96%B9%E6%B3%95%E8%80%8C%E6%B2%A1%E6%9C%89%E6%97%A0%E6%9D%83%E9%99%90%E7%9A%84%E5%9B%9E%E8%B0%83%E4%B8%8B%E8%BE%B9%E4%BE%8B%E5%AD%90%E6%95%99%E4%BD%A0%E6%80%8E%E4%B9%88%E5%81%9A)
 
-```java
-AndroidAop.INSTANCE.setOnPermissionsInterceptListener(new OnPermissionsInterceptListener() {
-    @SuppressLint("CheckResult")
-    @Override
-    public void requestPermission(@NonNull ProceedJoinPoint joinPoint, @NonNull Permission permission, @NonNull OnRequestPermissionListener call) {
-        Object target = joinPoint.getTarget();
-        String[] permissions = permission.value();
-        if (target instanceof FragmentActivity){
-            RxPermissions rxPermissions = new RxPermissions((FragmentActivity) target);
-            rxPermissions.requestEach(permissions)
-                .subscribe(permissionResult -> {
-                    call.onCall(permissionResult.granted);
-                    if (!permissionResult.granted && target instanceof PermissionRejectListener) {
-                        ((PermissionRejectListener) target).onReject(permission,permissionResult);
-                    }
-                });
-        }else if (target instanceof Fragment){
-            RxPermissions rxPermissions = new RxPermissions((Fragment) target);
-            rxPermissions.requestEach(permissions)
-                .subscribe(permissionResult -> {
-                    call.onCall(permissionResult.granted);
-                    if (!permissionResult.granted && target instanceof PermissionRejectListener) {
-                        ((PermissionRejectListener) target).onReject(permission,permissionResult);
-                    }
-                });
-        }else {
-            // TODO: target 不是 FragmentActivity 或 Fragment ，说明注解所在方法不在其中，请自行处理这种情况
-            // 建议：切点方法第一个参数可以设置为 FragmentActivity 或 Fragment ，然后 joinPoint.args[0] 就可以拿到
-        }
-    }
-});
-```
-
-- @CustomIntercept 使用此注解你必须配合以下设置（⚠️此步为必须设置的，否则还有什么意义呢？）
-```java
-AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener() {
-    @Nullable
-    @Override
-    public Object invoke(@NonNull ProceedJoinPoint joinPoint, @NonNull CustomIntercept customIntercept) {
-        // TODO: 2023/11/11 在此写你的逻辑 在合适的地方调用 joinPoint.proceed()，
-        //  joinPoint.proceed(args)可以修改方法传入的参数，如果需要改写返回值，则在 return 处返回即可
-
-        return null;
-    }
-});
-```
-
-- @CheckNetwork 使用此注解你可以配合以下设置
-
-  - 权限是必须加的
-  ```xml
-  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  ```java
+  AndroidAop.INSTANCE.setOnPermissionsInterceptListener(new OnPermissionsInterceptListener() {
+      @SuppressLint("CheckResult")
+      @Override
+      public void requestPermission(@NonNull ProceedJoinPoint joinPoint, @NonNull Permission permission, @NonNull OnRequestPermissionListener call) {
+          Object target = joinPoint.getTarget();
+          String[] permissions = permission.value();
+          if (target instanceof FragmentActivity){
+              RxPermissions rxPermissions = new RxPermissions((FragmentActivity) target);
+              rxPermissions.requestEach(permissions)
+                  .subscribe(permissionResult -> {
+                      call.onCall(permissionResult.granted);
+                      if (!permissionResult.granted && target instanceof PermissionRejectListener) {
+                          ((PermissionRejectListener) target).onReject(permission,permissionResult);
+                      }
+                  });
+          }else if (target instanceof Fragment){
+              RxPermissions rxPermissions = new RxPermissions((Fragment) target);
+              rxPermissions.requestEach(permissions)
+                  .subscribe(permissionResult -> {
+                      call.onCall(permissionResult.granted);
+                      if (!permissionResult.granted && target instanceof PermissionRejectListener) {
+                          ((PermissionRejectListener) target).onReject(permission,permissionResult);
+                      }
+                  });
+          }else {
+              // TODO: target 不是 FragmentActivity 或 Fragment ，说明注解所在方法不在其中，请自行处理这种情况
+              // 建议：切点方法第一个参数可以设置为 FragmentActivity 或 Fragment ，然后 joinPoint.args[0] 就可以拿到
+          }
+      }
+  });
   ```
 
-  - 以下设置为可选设置项
-
+- @CustomIntercept 使用此注解你必须配合以下设置（⚠️此步为必须设置的，否则还有什么意义呢？）
   ```java
-  AndroidAop.INSTANCE.setOnCheckNetworkListener(new OnCheckNetworkListener() {
+  AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener() {
       @Nullable
       @Override
-      public Object invoke(@NonNull ProceedJoinPoint joinPoint, @NonNull CheckNetwork checkNetwork, boolean availableNetwork) {
+      public Object invoke(@NonNull ProceedJoinPoint joinPoint, @NonNull CustomIntercept customIntercept) {
+          // TODO: 2023/11/11 在此写你的逻辑 在合适的地方调用 joinPoint.proceed()，
+          //  joinPoint.proceed(args)可以修改方法传入的参数，如果需要改写返回值，则在 return 处返回即可
+  
           return null;
       }
   });
   ```
 
+- @CheckNetwork 使用此注解你可以配合以下设置
+
+  - 权限是必须加的
+    ```xml
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    ```
+
+  - 以下设置为可选设置项
+
+    ```java
+    AndroidAop.INSTANCE.setOnCheckNetworkListener(new OnCheckNetworkListener() {
+        @Nullable
+        @Override
+        public Object invoke(@NonNull ProceedJoinPoint joinPoint, @NonNull CheckNetwork checkNetwork, boolean availableNetwork) {
+            return null;
+        }
+    });
+    ```
+
   - 在使用时 invokeListener 设置为true，即可进入上边回调
-  ```kotlin
-  @CheckNetwork(invokeListener = true)
-  fun toSecondActivity(){
-      startActivity(Intent(this,SecondActivity::class.java))
-  }
-  ```
+    ```kotlin
+    @CheckNetwork(invokeListener = true)
+    fun toSecondActivity(){
+        startActivity(Intent(this,SecondActivity::class.java))
+    }
+    ```
 
   - 另外内置 Toast 可以让你接管（意思不是说你自己写的 Toast 会走这个回调，而是这个库使用 Toast 时会回调这里）
-  ```java
-  AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
-      @Override
-      public void onToast(@NonNull Context context, @NonNull CharSequence text, int duration) {
-          
-      }
-  });
-  ```
+    ```java
+    AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
+        @Override
+        public void onToast(@NonNull Context context, @NonNull CharSequence text, int duration) {
+            
+        }
+    });
+    ```
 
 👆以上所有的的监听，最好放到你的 application 中
 
@@ -420,18 +420,18 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
 
 - 创建注解(将 @AndroidAopPointCut 加到你的注解上)
 
-```kotlin
-@AndroidAopPointCut(CustomInterceptCut::class)
-@Target(
-        AnnotationTarget.FUNCTION,
-        AnnotationTarget.PROPERTY_GETTER,
-        AnnotationTarget.PROPERTY_SETTER
-)
-@Retention(
-        AnnotationRetention.RUNTIME
-)
-annotation class CustomIntercept(vararg val value: String = [])
-```
+  ```kotlin
+  @AndroidAopPointCut(CustomInterceptCut::class)
+  @Target(
+          AnnotationTarget.FUNCTION,
+          AnnotationTarget.PROPERTY_GETTER,
+          AnnotationTarget.PROPERTY_SETTER
+  )
+  @Retention(
+          AnnotationRetention.RUNTIME
+  )
+  annotation class CustomIntercept(vararg val value: String = [])
+  ```
 
 <details>
 <summary><strong>Java写法:</strong></summary>
@@ -448,19 +448,19 @@ public @interface CustomIntercept {
 
 - 创建注解处理切面的类（需要实现 BasePointCut 接口，它的泛型填上边的注解）
 
-```kotlin
-class CustomInterceptCut : BasePointCut<CustomIntercept> {
-    override fun invoke(
-        joinPoint: ProceedJoinPoint,
-        annotation: CustomIntercept //annotation就是你加到方法上的注解
-    ): Any? {
-        // 在此写你的逻辑
-        // joinPoint.proceed() 表示继续执行切点方法的逻辑，不调用此方法不会执行切点方法里边的代码
-        // 关于 ProceedJoinPoint 可以看wiki 文档，详细点击下方链接
-        return joinPoint.proceed()
-    }
-}
-```
+  ```kotlin
+  class CustomInterceptCut : BasePointCut<CustomIntercept> {
+      override fun invoke(
+          joinPoint: ProceedJoinPoint,
+          annotation: CustomIntercept //annotation就是你加到方法上的注解
+      ): Any? {
+          // 在此写你的逻辑
+          // joinPoint.proceed() 表示继续执行切点方法的逻辑，不调用此方法不会执行切点方法里边的代码
+          // 关于 ProceedJoinPoint 可以看wiki 文档，详细点击下方链接
+          return joinPoint.proceed()
+      }
+  }
+  ```
 
 [关于 ProceedJoinPoint 使用说明](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)，下文的 ProceedJoinPoint 同理
 
@@ -468,13 +468,13 @@ class CustomInterceptCut : BasePointCut<CustomIntercept> {
 
 直接将你写的注解加到任意一个方法上，例如加到了 onCustomIntercept() 当 onCustomIntercept() 被调用时首先会进入到上文提到的 CustomInterceptCut 的 invoke 方法上
 
-```kotlin
-@CustomIntercept("我是自定义数据")
-fun onCustomIntercept(){
-    
-}
-
-```
+  ```kotlin
+  @CustomIntercept("我是自定义数据")
+  fun onCustomIntercept(){
+      
+  }
+  
+  ```
 
 #### 二、**@AndroidAopMatchClassMethod** 是做匹配某类及其对应方法的切面的
 
@@ -483,42 +483,42 @@ fun onCustomIntercept(){
 
 - 例子一
 
-```java
-package com.flyjingfish.test_lib;
-
-public class TestMatch {
-    public void test1(int value1,String value2){
-
-    }
-
-    public String test2(int value1,String value2){
-        return value1+value2;
-    }
-}
-
-```
+  ```java
+  package com.flyjingfish.test_lib;
+  
+  public class TestMatch {
+      public void test1(int value1,String value2){
+  
+      }
+  
+      public String test2(int value1,String value2){
+          return value1+value2;
+      }
+  }
+  
+  ```
 
 假如 TestMatch 是要匹配的类，而你想要匹配到 test2 这个方法，下边是匹配写法：
 
 
-```kotlin
-package com.flyjingfish.test_lib.mycut;
-
-@AndroidAopMatchClassMethod(
-        targetClassName = "com.flyjingfish.test_lib.TestMatch",
-        methodName = ["test2"],
-        type = MatchType.SELF
-)
-class MatchTestMatchMethod : MatchClassMethod {
-  override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
-    Log.e("MatchTestMatchMethod","======"+methodName+",getParameterTypes="+joinPoint.getTargetMethod().getParameterTypes().length);
-    // 在此写你的逻辑 
-    //不想执行原来方法逻辑，👇就不调用下边这句
-    return joinPoint.proceed()
+  ```kotlin
+  package com.flyjingfish.test_lib.mycut;
+  
+  @AndroidAopMatchClassMethod(
+          targetClassName = "com.flyjingfish.test_lib.TestMatch",
+          methodName = ["test2"],
+          type = MatchType.SELF
+  )
+  class MatchTestMatchMethod : MatchClassMethod {
+    override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
+      Log.e("MatchTestMatchMethod","======"+methodName+",getParameterTypes="+joinPoint.getTargetMethod().getParameterTypes().length);
+      // 在此写你的逻辑 
+      //不想执行原来方法逻辑，👇就不调用下边这句
+      return joinPoint.proceed()
+    }
   }
-}
-
-```
+  
+  ```
 
 可以看到上方 AndroidAopMatchClassMethod 设置的 type 是 MatchType.SELF 表示只匹配 TestMatch 这个类自身，不考虑其子类
 
@@ -528,20 +528,20 @@ class MatchTestMatchMethod : MatchClassMethod {
 
 假如想 Hook 所有的 android.view.View.OnClickListener 的 onClick，说白了就是想全局监测所有的设置 OnClickListener 的点击事件，代码如下：
 
-```kotlin
-@AndroidAopMatchClassMethod(
-    targetClassName = "android.view.View.OnClickListener",
-    methodName = ["onClick"],
-    type = MatchType.EXTENDS //type 一定是 EXTENDS 因为你想 hook 所有继承了 OnClickListener 的类
-)
-class MatchOnClick : MatchClassMethod {
-//    @SingleClick(5000) //联合 @SingleClick ，给所有点击增加防多点，6不6
-    override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
-        Log.e("MatchOnClick", "=====invoke=====$methodName")
-        return joinPoint.proceed()
-    }
-}
-```
+  ```kotlin
+  @AndroidAopMatchClassMethod(
+      targetClassName = "android.view.View.OnClickListener",
+      methodName = ["onClick"],
+      type = MatchType.EXTENDS //type 一定是 EXTENDS 因为你想 hook 所有继承了 OnClickListener 的类
+  )
+  class MatchOnClick : MatchClassMethod {
+  //    @SingleClick(5000) //联合 @SingleClick ，给所有点击增加防多点，6不6
+      override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
+          Log.e("MatchOnClick", "=====invoke=====$methodName")
+          return joinPoint.proceed()
+      }
+  }
+  ```
 
 可以看到上方 AndroidAopMatchClassMethod 设置的 type 是 MatchType.EXTENDS 表示匹配所有继承自 OnClickListener 的子类，另外更多继承方式，[请参考Wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#excludeclasses-%E6%98%AF%E6%8E%92%E9%99%A4%E6%8E%89%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB%E4%B8%AD%E7%9A%84%E4%B8%AD%E9%97%B4%E7%B1%BB%E6%95%B0%E7%BB%84)
 
@@ -552,51 +552,51 @@ class MatchOnClick : MatchClassMethod {
 此方式是对 @AndroidAopMatchClassMethod 的一个补充，[点此看wiki详细说明文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopReplaceClass)
 
 - Java写法
-```java
-@AndroidAopReplaceClass(
-        "android.widget.Toast"
-)
-public class ReplaceToast {
-    @AndroidAopReplaceMethod(
-            "android.widget.Toast makeText(android.content.Context, java.lang.CharSequence, int)"
-    )
-    //  因为被替换方法是静态的，所以参数类型及顺序和被替换方法一一对应
-    public static Toast makeText(Context context, CharSequence text, int duration) {
-        return Toast.makeText(context, "ReplaceToast-"+text, duration);
-    }
-    @AndroidAopReplaceMethod(
-            "void setGravity(int , int , int )"
-    )
-    //  因为被替换方法不是静态方法，所以参数第一个是被替换类，之后的参数和被替换方法一一对应
-    public static void setGravity(Toast toast,int gravity, int xOffset, int yOffset) {
-        toast.setGravity(Gravity.CENTER, xOffset, yOffset);
-    }
-    @AndroidAopReplaceMethod(
-            "void show()"
-    )
-    //  虽然被替换方法没有参数，但因为它不是静态方法，所以第一个参数仍然是被替换类
-    public static void show(Toast toast) {
-        toast.show();
-    }
-}
-```
+  ```java
+  @AndroidAopReplaceClass(
+          "android.widget.Toast"
+  )
+  public class ReplaceToast {
+      @AndroidAopReplaceMethod(
+              "android.widget.Toast makeText(android.content.Context, java.lang.CharSequence, int)"
+      )
+      //  因为被替换方法是静态的，所以参数类型及顺序和被替换方法一一对应
+      public static Toast makeText(Context context, CharSequence text, int duration) {
+          return Toast.makeText(context, "ReplaceToast-"+text, duration);
+      }
+      @AndroidAopReplaceMethod(
+              "void setGravity(int , int , int )"
+      )
+      //  因为被替换方法不是静态方法，所以参数第一个是被替换类，之后的参数和被替换方法一一对应
+      public static void setGravity(Toast toast,int gravity, int xOffset, int yOffset) {
+          toast.setGravity(Gravity.CENTER, xOffset, yOffset);
+      }
+      @AndroidAopReplaceMethod(
+              "void show()"
+      )
+      //  虽然被替换方法没有参数，但因为它不是静态方法，所以第一个参数仍然是被替换类
+      public static void show(Toast toast) {
+          toast.show();
+      }
+  }
+  ```
 
 该例意思就是凡是代码中写```Toast.makeText```和```Toast.show```  ...的地方都被替换成```ReplaceToast.makeText```和```ReplaceToast.show``` ...
 
 - Kotlin写法
-```kotlin
-
-@AndroidAopReplaceClass("android.util.Log")
-object ReplaceLog {
-    @AndroidAopReplaceMethod("int e(java.lang.String,java.lang.String)")
-    @JvmStatic
-    fun e( tag:String, msg:String) :Int{
-        return Log.e(tag, "ReplaceLog-$msg")
-    }
-}
-
-
-```
+  ```kotlin
+  
+  @AndroidAopReplaceClass("android.util.Log")
+  object ReplaceLog {
+      @AndroidAopReplaceMethod("int e(java.lang.String,java.lang.String)")
+      @JvmStatic
+      fun e( tag:String, msg:String) :Int{
+          return Log.e(tag, "ReplaceLog-$msg")
+      }
+  }
+  
+  
+  ```
 
 该例意思就是凡是代码中写```Log.e```的地方都被替换成```ReplaceLog.e```
 
@@ -605,21 +605,21 @@ object ReplaceLog {
 
 通常是在某个类的继承关系中替换掉其中一层，然后重写一些函数，在重写的函数中加入一些你想加的逻辑代码，起到监听、改写原有逻辑的作用，[详细使用方式](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopModifyExtendsClass)
 
-
-```java
-@AndroidAopModifyExtendsClass("androidx.appcompat.widget.AppCompatImageView")
-public class ReplaceImageView extends ImageView {
-    public ReplaceImageView(@NonNull Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    @Override
-    public void setImageDrawable(@Nullable Drawable drawable) {
-        super.setImageDrawable(drawable);
-        //做一些监测或者再次修改
-    }
-}
-```
+  
+  ```java
+  @AndroidAopModifyExtendsClass("androidx.appcompat.widget.AppCompatImageView")
+  public class ReplaceImageView extends ImageView {
+      public ReplaceImageView(@NonNull Context context, @Nullable AttributeSet attrs) {
+          super(context, attrs);
+      }
+  
+      @Override
+      public void setImageDrawable(@Nullable Drawable drawable) {
+          super.setImageDrawable(drawable);
+          //做一些监测或者再次修改
+      }
+  }
+  ```
 
 该例就是要把 ```AppCompatImageView``` 的继承类替换成 ```ReplaceImageView```
 
@@ -629,54 +629,54 @@ public class ReplaceImageView extends ImageView {
 
 - Kotlin
 
-```kotlin
-object InitCollect {
-    private val collects = mutableListOf<SubApplication>()
-    private val collectClazz: MutableList<Class<out SubApplication>> = mutableListOf()
-
-    @AndroidAopCollectMethod
-    @JvmStatic
-    fun collect(sub: SubApplication){
-      collects.add(sub)
-    }
-    @AndroidAopCollectMethod
-    @JvmStatic
-    fun collect2(sub:Class<out SubApplication>){
-      collectClazz.add(sub)
-    }
-  //直接调这个方法（方法名不限）上边的函数会被悉数回调
-    fun init(application: Application){
-        for (collect in collects) {
-            collect.onCreate(application)
-        }
-    }
-}
-```
+  ```kotlin
+  object InitCollect {
+      private val collects = mutableListOf<SubApplication>()
+      private val collectClazz: MutableList<Class<out SubApplication>> = mutableListOf()
+  
+      @AndroidAopCollectMethod
+      @JvmStatic
+      fun collect(sub: SubApplication){
+        collects.add(sub)
+      }
+      @AndroidAopCollectMethod
+      @JvmStatic
+      fun collect2(sub:Class<out SubApplication>){
+        collectClazz.add(sub)
+      }
+    //直接调这个方法（方法名不限）上边的函数会被悉数回调
+      fun init(application: Application){
+          for (collect in collects) {
+              collect.onCreate(application)
+          }
+      }
+  }
+  ```
 
 - Java
 
-```java
-public class InitCollect2 {
-    private static final List<SubApplication2> collects = new ArrayList<>();
-    private static final List<Class<? extends SubApplication2>> collectClazz = new ArrayList<>();
-    @AndroidAopCollectMethod
-    public static void collect(SubApplication2 sub){
-        collects.add(sub);
-    }
-
-    @AndroidAopCollectMethod
-    public static void collect3(Class<? extends SubApplication2> sub){
-        collectClazz.add(sub);
-    }
-  //直接调这个方法（方法名不限）上边的函数会被悉数回调
-    public static void init(Application application){
-        Log.e("InitCollect2","----init----");
-        for (SubApplication2 collect : collects) {
-            collect.onCreate(application);
-        }
-    }
-}
-```
+  ```java
+  public class InitCollect2 {
+      private static final List<SubApplication2> collects = new ArrayList<>();
+      private static final List<Class<? extends SubApplication2>> collectClazz = new ArrayList<>();
+      @AndroidAopCollectMethod
+      public static void collect(SubApplication2 sub){
+          collects.add(sub);
+      }
+  
+      @AndroidAopCollectMethod
+      public static void collect3(Class<? extends SubApplication2> sub){
+          collectClazz.add(sub);
+      }
+    //直接调这个方法（方法名不限）上边的函数会被悉数回调
+      public static void init(Application application){
+          Log.e("InitCollect2","----init----");
+          for (SubApplication2 collect : collects) {
+              collect.onCreate(application);
+          }
+      }
+  }
+  ```
 
 ### [常见问题](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
 
