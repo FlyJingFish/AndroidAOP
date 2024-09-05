@@ -67,7 +67,10 @@
 
 #### 方式一：```apply``` 方式（推荐）
 
-1、在 **项目根目录** 的 ```build.gradle``` 里依赖插件
+<p align = "left">    
+<img  src="https://github.com/FlyJingFish/AndroidAOP/blob/master/screenshot/one.svg" align = "center"  width="25" />
+在<strong>项目根目录</strong>的 <code>build.gradle</code> 里依赖插件
+</p>  
 
 - 新版本
 
@@ -92,8 +95,10 @@
   apply plugin: "android.aop"
   ```
 
-2、在 **app** 的 ```build.gradle``` 添加
-
+<p align = "left">    
+<img  src="https://github.com/FlyJingFish/AndroidAOP/blob/master/screenshot/two.svg" align = "center"  width="25" />
+在<strong>app</strong>的 <code>build.gradle</code> 添加
+</p> 
 
 - 新版本
 
