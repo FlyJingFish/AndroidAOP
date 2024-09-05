@@ -232,8 +232,7 @@ plugins {
 ```
 
 
-
-<img src="/screenshot/two.svg" alt="2" style="vertical-align: middle; width: 24px; height: 26px;" /> 在**根目录**的 `gradle.properties` 添加如下设置
+![Alt](/screenshot/two.svg#pic_center) 在**根目录**的 `gradle.properties` 添加如下设置
 
 ```properties
 androidAop.debugMode=true //设置为 true 走您项目当前的打包方式 ，false 则为全量打包方式，不写默认false
