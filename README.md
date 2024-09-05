@@ -67,50 +67,69 @@
 
 #### 方式一：```apply``` 方式（推荐）
 
-1、在 **项目根目录** 的 ```build.gradle``` 里依赖插件
+<p align = "left">    
+<picture>
+  <!-- 亮色模式下显示的 SVG -->
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one.svg" media="(prefers-color-scheme: light)">
+  <!-- 暗黑模式下显示的 SVG -->
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one_dark.svg" media="(prefers-color-scheme: dark)">
+  <!-- 默认图片 -->
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one.svg" align = "center"  width="22" height="22" />
+</picture>
+在<strong>项目根目录</strong>的 <code>build.gradle</code> 里依赖插件
+</p>  
 
 - 新版本
 
-```gradle
-
-plugins {
-    //必须项 👇 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五的方式二
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.1.2" apply true
-}
-```
+  ```gradle
+  
+  plugins {
+      //必须项 👇 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五的方式二
+      id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.1.2" apply true
+  }
+  ```
 
 - 或者老版本
 
-```gradle
-buildscript {
-    dependencies {
-        //必须项 👇
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.1.2'
-    }
-}
-// 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五的方式二
-apply plugin: "android.aop"
-```
+  ```gradle
+  buildscript {
+      dependencies {
+          //必须项 👇
+          classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.1.2'
+      }
+  }
+  // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五的方式二
+  apply plugin: "android.aop"
+  ```
 
-2、在 **app** 的 ```build.gradle``` 添加
-
+<p align = "left">    
+<picture>
+  <!-- 亮色模式下显示的 SVG -->
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two.svg" media="(prefers-color-scheme: light)">
+  <!-- 暗黑模式下显示的 SVG -->
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two_dark.svg" media="(prefers-color-scheme: dark)">
+  <!-- 默认图片 -->
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two.svg" align = "center"  width="22" height="22"/>
+</picture>
+在<strong>app</strong>的 <code>build.gradle</code> 添加
+</p> 
 
 - 新版本
 
-```gradle
-//必须项 👇
-plugins {
-    ...
-    id 'android.aop'//最好放在最后一行
-}
-```
+  ```gradle
+  //必须项 👇
+  plugins {
+      ...
+      id 'android.aop'//最好放在最后一行
+  }
+  ```
 
 - 或者老版本
 
-```gradle
-//必须项 👇
-apply plugin: 'android.aop' //最好放在最后一行
-```
+  ```gradle
+  //必须项 👇
+  apply plugin: 'android.aop' //最好放在最后一行
+  ```
 
 > [!CAUTION]\
 > **⚠️⚠️⚠️`id 'android.aop'` 这句尽量放在最后一行，尤其是必须在 `id 'com.android.application'` 或 `id 'com.android.library'` 的后边**
@@ -120,13 +139,13 @@ apply plugin: 'android.aop' //最好放在最后一行
 
 - 直接在 **app** 的 ```build.gradle``` 添加
 
-```gradle
-//必须项 👇
-plugins {
-    ...
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.1.2"//最好放在最后一行
-}
-```
+  ```gradle
+  //必须项 👇
+  plugins {
+      ...
+      id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.1.2"//最好放在最后一行
+  }
+  ```
 
 ### 二、如果你需要自定义切面，并且代码是 ```Kotlin``` (非必须)
 
@@ -209,31 +228,45 @@ android {
 
 ![Stargazers over time](https://github.com/FlyJingFish/AndroidAOP/blob/master/screenshot/warning_debug_mode.svg)
 
+<p align = "left">    
+<picture>
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one.svg" media="(prefers-color-scheme: light)">
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one_dark.svg" media="(prefers-color-scheme: dark)">
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one.svg" align = "center"  width="22" height="22"/>
+</picture>
+为<strong>所有的子module</strong>也依赖插件，请按照上述<a href="#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB">步骤一的方式一配置项目</a>，然后以下方式二选一
+</p>  
 
-- 1、为**所有的子module**也依赖插件，请按照上述[步骤一的方式一配置项目](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB)，然后以下方式二选一
 
-**方式一：（推荐）**
+- **方式一：（推荐）**
 
-按照上述[步骤一的方式一配置项目](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB)，就可以了。**这个方式自动为所有的 module 应用 debugMode**
+  按照上述[步骤一的方式一配置项目](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB)，就可以了。**这个方式自动为所有的 module 应用 debugMode**
 
 
-~~**方式二：（不推荐）**~~
+- ~~**方式二：（不推荐）**~~
+
+  请按照上述[步骤一的方式一配置项目](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB)后，手动为**所有子 module 模块**设置，例如：
+
+  ```gradle
+  plugins {
+      ...
+      id 'android.aop'//最好放在最后一行，尤其是必须在 `id 'com.android.application'` 或 `id 'com.android.library'` 的后边
+  }
+  ```
+
 
 > [!TIP]\
 > **💡💡💡这个方式可以只为你加过的 module 应用 debugMode，没加的 module 里边的相关切面不会生效**
 
-请按照上述[步骤一的方式一配置项目](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB)后，手动为**所有子 module 模块**设置，例如：
 
-```gradle
-plugins {
-    ...
-    id 'android.aop'//最好放在最后一行，尤其是必须在 `id 'com.android.application'` 或 `id 'com.android.library'` 的后边
-}
-```
-
-
-
-- 2、在**根目录**的 `gradle.properties` 添加如下设置
+<p align = "left">    
+<picture>
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two.svg" media="(prefers-color-scheme: light)">
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two_dark.svg" media="(prefers-color-scheme: dark)">
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two.svg" align = "center"  width="22" height="22"/>
+</picture>
+在<strong>根目录</strong>的 <code>gradle.properties</code> 添加如下设置
+</p>  
 
 ```properties
 androidAop.debugMode=true //设置为 true 走您项目当前的打包方式 ，false 则为全量打包方式，不写默认false
@@ -241,7 +274,14 @@ androidAop.debugMode=true //设置为 true 走您项目当前的打包方式 ，
 > [!CAUTION]\
 > **⚠️⚠️⚠️请注意设置为 true 时编译速度会变快但部分功能将失效，只会为设置的 module 织入 aop 代码，三方jar包 不会织入代码，因此打正式包时请注意关闭此项配置并clean项目**
 
-- 3、在**根目录**的 `gradle.properties` 添加如下设置
+<p align = "left">    
+<picture>
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/three.svg" media="(prefers-color-scheme: light)">
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/three_dark.svg" media="(prefers-color-scheme: dark)">
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/three.svg" align = "center"  width="22" height="22"/>
+</picture>
+在<strong>根目录</strong>的 <code>gradle.properties</code> 添加如下设置
+</p>  
 
 ```properties
 androidAop.debugMode.variantOnlyDebug = true //默认不写这项就是true
@@ -251,7 +291,14 @@ androidAop.debugMode.variantOnlyDebug = true //默认不写这项就是true
 
 > **此项功能默认开启，因此release包无需手动关闭 `androidAop.debugMode`**
 
-- 4、在**根目录**的 `gradle.properties` 添加如下设置（选填，追求极致可以配置这项）
+<p align = "left">    
+<picture>
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/four.svg" media="(prefers-color-scheme: light)">
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/four_dark.svg" media="(prefers-color-scheme: dark)">
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/four.svg" align = "center"  width="22" height="22"/>
+</picture>
+在<strong>根目录</strong>的 <code>gradle.properties</code> 添加如下设置（选填，追求极致可以配置这项）
+</p>  
 
 ```properties
 androidAop.reflectInvokeMethod = true //设置为 true 反射执行切面方法 ，不写默认 false
@@ -287,16 +334,16 @@ androidAop.reflectInvokeMethod.variantOnlyDebug = true // 设置为 true 则只�
   - **1、@OnLifecycle 加到的方法所属对象必须是属于直接或间接继承自 FragmentActivity 或 Fragment的方法才有用，或者注解方法的对象实现 LifecycleOwner 也可以**
   - 2、如果第1点不符合的情况下，可以给切面方法第一个参数设置为第1点的类型，在调用切面方法传入也是可以的，例如：
 
-```java
-public class StaticClass {
-    @SingleClick(5000)
-    @OnLifecycle(Lifecycle.Event.ON_RESUME)
-    public static void onStaticPermission(MainActivity activity, int maxSelect , ThirdActivity.OnPhotoSelectListener back){
-        back.onBack();
+    ```java
+    public class StaticClass {
+        @SingleClick(5000)
+        @OnLifecycle(Lifecycle.Event.ON_RESUME)
+        public static void onStaticPermission(MainActivity activity, int maxSelect , ThirdActivity.OnPhotoSelectListener back){
+            back.onBack();
+        }
+    
     }
-
-}
-```
+    ```
 
 - @TryCatch 使用此注解你可以设置以下设置（非必须）
 ```java
@@ -362,41 +409,41 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
 ```
 
 - @CheckNetwork 使用此注解你可以配合以下设置
--
+
   - 权限是必须加的
-```xml
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-```
--
+    ```xml
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    ```
+
   - 以下设置为可选设置项
 
-```java
-AndroidAop.INSTANCE.setOnCheckNetworkListener(new OnCheckNetworkListener() {
-    @Nullable
-    @Override
-    public Object invoke(@NonNull ProceedJoinPoint joinPoint, @NonNull CheckNetwork checkNetwork, boolean availableNetwork) {
-        return null;
-    }
-});
-```
--
+    ```java
+    AndroidAop.INSTANCE.setOnCheckNetworkListener(new OnCheckNetworkListener() {
+        @Nullable
+        @Override
+        public Object invoke(@NonNull ProceedJoinPoint joinPoint, @NonNull CheckNetwork checkNetwork, boolean availableNetwork) {
+            return null;
+        }
+    });
+    ```
+
   - 在使用时 invokeListener 设置为true，即可进入上边回调
-```kotlin
-@CheckNetwork(invokeListener = true)
-fun toSecondActivity(){
-    startActivity(Intent(this,SecondActivity::class.java))
-}
-```
--
-  - 另外内置 Toast 可以让你接管（意思不是说你自己写的 Toast 会走这个回调，而是这个库使用 Toast 时会回调这里）
-```java
-AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
-    @Override
-    public void onToast(@NonNull Context context, @NonNull CharSequence text, int duration) {
-        
+    ```kotlin
+    @CheckNetwork(invokeListener = true)
+    fun toSecondActivity(){
+        startActivity(Intent(this,SecondActivity::class.java))
     }
-});
-```
+    ```
+
+  - 另外内置 Toast 可以让你接管（意思不是说你自己写的 Toast 会走这个回调，而是这个库使用 Toast 时会回调这里）
+    ```java
+    AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
+        @Override
+        public void onToast(@NonNull Context context, @NonNull CharSequence text, int duration) {
+            
+        }
+    });
+    ```
 
 👆以上所有的的监听，最好放到你的 application 中
 
