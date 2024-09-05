@@ -210,7 +210,7 @@ android {
 ![Stargazers over time](https://github.com/FlyJingFish/AndroidAOP/blob/master/screenshot/warning_debug_mode.svg)
 
 
-- 1、为**所有的子module**也依赖插件，请按照上述[步骤一的方式一配置项目](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB)，然后以下方式二选一
+<img src="/screenshot/one.svg" alt="1" style="vertical-align: middle; width: 24px; height: 26px;" />  为**所有的子module**也依赖插件，请按照上述[步骤一的方式一配置项目](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB)，然后以下方式二选一
 
 **方式一：（推荐）**
 
@@ -233,7 +233,7 @@ plugins {
 
 
 
-- 2、在**根目录**的 `gradle.properties` 添加如下设置
+<img src="/screenshot/two.svg" alt="2" style="vertical-align: middle; width: 24px; height: 26px;" /> 在**根目录**的 `gradle.properties` 添加如下设置
 
 ```properties
 androidAop.debugMode=true //设置为 true 走您项目当前的打包方式 ，false 则为全量打包方式，不写默认false
@@ -241,7 +241,7 @@ androidAop.debugMode=true //设置为 true 走您项目当前的打包方式 ，
 > [!CAUTION]\
 > **⚠️⚠️⚠️请注意设置为 true 时编译速度会变快但部分功能将失效，只会为设置的 module 织入 aop 代码，三方jar包 不会织入代码，因此打正式包时请注意关闭此项配置并clean项目**
 
-- 3、在**根目录**的 `gradle.properties` 添加如下设置
+<img src="/screenshot/three.svg" alt="3" style="vertical-align: middle; width: 24px; height: 26px;" /> 在**根目录**的 `gradle.properties` 添加如下设置
 
 ```properties
 androidAop.debugMode.variantOnlyDebug = true //默认不写这项就是true
@@ -251,7 +251,8 @@ androidAop.debugMode.variantOnlyDebug = true //默认不写这项就是true
 
 > **此项功能默认开启，因此release包无需手动关闭 `androidAop.debugMode`**
 
-- 4、在**根目录**的 `gradle.properties` 添加如下设置（选填，追求极致可以配置这项）
+
+<img src="/screenshot/four.svg" alt="4" style="vertical-align: middle; width: 24px; height: 26px;" /> 在**根目录**的 `gradle.properties` 添加如下设置（选填，追求极致可以配置这项）
 
 ```properties
 androidAop.reflectInvokeMethod = true //设置为 true 反射执行切面方法 ，不写默认 false
