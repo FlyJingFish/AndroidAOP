@@ -74,7 +74,7 @@
   <!-- 暗黑模式下显示的 SVG -->
   <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one_dark.svg" media="(prefers-color-scheme: dark)">
   <!-- 默认图片 -->
-  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one.svg" align = "center"  width="22" />
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one.svg" align = "center"  width="22" height="22" />
 </picture>
 在<strong>项目根目录</strong>的 <code>build.gradle</code> 里依赖插件
 </p>  
@@ -109,7 +109,7 @@
   <!-- 暗黑模式下显示的 SVG -->
   <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two_dark.svg" media="(prefers-color-scheme: dark)">
   <!-- 默认图片 -->
-  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two.svg" align = "center"  width="22" />
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two.svg" align = "center"  width="22" height="22"/>
 </picture>
 在<strong>app</strong>的 <code>build.gradle</code> 添加
 </p> 
@@ -232,7 +232,7 @@ android {
 <picture>
   <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one.svg" media="(prefers-color-scheme: light)">
   <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one_dark.svg" media="(prefers-color-scheme: dark)">
-  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one.svg" align = "center"  width="22" />
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one.svg" align = "center"  width="22" height="22"/>
 </picture>
 为<strong>所有的子module</strong>也依赖插件，请按照上述<a href="#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB">步骤一的方式一配置项目</a>，然后以下方式二选一
 </p>  
@@ -263,7 +263,7 @@ android {
 <picture>
   <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two.svg" media="(prefers-color-scheme: light)">
   <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two_dark.svg" media="(prefers-color-scheme: dark)">
-  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two.svg" align = "center"  width="22" />
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two.svg" align = "center"  width="22" height="22"/>
 </picture>
 在<strong>根目录</strong>的 <code>gradle.properties</code> 添加如下设置
 </p>  
@@ -278,7 +278,7 @@ androidAop.debugMode=true //设置为 true 走您项目当前的打包方式 ，
 <picture>
   <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/three.svg" media="(prefers-color-scheme: light)">
   <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/three_dark.svg" media="(prefers-color-scheme: dark)">
-  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/three.svg" align = "center"  width="22" />
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/three.svg" align = "center"  width="22" height="22"/>
 </picture>
 在<strong>根目录</strong>的 <code>gradle.properties</code> 添加如下设置
 </p>  
@@ -295,7 +295,7 @@ androidAop.debugMode.variantOnlyDebug = true //默认不写这项就是true
 <picture>
   <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/four.svg" media="(prefers-color-scheme: light)">
   <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/four_dark.svg" media="(prefers-color-scheme: dark)">
-  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/four.svg" align = "center"  width="22" />
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/four.svg" align = "center"  width="22" height="22"/>
 </picture>
 在<strong>根目录</strong>的 <code>gradle.properties</code> 添加如下设置（选填，追求极致可以配置这项）
 </p>  
