@@ -68,7 +68,14 @@
 #### 方式一：```apply``` 方式（推荐）
 
 <p align = "left">    
-<img  src="https://github.com/FlyJingFish/AndroidAOP/blob/master/screenshot/one.svg" align = "center"  width="22" />
+<picture>
+  <!-- 亮色模式下显示的 SVG -->
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/screenshot/one.svg" media="(prefers-color-scheme: light)">
+  <!-- 暗黑模式下显示的 SVG -->
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/screenshot/one_dark.svg" media="(prefers-color-scheme: dark)">
+  <!-- 默认图片 -->
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/screenshot/one.svg" align = "center"  width="22" />
+</picture>
 在<strong>项目根目录</strong>的 <code>build.gradle</code> 里依赖插件
 </p>  
 
