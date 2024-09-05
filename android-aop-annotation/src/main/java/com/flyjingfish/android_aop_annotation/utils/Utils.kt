@@ -1,5 +1,6 @@
 package com.flyjingfish.android_aop_annotation.utils
 
+import com.flyjingfish.android_aop_annotation.AndroidAopJoinPoint
 import com.flyjingfish.android_aop_annotation.ProceedReturn
 import com.flyjingfish.android_aop_annotation.base.OnBaseSuspendReturnListener
 import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener
@@ -49,9 +50,37 @@ internal object Utils {
         }
         val stackTrace = throwable.stackTrace
         stackTrace?.let {
-            for (stackTraceElement in it) {
+            val list = it.toMutableList()
+            val iterator = list.iterator()
+            var crashClass :String ?= null
+            var crashMethodName :String ?= null
+            while (iterator.hasNext()) {
+                val stackTraceElement = iterator.next()
+                if (
+                    stackTraceElement == null
+                    ||
+                    stackTraceElement.className == AndroidAopJoinPoint::class.qualifiedName
+                    ||
+                    isInvokeClass(stackTraceElement.className)
+                    ) {
+                    iterator.remove()
+                    continue
+                }
+
+                if (
+                    (crashClass != null && crashMethodName != null
+                            && stackTraceElement.className == crashClass && stackTraceElement.methodName == crashMethodName
+                            && stackTraceElement.lineNumber < 0)
+                ) {
+                    iterator.remove()
+                    crashClass = null
+                    crashMethodName = null
+                    continue
+                }
                 val realMethodName = getRealMethodName(stackTraceElement.methodName)
                 if (realMethodName != stackTraceElement.methodName) {
+                    crashClass = stackTraceElement.className
+                    crashMethodName = realMethodName
                     try {
                         val field = StackTraceElement::class.java.getDeclaredField("methodName")
                         field.isAccessible = true
@@ -60,6 +89,22 @@ internal object Utils {
                     }
                 }
             }
+            try {
+                throwable.stackTrace = list.toTypedArray()
+            } catch (_: Throwable) {
+                for (stackTraceElement in it) {
+                    val realMethodName = getRealMethodName(stackTraceElement.methodName)
+                    if (realMethodName != stackTraceElement.methodName) {
+                        try {
+                            val field = StackTraceElement::class.java.getDeclaredField("methodName")
+                            field.isAccessible = true
+                            field[stackTraceElement] = realMethodName
+                        } catch (_: Throwable) {
+                        }
+                    }
+                }
+            }
+
         }
 
         return if (throwable is RuntimeException) {
@@ -79,5 +124,14 @@ internal object Utils {
         }else{
             methodName;
         }
+    }
+
+    private val InvokeClassPattern: Pattern = Pattern.compile("\\\$Invoke[a-zA-Z0-9]{32}$")
+    private fun isInvokeClass(className:String?):Boolean{
+        if (className == null){
+            return false
+        }
+        val matcher: Matcher = InvokeClassPattern.matcher(className)
+        return matcher.find()
     }
 }

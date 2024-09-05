@@ -151,6 +151,10 @@ public final class AndroidAopJoinPoint {
             }
         }
         Iterator<PointCutAnnotation> iterator = basePointCuts.iterator();
+        JoinPoint.INSTANCE.setHasNext(proceedJoinPoint,basePointCuts.size() > 1);
+        if (!iterator.hasNext()){
+            throw new IllegalStateException("没有找到切点: " + targetClassName + "." + targetMethodName+"，一般来说你应该 clean 项目并重新编译");
+        }
 
 
         if (basePointCuts.size() > 1) {
@@ -209,7 +213,7 @@ public final class AndroidAopJoinPoint {
             });
         }
 
-        JoinPoint.INSTANCE.setHasNext(proceedJoinPoint,basePointCuts.size() > 1);
+
         PointCutAnnotation cutAnnotation = iterator.next();
         iterator.remove();
         if (cutAnnotation.basePointCut != null) {
