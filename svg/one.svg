@@ -4,7 +4,7 @@
     xmlns:xlink="http://www.w3.org/1999/xlink"
     width="24px" height="24px">
     <circle cx="12px" cy="12px" r="12px" stroke="black" stroke-width="0" fill="#000"/>
-    <text font-size="16px" font-weight="700" x="8px" y="18px">
+    <text font-size="16px" font-weight="800" x="8px" y="18px">
         <tspan fill="white">1</tspan>
     </text>
 </svg>
