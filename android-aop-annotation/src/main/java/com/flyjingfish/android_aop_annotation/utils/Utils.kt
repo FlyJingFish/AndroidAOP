@@ -59,8 +59,6 @@ internal object Utils {
                 if (
                     stackTraceElement == null
                     ||
-                    stackTraceElement.className == AndroidAopJoinPoint::class.qualifiedName
-                    ||
                     isInvokeClass(stackTraceElement.className)
                     ) {
                     iterator.remove()

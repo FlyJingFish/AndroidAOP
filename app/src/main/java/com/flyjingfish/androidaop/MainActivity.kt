@@ -168,6 +168,8 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
 
     @SingleClick(5000)
     fun onSingleClick(){
+//        var number = 1;
+//        number = o!!.number
         Log.e("MainActivity","onSingleClick")
         setLogcat("@SingleClick 5000毫秒内只能点击一次")
     }
