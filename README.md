@@ -233,7 +233,7 @@ plugins {
 
 <p align = "left">    
 <img  src="https://github.com/FlyJingFish/AndroidAOP/blob/master/screenshot/two.svg" align = "center"  width="25" />
-在**根目录**的 `gradle.properties` 添加如下设置
+在<strong>根目录</strong>的 `gradle.properties` 添加如下设置
 </p>  
 
 ```properties
