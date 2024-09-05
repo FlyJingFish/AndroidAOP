@@ -5,6 +5,7 @@ import com.flyjingfish.android_aop_annotation.ProceedReturn
 import com.flyjingfish.android_aop_annotation.base.OnBaseSuspendReturnListener
 import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener
 import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener2
+import com.flyjingfish.android_aop_annotation.ex.AndroidAOPPointCutNotFoundException
 import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils.isIgnoreOther
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
@@ -56,11 +57,20 @@ internal object Utils {
             var crashMethodName :String ?= null
             while (iterator.hasNext()) {
                 val stackTraceElement = iterator.next()
+
                 if (
                     stackTraceElement == null
                     ||
                     isInvokeClass(stackTraceElement.className)
                     ) {
+                    iterator.remove()
+                    continue
+                }
+
+                if (
+                    throwable !is AndroidAOPPointCutNotFoundException &&
+                    stackTraceElement.className == AndroidAopJoinPoint::class.qualifiedName
+                ) {
                     iterator.remove()
                     continue
                 }

@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import com.flyjingfish.android_aop_annotation.AopMethod;
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint;
 import com.flyjingfish.android_aop_annotation.base.OnBaseSuspendReturnListener;
+import com.flyjingfish.android_aop_annotation.ex.AndroidAOPIllegalArgumentException;
 import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils;
 import com.flyjingfish.android_aop_annotation.utils.InvokeMethod;
 import com.flyjingfish.android_aop_annotation.utils.Utils;
@@ -136,7 +137,7 @@ class ProceedJoinPointImpl implements ProceedJoinPoint {
     Object realProceed(OnBaseSuspendReturnListener onSuspendReturnListener, Object... args) {
         if (argCount > 0) {
             if (args == null || args.length != argCount) {
-                throw new IllegalArgumentException("proceed 所参数个数不对");
+                throw new AndroidAOPIllegalArgumentException("proceed 所参数个数不对");
             }
         }
 

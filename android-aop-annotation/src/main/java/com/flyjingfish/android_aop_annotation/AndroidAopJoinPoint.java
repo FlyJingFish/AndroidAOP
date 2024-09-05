@@ -6,6 +6,8 @@ import com.flyjingfish.android_aop_annotation.base.BasePointCutSuspend;
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethodSuspend;
 import com.flyjingfish.android_aop_annotation.base.OnBaseSuspendReturnListener;
+import com.flyjingfish.android_aop_annotation.ex.AndroidAOPPointCutNotFoundException;
+import com.flyjingfish.android_aop_annotation.ex.AndroidAOPSuspendReturnException;
 import com.flyjingfish.android_aop_annotation.impl.AopMethodImpl;
 import com.flyjingfish.android_aop_annotation.impl.JoinPoint;
 import com.flyjingfish.android_aop_annotation.impl.ProceedReturnImpl;
@@ -153,7 +155,7 @@ public final class AndroidAopJoinPoint {
         Iterator<PointCutAnnotation> iterator = basePointCuts.iterator();
         JoinPoint.INSTANCE.setHasNext(proceedJoinPoint,basePointCuts.size() > 1);
         if (!iterator.hasNext()){
-            throw new IllegalStateException("在"+targetClassName + "." + originalMethodName+"上没有找到切面处理类，一般来说你应该 clean 项目并重新编译");
+            throw new AndroidAOPPointCutNotFoundException("在"+targetClassName + "." + originalMethodName+"上没有找到切面处理类，一般来说你应该 clean 项目并重新编译");
         }
 
 
@@ -174,9 +176,9 @@ public final class AndroidAopJoinPoint {
                                 } catch (ClassCastException e) {
                                     String message = e.getMessage();
                                     if (message == null || !message.contains("kotlin.coroutines.intrinsics.CoroutineSingletons")){
-                                        throw new RuntimeException(e);
+                                        throw e;
                                     }else {
-                                        throw new RuntimeException("协程函数的切面不可修改返回值，请使用 BasePointCutSuspend");
+                                        throw new AndroidAOPSuspendReturnException("协程函数的切面不可修改返回值，请使用 BasePointCutSuspend");
 //                                        value = proceedJoinPoint.getMethodReturnValue();
                                     }
                                 }
@@ -194,9 +196,9 @@ public final class AndroidAopJoinPoint {
                                 } catch (ClassCastException e) {
                                     String message = e.getMessage();
                                     if (message == null || !message.contains("kotlin.coroutines.intrinsics.CoroutineSingletons")){
-                                        throw new RuntimeException(e);
+                                        throw e;
                                     }else {
-                                        throw new RuntimeException("协程函数的切面不可修改返回值，请使用 MatchClassMethodSuspend");
+                                        throw new AndroidAOPSuspendReturnException("协程函数的切面不可修改返回值，请使用 MatchClassMethodSuspend");
 //                                        value = proceedJoinPoint.getMethodReturnValue();
                                     }
                                 }
@@ -226,9 +228,9 @@ public final class AndroidAopJoinPoint {
                     } catch (ClassCastException e) {
                         String message = e.getMessage();
                         if (message == null || !message.contains("kotlin.coroutines.intrinsics.CoroutineSingletons")){
-                            throw new RuntimeException(e);
+                            throw e;
                         }else {
-                            throw new RuntimeException("协程函数的切面不可修改返回值，请使用 BasePointCutSuspend");
+                            throw new AndroidAOPSuspendReturnException("协程函数的切面不可修改返回值，请使用 BasePointCutSuspend");
 //                            returnValue[0] = proceedJoinPoint.getMethodReturnValue();
                         }
                     }
@@ -246,9 +248,9 @@ public final class AndroidAopJoinPoint {
                     } catch (ClassCastException e) {
                         String message = e.getMessage();
                         if (message == null || !message.contains("kotlin.coroutines.intrinsics.CoroutineSingletons")){
-                            throw new RuntimeException(e);
+                            throw e;
                         }else {
-                            throw new RuntimeException("协程函数的切面不可修改返回值，请使用 MatchClassMethodSuspend");
+                            throw new AndroidAOPSuspendReturnException("协程函数的切面不可修改返回值，请使用 MatchClassMethodSuspend");
 //                            returnValue[0] = proceedJoinPoint.getMethodReturnValue();
                         }
                     }
