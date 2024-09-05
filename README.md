@@ -231,8 +231,10 @@ plugins {
 }
 ```
 
-
-![Alt](/screenshot/two.svg#pic_center) 在**根目录**的 `gradle.properties` 添加如下设置
+<p align = "left">    
+<img  src="https://github.com/FlyJingFish/AndroidAOP/blob/master/screenshot/two.svg" align = "center"  width="25" />
+在**根目录**的 `gradle.properties` 添加如下设置
+</p>  
 
 ```properties
 androidAop.debugMode=true //设置为 true 走您项目当前的打包方式 ，false 则为全量打包方式，不写默认false
