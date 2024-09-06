@@ -159,7 +159,7 @@ public final class AndroidAopJoinPoint {
         Iterator<PointCutAnnotation> iterator = basePointCuts.iterator();
         JoinPoint.INSTANCE.setHasNext(proceedJoinPoint,basePointCuts.size() > 1);
         if (!iterator.hasNext()){
-            if (AndroidAOPDebugUtils.INSTANCE.isDebug()){
+            if (AndroidAOPDebugUtils.INSTANCE.isApkDebug()){
                 throw new AndroidAOPPointCutNotFoundException("在"+targetClassName + "." + originalMethodName+"上没有找到切面处理类，一般来说你应该 clean 项目并重新编译");
             }else {
                 return proceedJoinPoint.proceed();

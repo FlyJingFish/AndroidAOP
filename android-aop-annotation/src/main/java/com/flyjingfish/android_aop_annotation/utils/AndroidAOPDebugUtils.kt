@@ -7,5 +7,5 @@ object AndroidAOPDebugUtils {
         } catch (_: Throwable) {
         }
     }
-    var isDebug : Boolean = false
+    var isApkDebug : Boolean = false
 }

@@ -17,6 +17,6 @@ class AndroidAopInit {
                 handler.post(runnable);
             }
         });
-        AndroidAOPDebugUtils.INSTANCE.setDebug(DebugUtils.INSTANCE.isDebug());
+        AndroidAOPDebugUtils.INSTANCE.setApkDebug(DebugUtils.INSTANCE.isDebug());
     }
 }
