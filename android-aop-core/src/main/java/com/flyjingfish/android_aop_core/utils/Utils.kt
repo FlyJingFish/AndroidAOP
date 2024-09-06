@@ -61,9 +61,9 @@ internal object Utils {
     fun toast(text: CharSequence, duration: Int){
         val onToastListener = AndroidAop.getOnToastListener()
         if (onToastListener != null){
-            onToastListener.onToast(AndroidAopContentProvider.appContext, text, duration)
+            onToastListener.onToast(AndroidAopContentProvider.getAppContext(), text, duration)
         }else{
-            Toast.makeText(AndroidAopContentProvider.appContext,text, duration).show()
+            Toast.makeText(AndroidAopContentProvider.getAppContext(),text, duration).show()
         }
     }
 

@@ -6,6 +6,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.NetworkInfo
 import android.os.Build
+import com.flyjingfish.android_aop_core.AndroidAopContentProvider
 
 @SuppressLint("MissingPermission")
 internal object NetworkUtils {
@@ -18,7 +19,8 @@ internal object NetworkUtils {
      * 判断当前网络可以正常上网
      * 表示此连接此网络并且能成功上网。  例如，对于具有NET_CAPABILITY_INTERNET的网络，这意味着已成功检测到INTERNET连接。
      */
-    fun isConnectedAvailableNetwork(context: Context): Boolean {
+    fun isConnectedAvailableNetwork(): Boolean {
+        val context: Context = AndroidAopContentProvider.getAppContext()
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val network = cm.activeNetwork ?: return false

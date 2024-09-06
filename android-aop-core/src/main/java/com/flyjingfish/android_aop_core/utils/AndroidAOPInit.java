@@ -4,9 +4,10 @@ import android.os.Handler;
 import android.os.Looper;
 
 
+import com.flyjingfish.android_aop_annotation.utils.AndroidAOPDebugUtils;
 import com.flyjingfish.android_aop_annotation.utils.HandlerUtils;
 
-class SetHandler {
+class AndroidAOPInit {
     static {
         Handler handler = new Handler(Looper.getMainLooper());
         HandlerUtils.INSTANCE.setHandler(runnable -> {
@@ -16,5 +17,6 @@ class SetHandler {
                 handler.post(runnable);
             }
         });
+        AndroidAOPDebugUtils.INSTANCE.setDebug(DebugUtils.INSTANCE.isDebug());
     }
 }

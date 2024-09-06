@@ -8,7 +8,10 @@ import android.net.Uri
 
 class AndroidAopContentProvider : ContentProvider() {
     companion object{
-        lateinit var appContext: Context
+        private var appContext: Context? = null
+        fun getAppContext(): Context {
+            return appContext ?: throw IllegalStateException("AndroidAopContentProvider not init")
+        }
     }
     override fun onCreate(): Boolean {
         appContext = context!!

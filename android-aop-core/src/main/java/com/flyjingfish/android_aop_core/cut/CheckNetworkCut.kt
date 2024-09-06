@@ -21,13 +21,13 @@ internal class CheckNetworkCut : BasePointCut<CheckNetwork> {
                         onCheckNetworkListener.invoke(
                             joinPoint,
                             anno,
-                            NetworkUtils.isConnectedAvailableNetwork(AndroidAopContentProvider.appContext)
+                            NetworkUtils.isConnectedAvailableNetwork()
                         )
                     }
                 }
             }
             false -> {
-                when(NetworkUtils.isConnectedAvailableNetwork(AndroidAopContentProvider.appContext)){
+                when(NetworkUtils.isConnectedAvailableNetwork()){
                     true -> joinPoint.proceed()
                     false -> {
                         if (anno.toastText.isNotEmpty()){

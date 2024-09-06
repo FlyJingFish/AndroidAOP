@@ -9,6 +9,10 @@ object ToastUtils {
     private var mToast: Toast? = null
     lateinit var app:Application
 
+    fun makeText(text: CharSequence) {
+        makeText(app, text, Toast.LENGTH_SHORT)?.show()
+    }
+
     fun makeText(context: Context, text: CharSequence) {
         makeText(context.applicationContext, text, Toast.LENGTH_SHORT)?.show()
     }
