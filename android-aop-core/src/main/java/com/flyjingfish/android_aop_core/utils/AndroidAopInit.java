@@ -7,7 +7,7 @@ import android.os.Looper;
 import com.flyjingfish.android_aop_annotation.utils.AndroidAOPDebugUtils;
 import com.flyjingfish.android_aop_annotation.utils.HandlerUtils;
 
-class AndroidAOPInit {
+class AndroidAopInit {
     static {
         Handler handler = new Handler(Looper.getMainLooper());
         HandlerUtils.INSTANCE.setHandler(runnable -> {
