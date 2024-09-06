@@ -30,7 +30,7 @@ internal object AndroidAopBeanUtils {
         return JoinAnnoCutUtils.getMatchClassCreator(annotationName)
     }
 
-    fun getBasePointCut(joinPoint: ProceedJoinPoint, annotationName : String,targetClassName:String, methodKey : String): BasePointCut<Annotation>? {
+    fun getBasePointCut(joinPoint: ProceedJoinPoint, annotationName : String,targetClassName:String, methodKey : String): BasePointCut<Annotation> {
         val key = "$targetClassName-${joinPoint.target}-$methodKey-$annotationName"
         var basePointCut: BasePointCut<Annotation>? = mBasePointCutMap[key]
         if (basePointCut == null) {
