@@ -68,8 +68,8 @@ internal object Utils {
                 }
 
                 if (
-                    throwable !is AndroidAOPPointCutNotFoundException &&
-                    stackTraceElement.className == AndroidAopJoinPoint::class.qualifiedName
+                    stackTraceElement.className == AndroidAopJoinPoint::class.qualifiedName &&
+                    throwable !is AndroidAOPPointCutNotFoundException
                 ) {
                     iterator.remove()
                     continue
