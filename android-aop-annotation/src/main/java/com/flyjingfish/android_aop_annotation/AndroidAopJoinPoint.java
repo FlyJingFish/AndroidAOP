@@ -27,7 +27,7 @@ import kotlin.coroutines.Continuation;
 
 public final class AndroidAopJoinPoint {
     static {
-        AndroidAOPDebugUtils.INSTANCE.init();
+        AndroidAOPDebugUtils.INSTANCE.init$android_aop_annotation();
     }
     private final Object target;
     private final Class<?> targetClass;
