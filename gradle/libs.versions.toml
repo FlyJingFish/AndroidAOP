@@ -2,7 +2,7 @@
 sdkVersion = "31"
 minSdkVersion = "21"
 ksp = "1.8.0-1.0.9"
-kotlinpoet_version = "1.18.1"
+kotlinpoet_version = "1.17.0"
 javapoet_version = "1.13.0"
 gradle_version = "7.4.1"
 javassist_version = "3.30.2-GA"

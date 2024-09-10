@@ -14,3 +14,11 @@ fun KSClassDeclaration.isSubtype(superType :String,logger: KSPLogger):Boolean{
     }
     return false
 }
+
+fun String.getClassName():String{
+    return if (contains(".")){
+        substring(lastIndexOf(".")+1)
+    }else{
+        this
+    }
+}

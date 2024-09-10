@@ -34,7 +34,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -158,13 +161,6 @@ public class AndroidAopProcessor extends AbstractProcessor {
                     .addAnnotation(AopClass.class)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .addSuperinterface(superinterface);
-            MethodSpec.Builder whatsMyName1 = whatsMyName(AOP_METHOD_NAME)
-                    .addAnnotation(AnnotationSpec.builder(AopPointCut.class)
-                            .addMember("value", "$S", "@"+element)
-                            .addMember("pointCutClassName", "$S", className)
-                            .build());
-
-            typeBuilder.addMethod(whatsMyName1.build());
 
             String elementClassName = element.toString();
             String packageName = elementClassName.substring(0, elementClassName.lastIndexOf("."));
@@ -179,7 +175,11 @@ public class AndroidAopProcessor extends AbstractProcessor {
                     .addModifiers(Modifier.FINAL)
                     .addModifiers(Modifier.PUBLIC)
                     .returns(returnType)
-                    .addStatement("return new "+className+"()");
+                    .addStatement("return new $T()",ClassName.bestGuess(className))
+                    .addAnnotation(AnnotationSpec.builder(AopPointCut.class)
+                            .addMember("value", "$S", "@"+element)
+                            .addMember("pointCutClassName", "$S", className)
+                            .build());
 
             typeBuilder.addMethod(whatsMyName2.build());
 
@@ -229,16 +229,6 @@ public class AndroidAopProcessor extends AbstractProcessor {
                     .addAnnotation(AopClass.class)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .addSuperinterface(superinterface);
-            MethodSpec.Builder whatsMyName1 = whatsMyName(AOP_METHOD_NAME)
-                    .addAnnotation(AnnotationSpec.builder(AopMatchClassMethod.class)
-                            .addMember("baseClassName", "$S", className)
-                            .addMember("methodNames", "$S", methodNamesBuilder)
-                            .addMember("pointCutClassName", "$S", element)
-                            .addMember("matchType", "$S", matchType.name())
-                            .addMember("excludeClasses", "$S", excludeClassesBuilder)
-                            .build());
-
-            typeBuilder.addMethod(whatsMyName1.build());
 
             ClassName bindClassName = ClassName.bestGuess(MatchClassMethod.class.getName());
 
@@ -247,7 +237,14 @@ public class AndroidAopProcessor extends AbstractProcessor {
                     .addModifiers(Modifier.PUBLIC)
                     .addAnnotation(Override.class)
                     .returns(bindClassName)
-                    .addStatement("return new "+element+"()");
+                    .addStatement("return new $T()",ClassName.bestGuess(element.toString()))
+                    .addAnnotation(AnnotationSpec.builder(AopMatchClassMethod.class)
+                            .addMember("baseClassName", "$S", className)
+                            .addMember("methodNames", "$S", methodNamesBuilder)
+                            .addMember("pointCutClassName", "$S", element)
+                            .addMember("matchType", "$S", matchType.name())
+                            .addMember("excludeClasses", "$S", excludeClassesBuilder)
+                            .build());
 
             typeBuilder.addMethod(whatsMyName2.build());
 
@@ -360,6 +357,8 @@ public class AndroidAopProcessor extends AbstractProcessor {
 
     private void processCollectMethod(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
         Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(AndroidAopCollectMethod.class);
+
+        Map<String, List<CollectMethod>> funMap = new HashMap<>();
         for (Element element : elements) {
             Name name1 = element.getSimpleName();
 
@@ -448,38 +447,58 @@ public class AndroidAopProcessor extends AbstractProcessor {
                     collectClassName = "java.lang.Object";
                 }
             }
-            String clazzName;
-            try {
-                clazzName = element.getEnclosingElement().getSimpleName()+computeMD5(name1+"("+isClazz+","+collectType+","+regex+","+variableElement.asType()+")");
-            } catch (NoSuchAlgorithmException e) {
-                clazzName = element.getEnclosingElement().getSimpleName().toString();
-            }
 //            System.out.println("collectClassName="+collectClassName);
-            TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(clazzName+"$$AndroidAopClass")
+            List<CollectMethod> list = funMap.computeIfAbsent(element.getEnclosingElement().toString(), k -> new ArrayList<>());
+
+            list.add(new CollectMethod(collectClassName,element.getEnclosingElement().toString(),name1.toString(),isClazz+"",regex,collectType));
+
+
+        }
+
+        Set<String> keySet= funMap.keySet();
+        for (String s : keySet) {
+            TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(getClassName(s)+"$$AndroidAopClass")
                     .addAnnotation(AopClass.class)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
-            MethodSpec.Builder whatsMyName1 = whatsMyName(AOP_METHOD_NAME)
-                    .addAnnotation(AnnotationSpec.builder(AopCollectMethod.class)
-                            .addMember("collectClassName", "$S", collectClassName)
-                            .addMember("invokeClassName", "$S", element.getEnclosingElement())
-                            .addMember("invokeMethod", "$S", name1)
-                            .addMember("isClazz", "$S", isClazz)
-                            .addMember("regex", "$S", regex)
-                            .addMember("collectType", "$S", collectType)
-                            .build());
+            List<CollectMethod> collectMethods = funMap.get(s);
+            String elementClassName = null;
+            for (int i = 0; i < collectMethods.size(); i++) {
+                CollectMethod collectMethod = collectMethods.get(i);
+                MethodSpec.Builder whatsMyName1 = whatsMyName(AOP_METHOD_NAME+i)
+                        .addAnnotation(AnnotationSpec.builder(AopCollectMethod.class)
+                                .addMember("collectClassName", "$S", collectMethod.collectClassName)
+                                .addMember("invokeClassName", "$S", collectMethod.invokeClassName)
+                                .addMember("invokeMethod", "$S", collectMethod.invokeMethod)
+                                .addMember("isClazz", "$S", collectMethod.isClazz)
+                                .addMember("regex", "$S", collectMethod.regex)
+                                .addMember("collectType", "$S", collectMethod.collectType)
+                                .build());
 
-            typeBuilder.addMethod(whatsMyName1.build());
-            TypeSpec typeSpec = typeBuilder.build();
-            String elementClassName = element.getEnclosingElement().toString();
-            String packageName = elementClassName.substring(0, elementClassName.lastIndexOf("."));
-
-            JavaFile javaFile = JavaFile.builder(packageName, typeSpec)
-                    .build();
-            try {
-                javaFile.writeTo(mFiler);
-            } catch (IOException e) {
-//                throw new RuntimeException(e);
+                typeBuilder.addMethod(whatsMyName1.build());
+                elementClassName = collectMethod.invokeClassName;
             }
+
+            if (elementClassName != null){
+                TypeSpec typeSpec = typeBuilder.build();
+                String packageName = elementClassName.substring(0, elementClassName.lastIndexOf("."));
+
+                JavaFile javaFile = JavaFile.builder(packageName, typeSpec)
+                        .build();
+                try {
+                    javaFile.writeTo(mFiler);
+                } catch (IOException e) {
+//                throw new RuntimeException(e);
+                }
+            }
+
+        }
+    }
+
+    String getClassName(String str){
+        if (str.contains(".")){
+             return str.substring(str.lastIndexOf(".")+1);
+        }else{
+             return str;
         }
     }
 

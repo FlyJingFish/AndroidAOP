@@ -169,7 +169,16 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         .addAnnotation(AopClass::class)
         .addSuperinterface(superinterface)
 
-      val whatsMyName1 = whatsMyName(AOP_METHOD_NAME)
+      val implementClassName = ClassName(symbol.packageName.asString(), "$symbol")
+      val bindClassName = ClassName.bestGuess(BasePointCut::class.qualifiedName!!)
+      val returnType = bindClassName.parameterizedBy(implementClassName)
+
+      val whatsMyName2 = whatsMyName("newInstance")
+        .addModifiers(KModifier.OVERRIDE)
+        .addModifiers(KModifier.FINAL)
+        .addModifiers(KModifier.PUBLIC)
+        .returns(returnType)
+        .addStatement("return $value()")
         .addAnnotation(
           AnnotationSpec.builder(AopPointCut::class)
             .addMember(
@@ -182,19 +191,6 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
             )
             .build()
         )
-
-      typeBuilder.addFunction(whatsMyName1.build())
-
-      val implementClassName = ClassName(symbol.packageName.asString(), "$symbol")
-      val bindClassName = ClassName.bestGuess(BasePointCut::class.qualifiedName!!)
-      val returnType = bindClassName.parameterizedBy(implementClassName)
-
-      val whatsMyName2 = whatsMyName("newInstance")
-        .addModifiers(KModifier.OVERRIDE)
-        .addModifiers(KModifier.FINAL)
-        .addModifiers(KModifier.PUBLIC)
-        .returns(returnType)
-        .addStatement("return $value()")
 
       typeBuilder.addFunction(whatsMyName2.build())
 
@@ -273,7 +269,15 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
           }
         }
       }
-      val whatsMyName1 = whatsMyName(AOP_METHOD_NAME)
+
+      val bindClassName = ClassName.bestGuess(MatchClassMethod::class.qualifiedName!!)
+
+      val whatsMyName2 = whatsMyName("newInstance")
+        .addModifiers(KModifier.OVERRIDE)
+        .addModifiers(KModifier.FINAL)
+        .addModifiers(KModifier.PUBLIC)
+        .returns(bindClassName)
+        .addStatement("return $symbol()")
         .addAnnotation(
           AnnotationSpec.builder(AopMatchClassMethod::class)
             .addMember(
@@ -298,17 +302,6 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
             )
             .build()
         )
-
-      typeBuilder.addFunction(whatsMyName1.build())
-
-      val bindClassName = ClassName.bestGuess(MatchClassMethod::class.qualifiedName!!)
-
-      val whatsMyName2 = whatsMyName("newInstance")
-        .addModifiers(KModifier.OVERRIDE)
-        .addModifiers(KModifier.FINAL)
-        .addModifiers(KModifier.PUBLIC)
-        .returns(bindClassName)
-        .addStatement("return $symbol()")
 
       typeBuilder.addFunction(whatsMyName2.build())
 
@@ -492,6 +485,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
   private fun processCollectMethod(resolver: Resolver): List<KSAnnotated> {
     val symbols :Sequence<KSAnnotated> =
       resolver.getSymbolsWithAnnotation(AndroidAopCollectMethod::class.qualifiedName!!)
+    val funMap = mutableMapOf<String,MutableList<CollectMethod>>()
     for (symbol in symbols) {
       val annotationMap = getAnnotation(symbol)
       if (symbol !is KSFunctionDeclaration) continue
@@ -640,47 +634,66 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         }
       }
 
-
+      val funAllList = funMap[invokeClassName]
+      val funList = if (funAllList == null){
+        val list = mutableListOf<CollectMethod>()
+        funMap[invokeClassName] = list
+        list
+      }else{
+        funAllList
+      }
+      funList.add(CollectMethod(symbol,collectClassName,invokeClassName,symbol.toString(),"$isClazz", regex, collectType))
 //      logger.error("invokeClassName=${symbol.location}")
-      clazzName += computeMD5("$symbol($isClazz,$collectType,$regex,$collectClassName)")
-      val fileName = "${clazzName}\$\$AndroidAopClass";
+
+    }
+
+    funMap.forEach {(invokeClassName,funList) ->
+      val fileName = "${invokeClassName.getClassName()}\$\$AndroidAopClass";
       val typeBuilder = TypeSpec.classBuilder(
         fileName
       ).addModifiers(KModifier.FINAL)
         .addAnnotation(AopClass::class)
-      val whatsMyName1 = whatsMyName(AOP_METHOD_NAME)
-        .addAnnotation(
-          AnnotationSpec.builder(AopCollectMethod::class)
-            .addMember(
-              "collectClassName = %S",
-              collectClassName
-            )
-            .addMember(
-              "invokeClassName = %S",
-              invokeClassName
-            )
-            .addMember(
-              "invokeMethod = %S",
-              symbol
-            )
-            .addMember(
-              "isClazz = %S",
-              "$isClazz"
-            )
-            .addMember(
-              "regex = %S",
-              "$regex"
-            )
-            .addMember(
-              "collectType = %S",
-              "$collectType"
-            )
-            .build()
-        )
+      var symbol : KSFunctionDeclaration?=null
+      for ((index,collectMethod) in funList.withIndex()) {
+        symbol = collectMethod.symbol
+        val whatsMyName1 = whatsMyName(AOP_METHOD_NAME+index)
+          .addAnnotation(
+            AnnotationSpec.builder(AopCollectMethod::class)
+              .addMember(
+                "collectClassName = %S",
+                collectMethod.collectClassName
+              )
+              .addMember(
+                "invokeClassName = %S",
+                collectMethod.invokeClassName
+              )
+              .addMember(
+                "invokeMethod = %S",
+                collectMethod.invokeMethod
+              )
+              .addMember(
+                "isClazz = %S",
+                collectMethod.isClazz
+              )
+              .addMember(
+                "regex = %S",
+                collectMethod.regex
+              )
+              .addMember(
+                "collectType = %S",
+                collectMethod.collectType
+              )
+              .build()
+          )
 
-      typeBuilder.addFunction(whatsMyName1.build())
-      writeToFile(typeBuilder,symbol.packageName.asString(), fileName, symbol)
+        typeBuilder.addFunction(whatsMyName1.build())
+      }
+
+      symbol?.let {
+        writeToFile(typeBuilder,it.packageName.asString(), fileName, it)
+      }
     }
+
     return symbols.filter { !it.validate() }.toList()
   }
   private val javaPattern: Pattern = Pattern.compile("<\\? extends .*?>")
