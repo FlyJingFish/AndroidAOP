@@ -690,7 +690,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       }
 
       symbol?.let {
-        writeToFile(typeBuilder,it.packageName.asString(), fileName, it)
+        writeToFile(typeBuilder,it.packageName.asString(), fileName, it.containingFile)
       }
     }
 
@@ -726,12 +726,21 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
     fileName: String,
     symbol: KSAnnotated
   ) {
+    writeToFile(typeBuilder, packageName, fileName, symbol.containingFile)
+  }
+
+  private fun writeToFile(
+    typeBuilder: TypeSpec.Builder,
+    packageName:String,
+    fileName: String,
+    sourceFile: KSFile?
+  ) {
     val typeSpec = typeBuilder.build()
     val kotlinFile = FileSpec.builder(packageName, fileName).addType(typeSpec)
       .build()
     codeGenerator
       .createNewFile(
-        Dependencies(false, symbol.containingFile!!),
+        Dependencies(false, sourceFile!!),
         packageName,
         fileName
       )
