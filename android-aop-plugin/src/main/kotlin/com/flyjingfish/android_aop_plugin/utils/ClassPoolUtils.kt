@@ -37,4 +37,7 @@ object ClassPoolUtils {
         return classPool
     }
 
+    fun release(){
+        classPool = null
+    }
 }

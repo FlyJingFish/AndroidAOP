@@ -10,6 +10,7 @@ import com.flyjingfish.android_aop_plugin.scanner_visitor.SuspendReturnScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import com.flyjingfish.android_aop_plugin.utils.AopTaskUtils
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
+import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils._CLASS
@@ -36,10 +37,12 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.util.Locale
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
 import kotlin.system.measureTimeMillis
+
 
 abstract class AssembleAndroidAopTask : DefaultTask() {
 
@@ -77,6 +80,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             scanFile()
         }
         jarOutput.close()
+        ClassPoolUtils.release()
         println("AndroidAOP woven info code finish, current cost time ${scanTimeCost}ms")
 
     }
@@ -660,6 +664,16 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             }
             jarFile.close()
         }
+//        val os = System.getProperty("os.name").lowercase(Locale.getDefault())
+//        if (os.contains("win")) {
+//            val tmpOtherDir = File(Utils.aopTransformInitTempDir(project,variant))
+//            val file = WovenIntoCode.createInitClass(tmpOtherDir)
+//            val relativePath = tmpOtherDir.toURI().relativize(file.toURI()).path
+//            val className = relativePath.replace(File.separatorChar, '/')
+//            file.inputStream().use {
+//                jarOutput.saveEntry(className,it)
+//            }
+//        }
         ClassFileUtils.wovenInfoInvokeClass(newClasses)
         if (!ClassFileUtils.reflectInvokeMethod){
             for (file in ClassFileUtils.outputDir.walk()) {

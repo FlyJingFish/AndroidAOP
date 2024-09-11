@@ -435,7 +435,9 @@ object WovenIntoCode {
                 throw RuntimeException(e)
             }
         }
-        return ctClass.toBytecode()
+        val wovenBytes = ctClass.toBytecode()
+        ctClass.detach()
+        return wovenBytes
     }
 
     private fun CtMethod.addKeepClassAnnotation(constPool: ConstPool){
@@ -486,7 +488,7 @@ object WovenIntoCode {
     }
 
 
-    fun createInitClass(output:File) {
+    fun createInitClass(output:File) :File{
         val className = "com.flyjingfish.android_aop_annotation.utils.DebugAndroidAopInit"
         //新建一个类生成器，COMPUTE_FRAMES，COMPUTE_MAXS这2个参数能够让asm自动更新操作数栈
         val cw = ClassWriter(COMPUTE_FRAMES or COMPUTE_MAXS)
@@ -525,6 +527,7 @@ object WovenIntoCode {
         val outFile = File(path)
         outFile.checkExist()
         classByteData.saveFile(outFile)
+        return outFile
     }
 
     fun createCollectClass(output:File) {
@@ -673,6 +676,7 @@ object WovenIntoCode {
                             }else{
                                 iterator.remove()
                             }
+                            ctClass.detach()
                         } catch (_: Exception) {
                         }
                     }

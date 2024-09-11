@@ -124,14 +124,16 @@ open class ReplaceBaseClassVisitor(
         }
 
         private fun hasConstructor(extendClass:String, descriptor: String):Boolean{
-            val constructor = try {
+            val hasConstructor = try {
                 val cp = ClassPoolUtils.getNewClassPool()
                 val ctClass = cp.get(extendClass)
-                ctClass.getConstructor(descriptor)
+                val has = ctClass.getConstructor(descriptor) != null
+                ctClass.detach()
+                has
             } catch (e: Exception) {
-                null
+                false
             }
-            return constructor != null
+            return hasConstructor
         }
     }
 }

@@ -66,10 +66,10 @@ object ClassFileUtils {
             }
             val classByteData = ctClass.toBytecode()
 //            //把类数据写入到class文件,这样你就可以把这个类文件打包供其他的人使用
-
             outFile.checkExist()
             classByteData.saveFile(outFile)
             cacheFiles.add(path)
+            ctClass.detach()
         }
         return cacheFiles
     }

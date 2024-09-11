@@ -509,6 +509,7 @@ object WovenInfoUtils {
                 }
             }
         }
+        ctClass.detach()
     }
 
     fun addCollectConfig(aopCollectCut: AopCollectCut){

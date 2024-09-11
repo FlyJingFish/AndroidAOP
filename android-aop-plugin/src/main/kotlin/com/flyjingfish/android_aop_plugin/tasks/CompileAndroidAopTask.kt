@@ -10,6 +10,7 @@ import com.flyjingfish.android_aop_plugin.scanner_visitor.SuspendReturnScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import com.flyjingfish.android_aop_plugin.utils.AopTaskUtils
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
+import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils._CLASS
@@ -53,6 +54,9 @@ class CompileAndroidAopTask(
         println("AndroidAOP woven info code start")
         val scanTimeCost = measureTimeMillis {
             scanFile()
+        }
+        if (isApp){
+            ClassPoolUtils.release()
         }
         println("AndroidAOP woven info code finish, current cost time ${scanTimeCost}ms")
 

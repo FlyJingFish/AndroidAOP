@@ -278,6 +278,9 @@ object Utils {
     fun aopTransformCollectTempDir(project:Project, variantName:String):String{
         return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempCollectClass/"
     }
+    fun aopTransformInitTempDir(project:Project, variantName:String):String{
+        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempInitClass/"
+    }
     fun aopTransformIgnoreJarDir(project:Project, variantName:String):String{
         return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempTransformIgnoreJar/"
     }
@@ -429,7 +432,10 @@ fun String.instanceof(instanceofClassNameKey: String): Boolean {
         val pool = ClassPoolUtils.classPool
         val clazz = pool!!.get(className)
         val instanceofClazz = pool.get(instanceofClassName)
-        clazz.subtypeOf(instanceofClazz)
+        val subtypeOf = clazz.subtypeOf(instanceofClazz)
+        clazz.detach()
+        instanceofClazz.detach()
+        subtypeOf
     } catch (e: Exception) {
         false
     }
