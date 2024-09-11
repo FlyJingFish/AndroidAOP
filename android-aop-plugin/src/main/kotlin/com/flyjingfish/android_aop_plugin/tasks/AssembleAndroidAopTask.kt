@@ -665,16 +665,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             }
             jarFile.close()
         }
-//        val os = System.getProperty("os.name").lowercase(Locale.getDefault())
-//        if (os.contains("win")) {
-//            val tmpOtherDir = File(Utils.aopTransformInitTempDir(project,variant))
-//            val file = WovenIntoCode.createInitClass(tmpOtherDir)
-//            val relativePath = tmpOtherDir.toURI().relativize(file.toURI()).path
-//            val className = relativePath.replace(File.separatorChar, '/')
-//            file.inputStream().use {
-//                jarOutput.saveEntry(className,it)
-//            }
-//        }
+
         ClassFileUtils.wovenInfoInvokeClass(newClasses)
         if (!ClassFileUtils.reflectInvokeMethod){
             for (file in ClassFileUtils.outputDir.walk()) {
