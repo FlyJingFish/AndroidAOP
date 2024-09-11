@@ -17,6 +17,7 @@ import com.flyjingfish.android_aop_plugin.utils.Utils._CLASS
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.computeMD5
 import com.flyjingfish.android_aop_plugin.utils.getFileClassname
+import com.flyjingfish.android_aop_plugin.utils.getRelativePath
 import com.flyjingfish.android_aop_plugin.utils.inRules
 import com.flyjingfish.android_aop_plugin.utils.isJarSignatureRelatedFiles
 import org.gradle.api.DefaultTask
@@ -209,7 +210,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 }
                 try {
                     val entryClazzName = entryName.replace(_CLASS,"")
-                    val relativePath = directory.toURI().relativize(file.toURI()).path
+                    val relativePath = file.getRelativePath(directory)
                     val thisClassName = Utils.slashToDotClassName(entryName).replace(_CLASS,"")
                     val isClassFile = file.name.endsWith(_CLASS)
                     val isWovenInfoCode = isClassFile
@@ -678,8 +679,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         if (!ClassFileUtils.reflectInvokeMethod){
             for (file in ClassFileUtils.outputDir.walk()) {
                 if (file.isFile) {
-                    val relativePath = ClassFileUtils.outputDir.toURI().relativize(file.toURI()).path
-                    val className = relativePath.replace(File.separatorChar, '/')
+                    val className = file.getFileClassname(ClassFileUtils.outputDir)
                     val invokeClassName = Utils.slashToDot(className).replace(_CLASS,"")
                     if (!WovenInfoUtils.containsInvokeClass(invokeClassName)){
                         file.inputStream().use {
@@ -693,8 +693,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         WovenIntoCode.createCollectClass(collectDir)
         for (file in collectDir.walk()) {
             if (file.isFile) {
-                val relativePath = collectDir.toURI().relativize(file.toURI()).path
-                val className = relativePath.replace(File.separatorChar, '/')
+                val className = file.getFileClassname(collectDir)
                 val invokeClassName = Utils.slashToDot(className).replace(_CLASS,"")
                 if (!WovenInfoUtils.containsInvokeClass(invokeClassName)){
                     file.inputStream().use {

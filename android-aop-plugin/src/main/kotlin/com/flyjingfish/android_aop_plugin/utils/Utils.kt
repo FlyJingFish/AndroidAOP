@@ -473,7 +473,10 @@ fun AndroidAopConfig.Companion.inRules(className: String):Boolean{
 }
 
 fun File.getFileClassname(directory :File):String {
-    val relativePath = directory.toURI().relativize(toURI()).path
-    val className = relativePath.replace(File.separatorChar, '/')
-    return className
+    val relativePath = getRelativePath(directory)
+    return relativePath.replace(File.separatorChar, '/')
+}
+
+fun File.getRelativePath(directory :File):String {
+    return directory.toURI().relativize(toURI()).path
 }

@@ -17,6 +17,7 @@ import com.flyjingfish.android_aop_plugin.utils.Utils._CLASS
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.checkExist
 import com.flyjingfish.android_aop_plugin.utils.getFileClassname
+import com.flyjingfish.android_aop_plugin.utils.getRelativePath
 import com.flyjingfish.android_aop_plugin.utils.inRules
 import com.flyjingfish.android_aop_plugin.utils.printLog
 import com.flyjingfish.android_aop_plugin.utils.saveEntry
@@ -120,7 +121,7 @@ class CompileAndroidAopTask(
                     return
                 }
                 val entryClazzName = entryName.replace(_CLASS,"")
-                val relativePath = directory.toURI().relativize(file.toURI()).path
+                val relativePath = file.getRelativePath(directory)
 
                 val thisClassName = Utils.slashToDotClassName(entryName).replace(_CLASS,"")
                 val isClassFile = file.name.endsWith(_CLASS)
@@ -312,7 +313,8 @@ class CompileAndroidAopTask(
             WovenIntoCode.createCollectClass(tmpOtherDir)
             for (file in tmpOtherDir.walk()) {
                 if (file.isFile) {
-                    val relativePath = tmpOtherDir.toURI().relativize(file.toURI()).path
+                    val relativePath = file.getRelativePath(tmpOtherDir)
+
 //                    println("relativePath=$relativePath")
                     val target = File(output.absolutePath + File.separatorChar + relativePath)
                     target.checkExist()
