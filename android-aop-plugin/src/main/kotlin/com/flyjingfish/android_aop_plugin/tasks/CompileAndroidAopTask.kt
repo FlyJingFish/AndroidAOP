@@ -16,6 +16,7 @@ import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils._CLASS
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.checkExist
+import com.flyjingfish.android_aop_plugin.utils.getFileClassname
 import com.flyjingfish.android_aop_plugin.utils.inRules
 import com.flyjingfish.android_aop_plugin.utils.printLog
 import com.flyjingfish.android_aop_plugin.utils.saveEntry
@@ -114,7 +115,7 @@ class CompileAndroidAopTask(
         val newClasses = mutableListOf<ByteArray>()
         fun processFile(file : File,directory:File,directoryPath:String){
             if (file.isFile) {
-                val entryName = file.absolutePath.replace("$directoryPath/","")
+                val entryName = file.getFileClassname(directory)
                 if (entryName.isEmpty() || entryName.startsWith("META-INF/") || "module-info.class" == entryName) {
                     return
                 }
@@ -140,7 +141,7 @@ class CompileAndroidAopTask(
 
 
                 val hasCollect = WovenInfoUtils.getAopCollectClassMap()[thisClassName] != null
-                val outFile = File(tmpCompileDir.absolutePath+"/"+relativePath)
+                val outFile = File(tmpCompileDir.absolutePath+File.separatorChar+relativePath)
                 fun mkOutFile(){
                     outFile.checkExist()
                     val tmpFile = TmpFile(file,outFile)
@@ -313,7 +314,7 @@ class CompileAndroidAopTask(
                 if (file.isFile) {
                     val relativePath = tmpOtherDir.toURI().relativize(file.toURI()).path
 //                    println("relativePath=$relativePath")
-                    val target = File(output.absolutePath + "/" + relativePath)
+                    val target = File(output.absolutePath + File.separatorChar + relativePath)
                     target.checkExist()
                     file.inputStream().use {
                         target.saveEntry(it)

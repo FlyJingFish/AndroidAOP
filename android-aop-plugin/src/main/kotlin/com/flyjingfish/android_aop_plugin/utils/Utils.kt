@@ -258,34 +258,34 @@ object Utils {
     }
 
     fun invokeJsonFile(project:Project, variantName:String):String{
-        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/cacheInfo.json"
+        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/cacheInfo.json".replace('/',File.separatorChar)
     }
     fun aopCompileTempDir(project:Project, variantName:String):String{
-        return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileClass/"
+        return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileClass/".replace('/',File.separatorChar)
     }
     fun aopCompileTempOtherDir(project:Project, variantName:String):String{
-        return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileOtherClass/"
+        return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileOtherClass/".replace('/',File.separatorChar)
     }
     fun aopCompileTempInvokeDir(project:Project, variantName:String):String{
-        return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileInvokeClass/"
+        return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileInvokeClass/".replace('/',File.separatorChar)
     }
     fun aopCompileTempOtherJson(project:Project, variantName:String):String{
-        return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileOtherClassJson/needDelClassInfo.json"
+        return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileOtherClassJson/needDelClassInfo.json".replace('/',File.separatorChar)
     }
     fun aopTransformTempDir(project:Project, variantName:String):String{
-        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempInvokeClass/"
+        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempInvokeClass/".replace('/',File.separatorChar)
     }
     fun aopTransformCollectTempDir(project:Project, variantName:String):String{
-        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempCollectClass/"
+        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempCollectClass/".replace('/',File.separatorChar)
     }
     fun aopTransformInitTempDir(project:Project, variantName:String):String{
-        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempInitClass/"
+        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempInitClass/".replace('/',File.separatorChar)
     }
     fun aopTransformIgnoreJarDir(project:Project, variantName:String):String{
-        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempTransformIgnoreJar/"
+        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempTransformIgnoreJar/".replace('/',File.separatorChar)
     }
     fun configJsonFile(project:Project):String{
-        return project.buildDir.absolutePath+"/tmp/android-aop/config/androidAopConfig.json"
+        return project.buildDir.absolutePath+"/tmp/android-aop/config/androidAopConfig.json".replace('/',File.separatorChar)
     }
 
     private val classnamePattern = Pattern.compile("Lkotlin/coroutines/jvm/internal/SuspendLambda;Lkotlin/jvm/functions/Function2<Lkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation<-.*?>;Ljava/lang/Object;>;")
@@ -470,4 +470,10 @@ fun AndroidAopConfig.Companion.inRules(className: String):Boolean{
         className,
         excludes
     )
+}
+
+fun File.getFileClassname(directory :File):String {
+    val relativePath = directory.toURI().relativize(toURI()).path
+    val className = relativePath.replace(File.separatorChar, '/')
+    return className
 }

@@ -16,6 +16,7 @@ import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils._CLASS
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.computeMD5
+import com.flyjingfish.android_aop_plugin.utils.getFileClassname
 import com.flyjingfish.android_aop_plugin.utils.inRules
 import com.flyjingfish.android_aop_plugin.utils.isJarSignatureRelatedFiles
 import org.gradle.api.DefaultTask
@@ -37,7 +38,6 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
-import java.util.Locale
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
@@ -120,7 +120,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         if (ignoreJar.isNotEmpty()){
             val temporaryDir = File(Utils.aopTransformIgnoreJarDir(project,variant))
             for (path in ignoreJar) {
-                val destDir = "${temporaryDir.absolutePath}/${File(path).name.computeMD5()}"
+                val destDir = "${temporaryDir.absolutePath}${File.separatorChar}${File(path).name.computeMD5()}"
                 val destFile = File(destDir)
                 destFile.deleteRecursively()
                 Utils.openJar(path,destDir)
@@ -203,7 +203,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         val newClasses = mutableListOf<ByteArray>()
         fun processFile(file : File,directory:File,directoryPath:String){
             if (file.isFile) {
-                val entryName = file.absolutePath.replace("$directoryPath/","")
+                val entryName = file.getFileClassname(directory)
                 if (entryName.isEmpty() || entryName.startsWith("META-INF/") || "module-info.class" == entryName) {
                     return
                 }

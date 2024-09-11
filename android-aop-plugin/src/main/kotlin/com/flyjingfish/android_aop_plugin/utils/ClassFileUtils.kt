@@ -39,7 +39,7 @@ object ClassFileUtils {
 
             val className = invokeClass.packageName
             val invokeBody = invokeClass.invokeBody
-            val path = outputDir.absolutePath + "/" +Utils.dotToSlash(className)+".class"
+            val path = outputDir.absolutePath + File.separatorChar +Utils.dotToSlash(className).replace('/',File.separatorChar)+".class"
             val outFile = File(path)
             if (outputCacheDir != null && outFile.exists()){
                 continue
@@ -79,14 +79,14 @@ object ClassFileUtils {
             return
         }
         invokeClasses.add(InvokeClass(className,invokeBody,methodName))
-        if (File(outputDir.absolutePath + "/" +Utils.dotToSlash(className)+".class").exists()){
+        if (File(outputDir.absolutePath + File.separatorChar +Utils.dotToSlash(className).replace('/',File.separatorChar)+".class").exists()){
             return
         }
         val cacheOutFir = outputCacheDir
         val outFile = if (cacheOutFir != null){
-            File(cacheOutFir.absolutePath + "/" +Utils.dotToSlash(className)+".class")
+            File(cacheOutFir.absolutePath + File.separatorChar +Utils.dotToSlash(className).replace('/',File.separatorChar)+".class")
         }else{
-            File(outputDir.absolutePath + "/" +Utils.dotToSlash(className)+".class")
+            File(outputDir.absolutePath + File.separatorChar +Utils.dotToSlash(className).replace('/',File.separatorChar)+".class")
         }
         if (outFile.exists()){
             return
@@ -140,12 +140,12 @@ object ClassFileUtils {
             }
         }
         outputCacheDir?.let {
-            val file = File(it.absolutePath + "/" +Utils.dotToSlash(className)+".class")
+            val file = File(it.absolutePath +File.separatorChar +Utils.dotToSlash(className).replace('/',File.separatorChar)+".class")
             if (file.exists()){
                 file.delete()
             }
         }
-        val file = File(outputDir.absolutePath + "/" +Utils.dotToSlash(className)+".class")
+        val file = File(outputDir.absolutePath + File.separatorChar +Utils.dotToSlash(className).replace('/',File.separatorChar)+".class")
         if (file.exists()){
             file.delete()
         }

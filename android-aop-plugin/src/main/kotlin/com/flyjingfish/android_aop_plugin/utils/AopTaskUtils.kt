@@ -23,7 +23,7 @@ import java.util.jar.JarFile
 object AopTaskUtils {
     fun processFileForConfig(file : File, directory: File, directoryPath:String){
         if (file.isFile) {
-            val className = file.absolutePath.replace("$directoryPath/","")
+            val className = file.getFileClassname(directory)
             WovenInfoUtils.addClassName(className)
             if (file.name.endsWith(Utils.AOP_CONFIG_END_NAME)) {
                 FileInputStream(file).use { inputs ->
@@ -136,7 +136,7 @@ object AopTaskUtils {
     fun processFileForSearch(file : File, directory: File, directoryPath:String,addClassMethodRecords:MutableMap<String,ClassMethodRecord>,deleteClassMethodRecords: MutableSet<String>){
         if (file.isFile) {
             val isClassFile = file.name.endsWith(Utils._CLASS)
-            val entryName = file.absolutePath.replace("$directoryPath/","")
+            val entryName = file.getFileClassname(directory)
             val thisClassName = Utils.slashToDotClassName(entryName).replace(Utils._CLASS,"")
             if (isClassFile && AndroidAopConfig.inRules(thisClassName)) {
                 FileInputStream(file).use { inputs ->
@@ -175,7 +175,7 @@ object AopTaskUtils {
             }
 
             if (file.absolutePath.endsWith(Utils._CLASS)){
-                val className = file.absolutePath.replace("$directoryPath/","").replace(".class","")
+                val className = file.getFileClassname(directory).replace(".class","")
                 WovenInfoUtils.addExtendsReplace(Utils.slashToDot(className))
 
                 val isAopCutClass = WovenInfoUtils.isAopMethodCutClass(className) || WovenInfoUtils.isAopMatchCutClass(className)

@@ -88,7 +88,7 @@ object InitConfig {
 
 
     fun initCutInfo(project: Project,clear:Boolean = true): Boolean {
-        temporaryDir = File(project.buildDir.absolutePath + "/tmp")
+        temporaryDir = File(project.buildDir.absolutePath + "/tmp".replace('/',File.separatorChar))
         cutInfoFile = File(temporaryDir, "cutInfo.json")
         if (clear){
             clearCache()

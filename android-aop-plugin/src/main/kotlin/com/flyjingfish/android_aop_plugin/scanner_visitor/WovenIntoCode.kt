@@ -520,7 +520,7 @@ object WovenIntoCode {
         mv.visitMaxs(0, 0)
         mv.visitEnd()
         //设置必要的类路径
-        val path = output.absolutePath + "/" +Utils.dotToSlash(className)+".class"
+        val path = output.absolutePath + File.separatorChar +Utils.dotToSlash(className).replace('/',File.separatorChar)+".class"
         //获取类的byte数组
         val classByteData = cw.toByteArray()
         //把类数据写入到class文件,这样你就可以把这个类文件打包供其他的人使用
@@ -688,7 +688,7 @@ object WovenIntoCode {
             mv.visitMaxs(0, 0)
             mv.visitEnd()
             //设置必要的类路径
-            val path = output.absolutePath + "/" +Utils.dotToSlash(className)+".class"
+            val path = output.absolutePath + File.separatorChar +Utils.dotToSlash(className).replace('/',File.separatorChar)+".class"
             //获取类的byte数组
             val classByteData = cw.toByteArray()
             //把类数据写入到class文件,这样你就可以把这个类文件打包供其他的人使用
