@@ -35,7 +35,7 @@
 
 **11、丰富完善的使用文档助你完全理解本库的使用规则[点此前往wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki)**
 
-**12、更有帮助你生成切面代码的插件供你使用[点此前往下载](https://github.com/FlyJingFish/AndroidAOP/wiki/AOP-%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E6%8F%92%E4%BB%B6)**
+**12、更有帮助你生成切面代码的插件助手供你使用[点此前往下载](https://github.com/FlyJingFish/AndroidAOP/wiki/AOP-%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E5%8A%A9%E6%89%8B)**
 
 
 #### [点此下载apk,也可扫下边二维码下载](https://github.com/FlyJingFish/AndroidAOP/blob/master/apk/release/app-release.apk?raw=true)
