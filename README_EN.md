@@ -36,7 +36,7 @@
 
 **11. Rich and complete usage documentation helps you fully understand the usage rules of this library [click here to go to the wiki document](https://github.com/FlyJingFish/AndroidAOP/wiki)**
 
-**12. There are also plug-ins that help you generate section codes for you to use [click here to download](https://github.com/FlyJingFish/AndroidAOP/wiki/AOP-%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E6%8F%92%E4%BB%B6)**
+**12. There are also plug-ins that help you generate section codes for you to use [click here to download](https://github.com/FlyJingFish/AndroidAOP/wiki/AOP-%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E5%8A%A9%E6%89%8B)**
 
 #### [Click here to download apk, or scan the QR code below to download](https://github.com/FlyJingFish/AndroidAOP/blob/master/apk/release/app-release.apk?raw=true)
 
