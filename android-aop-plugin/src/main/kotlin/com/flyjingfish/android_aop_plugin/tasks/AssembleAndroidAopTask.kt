@@ -20,6 +20,7 @@ import com.flyjingfish.android_aop_plugin.utils.getFileClassname
 import com.flyjingfish.android_aop_plugin.utils.getRelativePath
 import com.flyjingfish.android_aop_plugin.utils.inRules
 import com.flyjingfish.android_aop_plugin.utils.isJarSignatureRelatedFiles
+import com.flyjingfish.android_aop_plugin.utils.toClassPath
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
@@ -227,7 +228,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                         isSuspend = false
                         methodsRecord
                     }
-                    val jarEntryName: String = relativePath.replace(File.separatorChar, '/')
+                    val jarEntryName: String = relativePath.toClassPath()
                     fun realCopy(){
                         file.inputStream().use {
                             jarOutput.saveEntry(jarEntryName,it)

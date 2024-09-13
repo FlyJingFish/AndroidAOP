@@ -13,10 +13,14 @@ import com.flyjingfish.android_aop_plugin.utils.AndroidConfig
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
+import com.flyjingfish.android_aop_plugin.utils.adapterOSPath
 import org.codehaus.groovy.runtime.DefaultGroovyMethods
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.configurationcache.extensions.capitalized
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 import java.io.File
 
 class CompilePlugin(private val root:Boolean): BasePlugin() {
@@ -50,10 +54,16 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
             }
         }
 
-
+        val kotlinCompileFilePathMap = mutableMapOf<String, KotlinCompileTool>()
         variants.all { variant ->
             if (syncConfig){
                 AndroidAopConfig.syncConfig(project)
+            }
+            try {
+                project.tasks.withType(KotlinCompile::class.java).configureEach { task ->
+                    kotlinCompileFilePathMap[task.name] = task
+                }
+            } catch (_: Exception) {
             }
             val javaCompile: AbstractCompile =
                 if (DefaultGroovyMethods.hasProperty(variant, "javaCompileProvider") != null) {
@@ -113,7 +123,14 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                     if (javaPath.exists()){
                         localInput.add(javaPath)
                     }
-                    val kotlinPath = File(project.buildDir.path + "/tmp/kotlin-classes/" + variantName)
+                    val task = kotlinCompileFilePathMap["compile${variantName.capitalized()}Kotlin"]
+                    val cacheDir = try {
+                        task?.destinationDirectory?.get()?.asFile
+                    } catch (e: Exception) {
+                        null
+                    }
+                    val kotlinPath = cacheDir ?: File(project.buildDir.path + "/tmp/kotlin-classes/".adapterOSPath() + variantName)
+
                     if (kotlinPath.exists()){
                         localInput.add(kotlinPath)
                     }

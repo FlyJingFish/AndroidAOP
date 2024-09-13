@@ -13,6 +13,7 @@ import com.flyjingfish.android_aop_plugin.utils.Utils.CONVERSIONS_CLASS
 import com.flyjingfish.android_aop_plugin.utils.Utils.JOIN_POINT_CLASS
 import com.flyjingfish.android_aop_plugin.utils.Utils.KEEP_CLASS
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
+import com.flyjingfish.android_aop_plugin.utils.adapterOSPath
 import com.flyjingfish.android_aop_plugin.utils.checkExist
 import com.flyjingfish.android_aop_plugin.utils.computeMD5
 import com.flyjingfish.android_aop_plugin.utils.instanceof
@@ -520,7 +521,7 @@ object WovenIntoCode {
         mv.visitMaxs(0, 0)
         mv.visitEnd()
         //设置必要的类路径
-        val path = output.absolutePath + File.separatorChar +Utils.dotToSlash(className).replace('/',File.separatorChar)+".class"
+        val path = output.absolutePath + File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class"
         //获取类的byte数组
         val classByteData = cw.toByteArray()
         //把类数据写入到class文件,这样你就可以把这个类文件打包供其他的人使用
@@ -688,7 +689,7 @@ object WovenIntoCode {
             mv.visitMaxs(0, 0)
             mv.visitEnd()
             //设置必要的类路径
-            val path = output.absolutePath + File.separatorChar +Utils.dotToSlash(className).replace('/',File.separatorChar)+".class"
+            val path = output.absolutePath + File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class"
             //获取类的byte数组
             val classByteData = cw.toByteArray()
             //把类数据写入到class文件,这样你就可以把这个类文件打包供其他的人使用

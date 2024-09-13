@@ -20,6 +20,7 @@ dependencies {
     implementation libs.javassist
     implementation libs.gson
     implementation project(path: ':android-aop-annotation')
+    implementation libs.kotlin.gradle.plugin
 }
 // 发布到gradlePluginPortal
 gradlePlugin {

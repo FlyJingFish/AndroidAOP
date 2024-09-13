@@ -258,34 +258,34 @@ object Utils {
     }
 
     fun invokeJsonFile(project:Project, variantName:String):String{
-        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/cacheInfo.json".replace('/',File.separatorChar)
+        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/cacheInfo.json".adapterOSPath()
     }
     fun aopCompileTempDir(project:Project, variantName:String):String{
-        return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileClass/".replace('/',File.separatorChar)
+        return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileClass/".adapterOSPath()
     }
     fun aopCompileTempOtherDir(project:Project, variantName:String):String{
-        return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileOtherClass/".replace('/',File.separatorChar)
+        return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileOtherClass/".adapterOSPath()
     }
     fun aopCompileTempInvokeDir(project:Project, variantName:String):String{
-        return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileInvokeClass/".replace('/',File.separatorChar)
+        return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileInvokeClass/".adapterOSPath()
     }
     fun aopCompileTempOtherJson(project:Project, variantName:String):String{
-        return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileOtherClassJson/needDelClassInfo.json".replace('/',File.separatorChar)
+        return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileOtherClassJson/needDelClassInfo.json".adapterOSPath()
     }
     fun aopTransformTempDir(project:Project, variantName:String):String{
-        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempInvokeClass/".replace('/',File.separatorChar)
+        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempInvokeClass/".adapterOSPath()
     }
     fun aopTransformCollectTempDir(project:Project, variantName:String):String{
-        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempCollectClass/".replace('/',File.separatorChar)
+        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempCollectClass/".adapterOSPath()
     }
     fun aopTransformInitTempDir(project:Project, variantName:String):String{
-        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempInitClass/".replace('/',File.separatorChar)
+        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempInitClass/".adapterOSPath()
     }
     fun aopTransformIgnoreJarDir(project:Project, variantName:String):String{
-        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempTransformIgnoreJar/".replace('/',File.separatorChar)
+        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempTransformIgnoreJar/".adapterOSPath()
     }
     fun configJsonFile(project:Project):String{
-        return project.buildDir.absolutePath+"/tmp/android-aop/config/androidAopConfig.json".replace('/',File.separatorChar)
+        return project.buildDir.absolutePath+"/tmp/android-aop/config/androidAopConfig.json".adapterOSPath()
     }
 
     private val classnamePattern = Pattern.compile("Lkotlin/coroutines/jvm/internal/SuspendLambda;Lkotlin/jvm/functions/Function2<Lkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation<-.*?>;Ljava/lang/Object;>;")
@@ -473,10 +473,17 @@ fun AndroidAopConfig.Companion.inRules(className: String):Boolean{
 }
 
 fun File.getFileClassname(directory :File):String {
-    val relativePath = getRelativePath(directory)
-    return relativePath.replace(File.separatorChar, '/')
+    return getRelativePath(directory).toClassPath()
 }
 
 fun File.getRelativePath(directory :File):String {
     return directory.toURI().relativize(toURI()).path
+}
+
+fun String.adapterOSPath():String {
+    return replace('/',File.separatorChar)
+}
+
+fun String.toClassPath():String {
+    return replace(File.separatorChar, '/')
 }
