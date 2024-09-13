@@ -278,9 +278,6 @@ object Utils {
     fun aopTransformCollectTempDir(project:Project, variantName:String):String{
         return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempCollectClass/".adapterOSPath()
     }
-    fun aopTransformInitTempDir(project:Project, variantName:String):String{
-        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempInitClass/".adapterOSPath()
-    }
     fun aopTransformIgnoreJarDir(project:Project, variantName:String):String{
         return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempTransformIgnoreJar/".adapterOSPath()
     }
