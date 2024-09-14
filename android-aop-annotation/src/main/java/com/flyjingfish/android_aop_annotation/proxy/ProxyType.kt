@@ -1,4 +1,4 @@
-package com.flyjingfish.android_aop_core.proxy
+package com.flyjingfish.android_aop_annotation.proxy
 
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethod
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceNew

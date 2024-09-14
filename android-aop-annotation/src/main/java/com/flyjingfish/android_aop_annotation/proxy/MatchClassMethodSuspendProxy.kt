@@ -1,12 +1,12 @@
-package com.flyjingfish.android_aop_core.proxy
+package com.flyjingfish.android_aop_annotation.proxy
 
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
 import com.flyjingfish.android_aop_annotation.ProceedJoinPointSuspend
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceClass
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethodSuspend
-import com.flyjingfish.android_aop_core.proxy.impl.ProceedJoinPointProxy
-import com.flyjingfish.android_aop_core.proxy.impl.ProceedJoinPointSuspendProxy
+import com.flyjingfish.android_aop_annotation.proxy.impl.ProceedJoinPointProxy
+import com.flyjingfish.android_aop_annotation.proxy.impl.ProceedJoinPointSuspendProxy
 
 /**
  * 代理 [MatchClassMethodSuspend]，并使 [AndroidAopReplaceClass] 使用起来类似于 [AndroidAopMatchClassMethod]

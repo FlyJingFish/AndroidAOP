@@ -2,8 +2,8 @@ package com.flyjingfish.androidaop
 
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceClass
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethod
-import com.flyjingfish.android_aop_core.proxy.ProxyMethod
-import com.flyjingfish.android_aop_core.proxy.ProxyType
+import com.flyjingfish.android_aop_annotation.proxy.ProxyMethod
+import com.flyjingfish.android_aop_annotation.proxy.ProxyType
 
 //@AndroidAopReplaceClass("com.flyjingfish.androidaop.ThirdActivity")
 object ReplaceGetData3 {

@@ -4,7 +4,7 @@ import android.util.Log
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod
 import com.flyjingfish.android_aop_annotation.enums.MatchType
-import com.flyjingfish.android_aop_core.proxy.MatchClassMethodProxy
+import com.flyjingfish.android_aop_annotation.proxy.MatchClassMethodProxy
 
 @AndroidAopMatchClassMethod(
     targetClassName = "com.flyjingfish.test_lib.replace.ReplaceToast",

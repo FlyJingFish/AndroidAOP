@@ -1,4 +1,4 @@
-package com.flyjingfish.android_aop_core.proxy
+package com.flyjingfish.android_aop_annotation.proxy
 
 import kotlin.reflect.KClass
 
@@ -23,5 +23,5 @@ annotation class ProxyMethod(
      * 代理的方法的实际类型，为适配作准备
      * 除了设置 [ProxyType.METHOD] ，其他类型不作适配
      */
-    val type:ProxyType
+    val type: ProxyType
 )

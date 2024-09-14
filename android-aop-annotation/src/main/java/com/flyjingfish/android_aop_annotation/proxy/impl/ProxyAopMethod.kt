@@ -1,10 +1,10 @@
-package com.flyjingfish.android_aop_core.proxy.impl
+package com.flyjingfish.android_aop_annotation.proxy.impl
 
 import androidx.annotation.RequiresApi
 import com.flyjingfish.android_aop_annotation.AopMethod
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceClass
-import com.flyjingfish.android_aop_core.proxy.ProxyType
+import com.flyjingfish.android_aop_annotation.proxy.ProxyType
 import java.lang.reflect.Parameter
 import java.lang.reflect.Type
 

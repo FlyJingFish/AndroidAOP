@@ -12,6 +12,9 @@ android {
     kotlin {
         jvmToolchain(11)
     }
+    buildFeatures {
+        buildConfig = false
+    }
 }
 dependencies {
 //    compileOnly 'androidx.core:core-ktx:1.8.0'

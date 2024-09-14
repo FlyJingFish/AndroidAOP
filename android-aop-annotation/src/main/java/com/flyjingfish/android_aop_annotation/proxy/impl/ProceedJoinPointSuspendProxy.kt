@@ -1,4 +1,4 @@
-package com.flyjingfish.android_aop_core.proxy.impl
+package com.flyjingfish.android_aop_annotation.proxy.impl
 
 import com.flyjingfish.android_aop_annotation.ProceedJoinPointSuspend
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod

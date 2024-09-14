@@ -8,8 +8,8 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethodSuspend
 import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener
 import com.flyjingfish.android_aop_annotation.enums.MatchType
-import com.flyjingfish.android_aop_core.proxy.MatchClassMethodProxy
-import com.flyjingfish.android_aop_core.proxy.MatchClassMethodSuspendProxy
+import com.flyjingfish.android_aop_annotation.proxy.MatchClassMethodProxy
+import com.flyjingfish.android_aop_annotation.proxy.MatchClassMethodSuspendProxy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

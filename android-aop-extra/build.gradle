@@ -1,21 +1,16 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.devtools.ksp'
 }
 apply from: "$rootDir/gradle/android_base.gradle"
 apply from: "$rootDir/gradle/android_publish.gradle"
 android {
-    namespace 'com.flyjingfish.android_aop_core'
-    buildTypes {
-        release {
-            consumerProguardFiles 'proguard-rules.pro'
-        }
-        debug {
-            consumerProguardFiles 'proguard-rules.pro'
-        }
-    }
+    namespace 'com.flyjingfish.android_aop_extra'
 }
 
 dependencies {
     implementation project(path: ':android-aop-annotation')
+    implementation project(path: ':android-aop-core')
+    ksp project(':android-aop-ksp')
 }

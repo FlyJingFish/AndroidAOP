@@ -1,10 +1,10 @@
-package com.flyjingfish.android_aop_core.proxy
+package com.flyjingfish.android_aop_annotation.proxy
 
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceClass
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod
-import com.flyjingfish.android_aop_core.proxy.impl.ProceedJoinPointProxy
+import com.flyjingfish.android_aop_annotation.proxy.impl.ProceedJoinPointProxy
 
 
 /**
