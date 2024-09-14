@@ -171,6 +171,8 @@ dependencies {
     //必须项 👇
     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:2.1.5'
     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:2.1.5'
+    // 非必须项 👇这个包提供了一些常见的注解切面
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-extra:2.1.5'
     
     //必须项 👇如果您项目内已经有了这项不用加也可以
     implementation 'androidx.appcompat:appcompat:1.3.0' // 至少在1.3.0及以上

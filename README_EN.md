@@ -155,7 +155,9 @@ dependencies {
      //Required items 👇
      implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:2.1.5'
      implementation 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:2.1.5'
-     
+     // Optional 👇This package provides some common annotation aspects
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-extra:2.1.5'
+    
      //Required item 👇If you already have this item in your project, you don’t need to add it.
      implementation 'androidx.appcompat:appcompat:1.3.0' // At least in 1.3.0 and above
      
