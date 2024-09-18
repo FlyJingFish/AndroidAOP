@@ -17,5 +17,5 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':android-aop-annotation')
+    api project(path: ':android-aop-annotation')
 }
