@@ -102,4 +102,9 @@ dependencies {
     debugImplementation libs.leakcanary
     implementation libs.bcprov.jdk15on
     implementation "com.squareup.retrofit2:retrofit:2.8.1"
+
+    testImplementation libs.junit
+    androidTestImplementation libs.androidx.test.ext.junit
+    androidTestImplementation libs.espresso.core
+    androidTestImplementation libs.androidx.rules
 }
