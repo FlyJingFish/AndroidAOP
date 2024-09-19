@@ -146,6 +146,7 @@ object AopTaskUtils {
             val isClassFile = file.name.endsWith(Utils._CLASS)
             val entryName = file.getFileClassname(directory)
             val thisClassName = Utils.slashToDotClassName(entryName).replace(Utils._CLASS,"")
+            val className = file.getFileClassname(directory).replace(".class","")
             if (isClassFile && AndroidAopConfig.inRules(thisClassName)) {
                 FileInputStream(file).use { inputs ->
                     val bytes = inputs.readAllBytes()
@@ -180,7 +181,7 @@ object AopTaskUtils {
                                         }
                                     }
                                 ), ClassReader.EXPAND_FRAMES)
-                                processOverride(bytes, matchAopMatchCuts,entryName){
+                                processOverride(Utils.slashToDot(className), matchAopMatchCuts,entryName){
                                     val record = ClassMethodRecord(file.absolutePath, it)
                                     addClassMethodRecords[file.absolutePath+it.getKey()]  = record
                                 }
@@ -193,7 +194,6 @@ object AopTaskUtils {
             }
 
             if (file.absolutePath.endsWith(Utils._CLASS)){
-                val className = file.getFileClassname(directory).replace(".class","")
                 WovenInfoUtils.addExtendsReplace(Utils.slashToDot(className))
 
                 val isAopCutClass = WovenInfoUtils.isAopMethodCutClass(className) || WovenInfoUtils.isAopMatchCutClass(className)
@@ -213,12 +213,13 @@ object AopTaskUtils {
 
     }
 
-    private fun processOverride(bytes:ByteArray,matchAopMatchCuts: List<AopMatchCut>?,entryName:String,addCut :(MethodRecord) -> Unit){
+    private fun processOverride(className:String,matchAopMatchCuts: List<AopMatchCut>?,entryName:String,addCut :(MethodRecord) -> Unit){
         matchAopMatchCuts?.filter { it.overrideMethod && !it.isMatchAllMethod() && !it.isMatchPackageName() }?.let {
-            val cp = ClassPoolUtils.getNewClassPool()
-            val byteArrayInputStream: InputStream =
-                ByteArrayInputStream(bytes)
-            val ctClass = cp.makeClass(byteArrayInputStream)
+            val ctClass = try {
+                ClassPoolUtils.classPool?.getCtClass(className) ?: return
+            } catch (e: Exception) {
+                return
+            }
             val isInterface = Modifier.isInterface(ctClass.modifiers)
             if (isInterface){
                 return@let
@@ -229,9 +230,7 @@ object AopTaskUtils {
                         && !Modifier.isPrivate(ct.modifiers)
             }
 
-            val ctSuperClassName = ctClass.superclass.name
             val ctClassName = ctClass.name
-            val isSamePackageName = ctSuperClassName.substring(0,ctSuperClassName.lastIndexOf(".")) == ctClassName.substring(0,ctClassName.lastIndexOf("."))
             for (aopMatchCut in it) {
                 for (methodName in aopMatchCut.methodNames) {
                     if (methodName != "@null"){
@@ -246,7 +245,21 @@ object AopTaskUtils {
                                 } catch (e: Exception) {
                                     true
                                 }
-                                if (isBack && (!Modifier.isPackage(allMethod.modifiers)||isSamePackageName)) {
+                                val superMethodClass = allMethod.declaringClass
+                                val ctSuperClassName = superMethodClass.name
+                                val isInnerClass = ctSuperClassName.contains("$")
+                                val isSamePackageName = ctSuperClassName.substring(0,ctSuperClassName.lastIndexOf(".")) == ctClassName.substring(0,ctClassName.lastIndexOf("."))
+                                val isBackMethod = if (isInnerClass){
+                                    if (Modifier.isStatic(superMethodClass.modifiers) || Modifier.isInterface(superMethodClass.modifiers)){
+                                        isSamePackageName
+                                    }else{
+                                        false
+                                    }
+                                }else{
+                                    isSamePackageName
+                                }
+
+                                if (isBack && (!Modifier.isPackage(allMethod.modifiers)||isBackMethod)) {
                                     val cutInfo = CutInfo(
                                         "匹配切面",
                                         Utils.slashToDot(
@@ -289,6 +302,7 @@ object AopTaskUtils {
                 val isClassFile = entryName.endsWith(Utils._CLASS)
 //                    printLog("tranEntryName="+tranEntryName)
                 val thisClassName = Utils.slashToDotClassName(entryName).replace(Utils._CLASS,"")
+                val className = entryName.replace(".class","")
                 if (isClassFile && AndroidAopConfig.inRules(thisClassName)) {
 
                     jarFile.getInputStream(jarEntry).use { inputs ->
@@ -322,7 +336,7 @@ object AopTaskUtils {
                                             }
                                         }
                                     ), ClassReader.EXPAND_FRAMES)
-                                    processOverride(bytes, matchAopMatchCuts,entryName){
+                                    processOverride(Utils.slashToDot(className), matchAopMatchCuts,entryName){
                                         val record = ClassMethodRecord(entryName, it)
                                         addClassMethodRecords[entryName+it.getKey()]  = record
                                     }
@@ -333,7 +347,7 @@ object AopTaskUtils {
                     }
                 }
                 if (entryName.endsWith(Utils._CLASS)){
-                    val className = entryName.replace(".class","")
+
                     WovenInfoUtils.addExtendsReplace(Utils.slashToDot(className))
 
                     val isAopCutClass = WovenInfoUtils.isAopMethodCutClass(className) || WovenInfoUtils.isAopMatchCutClass(className)
