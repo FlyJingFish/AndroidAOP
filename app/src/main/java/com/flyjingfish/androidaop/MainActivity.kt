@@ -235,6 +235,7 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
         setLogcat("自定义Kotlin 注解切面进入方法,$num100")
     }
 
+
     suspend fun getData2(num:Int):Int{
         return withContext(Dispatchers.IO) {
             getDelayResult2(num)

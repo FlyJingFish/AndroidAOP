@@ -2,7 +2,7 @@ package com.flyjingfish.android_aop_plugin.beans
 
 import java.util.regex.Pattern
 
-data class AopMatchCut(val baseClassName:String, val methodNames:Array<String>,val cutClassName:String,val matchType:String = "EXTENDS",val excludeClass:Array<String>?) {
+data class AopMatchCut(val baseClassName:String, val methodNames:Array<String>,val cutClassName:String,val matchType:String = "EXTENDS",val excludeClass:Array<String>?, val overrideMethod: Boolean = false) {
     enum class MatchType{
         EXTENDS,SELF,DIRECT_EXTENDS,LEAF_EXTENDS
     }

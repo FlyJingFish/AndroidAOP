@@ -1,4 +1,4 @@
-package com.flyjingfish.androidaop
+package com.flyjingfish.androidaop.test
 
 import android.util.Log
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
@@ -7,14 +7,14 @@ import com.flyjingfish.android_aop_annotation.base.MatchClassMethod
 import com.flyjingfish.android_aop_annotation.enums.MatchType
 
 @AndroidAopMatchClassMethod(
-    targetClassName = "com.flyjingfish.androidaop.*",
-    methodName = ["*"],
-    type = MatchType.SELF,
-    excludeClasses = ["com.flyjingfish.androidaop.ReplaceGetData3","com.flyjingfish.androidaop.ThirdActivity"],
+    targetClassName = "com.flyjingfish.androidaop.test.TestOverride",
+    methodName = ["test"],
+    type = MatchType.EXTENDS,
+    overrideMethod = true
 )
-class MatchAll : MatchClassMethod {
+class MatchTestOverride : MatchClassMethod {
     override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
-        Log.e("MatchAll", "---->${joinPoint.targetClass}--${joinPoint.targetMethod.name}--${joinPoint.targetMethod.parameterTypes.toList()}");
+        Log.e("MatchTestOverride", "---->${joinPoint}")
         return joinPoint.proceed()
     }
 }

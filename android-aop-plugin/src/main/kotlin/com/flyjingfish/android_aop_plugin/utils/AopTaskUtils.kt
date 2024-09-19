@@ -1,23 +1,31 @@
 package com.flyjingfish.android_aop_plugin.utils
 
+import com.flyjingfish.android_aop_plugin.beans.AopMatchCut
 import com.flyjingfish.android_aop_plugin.beans.ClassMethodRecord
+import com.flyjingfish.android_aop_plugin.beans.CutInfo
+import com.flyjingfish.android_aop_plugin.beans.CutMethodJson
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.beans.WovenResult
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ClassSuperScanner
+import com.flyjingfish.android_aop_plugin.scanner_visitor.MethodParamNamesScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.MethodReplaceInvokeVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ReplaceBaseClassVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.SearchAOPConfigVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.SearchAopMethodVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.SuspendReturnScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
+import javassist.Modifier
 import org.gradle.api.Project
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.MethodVisitor
+import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileInputStream
+import java.io.InputStream
+import java.util.UUID
 import java.util.jar.JarFile
 
 object AopTaskUtils {
@@ -150,8 +158,13 @@ object AopTaskUtils {
                             WovenInfoUtils.deleteReplaceMethodInfo(file.absolutePath)
                             try {
                                 val classReader = ClassReader(bytes)
+                                var matchAopMatchCuts: List<AopMatchCut> ?= null
                                 classReader.accept(SearchAopMethodVisitor(
                                     object : SearchAopMethodVisitor.OnCallBackMethod{
+                                        override fun onBackMatch(aopMatchCuts: List<AopMatchCut>) {
+                                            matchAopMatchCuts = aopMatchCuts
+                                        }
+
                                         override fun onBackMethodRecord(methodRecord: MethodRecord) {
                                             val record = ClassMethodRecord(file.absolutePath, methodRecord)
 //                                                    WovenInfoUtils.addClassMethodRecords(record)
@@ -167,7 +180,12 @@ object AopTaskUtils {
                                         }
                                     }
                                 ), ClassReader.EXPAND_FRAMES)
+                                processOverride(bytes, matchAopMatchCuts,entryName){
+                                    val record = ClassMethodRecord(file.absolutePath, it)
+                                    addClassMethodRecords[file.absolutePath+it.getKey()]  = record
+                                }
                             } catch (e: Exception) {
+                                e.printStackTrace()
                             }
                         }
                     }
@@ -195,6 +213,69 @@ object AopTaskUtils {
 
     }
 
+    private fun processOverride(bytes:ByteArray,matchAopMatchCuts: List<AopMatchCut>?,entryName:String,addCut :(MethodRecord) -> Unit){
+        matchAopMatchCuts?.filter { it.overrideMethod && !it.isMatchAllMethod() && !it.isMatchPackageName() }?.let {
+            val cp = ClassPoolUtils.getNewClassPool()
+            val byteArrayInputStream: InputStream =
+                ByteArrayInputStream(bytes)
+            val ctClass = cp.makeClass(byteArrayInputStream)
+            val isInterface = Modifier.isInterface(ctClass.modifiers)
+            if (isInterface){
+                return@let
+            }
+            val allMethods = ctClass.methods.filter { ct ->
+                !Modifier.isStatic(ct.modifiers)
+                        && !Modifier.isFinal(ct.modifiers)
+                        && !Modifier.isPrivate(ct.modifiers)
+            }
+
+            val ctSuperClassName = ctClass.superclass.name
+            val ctClassName = ctClass.name
+            val isSamePackageName = ctSuperClassName.substring(0,ctSuperClassName.lastIndexOf(".")) == ctClassName.substring(0,ctClassName.lastIndexOf("."))
+            for (aopMatchCut in it) {
+                for (methodName in aopMatchCut.methodNames) {
+                    if (methodName != "@null"){
+                        val matchMethodInfo =
+                            Utils.getMethodInfo(methodName)
+                        for (allMethod in allMethods) {
+                            val name = allMethod.name
+                            val descriptor = allMethod.signature
+                            if (matchMethodInfo != null && name == matchMethodInfo.name) {
+                                val isBack = try {
+                                    Utils.verifyMatchCut(descriptor,matchMethodInfo)
+                                } catch (e: Exception) {
+                                    true
+                                }
+                                if (isBack && (!Modifier.isPackage(allMethod.modifiers)||isSamePackageName)) {
+                                    val cutInfo = CutInfo(
+                                        "匹配切面",
+                                        Utils.slashToDot(
+                                            entryName.replace(Utils._CLASS,"")
+                                        ),
+                                        aopMatchCut.cutClassName,
+                                        CutMethodJson(name, descriptor, false)
+                                    )
+                                    val methodRecord = MethodRecord(
+                                        name,
+                                        descriptor,
+                                        mutableSetOf(aopMatchCut.cutClassName),
+                                        false,
+                                        mutableMapOf<String, CutInfo>().apply { put(UUID.randomUUID().toString(), cutInfo)},
+                                        true,
+                                        allMethod.modifiers
+                                    )
+
+                                    addCut(methodRecord)
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
     fun processJarForSearch(file : File,addClassMethodRecords:MutableMap<String,ClassMethodRecord>,deleteClassMethodRecords: MutableSet<String>){
         val jarFile = JarFile(file)
         val enumeration = jarFile.entries()
@@ -219,8 +300,13 @@ object AopTaskUtils {
                                 WovenInfoUtils.deleteReplaceMethodInfo(entryName)
                                 try {
                                     val classReader = ClassReader(bytes)
+                                    var matchAopMatchCuts: List<AopMatchCut> ?= null
                                     classReader.accept(SearchAopMethodVisitor(
                                         object :SearchAopMethodVisitor.OnCallBackMethod{
+                                            override fun onBackMatch(aopMatchCuts: List<AopMatchCut>) {
+                                                matchAopMatchCuts = aopMatchCuts
+                                            }
+
                                             override fun onBackMethodRecord(methodRecord: MethodRecord) {
                                                 val record = ClassMethodRecord(entryName, methodRecord)
 //                                                    WovenInfoUtils.addClassMethodRecords(record)
@@ -236,6 +322,10 @@ object AopTaskUtils {
                                             }
                                         }
                                     ), ClassReader.EXPAND_FRAMES)
+                                    processOverride(bytes, matchAopMatchCuts,entryName){
+                                        val record = ClassMethodRecord(entryName, it)
+                                        addClassMethodRecords[entryName+it.getKey()]  = record
+                                    }
                                 } catch (e: Exception) {
                                 }
                             }

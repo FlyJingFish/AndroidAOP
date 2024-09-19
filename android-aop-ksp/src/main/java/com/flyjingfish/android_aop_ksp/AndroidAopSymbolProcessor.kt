@@ -239,11 +239,12 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       val typeStr: String? = classMethodMap["type"]?.toString()
       val matchType = typeStr?.substring(typeStr.lastIndexOf(".") + 1) ?: "EXTENDS"
 
-
       val className = (symbol as KSClassDeclaration).packageName.asString() + "." + symbol
       if (targetClassName == null || methodNames == null) {
         continue
       }
+      val overrideMethodStr: String = classMethodMap["overrideMethod"]?.toString() ?: "false"
+      val overrideMethod = overrideMethodStr == "true"
       val superinterface = ClassName.bestGuess(MatchClassMethodCreator::class.qualifiedName!!)
 
 
@@ -268,6 +269,10 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
             excludeClassesBuilder.append("-")
           }
         }
+      }
+      val matchAll = "*" == methodNamesBuilder.toString() || targetClassName.contains("*")
+      if (matchAll && overrideMethod){
+        throw IllegalArgumentException("注意：$symbol 匹配所有方法或匹配包名时不可以设置 overrideMethod 为 true")
       }
 
       val bindClassName = ClassName.bestGuess(MatchClassMethod::class.qualifiedName!!)
@@ -299,6 +304,10 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
             .addMember(
               "excludeClasses = %S",
               excludeClassesBuilder
+            )
+            .addMember(
+              "overrideMethod = %S",
+              overrideMethod.toString()
             )
             .build()
         )

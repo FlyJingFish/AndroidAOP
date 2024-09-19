@@ -42,7 +42,7 @@ import kotlin.coroutines.Continuation
 
 class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
     ClassNode(Opcodes.ASM9) {
-    private val aopMatchCuts = mutableListOf<AopMatchCut>();
+    private val aopMatchCuts = mutableListOf<AopMatchCut>()
 
     lateinit var className: String
     private var replaceInvokeClassName: String?=null
@@ -145,6 +145,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                 }
             }
         }
+        val aopMatchCuts = mutableListOf<AopMatchCut>();
         //        logger.error("className="+className+",superName="+superName+",interfaces="+ Arrays.asList(interfaces));
         WovenInfoUtils.getAopMatchCuts().forEach { (_: String?, aopMatchCut: AopMatchCut) ->
             if (aopMatchCut.isPackageName()){
@@ -245,6 +246,12 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
             ) {
                 aopMatchCuts.add(aopMatchCut)
             }
+        }
+        for (aopMatchCut in aopMatchCuts) {
+            this.aopMatchCuts.add(AopMatchCut(aopMatchCut.baseClassName,aopMatchCut.methodNames.copyOf(),aopMatchCut.cutClassName,aopMatchCut.matchType,aopMatchCut.excludeClass?.copyOf(),aopMatchCut.overrideMethod))
+        }
+        if (aopMatchCuts.isNotEmpty()){
+            onCallBackMethod?.onBackMatch(this.aopMatchCuts)
         }
         super.visit(version, access, name, signature, superName, interfaces)
     }
@@ -452,7 +459,8 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                 if (aopMatchCut.isMatchAllMethod()){
                     addMatchMethodCut()
                 }else{
-                    for (methodName in aopMatchCut.methodNames) {
+                    val removeIndex = mutableSetOf<Int>()
+                    for ((index,methodName) in aopMatchCut.methodNames.withIndex()) {
                         val matchMethodInfo = getMethodInfo(methodName)
                         if (matchMethodInfo != null && name == matchMethodInfo.name) {
                             val isBack = try {
@@ -462,9 +470,13 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                             }
                             if (isBack) {
                                 addMatchMethodCut()
+                                removeIndex.add(index)
                                 //                            cacheMethodRecords.add(new MethodRecord(name, descriptor, aopMatchCut.getCutClassName()));
                             }
                         }
+                    }
+                    for (index in removeIndex) {
+                        aopMatchCut.methodNames[index] = "@null"
                     }
                 }
 
@@ -496,27 +508,29 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                     //sam 方法名
                     val samMethodName = tmpNode.name
                     val bsmArgs = tmpNode.bsmArgs
-                    val samMethodType = bsmArgs[0] as Type
-                    val methodName = bsmArgs[1] as Handle
-                    //sam 实现方法实际参数描述符
+                    if (bsmArgs[0] is Type && bsmArgs[1] is Handle){
+                        val samMethodType = bsmArgs[0] as Type
+                        val methodName = bsmArgs[1] as Handle
+                        //sam 实现方法实际参数描述符
 //                  Type implMethodType = (Type) bsmArgs[2];
-                    val lambdaName = methodName.name
-                    val originalClassName = slashToDot(samBase.substring(1).replace(";", ""))
-                    val thisClassName = originalClassName.replace("$", ".")
-                    //                    logger.error("className="+className+",tmpNode.name="+tmpNode.name+",desc=" + desc + ",samBase=" + samBase + ",samMethodName="
+                        val lambdaName = methodName.name
+                        val originalClassName = slashToDot(samBase.substring(1).replace(";", ""))
+                        val thisClassName = originalClassName.replace("$", ".")
+                        //                    logger.error("className="+className+",tmpNode.name="+tmpNode.name+",desc=" + desc + ",samBase=" + samBase + ",samMethodName="
 //                            + samMethodName + ",methodName=" + lambdaName+ ",methodDesc=" + methodName.getDesc()+",thisClassName="+thisClassName+
 //                            ",getDescriptor"+samMethodType.getDescriptor());
-                    val lambdaDesc = methodName.desc
-                    val samMethodDesc = samMethodType.descriptor
-                    val lambdaMethod = LambdaMethod(
-                        samMethodName,
-                        samMethodDesc,
-                        thisClassName,
-                        originalClassName,
-                        lambdaName,
-                        lambdaDesc
-                    )
-                    lambdaMethodList.add(lambdaMethod)
+                        val lambdaDesc = methodName.desc
+                        val samMethodDesc = samMethodType.descriptor
+                        val lambdaMethod = LambdaMethod(
+                            samMethodName,
+                            samMethodDesc,
+                            thisClassName,
+                            originalClassName,
+                            lambdaName,
+                            lambdaDesc
+                        )
+                        lambdaMethodList.add(lambdaMethod)
+                    }
                 }
             }
 
@@ -598,6 +612,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
 
 
     interface OnCallBackMethod {
+        fun onBackMatch(aopMatchCuts: List<AopMatchCut>)
         fun onBackMethodRecord(methodRecord: MethodRecord)
         fun onDeleteMethodRecord(methodRecord: MethodRecord)
         fun onBackReplaceMethodInfo(replaceMethodInfo: ReplaceMethodInfo)

@@ -208,6 +208,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
             String[] methodNames = cut.methodName();
             String[] excludeClasses = cut.excludeClasses();
             MatchType matchType = cut.type();
+            boolean overrideMethod = cut.overrideMethod()
             StringBuilder methodNamesBuilder = new StringBuilder();
             for (int i = 0; i < methodNames.length; i++) {
                 methodNamesBuilder.append(methodNames[i]);
@@ -222,7 +223,10 @@ public class AndroidAopProcessor extends AbstractProcessor {
                     excludeClassesBuilder.append("-");
                 }
             }
-
+            boolean matchAll = "*".equals(methodNamesBuilder.toString()) || className.contains("*");
+            if (matchAll && overrideMethod){
+                throw new IllegalArgumentException("注意："+element+" 匹配所有方法或匹配包名时不可以设置 overrideMethod 为 true");
+            }
             ClassName superinterface = ClassName.bestGuess(MatchClassMethodCreator.class.getName());
 
             TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(name1+"$$AndroidAopClass")

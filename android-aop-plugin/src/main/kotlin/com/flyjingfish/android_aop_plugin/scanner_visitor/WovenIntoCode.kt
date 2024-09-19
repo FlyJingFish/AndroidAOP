@@ -42,6 +42,7 @@ import java.io.InputStream
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
+
 object WovenIntoCode {
     @Throws(Exception::class)
     fun modifyClass(
@@ -84,6 +85,8 @@ object WovenIntoCode {
         var thisHasCollect = false
         var thisHasStaticClock = false
         var thisCollectClassName :String ?= null
+        var ctClazzName :String ?= null
+        var superClassName :String ?= null
         if (hasReplace){
             cr.accept(object :MethodReplaceInvokeVisitor(cw){
                 override fun visit(
@@ -97,6 +100,8 @@ object WovenIntoCode {
                     super.visit(version, access, name, signature, superName, interfaces)
                     thisHasCollect = hasCollect
                     thisCollectClassName = thisClassName
+                    superClassName = superName
+                    ctClazzName = name
                 }
                 override fun visitMethod(
                     access: Int,
@@ -130,6 +135,8 @@ object WovenIntoCode {
                     super.visit(version, access, name, signature, superName, interfaces)
                     thisHasCollect = hasCollect
                     thisCollectClassName = thisClassName
+                    superClassName = superName
+                    ctClazzName = name
                 }
                 override fun visitMethod(
                     access: Int,
@@ -153,6 +160,9 @@ object WovenIntoCode {
         }
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
             if (value in wovenRecord){
+                return@forEach
+            }
+            if (value.overrideMethod){
                 return@forEach
             }
             val oldMethodName = value.methodName
@@ -263,6 +273,16 @@ object WovenIntoCode {
                     super.visitEnd()
                 }
             }, 0)
+        }
+        methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
+            if (value in wovenRecord){
+                return@forEach
+            }
+            if (value.overrideMethod && superClassName != null && ctClazzName != null){
+                wovenMethodCode(cw,superClassName!!, value.methodName,value.methodName,value.descriptor,value.modifier)
+                val newMethodName = Utils.getTargetMethodName(value.methodName, ctClazzName!!, value.descriptor)
+                wovenMethodCode(cw,superClassName!!, value.methodName,newMethodName,value.descriptor,ACC_PUBLIC + ACC_FINAL)
+            }
         }
         thisCollectClassName?.let {
             if (thisHasCollect && !thisHasStaticClock){
@@ -463,15 +483,68 @@ object WovenIntoCode {
     }
 
     fun wovenStaticCode(cw:ClassWriter,thisClassName:String){
-        val mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, "<clinit>", "()V", null, null);
+        val mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, "<clinit>", "()V", null, null)
         val className1 = "$thisClassName\$Inner${thisClassName.computeMD5()}"
-        mv.visitTypeInsn(AdviceAdapter.NEW,Utils.dotToSlash(className1));
-        mv.visitInsn(AdviceAdapter.DUP);//压入栈
+        mv.visitTypeInsn(AdviceAdapter.NEW,Utils.dotToSlash(className1))
+        mv.visitInsn(AdviceAdapter.DUP)//压入栈
         //弹出一个对象所在的地址，进行初始化操作，构造函数默认为空，此时栈大小为1（到目前只有一个局部变量）
-        mv.visitMethodInsn(AdviceAdapter.INVOKESPECIAL,Utils.dotToSlash(className1),"<init>","()V",false);
-        mv.visitInsn(Opcodes.RETURN)
+        mv.visitMethodInsn(AdviceAdapter.INVOKESPECIAL,Utils.dotToSlash(className1),"<init>","()V",false)
+        mv.visitInsn(RETURN)
         mv.visitMaxs(0, 0)
         mv.visitEnd()
+    }
+    private fun wovenMethodCode(cw:ClassWriter, superClassName:String, superMethodName:String, methodName:String, methodDescriptor:String, methodAccess:Int){
+        val mv = cw.visitMethod(methodAccess, methodName, methodDescriptor, null, null)
+        val isVoid = Type.getReturnType(methodDescriptor).className == "void"
+        val argTypes = Type.getArgumentTypes(methodDescriptor)
+        mv.visitCode()
+        // 调用 super.someMethod() 的字节码指令
+        mv.visitVarInsn(ALOAD, 0) // 加载 `this` 引用到操作数栈
+        var localVarIndex = 1
+        var maxStack = 1
+        for (argType in argTypes) {
+            maxStack += when (argType.sort) {
+                Type.LONG ,Type.DOUBLE -> {
+                    2
+                }
+                else -> {
+                    1
+                }
+            }
+            when (argType.sort) {
+                Type.INT -> mv.visitVarInsn(ILOAD, localVarIndex) // 加载 int 类型参数
+                Type.LONG -> mv.visitVarInsn(LLOAD, localVarIndex) // 加载 long 类型参数
+                Type.FLOAT -> mv.visitVarInsn(FLOAD, localVarIndex) // 加载 float 类型参数
+                Type.DOUBLE -> mv.visitVarInsn(DLOAD, localVarIndex) // 加载 double 类型参数
+                Type.BOOLEAN, Type.BYTE, Type.CHAR, Type.SHORT -> mv.visitVarInsn(
+                    ILOAD,
+                    localVarIndex
+                ) // 加载 boolean, byte, char, short，这些类型都使用 ILOAD
+                Type.OBJECT, Type.ARRAY -> mv.visitVarInsn(
+                    ALOAD,
+                    localVarIndex
+                ) // 加载引用类型（如 Object 和数组）
+                else -> throw IllegalArgumentException("Unsupported parameter type: $argType")
+            }
+            localVarIndex += argType.size // 更新下一个局部变量的索引
+
+        }
+
+        mv.visitMethodInsn(
+            INVOKESPECIAL,
+            superClassName,
+            superMethodName,
+            methodDescriptor,
+            false
+        ) // 调用父类的 someMethod()
+        if (isVoid) {
+            mv.visitInsn(RETURN) // 返回
+        } else {
+            mv.visitInsn(IRETURN) // 返回
+        }
+        mv.visitMaxs(maxStack, localVarIndex) // 设置操作数栈和局部变量表的大小
+        mv.visitEnd()
+
     }
 
     @Throws(NotFoundException::class)

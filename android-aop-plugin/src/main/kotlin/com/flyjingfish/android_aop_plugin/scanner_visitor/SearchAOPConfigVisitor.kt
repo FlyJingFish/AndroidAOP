@@ -34,6 +34,7 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
         private var pointCutClassName: String? = null
         private var matchType = "EXTENDS"
         private var excludeClasses: String? = null
+        private var overrideMethod: String? = null
         override fun visit(name: String, value: Any) {
             if (isAndroidAopClass) {
                 if (name == "value") {
@@ -56,6 +57,9 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
                 }
                 if (name == "excludeClasses") {
                     excludeClasses = value.toString()
+                }
+                if (name == "overrideMethod") {
+                    overrideMethod = value.toString()
                 }
                 //                WovenInfoUtils.INSTANCE.addAnnoInfo(value.toString());
             }
@@ -80,7 +84,8 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
                     methodNames!!.split("-").toTypedArray(),
                     pointCutClassName!!,
                     matchType,
-                    strings
+                    strings,
+                    overrideMethod == "true"
                 )
                 addMatchInfo(cut)
                 addAopInstance(pointCutClassName!!, className)
