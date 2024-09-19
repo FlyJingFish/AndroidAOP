@@ -208,7 +208,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
             String[] methodNames = cut.methodName();
             String[] excludeClasses = cut.excludeClasses();
             MatchType matchType = cut.type();
-            boolean overrideMethod = cut.overrideMethod()
+            boolean overrideMethod = cut.overrideMethod();
             StringBuilder methodNamesBuilder = new StringBuilder();
             for (int i = 0; i < methodNames.length; i++) {
                 methodNamesBuilder.append(methodNames[i]);
