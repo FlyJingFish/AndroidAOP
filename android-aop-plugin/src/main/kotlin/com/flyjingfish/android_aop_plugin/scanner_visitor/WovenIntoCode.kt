@@ -279,9 +279,12 @@ object WovenIntoCode {
                 return@forEach
             }
             if (value.overrideMethod && superClassName != null && ctClazzName != null){
-                wovenMethodCode(cw,superClassName!!, value.methodName,value.methodName,value.descriptor,value.modifier)
-                val newMethodName = Utils.getTargetMethodName(value.methodName, ctClazzName!!, value.descriptor)
-                wovenMethodCode(cw,superClassName!!, value.methodName,newMethodName,value.descriptor,ACC_PUBLIC + ACC_FINAL)
+                try {
+                    wovenMethodCode(cw,superClassName!!, value.methodName,value.methodName,value.descriptor,value.modifier)
+                    val newMethodName = Utils.getTargetMethodName(value.methodName, ctClazzName!!, value.descriptor)
+                    wovenMethodCode(cw,superClassName!!, value.methodName,newMethodName,value.descriptor,ACC_PUBLIC + ACC_FINAL)
+                } catch (_: Exception) {
+                }
             }
         }
         thisCollectClassName?.let {
