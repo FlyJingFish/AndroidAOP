@@ -275,7 +275,7 @@ object AopTaskUtils {
                                         false,
                                         mutableMapOf<String, CutInfo>().apply { put(UUID.randomUUID().toString(), cutInfo)},
                                         true,
-                                        allMethod.modifiers
+                                        superMethodClass.name
                                     )
 
                                     addCut(methodRecord)
@@ -341,6 +341,7 @@ object AopTaskUtils {
                                         addClassMethodRecords[entryName+it.getKey()]  = record
                                     }
                                 } catch (e: Exception) {
+                                    e.printStackTrace()
                                 }
                             }
                         }

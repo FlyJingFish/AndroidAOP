@@ -36,6 +36,8 @@ import org.objectweb.asm.ClassWriter.COMPUTE_FRAMES
 import org.objectweb.asm.ClassWriter.COMPUTE_MAXS
 import org.objectweb.asm.Opcodes.*
 import org.objectweb.asm.commons.AdviceAdapter
+import org.objectweb.asm.tree.LocalVariableNode
+import org.objectweb.asm.tree.MethodNode
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStream
@@ -52,6 +54,7 @@ object WovenIntoCode {
         isSuspend:Boolean = false
     ): ByteArray {
         val wovenRecord = mutableListOf<MethodRecord>()
+        val overrideRecord = mutableListOf<MethodRecord>()
         var returnClassName :String ?= null
 
         val cr = ClassReader(inputStreamBytes)
@@ -71,6 +74,9 @@ object WovenIntoCode {
                 if (newMethodName == name && oldDescriptor == descriptor){
                     wovenRecord.add(value)
                     WovenInfoUtils.addAopMethodCutInnerClassInfoInvokeMethod(className,newMethodName,descriptor)
+                }
+                if (value.overrideMethod && oldMethodName == name && oldDescriptor == descriptor){
+                    overrideRecord.add(value)
                 }
             }
 
@@ -278,11 +284,29 @@ object WovenIntoCode {
             if (value in wovenRecord){
                 return@forEach
             }
+            if (value in overrideRecord){
+                return@forEach
+            }
             if (value.overrideMethod && superClassName != null && ctClazzName != null){
                 try {
-                    wovenMethodCode(cw,superClassName!!, value.methodName,value.methodName,value.descriptor,value.modifier)
+                    val ctClass = try {
+                        ClassPoolUtils.classPool?.getCtClass(value.overrideClassname) ?: return@forEach
+                    } catch (e: Exception) {
+                        return@forEach
+                    }
+                    val ctMethod = ctClass.getMethod(value.methodName,value.descriptor)
+                    val methodParamNamesScanner = MethodParamNamesScanner(ctClass.toBytecode())
+                    val ctClasses = ctMethod.parameterTypes
+                    val len = ctClasses.size
+                    val argInfos = methodParamNamesScanner.getParamInfo(
+                        value.methodName,
+                        value.descriptor,
+                        len
+                    )
+                    val methodNode = methodParamNamesScanner.getMethodNode(value.methodName, value.descriptor)
+                    wovenMethodCode(cw,superClassName!!, value.methodName,value.methodName,value.descriptor,ctMethod.modifiers,methodNode,argInfos)
                     val newMethodName = Utils.getTargetMethodName(value.methodName, ctClazzName!!, value.descriptor)
-                    wovenMethodCode(cw,superClassName!!, value.methodName,newMethodName,value.descriptor,ACC_PUBLIC + ACC_FINAL)
+                    wovenMethodCode(cw,superClassName!!, value.methodName,newMethodName,value.descriptor,ACC_PUBLIC + ACC_FINAL,methodNode,argInfos)
                 } catch (_: Exception) {
                 }
             }
@@ -496,11 +520,23 @@ object WovenIntoCode {
         mv.visitMaxs(0, 0)
         mv.visitEnd()
     }
-    private fun wovenMethodCode(cw:ClassWriter, superClassName:String, superMethodName:String, methodName:String, methodDescriptor:String, methodAccess:Int){
-        val mv = cw.visitMethod(methodAccess, methodName, methodDescriptor, null, null)
+    private fun wovenMethodCode(cw:ClassWriter, superClassName:String, superMethodName:String, methodName:String, methodDescriptor:String, methodAccess:Int,methodNode:MethodNode? ,argInfos:List<LocalVariableNode>){
+        val mv = cw.visitMethod(methodAccess, methodName, methodDescriptor, methodNode?.signature, methodNode?.exceptions?.toTypedArray())
         val isVoid = Type.getReturnType(methodDescriptor).className == "void"
         val argTypes = Type.getArgumentTypes(methodDescriptor)
         mv.visitCode()
+
+        if (argInfos.isNotEmpty()){
+
+            for (info in argInfos) {
+                val start = info.start.label
+                val end = info.end.label
+                mv.visitLabel(start)
+                mv.visitLabel(end)
+                mv.visitLocalVariable(info.name, info.desc, info.signature, start, start, info.index)
+            }
+        }
+
         // 调用 super.someMethod() 的字节码指令
         mv.visitVarInsn(ALOAD, 0) // 加载 `this` 引用到操作数栈
         var localVarIndex = 1
