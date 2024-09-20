@@ -169,7 +169,9 @@ object WovenIntoCode {
                 return@forEach
             }
             if (value.overrideMethod){
-                return@forEach
+                if (value !in overrideRecord){
+                    return@forEach
+                }
             }
             val oldMethodName = value.methodName
 //            val targetMethodName = oldMethodName + METHOD_SUFFIX
