@@ -258,7 +258,7 @@ class AopTaskUtils(private val project: Project,private val variantName: String)
                                 }
 
                                 if (isBack && (!Modifier.isPackage(allMethod.modifiers)||isBackMethod)) {
-                                    printLog("processOverride=name=$name,descriptor=$descriptor")
+//                                    printLog("processOverride=name=$name,descriptor=$descriptor")
                                     val cutInfo = CutInfo(
                                         "匹配切面",
                                         Utils.slashToDot(
