@@ -27,12 +27,10 @@ public class ArrayInit extends ASTList {
 
     /**
      * Constructs an object.
-     *
-     * @param firstElement maybe null when the initializer is <code>{}</code> (empty).
-     * @param lineNumber
+     * @param firstElement      maybe null when the initializer is <code>{}</code> (empty).
      */
-    public ArrayInit(ASTree firstElement, int lineNumber) {
-        super(firstElement, lineNumber);
+    public ArrayInit(ASTree firstElement) {
+        super(firstElement);
     }
 
     /**

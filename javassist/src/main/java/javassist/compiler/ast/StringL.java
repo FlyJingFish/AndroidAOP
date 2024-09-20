@@ -26,8 +26,7 @@ public class StringL extends ASTree {
     private static final long serialVersionUID = 1L;
     protected String text;
 
-    public StringL(String t, int lineNumber) {
-        super(lineNumber);
+    public StringL(String t) {
         text = t;
     }
 

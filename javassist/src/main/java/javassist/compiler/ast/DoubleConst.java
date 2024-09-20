@@ -28,11 +28,7 @@ public class DoubleConst extends ASTree {
     protected double value;
     protected int type;
 
-    public DoubleConst(double v, int tokenId, int lineNumber) {
-        super(lineNumber);
-        value = v;
-        type = tokenId;
-    }
+    public DoubleConst(double v, int tokenId) { value = v; type = tokenId; }
 
     public double get() { return value; }
 
@@ -67,15 +63,15 @@ public class DoubleConst extends ASTree {
         else
             newType = TokenId.FloatConstant;
 
-        return compute(op, this.value, right.value, newType, getLineNumber());
+        return compute(op, this.value, right.value, newType);
     }
 
     private DoubleConst compute0(int op, IntConst right) {
-        return compute(op, this.value, right.value, this.type, getLineNumber());
+        return compute(op, this.value, right.value, this.type);
     }
 
     private static DoubleConst compute(int op, double value1, double value2,
-                                       int newType, int lineNumber)
+                                       int newType)
     {
         double newValue;
         switch (op) {
@@ -98,6 +94,6 @@ public class DoubleConst extends ASTree {
             return null;
         }
 
-        return new DoubleConst(newValue, newType, lineNumber);
+        return new DoubleConst(newValue, newType);
     }
 }

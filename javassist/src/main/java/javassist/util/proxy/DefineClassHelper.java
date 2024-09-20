@@ -327,7 +327,7 @@ public class DefineClassHelper {
     {
         try {
             Lookup lookup = MethodHandles.lookup();
-            lookup = lookup.dropLookupMode(java.lang.invoke.MethodHandles.Lookup.PRIVATE);
+            lookup = lookup.dropLookupMode(Lookup.PRIVATE);
             return lookup.defineClass(bcode);
         }
         catch (Throwable t) {

@@ -73,14 +73,14 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
      * into a String object.
      */
     protected static String argTypesToString(int[] types, int[] dims,
-                                             String[] cnames, int lineNumber) {
+                                             String[] cnames) {
         StringBuilder sbuf = new StringBuilder();
         sbuf.append('(');
         int n = types.length;
         if (n > 0) {
             int i = 0;
             while (true) {
-                typeToString(sbuf, types[i], dims[i], cnames[i], lineNumber);
+                typeToString(sbuf, types[i], dims[i], cnames[i]);
                 if (++i < n)
                     sbuf.append(',');
                 else
@@ -97,7 +97,7 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
      * into a String object.
      */
     protected static StringBuilder typeToString(StringBuilder sbuf,
-                                                int type, int dim, String cname, int lineNumber) {
+                                        int type, int dim, String cname) {
         String s;
         if (type == CLASS)
             s = MemberResolver.jvmToJavaName(cname);
@@ -105,7 +105,7 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
             s = "Object";
         else
             try {
-                s = MemberResolver.getTypeName(type, lineNumber);
+                s = MemberResolver.getTypeName(type);
             }
             catch (CompileError e) {
                 s = "?";
@@ -125,8 +125,8 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
         thisMethod = m;
     }
 
-    protected static void fatal(int lineLum) throws CompileError {
-        throw new CompileError("fatal", lineLum);
+    protected static void fatal() throws CompileError {
+        throw new CompileError("fatal");
     }
 
     /**
@@ -156,8 +156,8 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
     /* Expands a simple class name to java.lang.*.
      * For example, this converts Object into java/lang/Object.
      */
-    protected String resolveClassName(String jvmName, int lineNumber) throws CompileError {
-        return resolver.resolveJvmClassName(jvmName, lineNumber);
+    protected String resolveClassName(String jvmName) throws CompileError {
+        return resolver.resolveJvmClassName(jvmName);
     }
 
     @Override
@@ -168,7 +168,7 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
             CtClass clazz = resolver.lookupClassByName(expr.getClassName());
             String cname = clazz.getName();
             ASTList args = expr.getArguments();
-            atMethodCallCore(clazz, MethodInfo.nameInit, args, expr.getLineNumber());
+            atMethodCallCore(clazz, MethodInfo.nameInit, args);
             exprType = CLASS;
             arrayDim = 0;
             className = MemberResolver.javaToJvmName(cname);
@@ -294,7 +294,7 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
         throws CompileError
     {
         CtField f = fieldAccess(left);
-        atFieldRead(f, expr.getLineNumber());
+        atFieldRead(f);
         int fType = exprType;
         int fDim = arrayDim;
         String cname = className;
@@ -316,9 +316,9 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
 
         if (dim1 == 0 && dim1 == arrayDim)
             if (CodeGen.rightIsStrong(type1, exprType))
-                expr.setThen(new CastExpr(exprType, 0, expr.thenExpr(), expr.getLineNumber()));
+                expr.setThen(new CastExpr(exprType, 0, expr.thenExpr()));
             else if (CodeGen.rightIsStrong(exprType, type1)) {
-                expr.setElse(new CastExpr(type1, 0, expr.elseExpr(), expr.getLineNumber()));
+                expr.setElse(new CastExpr(type1, 0, expr.elseExpr()));
                 exprType = type1;
             }
     }
@@ -343,7 +343,7 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
                      * an expression using StringBuffer.
                      */
                     e = CallExpr.makeCall(Expr.make('.', e,
-                                            new Member("toString", expr.getLineNumber()), expr.getLineNumber()), null, expr.getLineNumber());
+                                            new Member("toString")), null);
                     expr.setOprand1(e);
                     expr.setOprand2(null);    // <---- look at this!
                     className = jvmJavaLangString;
@@ -404,10 +404,9 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
         if ((type1 == CLASS && dim1 == 0 && jvmJavaLangString.equals(cname))
             || (exprType == CLASS && arrayDim == 0
                 && jvmJavaLangString.equals(className))) {
-            int lineNum = expr.getLineNumber();
-            ASTList sbufClass = ASTList.make(new Symbol("java", lineNum),
-                            new Symbol("lang", lineNum), new Symbol("StringBuffer", lineNum), lineNum);
-            ASTree e = new NewExpr(sbufClass, null, lineNum);
+            ASTList sbufClass = ASTList.make(new Symbol("java"),
+                            new Symbol("lang"), new Symbol("StringBuffer"));
+            ASTree e = new NewExpr(sbufClass, null);
             exprType = CLASS;
             arrayDim = 0;
             className = "java/lang/StringBuffer";
@@ -425,7 +424,7 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
         ASTree newExpr = null;
         if (left instanceof StringL && right instanceof StringL && op == '+')
             newExpr = new StringL(((StringL)left).get()
-                                  + ((StringL)right).get(), left.getLineNumber());
+                                  + ((StringL)right).get());
         else if (left instanceof IntConst)
             newExpr = ((IntConst)left).compute(op, right);
         else if (left instanceof DoubleConst)
@@ -452,7 +451,7 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
             Expr e = (Expr)expr;
             int op = e.getOperator();
             if (op == MEMBER) {
-                ASTree cexpr = getConstantFieldValue((Member)e.oprand2(), expr.getLineNumber());
+                ASTree cexpr = getConstantFieldValue((Member)e.oprand2());
                 if (cexpr != null)
                     return cexpr;
             }
@@ -460,7 +459,7 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
                 return e.getLeft();
         }
         else if (expr instanceof Member) {
-            ASTree cexpr = getConstantFieldValue((Member)expr, expr.getLineNumber());
+            ASTree cexpr = getConstantFieldValue((Member)expr);
             if (cexpr != null)
                 return cexpr;
         }
@@ -472,11 +471,11 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
      * If MEM is a static final field, this method returns a constant
      * expression representing the value of that field.
      */
-    private static ASTree getConstantFieldValue(Member mem, int lineNumber) {
-        return getConstantFieldValue(mem.getField(), lineNumber);
+    private static ASTree getConstantFieldValue(Member mem) {
+        return getConstantFieldValue(mem.getField());
     }
 
-    public static ASTree getConstantFieldValue(CtField f, int lineNumber) {
+    public static ASTree getConstantFieldValue(CtField f) {
         if (f == null)
             return null;
 
@@ -485,19 +484,19 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
             return null;
 
         if (value instanceof String)
-            return new StringL((String)value, lineNumber);
+            return new StringL((String)value);
         else if (value instanceof Double || value instanceof Float) {
             int token = (value instanceof Double)
                         ? DoubleConstant : FloatConstant;
-            return new DoubleConst(((Number)value).doubleValue(), token, lineNumber);
+            return new DoubleConst(((Number)value).doubleValue(), token);
         }
         else if (value instanceof Number) {
             int token = (value instanceof Long) ? LongConstant : IntConstant; 
-            return new IntConst(((Number)value).longValue(), token, lineNumber);
+            return new IntConst(((Number)value).longValue(), token);
         }
         else if (value instanceof Boolean)
             return new Keyword(((Boolean)value).booleanValue()
-                               ? TokenId.TRUE : TokenId.FALSE, lineNumber);
+                               ? TokenId.TRUE : TokenId.FALSE);
         else
             return null;
     }
@@ -513,8 +512,8 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
     }
 
     private static Expr makeAppendCall(ASTree target, ASTree arg) {
-        return CallExpr.makeCall(Expr.make('.', target, new Member("append", target.getLineNumber()), target.getLineNumber()),
-                                 new ASTList(arg, target.getLineNumber()), target.getLineNumber());
+        return CallExpr.makeCall(Expr.make('.', target, new Member("append")),
+                                 new ASTList(arg));
     }
 
     private void computeBinExprType(BinExpr expr, int token, int type1)
@@ -562,7 +561,7 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
         throws CompileError
     {
         if (CodeGen.rightIsStrong(type1, type2))
-            expr.setLeft(new CastExpr(type2, 0, expr.oprand1(), expr.getLineNumber()));
+            expr.setLeft(new CastExpr(type2, 0, expr.oprand1()));
         else
             exprType = type1;
     }
@@ -619,7 +618,7 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
         else if (token == '!')
             booleanExpr(expr);
         else if (token == CALL)              // method call
-            fatal(expr.getLineNumber());
+            fatal();
         else {
             oprand.accept(this);
             if (!isConstant(expr, token, oprand))
@@ -682,7 +681,7 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
             if (op == MEMBER)                // static method
                 targetClass
                         = resolver.lookupClass(((Symbol)e.oprand1()).get(),
-                                               false, e.getLineNumber());
+                                               false);
             else if (op == '.') {
                 ASTree target = e.oprand1();
                 String classFollowedByDotSuper = isDotSuper(target);
@@ -703,30 +702,30 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
                         className = nfe.getField(); // JVM-internal
                         e.setOperator(MEMBER);
                         e.setOprand1(new Symbol(MemberResolver.jvmToJavaName(
-                                                                className), e.getLineNumber()));
+                                                                className)));
                     }
 
                     if (arrayDim > 0)
-                        targetClass = resolver.lookupClass(javaLangObject, true, e.getLineNumber());
+                        targetClass = resolver.lookupClass(javaLangObject, true);
                     else if (exprType == CLASS /* && arrayDim == 0 */)
-                        targetClass = resolver.lookupClassByJvmName(className, e.getLineNumber());
+                        targetClass = resolver.lookupClassByJvmName(className);
                     else
-                        badMethod(e.getLineNumber());
+                        badMethod();
                 }
             }
             else
-                badMethod(expr.getLineNumber());
+                badMethod();
         }
         else
-            fatal(expr.getLineNumber());
+            fatal();
 
         MemberResolver.Method minfo
-                = atMethodCallCore(targetClass, mname, args, expr.getLineNumber());
+                = atMethodCallCore(targetClass, mname, args);
         expr.setMethod(minfo);
     }
 
-    private static void badMethod(int lineNumber) throws CompileError {
-        throw new CompileError("bad method", lineNumber);
+    private static void badMethod() throws CompileError {
+        throw new CompileError("bad method");
     }
 
     /**
@@ -754,7 +753,7 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
      *          and the MethodInfo of that method.  Never null.
      */
     public MemberResolver.Method atMethodCallCore(CtClass targetClass,
-                                                  String mname, ASTList args, int lineNumber)
+                                                  String mname, ASTList args)
         throws CompileError
     {
         int nargs = getMethodArgsLength(args);
@@ -768,18 +767,18 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
                                     mname, types, dims, cnames);
         if (found == null) {
             String clazz = targetClass.getName();
-            String signature = argTypesToString(types, dims, cnames, lineNumber);
+            String signature = argTypesToString(types, dims, cnames);
             String msg;
             if (mname.equals(MethodInfo.nameInit))
                 msg = "cannot find constructor " + clazz + signature;
             else
                 msg = mname + signature +  " not found in " + clazz;
 
-            throw new CompileError(msg, lineNumber);
+            throw new CompileError(msg);
         }
 
         String desc = found.info.getDescriptor();
-        setReturnType(desc, lineNumber);
+        setReturnType(desc);
         return found;
     }
 
@@ -801,10 +800,10 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
         }
     }
 
-    void setReturnType(String desc, int lineNumber) throws CompileError {
+    void setReturnType(String desc) throws CompileError {
         int i = desc.indexOf(')');
         if (i < 0)
-            badMethod(lineNumber);
+            badMethod();
 
         char c = desc.charAt(++i);
         int dim = 0;
@@ -817,22 +816,22 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
         if (c == 'L') {
             int j = desc.indexOf(';', i + 1);
             if (j < 0)
-                badMethod(lineNumber);
+                badMethod();
 
             exprType = CLASS;
             className = desc.substring(i + 1, j);
         }
         else {
-            exprType = MemberResolver.descToType(c, lineNumber);
+            exprType = MemberResolver.descToType(c);
             className = null;
         }
     }
 
     private void atFieldRead(ASTree expr) throws CompileError {
-        atFieldRead(fieldAccess(expr), expr.getLineNumber());
+        atFieldRead(fieldAccess(expr));
     }
 
-    private void atFieldRead(CtField f, int lineNumber) throws CompileError {
+    private void atFieldRead(CtField f) throws CompileError {
         FieldInfo finfo = f.getFieldInfo2();
         String type = finfo.getDescriptor();
 
@@ -845,7 +844,7 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
         }
 
         arrayDim = dim;
-        exprType = MemberResolver.descToType(c, lineNumber);
+        exprType = MemberResolver.descToType(c);
 
         if (c == 'L')
             className = type.substring(i + 1, type.indexOf(';', i + 1));
@@ -934,14 +933,14 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
             }
         }
 
-        throw new CompileError("bad field access", expr.getLineNumber());
+        throw new CompileError("bad field access");
     }
 
     private CtField fieldAccess2(Expr e, String jvmClassName) throws CompileError {
         Member fname = (Member)e.oprand2();
         CtField f = resolver.lookupFieldByJvmName2(jvmClassName, fname, e);
         e.setOperator(MEMBER);
-        e.setOprand1(new Symbol(MemberResolver.jvmToJavaName(jvmClassName), e.getLineNumber()));
+        e.setOprand1(new Symbol(MemberResolver.jvmToJavaName(jvmClassName)));
         fname.setField(f);
         return f;
     }
@@ -1007,7 +1006,7 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
     protected void atFieldPlusPlus(ASTree oprand) throws CompileError
     {
         CtField f = fieldAccess(oprand);
-        atFieldRead(f, oprand.getLineNumber());
+        atFieldRead(f);
         int t = exprType;
         if (t == INT || t == BYTE || t == CHAR || t == SHORT)
             exprType = INT;
@@ -1047,7 +1046,7 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
                 className = getSuperName();
             break;
         default :
-            fatal(k.getLineNumber());
+            fatal();
         }
     }
 

@@ -28,26 +28,26 @@ public class NewExpr extends ASTList implements TokenId {
     protected boolean newArray;
     protected int arrayType;
 
-    public NewExpr(ASTList className, ASTList args, int lineNumber) {
-        super(className, new ASTList(args, lineNumber), lineNumber);
+    public NewExpr(ASTList className, ASTList args) {
+        super(className, new ASTList(args));
         newArray = false;
         arrayType = CLASS;
     }
 
-    public NewExpr(int type, ASTList arraySize, ArrayInit init, int lineNumber) {
-        super(null, new ASTList(arraySize, lineNumber), lineNumber);
+    public NewExpr(int type, ASTList arraySize, ArrayInit init) {
+        super(null, new ASTList(arraySize));
         newArray = true;
         arrayType = type;
         if (init != null)
-            append(this, init, lineNumber);
+            append(this, init);
     }
 
     public static NewExpr makeObjectArray(ASTList className,
-                                          ASTList arraySize, ArrayInit init, int lineNumber) {
-        NewExpr e = new NewExpr(className, arraySize, lineNumber);
+                                          ASTList arraySize, ArrayInit init) {
+        NewExpr e = new NewExpr(className, arraySize);
         e.newArray = true;
         if (init != null)
-            append(e, init, lineNumber);
+            append(e, init);
 
         return e;
     }

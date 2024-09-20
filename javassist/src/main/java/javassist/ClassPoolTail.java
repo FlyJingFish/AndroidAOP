@@ -31,6 +31,8 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import javassist.util.JarUtils;
+
 final class ClassPathList {
     ClassPathList next;
     ClassPath path;
@@ -130,8 +132,9 @@ final class JarDirClassPath implements ClassPath {
 final class JarClassPath implements ClassPath {
     Set<String> jarfileEntries;
     String jarfileURL;
-
+    private final String pathname;
     JarClassPath(String pathname) throws NotFoundException {
+        this.pathname = pathname;
         JarFile jarfile = null;
         try {
             jarfile = new JarFile(pathname);
@@ -159,7 +162,8 @@ final class JarClassPath implements ClassPath {
         URL jarURL = find(classname);
         if (null != jarURL)
             try {
-                if (ClassPool.cacheOpenedJarFile)
+                boolean isProjectJar = JarUtils.INSTANCE.isProjectJar(pathname);
+                if (ClassPool.cacheOpenedJarFile && !isProjectJar)
                     return jarURL.openConnection().getInputStream();
                 else {
                     java.net.URLConnection con = jarURL.openConnection();

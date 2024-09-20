@@ -161,7 +161,7 @@ import javassist.bytecode.StackMapTable;
  * <p>
  * An alternative method of serializing proxy objects is available which fixes these problems. It
  * requires inhibiting generation of the writeReplace method and instead using instances of
- * {@link javassist.util.proxy.ProxyObjectOutputStream} and {@link javassist.util.proxy.ProxyObjectInputStream}
+ * {@link ProxyObjectOutputStream} and {@link ProxyObjectInputStream}
  * (which are subclasses of {@link java.io.ObjectOutputStream} and  {@link java.io.ObjectInputStream})
  * to serialize and deserialize, respectively, the proxy. These streams recognise javassist proxies and ensure
  * that they are serialized and deserialized without the need for the proxy class to implement special methods

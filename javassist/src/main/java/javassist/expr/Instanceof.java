@@ -167,26 +167,26 @@ public class Instanceof extends Expr {
         }
 
         @Override
-        public void doit(JvstCodeGen gen, Bytecode bytecode, ASTList args, int lineNumber)
+        public void doit(JvstCodeGen gen, Bytecode bytecode, ASTList args)
             throws CompileError
         {
             if (gen.getMethodArgsLength(args) != 1)
                 throw new CompileError(Javac.proceedName
                         + "() cannot take more than one parameter "
-                        + "for instanceof", lineNumber);
+                        + "for instanceof");
 
             gen.atMethodArgs(args, new int[1], new int[1], new String[1]);
             bytecode.addOpcode(Opcode.INSTANCEOF);
             bytecode.addIndex(index);
-            gen.setType(CtClass.booleanType, lineNumber);
+            gen.setType(CtClass.booleanType);
         }
 
         @Override
-        public void setReturnType(JvstTypeChecker c, ASTList args, int lineNumber)
+        public void setReturnType(JvstTypeChecker c, ASTList args)
             throws CompileError
         {
             c.atMethodArgs(args, new int[1], new int[1], new String[1]);
-            c.setType(CtClass.booleanType, lineNumber);
+            c.setType(CtClass.booleanType);
         }
     }
 }

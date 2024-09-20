@@ -28,14 +28,14 @@ public class CastExpr extends ASTList implements TokenId {
     protected int castType;
     protected int arrayDim;
 
-    public CastExpr(ASTList className, int dim, ASTree expr, int lineNumber) {
-        super(className, new ASTList(expr, lineNumber), lineNumber);
+    public CastExpr(ASTList className, int dim, ASTree expr) {
+        super(className, new ASTList(expr));
         castType = CLASS;
         arrayDim = dim;
     }
 
-    public CastExpr(int type, int dim, ASTree expr, int lineNumber) {
-        super(null, new ASTList(expr, lineNumber), lineNumber);
+    public CastExpr(int type, int dim, ASTree expr) {
+        super(null, new ASTList(expr));
         castType = type;
         arrayDim = dim;
     }

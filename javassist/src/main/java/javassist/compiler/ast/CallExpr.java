@@ -28,8 +28,8 @@ public class CallExpr extends Expr {
     private static final long serialVersionUID = 1L;
     private MemberResolver.Method method;  // cached result of lookupMethod()
 
-    private CallExpr(ASTree _head, ASTList _tail, int lineNumber) {
-        super(TokenId.CALL, _head, _tail, lineNumber);
+    private CallExpr(ASTree _head, ASTList _tail) {
+        super(TokenId.CALL, _head, _tail);
         method = null;
     }
 
@@ -41,8 +41,8 @@ public class CallExpr extends Expr {
         return method;
     }
 
-    public static CallExpr makeCall(ASTree target, ASTree args, int lineNumber) {
-        return new CallExpr(target, new ASTList(args, lineNumber), lineNumber);
+    public static CallExpr makeCall(ASTree target, ASTree args) {
+        return new CallExpr(target, new ASTList(args));
     }
 
     @Override

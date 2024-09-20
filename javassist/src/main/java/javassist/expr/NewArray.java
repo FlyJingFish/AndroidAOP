@@ -270,13 +270,13 @@ public class NewArray extends Expr {
         }
 
         @Override
-        public void doit(JvstCodeGen gen, Bytecode bytecode, ASTList args, int lineNumber)
+        public void doit(JvstCodeGen gen, Bytecode bytecode, ASTList args)
             throws CompileError
         {
             int num = gen.getMethodArgsLength(args);
             if (num != dimension)
                 throw new CompileError(Javac.proceedName
-                        + "() with a wrong number of parameters", lineNumber);
+                        + "() with a wrong number of parameters");
 
             gen.atMethodArgs(args, new int[num],
                              new int[num], new String[num]);
@@ -291,14 +291,14 @@ public class NewArray extends Expr {
                 bytecode.growStack(1 - dimension);
             }
 
-            gen.setType(arrayType, lineNumber);
+            gen.setType(arrayType);
         }
 
         @Override
-        public void setReturnType(JvstTypeChecker c, ASTList args, int lineNumber)
+        public void setReturnType(JvstTypeChecker c, ASTList args)
             throws CompileError
         {
-            c.setType(arrayType, lineNumber);
+            c.setType(arrayType);
         }
     }
 }

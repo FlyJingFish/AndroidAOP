@@ -43,7 +43,7 @@ import javassist.compiler.ast.Stmnt;
 import javassist.compiler.ast.Symbol;
 
 public class Javac {
-    JvstCodeGenWitlLineNumber gen;
+    JvstCodeGen gen;
     SymbolTable stable;
     private Bytecode bytecode;
 
@@ -71,7 +71,7 @@ public class Javac {
      *                          belongs to.
      */
     public Javac(Bytecode b, CtClass thisClass) {
-        gen = new JvstCodeGenWitlLineNumber(b, thisClass, thisClass.getClassPool());
+        gen = new JvstCodeGen(b, thisClass, thisClass.getClassPool());
         stable = new SymbolTable();
         bytecode = b;
     }
@@ -94,9 +94,7 @@ public class Javac {
      * @see #recordProceed(String,String)
      */
     public CtMember compile(String src) throws CompileError {
-        int startLine = gen.thisClass.getLinesCount();
-        Lex lex = new Lex(src, startLine);
-        Parser p = new Parser(lex);
+        Parser p = new Parser(new Lex(src));
         ASTList mem = p.parseMember1(stable);
         try {
             if (mem instanceof FieldDecl)
@@ -108,8 +106,11 @@ public class Javac {
                                   decl.getClassFile2());
             return cb;
         }
-        catch (BadBytecode | CannotCompileException bb) {
-            throw new CompileError(bb.getMessage(), lex.getLineNumber());
+        catch (BadBytecode bb) {
+            throw new CompileError(bb.getMessage());
+        }
+        catch (CannotCompileException e) {
+            throw new CompileError(e.getMessage());
         }
     }
 
@@ -159,9 +160,8 @@ public class Javac {
                                                    gen.getThisClass());
                 cons.setModifiers(mod);
                 md.accept(gen);
-                CodeAttribute cattr = bytecode.toCodeAttribute();
-                cattr.setAttribute(gen.toLineNumberAttribute());
-                cons.getMethodInfo().setCodeAttribute(cattr);
+                cons.getMethodInfo().setCodeAttribute(
+                                        bytecode.toCodeAttribute());
                 cons.setExceptionTypes(tlist);
                 return cons;
             }
@@ -173,18 +173,17 @@ public class Javac {
             method.setModifiers(mod);
             gen.setThisMethod(method);
             md.accept(gen);
-            if (md.getBody() != null) {
-                CodeAttribute cattr = bytecode.toCodeAttribute();
-                cattr.setAttribute(gen.toLineNumberAttribute());
-                method.getMethodInfo().setCodeAttribute(cattr);
-            } else
+            if (md.getBody() != null)
+                method.getMethodInfo().setCodeAttribute(
+                                    bytecode.toCodeAttribute());
+            else
                 method.setModifiers(mod | Modifier.ABSTRACT);
 
             method.setExceptionTypes(tlist);
             return method;
         }
         catch (NotFoundException e) {
-            throw new CompileError(e.toString(), md.getLineNumber());
+            throw new CompileError(e.toString());
         }
     }
 
@@ -220,7 +219,7 @@ public class Javac {
                 Stmnt s = p.parseStatement(stb);
                 if (p.hasMore())
                     throw new CompileError(
-                        "the method/constructor body must be surrounded by {}", s.getLineNumber());
+                        "the method/constructor body must be surrounded by {}");
 
                 boolean callSuper = false;
                 if (method instanceof CtConstructor)
@@ -232,7 +231,7 @@ public class Javac {
             return bytecode;
         }
         catch (NotFoundException e) {
-            throw new CompileError(e.toString(), -1);
+            throw new CompileError(e.toString());
         }
     }
 
@@ -444,27 +443,27 @@ public class Javac {
 
         ProceedHandler h = new ProceedHandler() {
                 @Override
-                public void doit(JvstCodeGen gen, Bytecode b, ASTList args, int lineNumber)
+                public void doit(JvstCodeGen gen, Bytecode b, ASTList args)
                     throws CompileError
                 {
-                    ASTree expr = new Member(m, texpr.getLineNumber());
+                    ASTree expr = new Member(m);
                     if (texpr != null)
-                        expr = Expr.make('.', texpr, expr, texpr.getLineNumber());
+                        expr = Expr.make('.', texpr, expr);
 
-                    expr = CallExpr.makeCall(expr, args, texpr.getLineNumber());
+                    expr = CallExpr.makeCall(expr, args);
                     gen.compileExpr(expr);
                     gen.addNullIfVoid();
                 }
 
                 @Override
-                public void setReturnType(JvstTypeChecker check, ASTList args, int lineNumber)
+                public void setReturnType(JvstTypeChecker check, ASTList args)
                     throws CompileError
                 {
-                    ASTree expr = new Member(m, texpr.getLineNumber());
+                    ASTree expr = new Member(m);
                     if (texpr != null)
-                        expr = Expr.make('.', texpr, expr, texpr.getLineNumber());
+                        expr = Expr.make('.', texpr, expr);
 
-                    expr = CallExpr.makeCall(expr, args, texpr.getLineNumber());
+                    expr = CallExpr.makeCall(expr, args);
                     expr.accept(check);
                     check.addNullIfVoid();
                 }
@@ -490,23 +489,23 @@ public class Javac {
 
         ProceedHandler h = new ProceedHandler() {
                 @Override
-                public void doit(JvstCodeGen gen, Bytecode b, ASTList args, int lineNumber)
+                public void doit(JvstCodeGen gen, Bytecode b, ASTList args)
                     throws CompileError
                 {
                     Expr expr = Expr.make(TokenId.MEMBER,
-                                          new Symbol(c, args.getLineNumber()), new Member(m, args.getLineNumber()), args.getLineNumber());
-                    expr = CallExpr.makeCall(expr, args, args.getLineNumber());
+                                          new Symbol(c), new Member(m));
+                    expr = CallExpr.makeCall(expr, args);
                     gen.compileExpr(expr);
                     gen.addNullIfVoid();
                 }
 
                 @Override
-                public void setReturnType(JvstTypeChecker check, ASTList args, int lineNumber)
+                public void setReturnType(JvstTypeChecker check, ASTList args)
                     throws CompileError
                 {
                     Expr expr = Expr.make(TokenId.MEMBER,
-                                          new Symbol(c, args.getLineNumber()), new Member(m, args.getLineNumber()), args.getLineNumber());
-                    expr = CallExpr.makeCall(expr, args, args.getLineNumber());
+                                          new Symbol(c), new Member(m));
+                    expr = CallExpr.makeCall(expr, args);
                     expr.accept(check);
                     check.addNullIfVoid();
                 }
@@ -536,14 +535,14 @@ public class Javac {
 
         ProceedHandler h = new ProceedHandler() {
                 @Override
-                public void doit(JvstCodeGen gen, Bytecode b, ASTList args, int lineNumber)
+                public void doit(JvstCodeGen gen, Bytecode b, ASTList args)
                     throws CompileError
                 {
                     gen.compileInvokeSpecial(texpr, methodIndex, descriptor, args);
                 }
 
                 @Override
-                public void setReturnType(JvstTypeChecker c, ASTList args, int lineNumber)
+                public void setReturnType(JvstTypeChecker c, ASTList args)
                     throws CompileError
                 {
                     c.compileInvokeSpecial(texpr, classname, methodname, descriptor, args);

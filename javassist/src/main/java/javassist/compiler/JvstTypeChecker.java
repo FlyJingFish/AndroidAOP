@@ -89,7 +89,7 @@ public class JvstTypeChecker extends TypeChecker {
 
             int n = params.length;
             for (int i = 0; i < n; ++i)
-                compileUnwrapValue(params[i], expr.getLineNumber());
+                compileUnwrapValue(params[i]);
         }
         else
             super.atFieldAssign(expr, op, left, right);
@@ -124,10 +124,10 @@ public class JvstTypeChecker extends TypeChecker {
         CtClass returnType = codeGen.returnType;
         expr.getOprand().accept(this);
         if (exprType == VOID || CodeGen.isRefType(exprType) || arrayDim > 0)
-            compileUnwrapValue(returnType, expr.getLineNumber());
+            compileUnwrapValue(returnType);
         else if (returnType instanceof CtPrimitiveType) {
             CtPrimitiveType pt = (CtPrimitiveType)returnType;
-            int destType = MemberResolver.descToType(pt.getDescriptor(), expr.getLineNumber());
+            int destType = MemberResolver.descToType(pt.getDescriptor());
             exprType = destType;
             arrayDim = 0;
             className = null;
@@ -139,7 +139,7 @@ public class JvstTypeChecker extends TypeChecker {
         if (CodeGen.isRefType(exprType) || arrayDim > 0)
             return;     // Object type.  do nothing.
 
-        CtClass clazz = resolver.lookupClass(exprType, arrayDim, className, expr.getLineNumber());
+        CtClass clazz = resolver.lookupClass(exprType, arrayDim, className);
         if (clazz instanceof CtPrimitiveType) {
             exprType = CLASS;
             arrayDim = 0;
@@ -158,7 +158,7 @@ public class JvstTypeChecker extends TypeChecker {
             if (codeGen.procHandler != null
                 && name.equals(codeGen.proceedName)) {
                 codeGen.procHandler.setReturnType(this,
-                                                  (ASTList)expr.oprand2(), expr.getLineNumber());
+                                                  (ASTList)expr.oprand2());
                 return;
             }
             else if (name.equals(JvstCodeGen.cflowName)) {
@@ -223,7 +223,7 @@ public class JvstTypeChecker extends TypeChecker {
                     int n = params.length;
                     for (int k = 0; k < n; ++k) {
                         CtClass p = params[k];
-                        setType(p, a.getLineNumber());
+                        setType(p);
                         types[i] = exprType;
                         dims[i] = arrayDim;
                         cnames[i] = className;
@@ -254,38 +254,38 @@ public class JvstTypeChecker extends TypeChecker {
         int nargs = getMethodArgsLength(args);
         atMethodArgs(args, new int[nargs], new int[nargs],
                      new String[nargs]);
-        setReturnType(descriptor, target.getLineNumber());
+        setReturnType(descriptor);
         addNullIfVoid();
     }
 
-    protected void compileUnwrapValue(CtClass type, int lineNumber) throws CompileError
+    protected void compileUnwrapValue(CtClass type) throws CompileError
     {
         if (type == CtClass.voidType)
             addNullIfVoid();
         else
-            setType(type, lineNumber);
+            setType(type);
     }
 
     /* Sets exprType, arrayDim, and className;
      * If type is void, then this method does nothing.
      */
-    public void setType(CtClass type, int lineNumber) throws CompileError {
-        setType(type, 0, lineNumber);
+    public void setType(CtClass type) throws CompileError {
+        setType(type, 0);
     }
 
-    private void setType(CtClass type, int dim, int lineNumber) throws CompileError {
+    private void setType(CtClass type, int dim) throws CompileError {
         if (type.isPrimitive()) {
             CtPrimitiveType pt = (CtPrimitiveType)type;
-            exprType = MemberResolver.descToType(pt.getDescriptor(), lineNumber);
+            exprType = MemberResolver.descToType(pt.getDescriptor());
             arrayDim = dim;
             className = null;
         }
         else if (type.isArray())
             try {
-                setType(type.getComponentType(), dim + 1, lineNumber);
+                setType(type.getComponentType(), dim + 1);
             }
             catch (NotFoundException e) {
-                throw new CompileError("undefined type: " + type.getName(), lineNumber);
+                throw new CompileError("undefined type: " + type.getName());
             }
         else {
             exprType = CLASS;

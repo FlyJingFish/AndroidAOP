@@ -163,26 +163,26 @@ public class Cast extends Expr {
         }
 
         @Override
-        public void doit(JvstCodeGen gen, Bytecode bytecode, ASTList args, int lineNumber)
+        public void doit(JvstCodeGen gen, Bytecode bytecode, ASTList args)
             throws CompileError
         {
             if (gen.getMethodArgsLength(args) != 1)
                 throw new CompileError(Javac.proceedName
                         + "() cannot take more than one parameter "
-                        + "for cast", lineNumber);
+                        + "for cast");
 
             gen.atMethodArgs(args, new int[1], new int[1], new String[1]);
             bytecode.addOpcode(Opcode.CHECKCAST);
             bytecode.addIndex(index);
-            gen.setType(retType, lineNumber);
+            gen.setType(retType);
         }
 
         @Override
-        public void setReturnType(JvstTypeChecker c, ASTList args, int lineNumber)
+        public void setReturnType(JvstTypeChecker c, ASTList args)
             throws CompileError
         {
             c.atMethodArgs(args, new int[1], new int[1], new String[1]);
-            c.setType(retType, lineNumber);
+            c.setType(retType);
         }
     }
 }
