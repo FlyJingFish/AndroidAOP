@@ -47,6 +47,7 @@ class CompileAndroidAopTask(
     private lateinit var logger: Logger
     fun taskAction() {
         ClassPoolUtils.release(project)
+        WovenInfoUtils.checkHasOverrideJson(project, variantName)
         logger = project.logger
         WovenInfoUtils.isCompile = true
         ClassFileUtils.outputDir = output

@@ -12,6 +12,8 @@ import com.flyjingfish.android_aop_plugin.beans.CutMethodJson
 import com.flyjingfish.android_aop_plugin.beans.LambdaMethod
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
+import com.flyjingfish.android_aop_plugin.ex.AndroidAOPOverrideMethodException
+import com.flyjingfish.android_aop_plugin.utils.FileHashUtils
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils.getMethodInfo
 import com.flyjingfish.android_aop_plugin.utils.Utils.isAOPMethod
@@ -25,6 +27,7 @@ import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.isLeaf
 import com.flyjingfish.android_aop_plugin.utils.instanceof
 import com.flyjingfish.android_aop_plugin.utils.isHasMethodBody
 import com.flyjingfish.android_aop_plugin.utils.isStaticMethod
+import javassist.Modifier
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.Handle
 import org.objectweb.asm.MethodVisitor
@@ -47,6 +50,8 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
     lateinit var className: String
     private var replaceInvokeClassName: String?=null
     private var replaceTargetClassName: String?=null
+    private var isOverrideClass = false
+    private var overrideMethodSet :MutableSet<String> = mutableSetOf()
 
 
     override fun visit(
@@ -58,6 +63,10 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
         interfaces: Array<String>?
     ) {
         className = name
+        isOverrideClass = WovenInfoUtils.isLastOverrideClassname(slashToDot(className))
+        if (isOverrideClass){
+            overrideMethodSet.addAll(WovenInfoUtils.getLastOverrideMethod(slashToDot(className)))
+        }
         val seeClsName = slashToDotClassName(className)
         val isReplaceClass = WovenInfoUtils.containInvoke(seeClsName)
         if (isReplaceClass){
@@ -434,6 +443,12 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
         access: Int, name: String, descriptor: String,
         signature: String?, exceptions: Array<String?>?
     ): MethodVisitor {
+        if (isOverrideClass
+            && !Modifier.isStatic(access)
+            && !Modifier.isFinal(access)
+            && !Modifier.isPrivate(access)){
+            overrideMethodSet.remove("${slashToDot(className)}.$name($descriptor)")
+        }
         if ("<init>" != name && "<clinit>" != name && aopMatchCuts.size > 0 && isBackMethod(access) && !isAOPMethod(name)) {
             for (aopMatchCut in aopMatchCuts) {
                 fun addMatchMethodCut(){
@@ -495,6 +510,9 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
 
     override fun visitEnd() {
         super.visitEnd()
+        if (isOverrideClass && overrideMethodSet.isNotEmpty()){
+            onCallBackMethod?.onThrowOverrideMethod(slashToDot(className))
+        }
 
         this.methods.forEach { methodNode ->
 
@@ -616,5 +634,6 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
         fun onBackMethodRecord(methodRecord: MethodRecord)
         fun onDeleteMethodRecord(methodRecord: MethodRecord)
         fun onBackReplaceMethodInfo(replaceMethodInfo: ReplaceMethodInfo)
+        fun onThrowOverrideMethod(className:String)
     }
 }

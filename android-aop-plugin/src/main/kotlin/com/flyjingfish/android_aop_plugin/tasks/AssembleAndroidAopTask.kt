@@ -76,6 +76,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         ClassFileUtils.reflectInvokeMethod = reflectInvokeMethod
         WovenInfoUtils.isCompile = false
         WovenInfoUtils.checkHasInvokeJson(project, variant)
+        WovenInfoUtils.checkHasOverrideJson(project, variant)
         println("AndroidAOP woven info code start")
         ClassFileUtils.outputDir = File(Utils.aopTransformTempDir(project,variant))
         ClassFileUtils.clear()
@@ -89,6 +90,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         println("AndroidAOP woven info code finish, current cost time ${scanTimeCost}ms")
 
     }
+
 
     private fun scanFile() {
         loadJoinPointConfig()
@@ -237,11 +239,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             jarOutput.saveEntry(jarEntryName,it)
                         }
                     }
-                    fun recordChange(byteArray: ByteArray){
-                        if (WovenInfoUtils.isOverrideClassname(Utils.slashToDot(entryClazzName))){
-                            FileHashUtils.recordOverrideChange(Utils.slashToDot(entryClazzName),byteArray)
-                        }
-                    }
                     if (realMethodsRecord != null){
                         FileInputStream(file).use { inputs ->
                             val byteArray = try {
@@ -256,7 +253,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 null
                             }
                             byteArray?.let { bytes ->
-                                recordChange(bytes)
                                 bytes.inputStream().use {
                                     jarOutput.saveEntry(jarEntryName,it)
                                 }
@@ -267,7 +263,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                         FileInputStream(file).use { inputs ->
                             val originInject = inputs.readAllBytes()
                             val resultByteArray = RegisterMapWovenInfoCode().execute(originInject.inputStream())
-                            recordChange(resultByteArray)
                             resultByteArray.inputStream().use {
                                 jarOutput.saveEntry(entryName,it)
                             }
@@ -316,7 +311,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                             cr.accept(cv, 0)
 
                                             val newByteArray = cw.toByteArray()
-                                            recordChange(newByteArray)
                                             newByteArray.inputStream().use {
                                                 jarOutput.saveEntry(jarEntryName,it)
                                             }
@@ -339,11 +333,10 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 if (byteArray.isNotEmpty()){
                                     try {
                                         val newByteArray = aopTaskUtils.wovenIntoCodeForReplace(byteArray)
-                                        recordChange(newByteArray.byteArray)
                                         newByteArray.byteArray.inputStream().use {
                                             jarOutput.saveEntry(jarEntryName,it)
                                         }
-    //                                    newClasses.add(newByteArray)
+                                        //                                    newClasses.add(newByteArray)
                                     } catch (e: Exception) {
                                         copy()
                                     }
@@ -359,11 +352,10 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     if (byteArray.isNotEmpty()){
                                         try {
                                             val newByteArray = aopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
-                                            recordChange(newByteArray.byteArray)
                                             newByteArray.byteArray.inputStream().use {
                                                 jarOutput.saveEntry(jarEntryName,it)
                                             }
-    //                                        newClasses.add(newByteArray)
+                                            //                                        newClasses.add(newByteArray)
                                         } catch (e: Exception) {
                                             copy()
                                         }
@@ -408,11 +400,10 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                         }
 
                                         val newByteArray = cw.toByteArray()
-                                        recordChange(newByteArray)
                                         newByteArray.inputStream().use {
                                             jarOutput.saveEntry(jarEntryName,it)
                                         }
-    //                                    newClasses.add(newByteArray)
+                                        //                                    newClasses.add(newByteArray)
                                     } catch (e: Exception) {
                                         copy()
                                     }
@@ -491,13 +482,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             jarOutput.saveEntry(entryName,it)
                         }
                     }
-
-                    fun recordChange(byteArray: ByteArray){
-                        if (WovenInfoUtils.isOverrideClassname(Utils.slashToDot(entryClazzName))){
-                            FileHashUtils.recordOverrideChange(Utils.slashToDot(entryClazzName),byteArray)
-                        }
-                    }
-
                     if (realMethodsRecord != null){
                         jarFile.getInputStream(jarEntry).use { inputs ->
                             val byteArray = try {
@@ -512,7 +496,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 null
                             }
                             byteArray?.let {
-                                recordChange(it)
                                 it.inputStream().use {
                                     jarOutput.saveEntry(entryName,it)
                                 }
@@ -523,7 +506,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                         jarFile.getInputStream(jarEntry).use { inputs ->
                             val originInject = inputs.readAllBytes()
                             val resultByteArray = RegisterMapWovenInfoCode().execute(originInject.inputStream())
-                            recordChange(resultByteArray)
                             resultByteArray.inputStream().use {
                                 jarOutput.saveEntry(entryName,it)
                             }
@@ -572,7 +554,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                             cr.accept(cv, 0)
 
                                             val newByteArray = cw.toByteArray()
-                                            recordChange(newByteArray)
                                             newByteArray.inputStream().use {
                                                 jarOutput.saveEntry(entryName,it)
                                             }
@@ -596,7 +577,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 if (byteArray.isNotEmpty()){
                                     try {
                                         val newByteArray = aopTaskUtils.wovenIntoCodeForReplace(byteArray)
-                                        recordChange(newByteArray.byteArray)
                                         newByteArray.byteArray.inputStream().use {
                                             jarOutput.saveEntry(entryName,it)
                                         }
@@ -616,7 +596,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     if (byteArray.isNotEmpty()){
                                         try {
                                             val newByteArray = aopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
-                                            recordChange(newByteArray.byteArray)
                                             newByteArray.byteArray.inputStream().use {
                                                 jarOutput.saveEntry(entryName,it)
                                             }
@@ -665,7 +644,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                         }
 
                                         val newByteArray = cw.toByteArray()
-                                        recordChange(newByteArray)
                                         newByteArray.inputStream().use {
                                             jarOutput.saveEntry(entryName,it)
                                         }

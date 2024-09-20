@@ -310,7 +310,7 @@ object WovenIntoCode {
                     wovenMethodCode(cw,superClassName!!, value.methodName,value.methodName,value.descriptor,ctMethod.modifiers,methodNode,argInfos)
                     val newMethodName = Utils.getTargetMethodName(value.methodName, ctClazzName!!, value.descriptor)
                     wovenMethodCode(cw,superClassName!!, value.methodName,newMethodName,value.descriptor,ACC_PUBLIC + ACC_FINAL,methodNode,argInfos)
-                    WovenInfoUtils.recordOverrideClassname(value.overrideClassname)
+                    WovenInfoUtils.recordOverrideClassname(value.overrideClassname,value.methodName, value.descriptor)
                 } catch (_: Exception) {
                 }
                 ctClass.detach()

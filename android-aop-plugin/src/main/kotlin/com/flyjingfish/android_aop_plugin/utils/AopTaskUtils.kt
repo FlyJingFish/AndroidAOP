@@ -8,6 +8,7 @@ import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.beans.WovenResult
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
+import com.flyjingfish.android_aop_plugin.ex.AndroidAOPOverrideMethodException
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ClassSuperScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.MethodReplaceInvokeVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ReplaceBaseClassVisitor
@@ -15,6 +16,7 @@ import com.flyjingfish.android_aop_plugin.scanner_visitor.SearchAOPConfigVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.SearchAopMethodVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.SuspendReturnScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
+import com.flyjingfish.android_aop_plugin.utils.Utils.slashToDot
 import javassist.Modifier
 import org.gradle.api.Project
 import org.objectweb.asm.ClassReader
@@ -126,7 +128,7 @@ class AopTaskUtils(private val project: Project,private val variantName: String)
                             val entryName = jarEntry.name
                             if (entryName.endsWith(Utils._CLASS)) {
                                 val className = entryName.replace(".class","")
-                                WovenInfoUtils.addExtendsReplace(Utils.slashToDot(className))
+                                WovenInfoUtils.addExtendsReplace(slashToDot(className))
                             }
                         } catch (_: Exception) {
 
@@ -151,10 +153,8 @@ class AopTaskUtils(private val project: Project,private val variantName: String)
 
                     if (bytes.isNotEmpty()){
                         val inAsm = FileHashUtils.isAsmScan(file.absolutePath,bytes,2)
-                        if (WovenInfoUtils.isLastOverrideClassname(Utils.slashToDot(className)) && FileHashUtils.overrideIsChange(Utils.slashToDot(className),bytes)){
-                            throw RuntimeException("${Utils.slashToDot(className)} 已经改变，需要 clean 后重新编译")
-                        }
                         if (inAsm){
+
                             WovenInfoUtils.deleteClassMethodRecord(file.absolutePath)
                             WovenInfoUtils.deleteReplaceMethodInfo(file.absolutePath)
                             try {
@@ -179,13 +179,20 @@ class AopTaskUtils(private val project: Project,private val variantName: String)
                                         override fun onBackReplaceMethodInfo(replaceMethodInfo: ReplaceMethodInfo) {
                                             WovenInfoUtils.addReplaceMethodInfo(file.absolutePath, replaceMethodInfo)
                                         }
+
+                                        override fun onThrowOverrideMethod(className: String) {
+                                            throwOverride(className)
+                                        }
                                     }
                                 ), ClassReader.EXPAND_FRAMES)
-                                processOverride(Utils.slashToDot(className), matchAopMatchCuts,entryName){
+                                processOverride(slashToDot(className), matchAopMatchCuts,entryName){
                                     val record = ClassMethodRecord(file.absolutePath, it)
                                     addClassMethodRecords[file.absolutePath+it.getKey()]  = record
                                 }
                             } catch (e: Exception) {
+                                if (e is AndroidAOPOverrideMethodException){
+                                    throw e
+                                }
                                 e.printStackTrace()
                             }
                         }
@@ -194,7 +201,7 @@ class AopTaskUtils(private val project: Project,private val variantName: String)
             }
 
             if (file.absolutePath.endsWith(Utils._CLASS)){
-                WovenInfoUtils.addExtendsReplace(Utils.slashToDot(className))
+                WovenInfoUtils.addExtendsReplace(slashToDot(className))
 
                 val isAopCutClass = WovenInfoUtils.isAopMethodCutClass(className) || WovenInfoUtils.isAopMatchCutClass(className)
                 if (isAopCutClass){
@@ -263,7 +270,7 @@ class AopTaskUtils(private val project: Project,private val variantName: String)
 //                                    printLog("processOverride=name=$name,descriptor=$descriptor")
                                     val cutInfo = CutInfo(
                                         "匹配切面",
-                                        Utils.slashToDot(
+                                        slashToDot(
                                             entryName.replace(Utils._CLASS,"")
                                         ),
                                         aopMatchCut.cutClassName,
@@ -314,9 +321,6 @@ class AopTaskUtils(private val project: Project,private val variantName: String)
                         val bytes = inputs.readAllBytes();
                         if (bytes.isNotEmpty()){
                             val inAsm = FileHashUtils.isAsmScan(entryName,bytes,2)
-                            if (WovenInfoUtils.isLastOverrideClassname(Utils.slashToDot(className)) && FileHashUtils.overrideIsChange(Utils.slashToDot(className),bytes)){
-                                throw RuntimeException("${Utils.slashToDot(className)} 已经改变，需要 clean 后重新编译")
-                            }
                             if (inAsm){
                                 WovenInfoUtils.deleteClassMethodRecord(entryName)
                                 WovenInfoUtils.deleteReplaceMethodInfo(entryName)
@@ -342,13 +346,19 @@ class AopTaskUtils(private val project: Project,private val variantName: String)
                                             override fun onBackReplaceMethodInfo(replaceMethodInfo: ReplaceMethodInfo) {
                                                 WovenInfoUtils.addReplaceMethodInfo(entryName, replaceMethodInfo)
                                             }
+                                            override fun onThrowOverrideMethod(className: String) {
+                                                throwOverride(className)
+                                            }
                                         }
                                     ), ClassReader.EXPAND_FRAMES)
-                                    processOverride(Utils.slashToDot(className), matchAopMatchCuts,entryName){
+                                    processOverride(slashToDot(className), matchAopMatchCuts,entryName){
                                         val record = ClassMethodRecord(entryName, it)
                                         addClassMethodRecords[entryName+it.getKey()]  = record
                                     }
                                 } catch (e: Exception) {
+                                    if (e is AndroidAOPOverrideMethodException){
+                                        throw e
+                                    }
                                     e.printStackTrace()
                                 }
                             }
@@ -357,7 +367,7 @@ class AopTaskUtils(private val project: Project,private val variantName: String)
                 }
                 if (entryName.endsWith(Utils._CLASS)){
 
-                    WovenInfoUtils.addExtendsReplace(Utils.slashToDot(className))
+                    WovenInfoUtils.addExtendsReplace(slashToDot(className))
 
                     val isAopCutClass = WovenInfoUtils.isAopMethodCutClass(className) || WovenInfoUtils.isAopMatchCutClass(className)
                     if (isAopCutClass){
@@ -372,10 +382,19 @@ class AopTaskUtils(private val project: Project,private val variantName: String)
                     }
                 }
             } catch (e: Exception) {
+                if (e is AndroidAOPOverrideMethodException){
+                    throw e
+                }
                 printLog("Merge jar error entry:[${jarEntry.name}], error message:$e")
             }
         }
         jarFile.close()
+    }
+
+    private fun throwOverride(className: String){
+        val hintFilePath = Utils.overrideClassFile(project,variantName)
+        InitConfig.exportOverrideClassFile(File(hintFilePath), mutableListOf(className))
+        throw AndroidAOPOverrideMethodException("重写$className 的相关方法已经改变，需要 clean 后重新编译")
     }
 
     fun searchJoinPointLocationEnd(addClassMethodRecords:MutableMap<String,ClassMethodRecord>,deleteClassMethodRecords: MutableSet<String>){

@@ -2,7 +2,6 @@ package com.flyjingfish.android_aop_plugin.utils
 
 import com.flyjingfish.android_aop_plugin.beans.MatchMethodInfo
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
-import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import org.gradle.api.Project
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.commons.Method
@@ -259,6 +258,9 @@ object Utils {
 
     fun invokeJsonFile(project:Project, variantName:String):String{
         return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/cacheInfo.json".adapterOSPath()
+    }
+    fun overrideClassFile(project:Project, variantName:String):String{
+        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/overrideClass.json".adapterOSPath()
     }
     fun aopCompileTempDir(project:Project, variantName:String):String{
         return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileClass/".adapterOSPath()

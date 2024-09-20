@@ -16,6 +16,7 @@ import com.flyjingfish.android_aop_plugin.beans.CutReplaceClassMap
 import com.flyjingfish.android_aop_plugin.beans.CutReplaceMethodJson
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ModifyExtendsClassJson
+import com.flyjingfish.android_aop_plugin.beans.OverrideClassJson
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig.Companion.cutInfoJson
@@ -245,6 +246,13 @@ object InitConfig {
     fun exportCacheCutFile(jsonFile: File,mutableList: MutableList<String>) {
         jsonFile.checkExist()
         val json = GsonBuilder().setPrettyPrinting().create().toJson(CutFileJson(mutableList))
+
+        saveFile(jsonFile, json,false)
+    }
+
+    fun exportOverrideClassFile(jsonFile: File,mutableList: MutableList<String>) {
+        jsonFile.checkExist()
+        val json = GsonBuilder().setPrettyPrinting().create().toJson(OverrideClassJson(mutableList))
 
         saveFile(jsonFile, json,false)
     }

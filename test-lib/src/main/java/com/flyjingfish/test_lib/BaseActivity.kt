@@ -16,7 +16,7 @@ abstract class BaseActivity :AppCompatActivity() {
     open fun baseMultParam(@TestParams("lala")@TestParams2("hehe") num1: Int, num2: Long, num3: Long, num4: Int, num5: Int,
                   num6: Int, num7: Int, num8: Int, num9: Int, num10: Int,
                   num11: Int, num12: Int, num13: Int, num14: Int, num15: Int,
-                  num16: Int, num17: Int, num18: Int, num19: Int, num20: Int):Int{
+                  num16: Int, num17: Int, num18: Int, num19: Int, num20: Int,list: List<String>):Int{
         val num100 = num1+num5
         return num100
     }
@@ -24,7 +24,7 @@ abstract class BaseActivity :AppCompatActivity() {
     fun onTest(){
 
     }
-    fun onTest(max:Int,value:String){
+    fun onTest(maxs:Int,value:String){
 
     }
 }

@@ -8,10 +8,11 @@ import com.flyjingfish.android_aop_plugin.beans.AopReplaceCut
 import com.flyjingfish.android_aop_plugin.beans.ClassMethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ClassSuperInfo
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
+import com.flyjingfish.android_aop_plugin.beans.OverrideClassJson
 import com.flyjingfish.android_aop_plugin.beans.ReplaceInnerClassInfo
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
-import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
+import com.flyjingfish.android_aop_plugin.ex.AndroidAOPOverrideMethodException
 import org.gradle.api.Project
 import java.io.File
 import java.util.concurrent.CopyOnWriteArraySet
@@ -50,6 +51,8 @@ object WovenInfoUtils {
     private val aopMethodCutInnerClassInfoInvokeClassNameCount = mutableMapOf<String,Int>()
     private val overrideClassnameSet = mutableSetOf<String>()
     private val lastOverrideClassnameSet = mutableSetOf<String>()
+    private val overrideMethodMap = mutableMapOf<String,MutableSet<String>>()
+    private val lastOverrideMethodMap = mutableMapOf<String,MutableSet<String>>()
     fun getClassPaths():CopyOnWriteArraySet<String>{
         return classPaths
     }
@@ -283,6 +286,10 @@ object WovenInfoUtils {
         lastOverrideClassnameSet.clear()
         lastOverrideClassnameSet.addAll(overrideClassnameSet)
         overrideClassnameSet.clear()
+
+        lastOverrideMethodMap.clear()
+        lastOverrideMethodMap.putAll(overrideMethodMap)
+        overrideMethodMap.clear()
     }
 
     fun addClassName(classPath: String) {
@@ -607,6 +614,16 @@ object WovenInfoUtils {
         }
     }
 
+    fun checkHasOverrideJson(project: Project,variant:String){
+        val cacheJsonFile = File(Utils.overrideClassFile(project,variant))
+        if (cacheJsonFile.exists()){
+            val json = InitConfig.optFromJsonString(
+                InitConfig.readAsString(cacheJsonFile.absolutePath),
+                OverrideClassJson::class.java)
+            throw AndroidAOPOverrideMethodException("重写${json?.overrideClassJson?.get(0)}的相关方法 已经改变，需要 clean 后重新编译")
+        }
+    }
+
     fun checkLeafConfig(isApp:Boolean){
         val verifyLeafExtends = AndroidAopConfig.verifyLeafExtends
         if (!verifyLeafExtends && isApp){
@@ -704,15 +721,26 @@ object WovenInfoUtils {
         }
     }
 
-    fun recordOverrideClassname(className: String){
+    fun recordOverrideClassname(className: String, methodName: String, descriptor: String){
         overrideClassnameSet.add(className)
+        var list = overrideMethodMap[className]
+        if (list == null){
+            list = mutableSetOf()
+            overrideMethodMap[className] = list
+        }
+        list.add("$className.$methodName($descriptor)")
     }
 
     fun isLastOverrideClassname(className: String):Boolean{
         return lastOverrideClassnameSet.contains(className)
     }
 
-    fun isOverrideClassname(className: String):Boolean{
-        return overrideClassnameSet.contains(className)
+    fun getLastOverrideMethod(className: String):MutableSet<String>{
+        val record = lastOverrideMethodMap[className]
+        val set = mutableSetOf<String>()
+        record?.let {
+            set.addAll(it)
+        }
+        return set
     }
 }
