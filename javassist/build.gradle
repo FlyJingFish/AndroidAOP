@@ -1,0 +1,11 @@
+plugins {
+    id 'java-library'
+    id 'org.jetbrains.kotlin.jvm'
+}
+javadoc {
+    title = "AndroidAop Javassist ${version} API"
+    options.bottom = 'AndroidAop'
+}
+apply from: "$rootDir/gradle/java_base.gradle"
+apply from: "$rootDir/gradle/java_publish.gradle"
+
