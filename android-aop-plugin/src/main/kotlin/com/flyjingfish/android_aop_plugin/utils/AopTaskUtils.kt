@@ -151,8 +151,10 @@ class AopTaskUtils(private val project: Project,private val variantName: String)
 
                     if (bytes.isNotEmpty()){
                         val inAsm = FileHashUtils.isAsmScan(file.absolutePath,bytes,2)
+                        if (WovenInfoUtils.isLastOverrideClassname(Utils.slashToDot(className)) && FileHashUtils.overrideIsChange(Utils.slashToDot(className),bytes)){
+                            throw RuntimeException("${Utils.slashToDot(className)} 已经改变，需要 clean 后重新编译")
+                        }
                         if (inAsm){
-
                             WovenInfoUtils.deleteClassMethodRecord(file.absolutePath)
                             WovenInfoUtils.deleteReplaceMethodInfo(file.absolutePath)
                             try {
@@ -312,6 +314,9 @@ class AopTaskUtils(private val project: Project,private val variantName: String)
                         val bytes = inputs.readAllBytes();
                         if (bytes.isNotEmpty()){
                             val inAsm = FileHashUtils.isAsmScan(entryName,bytes,2)
+                            if (WovenInfoUtils.isLastOverrideClassname(Utils.slashToDot(className)) && FileHashUtils.overrideIsChange(Utils.slashToDot(className),bytes)){
+                                throw RuntimeException("${Utils.slashToDot(className)} 已经改变，需要 clean 后重新编译")
+                            }
                             if (inAsm){
                                 WovenInfoUtils.deleteClassMethodRecord(entryName)
                                 WovenInfoUtils.deleteReplaceMethodInfo(entryName)

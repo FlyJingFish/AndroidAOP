@@ -29,6 +29,17 @@ object FileHashUtils {
             false
         }
     }
+
+    fun overrideIsChange(file: String, fileBytes: ByteArray): Boolean {
+        return isAsmScan(file, fileBytes,10)
+    }
+
+    fun recordOverrideChange(file: String, fileBytes: ByteArray) {
+        if (!AndroidAopConfig.increment){
+            return
+        }
+        putFileHash(file, fileBytes,10)
+    }
     private fun putFileHash(file: String, fileBytes: ByteArray, step: Int) {
         val hash = getSHA256Hash(fileBytes)
         when(step){

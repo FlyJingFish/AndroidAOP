@@ -77,7 +77,7 @@ open class AndroidAopConfig {
         val excludes = mutableListOf<String>()
         var verifyLeafExtends = true
         var cutInfoJson = false
-        var increment = false
+        var increment = true
 
         internal fun syncConfig(project: Project){
             val androidAopConfig = project.extensions.getByType(AndroidAopConfig::class.java)

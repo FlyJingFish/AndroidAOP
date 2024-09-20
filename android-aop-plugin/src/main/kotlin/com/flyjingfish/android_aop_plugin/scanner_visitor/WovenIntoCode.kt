@@ -7,6 +7,7 @@ import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
 import com.flyjingfish.android_aop_plugin.utils.ClassNameToConversions
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
+import com.flyjingfish.android_aop_plugin.utils.FileHashUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils.CONVERSIONS_CLASS
@@ -309,6 +310,7 @@ object WovenIntoCode {
                     wovenMethodCode(cw,superClassName!!, value.methodName,value.methodName,value.descriptor,ctMethod.modifiers,methodNode,argInfos)
                     val newMethodName = Utils.getTargetMethodName(value.methodName, ctClazzName!!, value.descriptor)
                     wovenMethodCode(cw,superClassName!!, value.methodName,newMethodName,value.descriptor,ACC_PUBLIC + ACC_FINAL,methodNode,argInfos)
+                    WovenInfoUtils.recordOverrideClassname(value.overrideClassname)
                 } catch (_: Exception) {
                 }
                 ctClass.detach()

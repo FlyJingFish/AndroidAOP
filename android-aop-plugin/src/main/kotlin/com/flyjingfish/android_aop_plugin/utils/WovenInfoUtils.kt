@@ -48,6 +48,8 @@ object WovenInfoUtils {
     private val aopMethodCutInnerClassInfoInvokeMethod = mutableSetOf<String>()
     private val aopMethodCutInnerClassInfoInvokeClassName = mutableSetOf<String>()
     private val aopMethodCutInnerClassInfoInvokeClassNameCount = mutableMapOf<String,Int>()
+    private val overrideClassnameSet = mutableSetOf<String>()
+    private val lastOverrideClassnameSet = mutableSetOf<String>()
     fun getClassPaths():CopyOnWriteArraySet<String>{
         return classPaths
     }
@@ -278,6 +280,9 @@ object WovenInfoUtils {
 //        classSuperList.clear()
             classSuperMap.clear()
         }
+        lastOverrideClassnameSet.clear()
+        lastOverrideClassnameSet.addAll(overrideClassnameSet)
+        overrideClassnameSet.clear()
     }
 
     fun addClassName(classPath: String) {
@@ -697,5 +702,17 @@ object WovenInfoUtils {
         }else{
             null
         }
+    }
+
+    fun recordOverrideClassname(className: String){
+        overrideClassnameSet.add(className)
+    }
+
+    fun isLastOverrideClassname(className: String):Boolean{
+        return lastOverrideClassnameSet.contains(className)
+    }
+
+    fun isOverrideClassname(className: String):Boolean{
+        return overrideClassnameSet.contains(className)
     }
 }
