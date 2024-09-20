@@ -191,8 +191,6 @@ androidAopConfig {
      verifyLeafExtends true
      //Off by default, if enabled in Build or after packaging, the point cut information json file will be generated in app/build/tmp/cutInfo.json
      cutInfoJson false
-     //It is enabled by default. After setting false, there will be no incremental compilation effect. Filter (keyword: AndroidAOP woven info code) build output log viewable time
-    increment true
 }
 android {
      ...

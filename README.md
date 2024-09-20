@@ -210,8 +210,6 @@ androidAopConfig {
     verifyLeafExtends true
     //默认关闭，开启在 Build 或 打包后 将会生成切点信息json文件在 app/build/tmp/cutInfo.json
     cutInfoJson false
-    //默认开启，设置 false 后会没有增量编译效果 筛选（关键字： AndroidAOP woven info code） build 输出日志可看时间 
-    increment true//修改、增加、删除匹配、收集切面的话，就会走全量编译
 }
 android {
     ...
