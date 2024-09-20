@@ -26,6 +26,7 @@ open class AndroidAopConfig {
     /**
      * 增量加速，有一定增速效果，默认开启
      */
+    @Deprecated("已弃用，再使用此配置已无作用")
     var increment = true
     /**
      * 包含规则,可以精确到直接使用类名
@@ -63,7 +64,7 @@ open class AndroidAopConfig {
         AndroidAopConfig.excludes.add(Utils.corePackage)
         AndroidAopConfig.verifyLeafExtends = verifyLeafExtends
         AndroidAopConfig.cutInfoJson = cutInfoJson
-        AndroidAopConfig.increment = increment
+//        AndroidAopConfig.increment = increment
     }
 
     override fun toString(): String {
@@ -76,7 +77,7 @@ open class AndroidAopConfig {
         val excludes = mutableListOf<String>()
         var verifyLeafExtends = true
         var cutInfoJson = false
-        var increment = true
+        var increment = false
 
         internal fun syncConfig(project: Project){
             val androidAopConfig = project.extensions.getByType(AndroidAopConfig::class.java)

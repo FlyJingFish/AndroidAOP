@@ -5,65 +5,16 @@ apply plugin: "signing"
 group = rootProject.group
 version = rootProject.version
 
-//def appVersionName = getAppVersionName()
 java {
     withJavadocJar()
-    withSourcesJar()
 }
 javadoc {
     if (JavaVersion.current().isJava9Compatible()) {
         options.addBooleanOption('html5', true)
     }
 }
-afterEvaluate {
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                artifactId = PROJ_NAME
-                from(components.java)
-                pom {
-                    packaging = "jar"
-                    name = PROJ_BASENAME
-                    description = PROJ_DESCRIPTION
-                    url = PROJ_WEBSITEURL
-                    licenses {
-                        license {
-                            name =  'The Apache License, Version 2.0'
-                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                        }
-                    }
-                    developers {
-                        developer {
-                            id = DEVELOPER_ID
-                            name = DEVELOPER_NAME
-                            email = DEVELOPER_EMAIL
-                        }
-                    }
 
-                    scm {
-                        connection = PROJ_VCSURL
-                        developerConnection = PROJ_VCSURL
-                        url = PROJ_WEBSITEURL
-                    }
-                }
-            }
-        }
-    }
-    signing {
-        sign publishing.publications.mavenJava
-    }
-}
+apply from: "$rootDir/gradle/java_base_publish.gradle"
+//def appVersionName = getAppVersionName()
 
-
-
-//nexusPublishing {
-//    repositories {
-//        myNexus {
-//            nexusUrl = uri('https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/')
-//            snapshotRepositoryUrl = uri('https://s01.oss.sonatype.org/content/repositories/snapshots/')
-//            username = ossrhUsername // defaults to project.properties["myNexusUsername"]
-//            password = ossrhPassword // defaults to project.properties["myNexusPassword"]
-//        }
-//    }
-//}
 

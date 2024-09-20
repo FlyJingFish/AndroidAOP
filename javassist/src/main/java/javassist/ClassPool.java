@@ -324,6 +324,7 @@ public class ClassPool {
      * @param name          an invalid class name (separeted by dots).
      * @deprecated
      */
+    @Deprecated
     public void recordInvalidClassName(String name) {
         // source.recordInvalidClassName(name);
     }
@@ -1092,6 +1093,7 @@ public class ClassPool {
      * overriding this method should be modified.  It should override
      * {@link #toClass(CtClass,Class,ClassLoader,ProtectionDomain)}.
      */
+    @Deprecated
     public Class toClass(CtClass ct, ClassLoader loader)
         throws CannotCompileException
     {
@@ -1130,6 +1132,7 @@ public class ClassPool {
      * @since 3.3
      * @deprecated      Replaced by {@link #toClass(CtClass,Class,ClassLoader,ProtectionDomain)}.
      */
+    @Deprecated
     public Class toClass(CtClass ct, ClassLoader loader, ProtectionDomain domain)
         throws CannotCompileException
     {
@@ -1265,6 +1268,7 @@ public class ClassPool {
      * @since 3.16
      * @deprecated
      */
+    @Deprecated
     public void makePackage(ClassLoader loader, String name)
         throws CannotCompileException
     {

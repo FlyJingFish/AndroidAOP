@@ -25,10 +25,9 @@ import com.flyjingfish.androidaop.test2.StaticClass
 import com.flyjingfish.androidaop.test.TestBean
 import com.flyjingfish.test_lib.mycut.TestParams
 import com.flyjingfish.androidaop.test.TestReplace
-import com.flyjingfish.test_lib.annotation.MyAnno3
 import com.flyjingfish.test_lib.BaseActivity
+import com.flyjingfish.test_lib.annotation.MyAnno3
 import com.flyjingfish.test_lib.PermissionRejectListener
-import com.flyjingfish.test_lib.TestMatch
 import com.flyjingfish.test_lib.TestMatch2
 import com.flyjingfish.test_lib.annotation.MyAnno2
 import com.flyjingfish.test_lib.mycut.TestParams2
@@ -210,7 +209,7 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
     }
 
     @Permission(Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    fun onPermission(activity: BaseActivity,maxSelect :Int){
+    fun onPermission(activity: BaseActivity, maxSelect :Int){
         setLogcat("@Permission 获得权限了进入了方法 activity$activity,maxSelect=$maxSelect")
     }
 

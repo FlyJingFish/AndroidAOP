@@ -66,8 +66,10 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     private lateinit var jarOutput: JarOutputStream
     private val ignoreJar = mutableSetOf<String>()
     private val ignoreJarClassPaths = mutableListOf<File>()
+    private val aopTaskUtils = AopTaskUtils(project,variant)
     @TaskAction
     fun taskAction() {
+        ClassPoolUtils.release(project)
         ClassFileUtils.debugMode = false
         ClassFileUtils.reflectInvokeMethod = reflectInvokeMethod
         WovenInfoUtils.isCompile = false
@@ -82,7 +84,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             scanFile()
         }
         jarOutput.close()
-        ClassPoolUtils.release()
         println("AndroidAOP woven info code finish, current cost time ${scanTimeCost}ms")
 
     }
@@ -131,7 +132,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         }
 
         fun processFile(file : File,directory:File,directoryPath:String){
-            AopTaskUtils.processFileForConfig(file, directory, directoryPath)
+            aopTaskUtils.processFileForConfig(file, directory, directoryPath)
         }
         if (!ClassFileUtils.reflectInvokeMethod){
             WovenInfoUtils.addClassPath(ClassFileUtils.outputDir.absolutePath)
@@ -159,19 +160,19 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             if (file.asFile.absolutePath in ignoreJar){
                 return@forEach
             }
-            AopTaskUtils.processJarForConfig(file.asFile)
+            aopTaskUtils.processJarForConfig(file.asFile)
         }
-        AopTaskUtils.loadJoinPointConfigEnd(true)
+        aopTaskUtils.loadJoinPointConfigEnd(true)
     }
 
     private fun searchJoinPointLocation(){
-        AopTaskUtils.searchJoinPointLocationStart(project)
+        aopTaskUtils.searchJoinPointLocationStart(project)
 
         val addClassMethodRecords = mutableMapOf<String,ClassMethodRecord>()
         val deleteClassMethodRecords = mutableSetOf<String>()
 
         fun processFile(file : File,directory:File,directoryPath:String){
-            AopTaskUtils.processFileForSearch(file, directory, directoryPath,addClassMethodRecords, deleteClassMethodRecords)
+            aopTaskUtils.processFileForSearch(file, directory, directoryPath,addClassMethodRecords, deleteClassMethodRecords)
         }
 
         for (directory in ignoreJarClassPaths) {
@@ -191,9 +192,9 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             if (file.asFile.absolutePath in ignoreJar){
                 return@forEach
             }
-            AopTaskUtils.processJarForSearch(file.asFile, addClassMethodRecords, deleteClassMethodRecords)
+            aopTaskUtils.processJarForSearch(file.asFile, addClassMethodRecords, deleteClassMethodRecords)
         }
-        AopTaskUtils.searchJoinPointLocationEnd(addClassMethodRecords, deleteClassMethodRecords)
+        aopTaskUtils.searchJoinPointLocationEnd(addClassMethodRecords, deleteClassMethodRecords)
     }
 
     private fun wovenIntoCode(){
@@ -327,7 +328,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 val byteArray = inputs.readAllBytes()
                                 if (byteArray.isNotEmpty()){
                                     try {
-                                        val newByteArray = AopTaskUtils.wovenIntoCodeForReplace(byteArray)
+                                        val newByteArray = aopTaskUtils.wovenIntoCodeForReplace(byteArray)
                                         newByteArray.byteArray.inputStream().use {
                                             jarOutput.saveEntry(jarEntryName,it)
                                         }
@@ -346,7 +347,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     val byteArray = inputs.readAllBytes()
                                     if (byteArray.isNotEmpty()){
                                         try {
-                                            val newByteArray = AopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
+                                            val newByteArray = aopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
                                             newByteArray.byteArray.inputStream().use {
                                                 jarOutput.saveEntry(jarEntryName,it)
                                             }
@@ -571,7 +572,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 val byteArray = inputs.readAllBytes()
                                 if (byteArray.isNotEmpty()){
                                     try {
-                                        val newByteArray = AopTaskUtils.wovenIntoCodeForReplace(byteArray)
+                                        val newByteArray = aopTaskUtils.wovenIntoCodeForReplace(byteArray)
                                         newByteArray.byteArray.inputStream().use {
                                             jarOutput.saveEntry(entryName,it)
                                         }
@@ -590,7 +591,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     val byteArray = inputs.readAllBytes()
                                     if (byteArray.isNotEmpty()){
                                         try {
-                                            val newByteArray = AopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
+                                            val newByteArray = aopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
                                             newByteArray.byteArray.inputStream().use {
                                                 jarOutput.saveEntry(entryName,it)
                                             }

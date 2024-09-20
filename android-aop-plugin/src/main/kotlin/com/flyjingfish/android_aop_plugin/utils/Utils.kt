@@ -278,12 +278,35 @@ object Utils {
     fun aopTransformCollectTempDir(project:Project, variantName:String):String{
         return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempCollectClass/".adapterOSPath()
     }
+//    fun aopProjectJarTempDir(project:Project, variantName:String):String{
+//        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempProjectJar/".adapterOSPath()
+//    }
     fun aopTransformIgnoreJarDir(project:Project, variantName:String):String{
         return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempTransformIgnoreJar/".adapterOSPath()
     }
     fun configJsonFile(project:Project):String{
         return project.buildDir.absolutePath+"/tmp/android-aop/config/androidAopConfig.json".adapterOSPath()
     }
+
+//    fun isProjectJar(project:Project?,filePath: String):Boolean{
+//        if (project == null){
+//            return false
+//        }
+//        val projectPath = project.rootProject.buildDir.absolutePath.replace("/build".adapterOSPath(),"")
+//        return filePath.startsWith(projectPath) && filePath.endsWith(".jar")
+//    }
+//
+//    fun getNewProjectJar(project:Project,variantName:String,filePath: String):String?{
+//        val oldJar = File(filePath)
+//        if (oldJar.exists()){
+//            val path = aopProjectJarTempDir(project,variantName)
+//            val jarPath = "$path${UUID.randomUUID().toString().replace("-","")}/${oldJar.absolutePath.computeMD5()}.jar".adapterOSPath()
+//            val newJar = File(jarPath)
+//            oldJar.copyTo(newJar,true)
+//            return newJar.absolutePath
+//        }
+//        return null
+//    }
 
     private val classnamePattern = Pattern.compile("Lkotlin/coroutines/jvm/internal/SuspendLambda;Lkotlin/jvm/functions/Function2<Lkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation<-.*?>;Ljava/lang/Object;>;")
     private val classnamePattern1 = Pattern.compile("Lkotlin/coroutines/jvm/internal/SuspendLambda;Lkotlin/jvm/functions/Function2<Lkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation<-.*?")

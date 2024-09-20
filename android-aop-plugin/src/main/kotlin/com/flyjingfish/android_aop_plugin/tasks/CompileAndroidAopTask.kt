@@ -19,7 +19,6 @@ import com.flyjingfish.android_aop_plugin.utils.checkExist
 import com.flyjingfish.android_aop_plugin.utils.getFileClassname
 import com.flyjingfish.android_aop_plugin.utils.getRelativePath
 import com.flyjingfish.android_aop_plugin.utils.inRules
-import com.flyjingfish.android_aop_plugin.utils.printLog
 import com.flyjingfish.android_aop_plugin.utils.saveEntry
 import com.flyjingfish.android_aop_plugin.utils.saveFile
 import org.gradle.api.Project
@@ -43,10 +42,11 @@ class CompileAndroidAopTask(
     private val tmpJsonFile:File,
     private val variantName:String
 ) {
-
+    private val aopTaskUtils = AopTaskUtils(project,variantName)
 
     private lateinit var logger: Logger
     fun taskAction() {
+        ClassPoolUtils.release(project)
         logger = project.logger
         WovenInfoUtils.isCompile = true
         ClassFileUtils.outputDir = output
@@ -56,9 +56,6 @@ class CompileAndroidAopTask(
         println("AndroidAOP woven info code start")
         val scanTimeCost = measureTimeMillis {
             scanFile()
-        }
-        if (isApp){
-            ClassPoolUtils.release()
         }
         println("AndroidAOP woven info code finish, current cost time ${scanTimeCost}ms")
 
@@ -79,19 +76,19 @@ class CompileAndroidAopTask(
             val directoryPath = directory.absolutePath
             WovenInfoUtils.addClassPath(directoryPath)
             directory.walk().forEach { file ->
-                AopTaskUtils.processFileForConfig(file, directory, directoryPath)
+                aopTaskUtils.processFileForConfig(file, directory, directoryPath)
             }
 
         }
 
         allJars.forEach { file ->
-           AopTaskUtils.processJarForConfig(file)
+           aopTaskUtils.processJarForConfig(file)
         }
-        AopTaskUtils.loadJoinPointConfigEnd(isApp)
+        aopTaskUtils.loadJoinPointConfigEnd(isApp)
     }
 
     private fun searchJoinPointLocation(){
-        AopTaskUtils.searchJoinPointLocationStart(project)
+        aopTaskUtils.searchJoinPointLocationStart(project)
 
         val addClassMethodRecords = mutableMapOf<String,ClassMethodRecord>()
         val deleteClassMethodRecords = mutableSetOf<String>()
@@ -99,13 +96,13 @@ class CompileAndroidAopTask(
         allDirectories.forEach { directory ->
             val directoryPath = directory.absolutePath
             directory.walk().forEach { file ->
-                AopTaskUtils.processFileForSearch(file, directory, directoryPath,addClassMethodRecords, deleteClassMethodRecords)
+                aopTaskUtils.processFileForSearch(file, directory, directoryPath,addClassMethodRecords, deleteClassMethodRecords)
             }
         }
         allJars.forEach { file ->
-            AopTaskUtils.processJarForSearch(file, addClassMethodRecords, deleteClassMethodRecords)
+            aopTaskUtils.processJarForSearch(file, addClassMethodRecords, deleteClassMethodRecords)
         }
-        AopTaskUtils.searchJoinPointLocationEnd(addClassMethodRecords, deleteClassMethodRecords)
+        aopTaskUtils.searchJoinPointLocationEnd(addClassMethodRecords, deleteClassMethodRecords)
     }
     private fun wovenIntoCode(){
         WovenInfoUtils.makeReplaceMethodInfoUse()
@@ -215,7 +212,7 @@ class CompileAndroidAopTask(
                             val byteArray = inputs.readAllBytes()
                             if (byteArray.isNotEmpty()){
                                 try {
-                                    val newByteArray = AopTaskUtils.wovenIntoCodeForReplace(byteArray)
+                                    val newByteArray = aopTaskUtils.wovenIntoCodeForReplace(byteArray)
                                     if (newByteArray.modified){
                                         mkOutFile()
                                         newByteArray.byteArray.saveFile(outFile)
@@ -234,7 +231,7 @@ class CompileAndroidAopTask(
                                 val byteArray = inputs.readAllBytes()
                                 if (byteArray.isNotEmpty()){
                                     try {
-                                        val newByteArray = AopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
+                                        val newByteArray = aopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
                                         if (newByteArray.modified){
                                             mkOutFile()
                                             newByteArray.byteArray.saveFile(outFile)

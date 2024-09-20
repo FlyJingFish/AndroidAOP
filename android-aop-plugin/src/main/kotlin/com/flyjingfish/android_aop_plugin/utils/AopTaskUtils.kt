@@ -9,7 +9,6 @@ import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.beans.WovenResult
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ClassSuperScanner
-import com.flyjingfish.android_aop_plugin.scanner_visitor.MethodParamNamesScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.MethodReplaceInvokeVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ReplaceBaseClassVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.SearchAOPConfigVisitor
@@ -21,14 +20,12 @@ import org.gradle.api.Project
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.MethodVisitor
-import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileInputStream
-import java.io.InputStream
 import java.util.UUID
 import java.util.jar.JarFile
 
-object AopTaskUtils {
+class AopTaskUtils(private val project: Project,private val variantName: String) {
     fun processFileForConfig(file : File, directory: File, directoryPath:String){
         if (file.isFile) {
             val className = file.getFileClassname(directory)
@@ -109,6 +106,7 @@ object AopTaskUtils {
 //        logger.error(""+WovenInfoUtils.aopMatchCuts)
 //        InitConfig.saveBuildConfig()
         ClassPoolUtils.initClassPool()
+//        ClassPoolUtils.initClassPool(project,variantName)
         FileHashUtils.isChangeAopMatch = WovenInfoUtils.aopMatchsChanged()
         WovenInfoUtils.aopCollectChanged(FileHashUtils.isChangeAopMatch)
 
@@ -260,6 +258,7 @@ object AopTaskUtils {
                                 }
 
                                 if (isBack && (!Modifier.isPackage(allMethod.modifiers)||isBackMethod)) {
+                                    printLog("processOverride=name=$name,descriptor=$descriptor")
                                     val cutInfo = CutInfo(
                                         "匹配切面",
                                         Utils.slashToDot(
@@ -286,6 +285,10 @@ object AopTaskUtils {
                     }
                 }
             }
+            for (allMethod in allMethods) {
+                allMethod.declaringClass.detach()
+            }
+            ctClass.detach()
         }
     }
 

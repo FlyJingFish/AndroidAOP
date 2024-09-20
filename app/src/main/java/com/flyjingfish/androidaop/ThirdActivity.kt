@@ -9,10 +9,10 @@ import com.flyjingfish.android_aop_core.annotations.OnLifecycle
 import com.flyjingfish.android_aop_core.annotations.Permission
 import com.flyjingfish.android_aop_core.annotations.SingleClick
 import com.flyjingfish.androidaop.databinding.ActivityThirdBinding
+import com.flyjingfish.test_lib.BaseActivity
 import com.flyjingfish.test_lib.annotation.MyAnno3
 import com.flyjingfish.test_lib.annotation.MyAnno4
 import com.flyjingfish.test_lib.annotation.MyAnno5
-import com.flyjingfish.test_lib.BaseActivity
 import com.flyjingfish.test_lib.PermissionRejectListener
 import com.flyjingfish.test_lib.TestSuspend
 import kotlinx.coroutines.Dispatchers

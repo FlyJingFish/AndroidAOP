@@ -16,7 +16,7 @@ androidAopConfig {
     include 'com.flyjingfish','androidx.appcompat.widget.AppCompatImageView','com.google.android.material.textview'
     //默认关闭，开启后将会生成切点信息json文件在 /build/tmp/cutInfo.json
     cutInfoJson true
-    increment true
+    increment false
     // 移除kotlin相关，编译错误和提升速度
 //    exclude 'kotlin.jvm', 'kotlin.internal','kotlinx.coroutines.internal', 'kotlinx.coroutines.android'
 }

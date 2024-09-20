@@ -290,12 +290,12 @@ object WovenIntoCode {
                 return@forEach
             }
             if (value.overrideMethod && superClassName != null && ctClazzName != null){
+                val ctClass = try {
+                    ClassPoolUtils.classPool?.getCtClass(value.overrideClassname) ?: return@forEach
+                } catch (e: Exception) {
+                    return@forEach
+                }
                 try {
-                    val ctClass = try {
-                        ClassPoolUtils.classPool?.getCtClass(value.overrideClassname) ?: return@forEach
-                    } catch (e: Exception) {
-                        return@forEach
-                    }
                     val ctMethod = ctClass.getMethod(value.methodName,value.descriptor)
                     val methodParamNamesScanner = MethodParamNamesScanner(ctClass.toBytecode())
                     val ctClasses = ctMethod.parameterTypes
@@ -311,6 +311,7 @@ object WovenIntoCode {
                     wovenMethodCode(cw,superClassName!!, value.methodName,newMethodName,value.descriptor,ACC_PUBLIC + ACC_FINAL,methodNode,argInfos)
                 } catch (_: Exception) {
                 }
+                ctClass.detach()
             }
         }
         thisCollectClassName?.let {
