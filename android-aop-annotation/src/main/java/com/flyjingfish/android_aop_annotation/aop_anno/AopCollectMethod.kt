@@ -1,5 +1,8 @@
 package com.flyjingfish.android_aop_annotation.aop_anno
 
+import com.flyjingfish.android_aop_annotation.base.BasePointCut
+import kotlin.reflect.KClass
+
 
 /**
  * 这个注解使用本库者用不到
@@ -10,11 +13,11 @@ annotation class AopCollectMethod(
     /**
      * 需要收集的类名（包含包名）
      */
-    val collectClassName: String,
+    val collectClass: KClass<*>,
     /**
      * 执行类名（包含包名）
      */
-    val invokeClassName: String,
+    val invokeClass: KClass<*>,
     /**
      * 执行方法
      */
@@ -22,7 +25,7 @@ annotation class AopCollectMethod(
     /**
      * 是否是 class
      */
-    val isClazz:String = "false",
+    val isClazz:Boolean = false,
     /**
      * 正则表达式
      */

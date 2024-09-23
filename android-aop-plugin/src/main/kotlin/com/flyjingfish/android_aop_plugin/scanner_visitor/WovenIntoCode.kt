@@ -695,7 +695,7 @@ object WovenIntoCode {
                             val ctClass = classPool.get(WovenInfoUtils.getClassString(Utils.slashToDotClassName(aopCollectCut.collectExtendsClassName)))
                             val access = ctClass.modifiers
                             val isAbstractClass = access and ACC_ABSTRACT != 0
-                            val isObject = Utils.slashToDotClassName(aopCollectCut.collectClassName) == "java.lang.Object"
+                            val isObject = Utils.slashToDot(aopCollectCut.collectClassName) == "java.lang.Object"
                             var isMatchExtends = false
                             val collectExtendsClassName = aopCollectCut.collectExtendsClassName
                             if (!isObject){
@@ -704,14 +704,14 @@ object WovenIntoCode {
                                 val interfaces = ctClass.interfaces
                                 if (interfaces != null) {
                                     for (subCtClass in ctClass.interfaces) {
-                                        if (Utils.slashToDotClassName(subCtClass.name) == aopCollectCut.collectClassName){
+                                        if (Utils.slashToDot(subCtClass.name) == aopCollectCut.collectClassName){
                                             isImplementsInterface = true
                                             break
                                         }
                                     }
                                 }
 
-                                if (isImplementsInterface || Utils.slashToDotClassName(aopCollectCut.collectClassName) == Utils.slashToDotClassName(
+                                if (isImplementsInterface || aopCollectCut.collectClassName == Utils.slashToDot(
                                         ctClass.superclass.name
                                     )
                                 ) {

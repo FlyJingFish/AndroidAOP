@@ -31,7 +31,7 @@ annotation class AndroidAopMatchClassMethod(
     val excludeClasses: Array<String> = [],
     /**
      *
-     * @return 如果子类中没有匹配的方法则重写父类的方法，methodName 不可以定义 [ "*" ]，并且方法不能是private 、final修饰的才可以，重写所在类不可以是接口
+     * @return 如果子类中没有匹配的方法则重写父类的方法，targetClassName 不可以包含 * ，methodName 不可以定义 [ "*" ]，并且方法不能是private 、final修饰的才可以，重写所在类不可以是接口
      */
     val overrideMethod: Boolean = false
 )

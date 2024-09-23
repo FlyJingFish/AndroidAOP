@@ -2,6 +2,7 @@ package com.flyjingfish.test_lib.collect;
 
 import android.app.Application;
 import android.util.Log;
+import android.view.View;
 
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopCollectMethod;
 import com.flyjingfish.android_aop_annotation.enums.CollectType;
@@ -58,6 +59,10 @@ public class InitCollect2 {
     @AndroidAopCollectMethod(regex = ".*?\\$\\$AndroidAopClass")
     public static void collectAndroidAopClassRegex(Class<?> sub){
         Log.e("InitCollect2","----collectAndroidAopClassRegexClazz----"+sub);
+    }
+
+    @AndroidAopCollectMethod
+    public static void collectOnClickListener(Class<? extends View.OnClickListener> listener){
     }
 
     @MyAnno

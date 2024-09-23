@@ -9,7 +9,7 @@ import com.flyjingfish.android_aop_annotation.enums.CollectType
 @Target(
     AnnotationTarget.FUNCTION
 )
-@Retention(AnnotationRetention.BINARY)
+@Retention(AnnotationRetention.SOURCE)
 annotation class AndroidAopCollectMethod(
     /**
      * 收集的类型

@@ -13,5 +13,5 @@ annotation class AopMatchClassMethod(
     val pointCutClassName: String,
     val matchType: String,
     val excludeClasses: String,
-    val overrideMethod: String = "false"
+    val overrideMethod: Boolean = false
 )

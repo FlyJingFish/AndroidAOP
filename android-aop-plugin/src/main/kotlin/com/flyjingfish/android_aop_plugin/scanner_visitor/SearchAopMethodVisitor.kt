@@ -2,7 +2,9 @@ package com.flyjingfish.android_aop_plugin.scanner_visitor
 
 
 import com.flyjingfish.android_aop_annotation.base.BasePointCut
+import com.flyjingfish.android_aop_annotation.base.BasePointCutSuspend
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod
+import com.flyjingfish.android_aop_annotation.base.MatchClassMethodSuspend
 import com.flyjingfish.android_aop_annotation.utils.InvokeMethod
 import com.flyjingfish.android_aop_plugin.beans.AopCollectClass
 import com.flyjingfish.android_aop_plugin.beans.AopCollectCut
@@ -12,8 +14,6 @@ import com.flyjingfish.android_aop_plugin.beans.CutMethodJson
 import com.flyjingfish.android_aop_plugin.beans.LambdaMethod
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
-import com.flyjingfish.android_aop_plugin.ex.AndroidAOPOverrideMethodException
-import com.flyjingfish.android_aop_plugin.utils.FileHashUtils
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils.getMethodInfo
 import com.flyjingfish.android_aop_plugin.utils.Utils.isAOPMethod
@@ -97,14 +97,14 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                     var isImplementsInterface = false
                     if (interfaces != null) {
                         for (anInterface in interfaces) {
-                            val inter = slashToDotClassName(anInterface)
-                            if (inter == slashToDotClassName(aopCollectCut.collectClassName)) {
+                            val inter = slashToDot(anInterface)
+                            if (inter == aopCollectCut.collectClassName) {
                                 isImplementsInterface = true
                                 break
                             }
                         }
                     }
-                    if (isImplementsInterface || slashToDotClassName(aopCollectCut.collectClassName) == slashToDotClassName(
+                    if (isImplementsInterface || aopCollectCut.collectClassName == slashToDot(
                             superName!!
                         )
                     ) {
@@ -384,7 +384,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
 
                                     if (returnTypeDescriptor.startsWith("L") && returnTypeDescriptor.endsWith(";")
                                         && paramType0?.className == slashToDotClassName(replaceMethodInfo.oldOwner)
-                                        && (returnTypeClassName == slashToDotClassName(replaceMethodInfo.oldOwner) || returnTypeClassName.instanceof(slashToDotClassName(replaceMethodInfo.oldOwner)))){
+                                        && (returnTypeClassName == slashToDotClassName(replaceMethodInfo.oldOwner) || slashToDotClassName(returnTypeClassName).instanceof(slashToDotClassName(replaceMethodInfo.oldOwner)))){
                                         onCallBackMethod?.onBackReplaceMethodInfo(replaceMethodInfo)
                                     }
                                 } else{
@@ -408,8 +408,9 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
         init {
             val isSuspendMethod: Boolean =
             methoddescriptor.endsWith("Lkotlin/coroutines/Continuation;)Ljava/lang/Object;")
-            isSuspend = (isSuspendMethod && !slashToDotClassName(className).instanceof(slashToDotClassName("com/flyjingfish/android_aop_annotation/base/MatchClassMethodSuspend"))
-                    &&!slashToDotClassName(className).instanceof(slashToDotClassName("com/flyjingfish/android_aop_annotation/base/BasePointCutSuspend")))
+            isSuspend = (isSuspendMethod && !slashToDot(className).instanceof(
+                MatchClassMethodSuspend::class.java.name)
+                    &&!slashToDot(className).instanceof(BasePointCutSuspend::class.java.name))
         }
 
 

@@ -15,6 +15,7 @@ import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
+import org.objectweb.asm.Type
 
 class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
     var isAndroidAopClass = false
@@ -34,7 +35,7 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
         private var pointCutClassName: String? = null
         private var matchType = "EXTENDS"
         private var excludeClasses: String? = null
-        private var overrideMethod: String? = null
+        private var overrideMethod: Boolean = false
         override fun visit(name: String, value: Any) {
             if (isAndroidAopClass) {
                 if (name == "value") {
@@ -58,8 +59,8 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
                 if (name == "excludeClasses") {
                     excludeClasses = value.toString()
                 }
-                if (name == "overrideMethod") {
-                    overrideMethod = value.toString()
+                if (name == "overrideMethod" && value is Boolean) {
+                    overrideMethod = value
                 }
                 //                WovenInfoUtils.INSTANCE.addAnnoInfo(value.toString());
             }
@@ -85,7 +86,7 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
                     pointCutClassName!!,
                     matchType,
                     strings,
-                    overrideMethod == "true"
+                    overrideMethod
                 )
                 addMatchInfo(cut)
                 addAopInstance(pointCutClassName!!, className)
@@ -158,22 +159,22 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
         private var collectClassName: String? = null
         private var invokeClassName: String? = null
         private var invokeMethod: String? = null
-        private var isClazz: String = "false"
+        private var isClazz: Boolean = false
         private var regex: String = ""
         private var collectType: String = "DIRECT_EXTENDS"
         override fun visit(name: String, value: Any) {
             if (isAndroidAopClass) {
-                if (name == "collectClassName") {
-                    collectClassName = value.toString()
+                if (name == "collectClass" && value is Type) {
+                    collectClassName = value.className
                 }
-                if (name == "invokeClassName") {
-                    invokeClassName = value.toString()
+                if (name == "invokeClass" && value is Type) {
+                    invokeClassName = value.className
                 }
                 if (name == "invokeMethod") {
                     invokeMethod = value.toString()
                 }
-                if (name == "isClazz") {
-                    isClazz = value.toString()
+                if (name == "isClazz" && value is Boolean) {
+                    isClazz = value
                 }
                 if (name == "regex") {
                     regex = value.toString()
@@ -188,7 +189,7 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
         override fun visitEnd() {
             super.visitEnd()
             if (collectClassName != null && invokeClassName != null && invokeMethod != null) {
-                addCollectConfig(AopCollectCut(collectClassName!!, invokeClassName!!, invokeMethod!!,isClazz == "true",regex,collectType))
+                addCollectConfig(AopCollectCut(collectClassName!!, invokeClassName!!, invokeMethod!!,isClazz,regex,collectType))
             }
         }
     }

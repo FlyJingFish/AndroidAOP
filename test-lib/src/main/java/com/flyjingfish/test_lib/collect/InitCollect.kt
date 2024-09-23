@@ -2,6 +2,7 @@ package com.flyjingfish.test_lib.collect
 
 import android.app.Application
 import android.util.Log
+import android.view.View.OnClickListener
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopCollectMethod
 import com.flyjingfish.test_lib.SubApplication
 import com.flyjingfish.test_lib.SubApplication3
@@ -46,6 +47,10 @@ object InitCollect {
         Log.e("InitCollect", "----collectAndroidAopClassRegexObject----$sub")
     }
 
+    @AndroidAopCollectMethod
+    @JvmStatic
+    fun collectOnClickListener(listener: Class<out OnClickListener>){
+    }
     fun init(application: Application){
         Log.e("InitCollect","----init----");
         for (collect in Collects) {

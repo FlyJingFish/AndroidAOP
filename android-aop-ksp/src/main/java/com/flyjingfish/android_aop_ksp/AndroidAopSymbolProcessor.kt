@@ -126,8 +126,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         val allowedTargets = targetMap["allowedTargets"]
 
         if (allowedTargets is ArrayList<*>) {
-          val value: ArrayList<*> = allowedTargets
-          for (s in value) {
+          for (s in allowedTargets) {
             if (symbol.origin == Origin.JAVA) {
               if ("METHOD" != s.toString()) {
                 throw IllegalArgumentException("注意：请给 $symbol 设置 @Target 为 METHOD ")
@@ -149,8 +148,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
 
       val retentionMap: MutableMap<String, Any?>? = annotationMap["@Retention"]
       if (retentionMap != null) {
-        val value = retentionMap["value"]
-        val retention = value.toString()
+        val retention = retentionMap["value"]?.toString()
         if ((symbol.origin == Origin.JAVA && "RUNTIME" != retention) || (symbol.origin == Origin.KOTLIN && "kotlin.annotation.AnnotationRetention.RUNTIME" != retention)) {
           throw IllegalArgumentException("注意：请给 $symbol 设置 @Retention 为 RUNTIME ")
         }
@@ -306,8 +304,8 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
               excludeClassesBuilder
             )
             .addMember(
-              "overrideMethod = %S",
-              overrideMethod.toString()
+              "overrideMethod = %L",
+              overrideMethod
             )
             .build()
         )
@@ -617,9 +615,9 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
                 "java.lang.Object"
               }
             }else{
-              val subPackageName = type.resolve().declaration.packageName.asString().toString()
-              val subClazzName = type.resolve().declaration.toString()
-              "$subPackageName.$subClazzName"
+//              val subPackageName = type.resolve().declaration.packageName.asString().toString()
+//              val subClazzName = type.resolve().declaration.toString()
+              type.resolve().declaration.qualifiedName?.asString().toString()
             }
 
           }
@@ -628,7 +626,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         }
 
       }else{
-        "${parameter.type.resolve().declaration.packageName.asString()}.${collectClassShortName}"
+        "${parameter.type.resolve().declaration.qualifiedName?.asString()}"
       }
 
       if (collectClassName in IGNORE_TYPE){
@@ -669,20 +667,24 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
           .addAnnotation(
             AnnotationSpec.builder(AopCollectMethod::class)
               .addMember(
-                "collectClassName = %S",
-                collectMethod.collectClassName
+                "collectClass = %T::class",
+                ClassName.bestGuess(
+                  collectMethod.collectClassName
+                )
               )
               .addMember(
-                "invokeClassName = %S",
-                collectMethod.invokeClassName
+                "invokeClass = %T::class",
+                ClassName.bestGuess(
+                  collectMethod.invokeClassName
+                )
               )
               .addMember(
                 "invokeMethod = %S",
                 collectMethod.invokeMethod
               )
               .addMember(
-                "isClazz = %S",
-                collectMethod.isClazz
+                "isClazz = %L",
+                collectMethod.isClazz == "true"
               )
               .addMember(
                 "regex = %S",

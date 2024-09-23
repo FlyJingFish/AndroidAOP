@@ -248,6 +248,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
                             .addMember("pointCutClassName", "$S", element)
                             .addMember("matchType", "$S", matchType.name())
                             .addMember("excludeClasses", "$S", excludeClassesBuilder)
+                            .addMember("overrideMethod", "$L", overrideMethod)
                             .build());
 
             typeBuilder.addMethod(whatsMyName2.build());
@@ -470,10 +471,10 @@ public class AndroidAopProcessor extends AbstractProcessor {
                 CollectMethod collectMethod = collectMethods.get(i);
                 MethodSpec.Builder whatsMyName1 = whatsMyName(AOP_METHOD_NAME+i)
                         .addAnnotation(AnnotationSpec.builder(AopCollectMethod.class)
-                                .addMember("collectClassName", "$S", collectMethod.collectClassName)
-                                .addMember("invokeClassName", "$S", collectMethod.invokeClassName)
+                                .addMember("collectClass", "$T.class", ClassName.bestGuess(collectMethod.collectClassName))
+                                .addMember("invokeClass", "$T.class", ClassName.bestGuess(collectMethod.invokeClassName))
                                 .addMember("invokeMethod", "$S", collectMethod.invokeMethod)
-                                .addMember("isClazz", "$S", collectMethod.isClazz)
+                                .addMember("isClazz", "$L", "true".equals(collectMethod.isClazz))
                                 .addMember("regex", "$S", collectMethod.regex)
                                 .addMember("collectType", "$S", collectMethod.collectType)
                                 .build());
