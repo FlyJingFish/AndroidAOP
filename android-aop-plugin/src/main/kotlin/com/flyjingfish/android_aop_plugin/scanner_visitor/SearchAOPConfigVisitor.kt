@@ -11,6 +11,7 @@ import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addMatchInfo
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addModifyExtendsClassInfo
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addReplaceCut
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addReplaceInfo
+import com.google.gson.Gson
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
@@ -78,11 +79,11 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
             if (baseClassName != null && methodNames != null) {
                 var strings: Array<String>? = null
                 if (excludeClasses != null) {
-                    strings = excludeClasses!!.split("-").toTypedArray()
+                    strings = mGson.fromJson(excludeClasses, Array<String>::class.java)
                 }
                 val cut = AopMatchCut(
                     baseClassName!!,
-                    methodNames!!.split("-").toTypedArray(),
+                    mGson.fromJson(methodNames, Array<String>::class.java),
                     pointCutClassName!!,
                     matchType,
                     strings,
@@ -123,7 +124,7 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
                 addReplaceInfo(targetClassName!!, invokeClassName!!)
                 var strings: Array<String>? = null
                 if (excludeClasses != null) {
-                    strings = excludeClasses!!.split("-").toTypedArray()
+                    strings = mGson.fromJson(excludeClasses, Array<String>::class.java)
                 }
 
                 addReplaceCut(AopReplaceCut(targetClassName!!,invokeClassName!!,matchType,strings))
@@ -244,5 +245,6 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
         const val EXTENDS_POINT =
             "Lcom/flyjingfish/android_aop_annotation/aop_anno/AopModifyExtendsClass"
         const val COLLECT_POINT = "Lcom/flyjingfish/android_aop_annotation/aop_anno/AopCollectMethod"
+        val mGson = Gson()
     }
 }

@@ -15,6 +15,7 @@ dependencies {
     implementation project(path: ':android-aop-annotation')
     implementation libs.kotlinpoet
     implementation libs.ksp.api
+    implementation libs.gson
 //    compileOnly libs.autoservice.annotations
 //    ksp libs.ksp.autoservice
 }

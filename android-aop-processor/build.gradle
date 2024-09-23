@@ -9,5 +9,6 @@ apply from: "$rootDir/gradle/java_base.gradle"
 apply from: "$rootDir/gradle/java_publish.gradle"
 dependencies {
     implementation libs.javapoet
+    implementation libs.gson
     implementation project(path: ':android-aop-annotation')
 }

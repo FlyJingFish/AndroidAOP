@@ -33,6 +33,7 @@ import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.Modifier
 import com.google.devtools.ksp.symbol.Origin
 import com.google.devtools.ksp.validate
+import com.google.gson.Gson
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
@@ -64,6 +65,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       add("java.lang.String")
       add("kotlin.reflect.KClass")
     }
+    val mGson = Gson()
   }
   override fun process(resolver: Resolver): List<KSAnnotated> {
 //    logger.error("---------AndroidAopSymbolProcessor---------")
@@ -230,10 +232,10 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         annotationMap["@"+AndroidAopMatchClassMethod::class.simpleName] ?: continue
 
       val targetClassName: String? = classMethodMap["targetClassName"]?.toString()
-      val methodNames: ArrayList<String>? =
-        if (classMethodMap["methodName"] is ArrayList<*>) classMethodMap["methodName"] as ArrayList<String> else null
-      val excludeClasses: ArrayList<String>? =
-        if (classMethodMap["excludeClasses"] is ArrayList<*>) classMethodMap["excludeClasses"] as ArrayList<String> else null
+      val methodNames: ArrayList<String> =
+        if (classMethodMap["methodName"] is ArrayList<*>) classMethodMap["methodName"] as ArrayList<String> else ArrayList()
+      val excludeClasses: ArrayList<String> =
+        if (classMethodMap["excludeClasses"] is ArrayList<*>) classMethodMap["excludeClasses"] as ArrayList<String> else ArrayList()
       val typeStr: String? = classMethodMap["type"]?.toString()
       val matchType = typeStr?.substring(typeStr.lastIndexOf(".") + 1) ?: "EXTENDS"
 
@@ -260,12 +262,10 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         }
       }
       val excludeClassesBuilder = StringBuilder()
-      if (excludeClasses != null) {
-        for (i in excludeClasses.indices) {
-          excludeClassesBuilder.append(excludeClasses[i])
-          if (i != excludeClasses.size - 1) {
-            excludeClassesBuilder.append("-")
-          }
+      for (i in excludeClasses.indices) {
+        excludeClassesBuilder.append(excludeClasses[i])
+        if (i != excludeClasses.size - 1) {
+          excludeClassesBuilder.append("-")
         }
       }
       val matchAll = "*" == methodNamesBuilder.toString() || targetClassName.contains("*")
@@ -289,7 +289,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
             )
             .addMember(
               "methodNames = %S",
-              methodNamesBuilder
+              mGson.toJson(methodNames)
             )
             .addMember(
               "pointCutClassName = %S",
@@ -301,7 +301,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
             )
             .addMember(
               "excludeClasses = %S",
-              excludeClassesBuilder
+              mGson.toJson(excludeClasses)
             )
             .addMember(
               "overrideMethod = %L",
@@ -333,18 +333,16 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         continue
       }
 
-      val excludeClasses: ArrayList<String>? =
-        if (classMethodMap["excludeClasses"] is ArrayList<*>) classMethodMap["excludeClasses"] as ArrayList<String> else null
+      val excludeClasses: ArrayList<String> =
+        if (classMethodMap["excludeClasses"] is ArrayList<*>) classMethodMap["excludeClasses"] as ArrayList<String> else ArrayList()
       val typeStr: String? = classMethodMap["type"]?.toString()
       val matchType = typeStr?.substring(typeStr.lastIndexOf(".") + 1) ?: "EXTENDS"
 
       val excludeClassesBuilder = StringBuilder()
-      if (excludeClasses != null) {
-        for (i in excludeClasses.indices) {
-          excludeClassesBuilder.append(excludeClasses[i])
-          if (i != excludeClasses.size - 1) {
-            excludeClassesBuilder.append("-")
-          }
+      for (i in excludeClasses.indices) {
+        excludeClassesBuilder.append(excludeClasses[i])
+        if (i != excludeClasses.size - 1) {
+          excludeClassesBuilder.append("-")
         }
       }
       val fileName = "${symbol}\$\$AndroidAopClass";
@@ -369,7 +367,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
             )
             .addMember(
               "excludeClasses = %S",
-              excludeClassesBuilder
+              mGson.toJson(excludeClasses)
             )
             .build()
         )

@@ -18,6 +18,7 @@ import com.flyjingfish.android_aop_annotation.base.BasePointCutCreator;
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
 import com.flyjingfish.android_aop_annotation.base.MatchClassMethodCreator;
 import com.flyjingfish.android_aop_annotation.enums.MatchType;
+import com.google.gson.Gson;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
@@ -66,6 +67,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
     private Types types;
     private static final String AOP_METHOD_NAME = "aopConfigMethod";
     private Elements elementUtils;
+    private static final Gson mGson = new Gson();
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
@@ -244,10 +246,10 @@ public class AndroidAopProcessor extends AbstractProcessor {
                     .addStatement("return new $T()",ClassName.bestGuess(element.toString()))
                     .addAnnotation(AnnotationSpec.builder(AopMatchClassMethod.class)
                             .addMember("baseClassName", "$S", className)
-                            .addMember("methodNames", "$S", methodNamesBuilder)
+                            .addMember("methodNames", "$S", mGson.toJson(methodNames))
                             .addMember("pointCutClassName", "$S", element)
                             .addMember("matchType", "$S", matchType.name())
-                            .addMember("excludeClasses", "$S", excludeClassesBuilder)
+                            .addMember("excludeClasses", "$S", mGson.toJson(excludeClasses))
                             .addMember("overrideMethod", "$L", overrideMethod)
                             .build());
 
@@ -293,7 +295,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
                             .addMember("targetClassName", "$S", className)
                             .addMember("invokeClassName", "$S", element)
                             .addMember("matchType", "$S", matchType.name())
-                            .addMember("excludeClasses", "$S", excludeClassesBuilder)
+                            .addMember("excludeClasses", "$S", mGson.toJson(excludeClasses))
                             .build());
 
             typeBuilder.addMethod(whatsMyName1.build());
