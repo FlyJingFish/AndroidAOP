@@ -593,7 +593,7 @@ class MatchOnClick : MatchClassMethod {
 
 可以看到上方 AndroidAopMatchClassMethod 设置的 type 是 MatchType.EXTENDS 表示匹配所有继承自 OnClickListener 的子类，另外更多继承方式，[请参考Wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#excludeclasses-%E6%98%AF%E6%8E%92%E9%99%A4%E6%8E%89%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB%E4%B8%AD%E7%9A%84%E4%B8%AD%E9%97%B4%E7%B1%BB%E6%95%B0%E7%BB%84)
 
-**⚠️注意：如果子类没有该方法，则切面无效**
+**⚠️注意：如果子类没有该方法，则切面无效，使用 overrideMethod 可忽略此限制[详情点此](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)**
 
 #### 三、**@AndroidAopReplaceClass** 是做替换方法调用的
 
