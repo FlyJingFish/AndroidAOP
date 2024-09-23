@@ -14,6 +14,7 @@ internal class AopMethodImpl(
     private val mParamNames: Array<String>,
     private val mParamClasses: Array<Class<*>>,
     private val mReturnType: Class<*>,
+    private val mLambda: Boolean
 ) : AopMethod {
 
     override val name: String
@@ -104,5 +105,7 @@ internal class AopMethodImpl(
             }
             return parameterAnnotations
         }
+    override val isLambda: Boolean
+        get() = mLambda
 
 }

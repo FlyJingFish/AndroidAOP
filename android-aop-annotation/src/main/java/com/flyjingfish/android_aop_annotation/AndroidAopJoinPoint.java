@@ -44,14 +44,20 @@ public final class AndroidAopJoinPoint {
     private String methodKey;
     private final String targetClassName;
     private InvokeMethod invokeMethod;
+    private final boolean lambda;
 
-    public AndroidAopJoinPoint(Class<?> clazz, Object target, String originalMethodName, String targetMethodName) {
+    public AndroidAopJoinPoint(Class<?> clazz, Object target, String originalMethodName, String targetMethodName,boolean lambda) {
         this.targetClassName = clazz.getName();
         this.target = target;
         this.originalMethodName = originalMethodName;
         this.targetMethodName = targetMethodName;
         this.targetClass = clazz;
+        this.lambda = lambda;
 
+    }
+
+    public AndroidAopJoinPoint(Class<?> clazz, Object target, String originalMethodName, String targetMethodName) {
+        this(clazz,target,originalMethodName,targetMethodName,false);
     }
 
 
@@ -124,7 +130,7 @@ public final class AndroidAopJoinPoint {
         boolean isSuspend = continuation != null;
 
         ProceedJoinPoint proceedJoinPoint;
-        AopMethod aopMethod = new AopMethodImpl(originalMethod,isSuspend,continuation,mParamNames,mArgClasses,mReturnClass);
+        AopMethod aopMethod = new AopMethodImpl(originalMethod,isSuspend,continuation,mParamNames,mArgClasses,mReturnClass,lambda);
         if (isSuspend){
             proceedJoinPoint = JoinPoint.INSTANCE.getJoinPointSuspend(targetClass, mArgs,target,true,targetMethod,invokeMethod,aopMethod);
         }else {

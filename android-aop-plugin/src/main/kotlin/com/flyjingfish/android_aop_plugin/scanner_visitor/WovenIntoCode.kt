@@ -350,7 +350,7 @@ object WovenIntoCode {
 ////                WovenInfoUtils.checkNoneInvokeClass(invokeClassName)
 //                return@forEach
 //            }
-            val newMethodBody : String ?= null
+            var newMethodBody : String ?= null
             try {
                 val ctMethod =
                     getCtMethod(ctClass, oldMethodName, oldDescriptor)
@@ -465,8 +465,8 @@ object WovenIntoCode {
                 }
                 cp.importPackage(invokeClassName)
                 val argReflect = if (ClassFileUtils.reflectInvokeMethod) "" else ",new $invokeClassName()"
-                val constructor = "$targetClassName.class,${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\""
-                val newMethodBody =
+                val constructor = "$targetClassName.class,${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\",${value.lambda}"
+                newMethodBody =
                     " {AndroidAopJoinPoint pointCut = new AndroidAopJoinPoint($constructor);\n"+
                             "String[] cutClassNames = new String[]{$cutClassNameArray};\n"+
                             "pointCut.setCutMatchClassNames(cutClassNames);\n"+

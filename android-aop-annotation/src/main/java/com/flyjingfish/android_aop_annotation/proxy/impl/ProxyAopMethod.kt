@@ -82,4 +82,8 @@ internal class ProxyAopMethod(private val aopMethod: AopMethod,val type: ProxyTy
                 values
             }
         }
+    override val isLambda: Boolean
+        get() {
+            throw IllegalArgumentException("不支持此操作")
+        }
 }

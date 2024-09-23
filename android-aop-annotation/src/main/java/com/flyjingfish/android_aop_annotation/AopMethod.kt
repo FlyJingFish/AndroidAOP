@@ -75,4 +75,9 @@ interface AopMethod {
      * @return 返回方法参数上注解
      */
     val parameterAnnotations: Array<Array<Annotation>>
+
+    /**
+     * @return 是否是 lambda 方法
+     */
+    val isLambda: Boolean
 }
