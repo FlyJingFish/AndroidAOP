@@ -255,11 +255,18 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         .addAnnotation(AopClass::class).addSuperinterface(superinterface)
 
       val methodNamesBuilder = StringBuilder()
+      var hasMethodStar = false
       for (i in methodNames.indices) {
+        if (methodNames[i] == "*"){
+          hasMethodStar = true
+        }
         methodNamesBuilder.append(methodNames[i])
         if (i != methodNames.size - 1) {
           methodNamesBuilder.append("-")
         }
+      }
+      if (hasMethodStar && methodNames.size > 1){
+        throw IllegalArgumentException("注意：$symbol 匹配所有方法时不可以再设置其他方法名了")
       }
       val excludeClassesBuilder = StringBuilder()
       for (i in excludeClasses.indices) {

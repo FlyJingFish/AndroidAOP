@@ -212,11 +212,18 @@ public class AndroidAopProcessor extends AbstractProcessor {
             MatchType matchType = cut.type();
             boolean overrideMethod = cut.overrideMethod();
             StringBuilder methodNamesBuilder = new StringBuilder();
+            boolean hasMethodStar = false;
             for (int i = 0; i < methodNames.length; i++) {
+                if ("*".equals(methodNames[i])){
+                    hasMethodStar = true;
+                }
                 methodNamesBuilder.append(methodNames[i]);
                 if (i != methodNames.length -1){
                     methodNamesBuilder.append("-");
                 }
+            }
+            if (hasMethodStar && methodNames.length > 1){
+                throw new IllegalArgumentException("注意："+element+" 匹配所有方法时不可以再设置其他方法名了");
             }
             StringBuilder excludeClassesBuilder = new StringBuilder();
             for (int i = 0; i < excludeClasses.length; i++) {
