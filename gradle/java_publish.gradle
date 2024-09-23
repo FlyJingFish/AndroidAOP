@@ -1,11 +1,9 @@
-// Configures common publishing settings.
-
 apply plugin: "maven-publish"
 apply plugin: "signing"
+
 group = rootProject.group
 version = rootProject.version
 
-//def appVersionName = getAppVersionName()
 java {
     withJavadocJar()
     withSourcesJar()
@@ -53,17 +51,4 @@ afterEvaluate {
         sign publishing.publications.mavenJava
     }
 }
-
-
-
-//nexusPublishing {
-//    repositories {
-//        myNexus {
-//            nexusUrl = uri('https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/')
-//            snapshotRepositoryUrl = uri('https://s01.oss.sonatype.org/content/repositories/snapshots/')
-//            username = ossrhUsername // defaults to project.properties["myNexusUsername"]
-//            password = ossrhPassword // defaults to project.properties["myNexusPassword"]
-//        }
-//    }
-//}
 
