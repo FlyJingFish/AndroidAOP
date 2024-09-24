@@ -14,6 +14,7 @@ import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.ex.AndroidAOPOverrideMethodException
 import org.gradle.api.Project
+import org.objectweb.asm.Type
 import java.io.File
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.jar.JarFile
@@ -175,12 +176,12 @@ object WovenInfoUtils {
     }
 
     fun isContainAnno(info: String): Boolean {
-        val anno = "@" + info.substring(1, info.length).replace("/", ".").replace(";", "")
+        val anno = "@" + Type.getType(info).className
         return aopMethodCuts.contains(anno)
     }
 
     fun getAnnoInfo(info: String): AopMethodCut? {
-        val anno = "@" + info.substring(1, info.length).replace("/", ".").replace(";", "")
+        val anno = "@" + Type.getType(info).className
         return aopMethodCuts[anno]
     }
 

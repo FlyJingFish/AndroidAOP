@@ -1,6 +1,5 @@
 package com.flyjingfish.android_aop_annotation.aop_anno
 
-import com.flyjingfish.android_aop_annotation.base.BasePointCut
 import kotlin.reflect.KClass
 
 

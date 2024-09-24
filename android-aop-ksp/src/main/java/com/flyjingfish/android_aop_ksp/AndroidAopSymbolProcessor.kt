@@ -92,27 +92,26 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       val classMethodMap: MutableMap<String, Any?> =
         annotationMap["@"+AndroidAopPointCut::class.simpleName] ?: continue
 
-      val value: KSType? =
-        if (classMethodMap["value"] != null) classMethodMap["value"] as KSType else null
-      val targetClassName: String =
-        (if (value != null) value.declaration.packageName.asString() + "." + value.toString() else null)
+      val value: KSType =
+        (if (classMethodMap["value"] != null) classMethodMap["value"] as KSType else null)
           ?: continue
-      if (value == null){
-        continue
-      }
+
+      val cutClassName: String = value.declaration.packageName.asString() + "." + value.toString()
+
+      val targetClassName = value.declaration.qualifiedName?.asString()?:cutClassName
 
       val targetMap: MutableMap<String, Any?>? = annotationMap["@Target"]
       if (targetMap != null) {
-        val value = targetMap["value"]
-        if (value is ElementType) {
-          if (ElementType.METHOD != value) {
+        val targetValue = targetMap["value"]
+        if (targetValue is ElementType) {
+          if (ElementType.METHOD != targetValue) {
             throw IllegalArgumentException("注意：请给 $symbol 设置 @Target 为 METHOD ")
           }
-        } else if (value is ArrayList<*>) {
-          for (s in value) {
+        } else if (targetValue is ArrayList<*>) {
+          for (s in targetValue) {
             if (symbol.origin == Origin.JAVA) {
               if ("METHOD" != s.toString()) {
-                if (value.size > 1) {
+                if (targetValue.size > 1) {
                   throw IllegalArgumentException("注意： $symbol 只可以设置 @Target 为 METHOD 这一种")
                 } else {
                   throw IllegalArgumentException("注意：请给 $symbol 设置 @Target 为 METHOD ")
@@ -158,8 +157,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         throw IllegalArgumentException("注意：请给 $symbol 设置 @Retention 为 RUNTIME ")
       }
 
-      val className = (symbol as KSClassDeclaration).packageName.asString() + "." + symbol
-
+      val className = (symbol as KSClassDeclaration).qualifiedName?.asString()?:(symbol.packageName.asString() + "." + symbol)
       val superinterface = ClassName.bestGuess(BasePointCutCreator::class.qualifiedName!!)
 
       val fileName = "${symbol}\$\$AndroidAopClass";

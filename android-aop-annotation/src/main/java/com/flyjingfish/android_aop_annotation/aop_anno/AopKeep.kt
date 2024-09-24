@@ -11,5 +11,4 @@ package com.flyjingfish.android_aop_annotation.aop_anno
     AnnotationTarget.PROPERTY_GETTER,
     AnnotationTarget.FIELD
 )
-annotation class AopKeep {
-}
+annotation class AopKeep
