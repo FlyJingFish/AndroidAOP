@@ -15,7 +15,7 @@ internal class ProceedJoinPointSuspendImpl(
     target: Any?,
     isSuspend: Boolean,
     targetMethod: Method,
-    invokeMethod: InvokeMethod,
+    invokeMethod: InvokeMethod?,
     aopMethod: AopMethod
 ) : ProceedJoinPointImpl(targetClass, args, target, isSuspend,targetMethod, invokeMethod, aopMethod),
     ProceedJoinPointSuspend {

@@ -13,7 +13,7 @@ internal object JoinPoint {
         target: Any?,
         isSuspend: Boolean,
         targetMethod: Method,
-        invokeMethod: InvokeMethod,
+        invokeMethod: InvokeMethod?,
         aopMethod: AopMethod
     ): ProceedJoinPointImpl {
         return ProceedJoinPointImpl(
@@ -33,7 +33,7 @@ internal object JoinPoint {
         target: Any?,
         isSuspend: Boolean,
         targetMethod: Method,
-        invokeMethod: InvokeMethod,
+        invokeMethod: InvokeMethod?,
         aopMethod: AopMethod
     ): ProceedJoinPointImpl {
         return ProceedJoinPointSuspendImpl(

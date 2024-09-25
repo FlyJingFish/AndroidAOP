@@ -29,6 +29,7 @@ class ProceedJoinPointImpl implements ProceedJoinPoint {
     @NonNull
     private final Class<?> targetClass;
     private final Method targetMethod;
+    @Nullable
     private final InvokeMethod targetInvokeMethod;
     private final AopMethod targetAopMethod;
     private final int argCount;
