@@ -157,7 +157,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         throw IllegalArgumentException("注意：请给 $symbol 设置 @Retention 为 RUNTIME ")
       }
 
-      val className = (symbol as KSClassDeclaration).qualifiedName?.asString()?:(symbol.packageName.asString() + "." + symbol)
+      val className = (symbol as KSClassDeclaration).getClassName()
       val superinterface = ClassName.bestGuess(BasePointCutCreator::class.qualifiedName!!)
 
       val fileName = "${symbol}\$\$AndroidAopClass";
@@ -237,8 +237,8 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       val typeStr: String? = classMethodMap["type"]?.toString()
       val matchType = typeStr?.substring(typeStr.lastIndexOf(".") + 1) ?: "EXTENDS"
 
-      val className = (symbol as KSClassDeclaration).packageName.asString() + "." + symbol
-      if (targetClassName == null || methodNames == null) {
+      val className = (symbol as KSClassDeclaration).getClassName()
+      if (targetClassName == null) {
         continue
       }
       val overrideMethodStr: String = classMethodMap["overrideMethod"]?.toString() ?: "false"
@@ -333,7 +333,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       val targetClassName: String? = classMethodMap["value"]?.toString()
 
 
-      val className = (symbol as KSClassDeclaration).packageName.asString() + "." + symbol
+      val className = (symbol as KSClassDeclaration).getClassName()
       if (targetClassName == null) {
         continue
       }
@@ -417,41 +417,6 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
     return symbols.filter { !it.validate() }.toList()
   }
 
-  private fun processReplaceNew(resolver: Resolver): List<KSAnnotated> {
-    val symbols :Sequence<KSAnnotated> =
-      resolver.getSymbolsWithAnnotation(AndroidAopReplaceMethod::class.qualifiedName!!)
-    for (symbol in symbols) {
-      val annotationMap = getAnnotation(symbol)
-
-      if (symbol.origin == Origin.KOTLIN){
-        if (!annotationMap.containsKey("@JvmStatic")){
-          var className = "${(symbol as KSFunctionDeclaration).packageName.asString()}."
-          var parent = symbol.parent
-          while (parent !is KSFile){
-            className = "$className$parent."
-            parent = parent?.parent
-          }
-          throw IllegalArgumentException("注意：函数$className${symbol} 必须添加 @JvmStatic 注解")
-        }
-
-      }else if (symbol.origin == Origin.JAVA){
-        if (symbol is KSFunctionDeclaration){
-          if (symbol.functionKind != FunctionKind.STATIC){
-            var className = "${symbol.packageName.asString()}."
-            var parent = symbol.parent
-            while (parent !is KSFile){
-              className = "$className$parent."
-              parent = parent?.parent
-            }
-            throw IllegalArgumentException("注意：方法$className${symbol} 必须是静态方法")
-          }
-        }
-      }
-    }
-    return symbols.filter { !it.validate() }.toList()
-  }
-
-
   private fun processModifyExtendsClass(resolver: Resolver): List<KSAnnotated> {
     val symbols :Sequence<KSAnnotated> =
       resolver.getSymbolsWithAnnotation(AndroidAopModifyExtendsClass::class.qualifiedName!!)
@@ -463,7 +428,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       val targetClassName: String? = classMethodMap["value"]?.toString()
 
 
-      val className = (symbol as KSClassDeclaration).packageName.asString() + "." + symbol
+      val className = (symbol as KSClassDeclaration).getClassName()
       if (targetClassName == null) {
         continue
       }
@@ -571,8 +536,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
 //      logger.error("invokeClassName=$invokeClassName")
       val parameter = symbol.parameters[0]
       val collectClassShortName = "${parameter.type.resolve().declaration}"
-      val collectOutClassName = "${parameter.type.resolve().declaration.packageName.asString()}.${collectClassShortName}"
-
+      val collectOutClassName = parameter.type.resolve().declaration.qualifiedName?.asString()?:"${parameter.type.resolve().declaration.packageName.asString()}.${collectClassShortName}"
       val isClazz = collectOutClassName == "java.lang.Class"
       var collectClassName = if (isClazz){
         if (symbol.origin == Origin.KOTLIN){
@@ -618,9 +582,9 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
                 "java.lang.Object"
               }
             }else{
-//              val subPackageName = type.resolve().declaration.packageName.asString().toString()
-//              val subClazzName = type.resolve().declaration.toString()
-              type.resolve().declaration.qualifiedName?.asString().toString()
+              val subPackageName = type.resolve().declaration.packageName.asString()
+              val subClazzName = type.resolve().declaration.toString()
+              type.resolve().declaration.qualifiedName?.asString()?:"$subPackageName.$subClazzName"
             }
 
           }
@@ -629,7 +593,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         }
 
       }else{
-        "${parameter.type.resolve().declaration.qualifiedName?.asString()}"
+        parameter.type.resolve().declaration.qualifiedName?.asString()?:"${parameter.type.resolve().declaration.packageName.asString()}.${collectClassShortName}"
       }
 
       if (collectClassName in IGNORE_TYPE){

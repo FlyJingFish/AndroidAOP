@@ -15,6 +15,9 @@ fun KSClassDeclaration.isSubtype(superType :String,logger: KSPLogger):Boolean{
     return false
 }
 
+fun KSClassDeclaration.getClassName():String{
+    return qualifiedName?.asString()?:(packageName.asString() + "." + toString())
+}
 fun String.getClassName():String{
     return if (contains(".")){
         substring(lastIndexOf(".")+1)
