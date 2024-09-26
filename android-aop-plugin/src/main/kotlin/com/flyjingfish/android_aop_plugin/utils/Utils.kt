@@ -19,6 +19,7 @@ import java.util.zip.ZipInputStream
 object Utils {
     const val annotationPackage = "com.flyjingfish.android_aop_annotation"
     const val corePackage = "com.flyjingfish.android_aop_core"
+    const val extraPackage = "com.flyjingfish.android_aop_extra"
     const val JoinAnnoCutUtils = "${annotationPackage}.utils.JoinAnnoCutUtils"
     const val _CLASS = ".class"
     const val AOP_CONFIG_END_NAME = "\$\$AndroidAopClass.class"

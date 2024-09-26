@@ -62,6 +62,7 @@ open class AndroidAopConfig {
         AndroidAopConfig.excludes.addAll(excludes)
         AndroidAopConfig.excludes.add(Utils.annotationPackage)
         AndroidAopConfig.excludes.add(Utils.corePackage)
+        AndroidAopConfig.excludes.add(Utils.extraPackage)
         AndroidAopConfig.verifyLeafExtends = verifyLeafExtends
         AndroidAopConfig.cutInfoJson = cutInfoJson
 //        AndroidAopConfig.increment = increment
