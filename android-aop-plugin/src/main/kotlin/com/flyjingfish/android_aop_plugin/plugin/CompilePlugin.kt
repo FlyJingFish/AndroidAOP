@@ -1,13 +1,17 @@
 package com.flyjingfish.android_aop_plugin.plugin
 
+import com.android.build.api.variant.AndroidComponentsExtension
+import com.android.build.api.variant.Variant
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.DynamicFeaturePlugin
 import com.android.build.gradle.LibraryExtension
+import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import com.flyjingfish.android_aop_plugin.tasks.CompileAndroidAopTask
+import com.flyjingfish.android_aop_plugin.tasks.DebugModeFileTask
 import com.flyjingfish.android_aop_plugin.tasks.SyncConfigTask
 import com.flyjingfish.android_aop_plugin.utils.AndroidConfig
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
@@ -136,6 +140,39 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                 val kotlinPath = cacheDir ?: File(project.buildDir.path + "/tmp/kotlin-classes/".adapterOSPath() + variantName)
 
                 doLast(project, isApp, variantName, buildTypeName, javaCompile, kotlinPath)
+            }
+        }
+        val androidComponents = project.extensions.getByType(AndroidComponentsExtension::class.java)
+        val variantList: ArrayList<Variant> = ArrayList()
+        androidComponents.onVariants { variant ->
+            variantList.add(variant)
+            val variantName = variant.name
+            val path = Utils.aopDebugModeJavaDir(variantName)
+            val debugModeDir = File("${project.buildDir.absolutePath}$path")
+            if (!debugModeDir.exists()){
+                debugModeDir.mkdirs()
+            }
+            variant.sources.java?.let { java ->
+                java.addStaticSourceDirectory("build$path")
+            }
+            val variantNameCapitalized = variantName.capitalized()
+            val packageName = if (android.namespace == null || android.namespace == "null"){
+                android.defaultConfig.applicationId.toString()
+            }else{
+                android.namespace.toString()
+            }
+            project
+                .tasks
+                .register("debugModeFile$variantNameCapitalized", DebugModeFileTask::class.java){
+                    it.debugModeDir = debugModeDir.absolutePath
+                    it.packageName = packageName
+                }
+        }
+        project.afterEvaluate {
+            for (variant in variantList) {
+                val variantName = variant.name
+                val variantNameCapitalized = variantName.capitalized()
+                project.tasks.findByName("pre${variantNameCapitalized}Build")?.finalizedBy("debugModeFile$variantNameCapitalized")
             }
         }
     }
