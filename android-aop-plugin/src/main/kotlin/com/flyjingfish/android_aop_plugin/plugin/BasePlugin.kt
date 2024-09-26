@@ -62,4 +62,11 @@ abstract class BasePlugin :Plugin<Project> {
             false
         }
     }
+
+    fun isDebugMode():Boolean{
+        return debugMode
+    }
+    fun isReflectInvokeMethod():Boolean{
+        return reflectInvokeMethod
+    }
 }

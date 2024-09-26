@@ -31,7 +31,6 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
     override fun apply(project: Project) {
         super.apply(project)
         val isApp = project.plugins.hasPlugin(AppPlugin::class.java)
-        val logger = project.logger
 
 
         val isDynamicLibrary = project.plugins.hasPlugin(DynamicFeaturePlugin::class.java)
@@ -40,6 +39,10 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
             // java项目
             project.tasks.withType(JavaCompile::class.java).configureEach { compileTask ->
                 compileTask.doLast{
+                    val androidObject1: Any? = project.extensions.findByName(ANDROID_EXTENSION_NAME)
+                    if (androidObject1 != null) {
+                        return@doLast
+                    }
                     if (compileTask !is AbstractCompile){
                         return@doLast
                     }
@@ -49,72 +52,17 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                         return@doLast
                     }
                     val compileKotlin = compileKotlinTask.get()
-                    val androidAopConfig1 : AndroidAopConfig = if (isApp){
-                        val config = project.extensions.getByType(AndroidAopConfig::class.java)
-                        config.initConfig()
-                        config
-                    }else{
-                        var config1 = InitConfig.optFromJsonString(
-                            InitConfig.readAsString(Utils.configJsonFile(project)),
-                            AndroidAopConfig::class.java)
-                        if (config1 == null){
-                            config1 = AndroidAopConfig()
-                        }
-                        config1
-                    }
-                    if (androidAopConfig1.cutInfoJson){
-                        InitConfig.initCutInfo(project,false)
-                    }
+
                     val buildTypeName = "release"
                     val variantName = "release"
 
-                    if (androidAopConfig1.enabled && isDebugMode(buildTypeName,variantName)){
-                        ClassFileUtils.debugMode = true
-                        val hint = "AndroidAOP提示：打正式包时请注意通过设置 androidAop.debugMode 或 androidAop.debugMode.variantOnlyDebug 关闭debug模式"
-                        logger.error(hint)
-                        val localInput = mutableListOf<File>()
-                        val javaPath = File(javaCompile.destinationDirectory.asFile.orNull.toString())
-                        if (javaPath.exists()){
-                            localInput.add(javaPath)
-                        }
-                        val task = compileKotlin
-                        val cacheDir = try {
-                            task.destinationDirectory.get().asFile
-                        } catch (e: Exception) {
-                            null
-                        }
-                        val kotlinPath = cacheDir ?: File(project.buildDir.path + "/classes/kotlin/main".adapterOSPath())
-
-                        if (kotlinPath.exists()){
-                            localInput.add(kotlinPath)
-                        }
-                        val jarInput = mutableListOf<File>()
-                        val bootJarPath = mutableSetOf<String>()
-                        for (file in localInput) {
-                            bootJarPath.add(file.absolutePath)
-                        }
-                        for (file in javaCompile.classpath) {
-                            if (file.absolutePath !in bootJarPath && file.exists()){
-                                if (file.isDirectory){
-                                    localInput.add(file)
-                                }else{
-                                    jarInput.add(file)
-                                }
-                            }
-                        }
-                        if (localInput.isNotEmpty()){
-                            ClassFileUtils.reflectInvokeMethod = isReflectInvokeMethod(buildTypeName,variantName)
-                            val output = File(javaCompile.destinationDirectory.asFile.orNull.toString())
-                            val task = CompileAndroidAopTask(jarInput,localInput,output,project,isApp,
-                                File(Utils.aopCompileTempDir(project,variantName)),
-                                File(Utils.invokeJsonFile(project,variantName)),
-                                variantName,false
-                            )
-                            task.taskAction()
-                        }
+                    val cacheDir = try {
+                        compileKotlin.destinationDirectory.get().asFile
+                    } catch (e: Exception) {
+                        null
                     }
-
-
+                    val kotlinPath = cacheDir ?: File(project.buildDir.path + "/classes/kotlin/main".adapterOSPath())
+                    doLast(project, isApp, variantName, buildTypeName, javaCompile, kotlinPath,false)
                 }
             }
             return
@@ -178,78 +126,96 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                 }
             }
             javaCompile.doLast{
-                val androidAopConfig : AndroidAopConfig = if (isApp){
-                    val config = project.extensions.getByType(AndroidAopConfig::class.java)
-                    config.initConfig()
-                    config
-                }else{
-                    var config = InitConfig.optFromJsonString(
-                        InitConfig.readAsString(Utils.configJsonFile(project)),
-                        AndroidAopConfig::class.java)
-                    if (config == null){
-                        config = AndroidAopConfig()
-                    }
-                    config
+
+                val task = kotlinCompileFilePathMap["compile${variantName.capitalized()}Kotlin"]
+                val cacheDir = try {
+                    task?.destinationDirectory?.get()?.asFile
+                } catch (e: Exception) {
+                    null
                 }
-                if (androidAopConfig.cutInfoJson){
-                    InitConfig.initCutInfo(project,false)
+                val kotlinPath = cacheDir ?: File(project.buildDir.path + "/tmp/kotlin-classes/".adapterOSPath() + variantName)
+
+                doLast(project, isApp, variantName, buildTypeName, javaCompile, kotlinPath)
+            }
+        }
+    }
+
+    private fun doLast(project: Project,isApp:Boolean,variantName: String,buildTypeName: String,
+                       javaCompile:AbstractCompile,kotlinPath: File,isAndroidModule : Boolean = true){
+        val logger = project.logger
+        val androidAopConfig : AndroidAopConfig = if (isApp){
+            val config = project.extensions.getByType(AndroidAopConfig::class.java)
+            config.initConfig()
+            config
+        }else{
+            var config = InitConfig.optFromJsonString(
+                InitConfig.readAsString(Utils.configJsonFile(project)),
+                AndroidAopConfig::class.java)
+            if (config == null){
+                config = AndroidAopConfig()
+            }
+            config
+        }
+        if (androidAopConfig.cutInfoJson){
+            InitConfig.initCutInfo(project,false)
+        }
+        val debugMode = if (isAndroidModule){
+            isDebugMode(buildTypeName,variantName)
+        }else{
+            isDebugMode()
+        }
+        if (androidAopConfig.enabled && debugMode){
+            ClassFileUtils.debugMode = true
+            val hint = "AndroidAOP提示：打正式包时请注意通过设置 androidAop.debugMode 或 androidAop.debugMode.variantOnlyDebug 关闭debug模式"
+            if (buildTypeName == "release"){
+                logger.error(hint)
+            }else{
+                logger.warn(hint)
+            }
+            val localInput = mutableListOf<File>()
+            val javaPath = File(javaCompile.destinationDirectory.asFile.orNull.toString())
+            if (javaPath.exists()){
+                localInput.add(javaPath)
+            }
+
+            if (kotlinPath.exists()){
+                localInput.add(kotlinPath)
+            }
+            val jarInput = mutableListOf<File>()
+            val bootJarPath = mutableSetOf<String>()
+            if (isAndroidModule){
+                val androidConfig = AndroidConfig(project)
+                val list: List<File> = androidConfig.getBootClasspath()
+                for (file in list) {
+                    bootJarPath.add(file.absolutePath)
                 }
-                if (androidAopConfig.enabled && isDebugMode(buildTypeName,variantName)){
-                    ClassFileUtils.debugMode = true
-                    val hint = "AndroidAOP提示：打正式包时请注意通过设置 androidAop.debugMode 或 androidAop.debugMode.variantOnlyDebug 关闭debug模式"
-                    if (buildTypeName == "release"){
-                        logger.error(hint)
+            }
+            for (file in localInput) {
+                bootJarPath.add(file.absolutePath)
+            }
+            for (file in javaCompile.classpath) {
+                if (file.absolutePath !in bootJarPath && file.exists()){
+                    if (file.isDirectory){
+                        localInput.add(file)
                     }else{
-                        logger.warn(hint)
-                    }
-                    val localInput = mutableListOf<File>()
-                    val javaPath = File(javaCompile.destinationDirectory.asFile.orNull.toString())
-                    if (javaPath.exists()){
-                        localInput.add(javaPath)
-                    }
-                    val task = kotlinCompileFilePathMap["compile${variantName.capitalized()}Kotlin"]
-                    val cacheDir = try {
-                        task?.destinationDirectory?.get()?.asFile
-                    } catch (e: Exception) {
-                        null
-                    }
-                    val kotlinPath = cacheDir ?: File(project.buildDir.path + "/tmp/kotlin-classes/".adapterOSPath() + variantName)
-
-                    if (kotlinPath.exists()){
-                        localInput.add(kotlinPath)
-                    }
-                    val jarInput = mutableListOf<File>()
-                    val androidConfig = AndroidConfig(project)
-                    val list: List<File> = androidConfig.getBootClasspath()
-                    val bootJarPath = mutableSetOf<String>()
-                    for (file in list) {
-                        bootJarPath.add(file.absolutePath)
-                    }
-                    for (file in localInput) {
-                        bootJarPath.add(file.absolutePath)
-                    }
-                    for (file in javaCompile.classpath) {
-                        if (file.absolutePath !in bootJarPath && file.exists()){
-                            if (file.isDirectory){
-                                localInput.add(file)
-                            }else{
-                                jarInput.add(file)
-                            }
-                        }
-                    }
-                    if (localInput.isNotEmpty()){
-                        ClassFileUtils.reflectInvokeMethod = isReflectInvokeMethod(buildTypeName,variantName)
-                        val output = File(javaCompile.destinationDirectory.asFile.orNull.toString())
-                        val task = CompileAndroidAopTask(jarInput,localInput,output,project,isApp,
-                            File(Utils.aopCompileTempDir(project,variantName)),
-                            File(Utils.invokeJsonFile(project,variantName)),
-                            variantName
-                        )
-                        task.taskAction()
+                        jarInput.add(file)
                     }
                 }
-
-
+            }
+            if (localInput.isNotEmpty()){
+                val reflectInvokeMethod = if (isAndroidModule){
+                    isReflectInvokeMethod(buildTypeName,variantName)
+                }else{
+                    isReflectInvokeMethod()
+                }
+                ClassFileUtils.reflectInvokeMethod = reflectInvokeMethod
+                val output = File(javaCompile.destinationDirectory.asFile.orNull.toString())
+                val task = CompileAndroidAopTask(jarInput,localInput,output,project,isApp,
+                    File(Utils.aopCompileTempDir(project,variantName)),
+                    File(Utils.invokeJsonFile(project,variantName)),
+                    variantName,isAndroidModule
+                )
+                task.taskAction()
             }
         }
     }
