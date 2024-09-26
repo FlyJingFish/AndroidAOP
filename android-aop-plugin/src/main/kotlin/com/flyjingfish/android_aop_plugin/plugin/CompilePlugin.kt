@@ -35,14 +35,91 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
 
 
         val isDynamicLibrary = project.plugins.hasPlugin(DynamicFeaturePlugin::class.java)
-        val androidObject: Any = project.extensions.findByName(ANDROID_EXTENSION_NAME) ?: return
+        val androidObject: Any? = project.extensions.findByName(ANDROID_EXTENSION_NAME)
+        if (androidObject == null) {
+            // java项目
+            project.tasks.withType(JavaCompile::class.java).configureEach { compileTask ->
+                compileTask.doLast{
+                    if (compileTask !is AbstractCompile){
+                        return@doLast
+                    }
+                    val javaCompile: AbstractCompile = compileTask
+                    val compileKotlinTask = project.tasks.named("compileKotlin", KotlinCompile::class.java)
+                    if (compileKotlinTask.get() !is KotlinCompile){
+                        return@doLast
+                    }
+                    val compileKotlin = compileKotlinTask.get()
+                    val androidAopConfig1 : AndroidAopConfig = if (isApp){
+                        val config = project.extensions.getByType(AndroidAopConfig::class.java)
+                        config.initConfig()
+                        config
+                    }else{
+                        var config1 = InitConfig.optFromJsonString(
+                            InitConfig.readAsString(Utils.configJsonFile(project)),
+                            AndroidAopConfig::class.java)
+                        if (config1 == null){
+                            config1 = AndroidAopConfig()
+                        }
+                        config1
+                    }
+                    if (androidAopConfig1.cutInfoJson){
+                        InitConfig.initCutInfo(project,false)
+                    }
+                    val buildTypeName = "release"
+                    val variantName = "release"
 
-        val android = androidObject as BaseExtension
-        val variants = if (isApp or isDynamicLibrary) {
-            (android as AppExtension).applicationVariants
-        } else {
-            (android as LibraryExtension).libraryVariants
+                    if (androidAopConfig1.enabled && isDebugMode(buildTypeName,variantName)){
+                        ClassFileUtils.debugMode = true
+                        val hint = "AndroidAOP提示：打正式包时请注意通过设置 androidAop.debugMode 或 androidAop.debugMode.variantOnlyDebug 关闭debug模式"
+                        logger.error(hint)
+                        val localInput = mutableListOf<File>()
+                        val javaPath = File(javaCompile.destinationDirectory.asFile.orNull.toString())
+                        if (javaPath.exists()){
+                            localInput.add(javaPath)
+                        }
+                        val task = compileKotlin
+                        val cacheDir = try {
+                            task.destinationDirectory.get().asFile
+                        } catch (e: Exception) {
+                            null
+                        }
+                        val kotlinPath = cacheDir ?: File(project.buildDir.path + "/classes/kotlin/main".adapterOSPath())
+
+                        if (kotlinPath.exists()){
+                            localInput.add(kotlinPath)
+                        }
+                        val jarInput = mutableListOf<File>()
+                        val bootJarPath = mutableSetOf<String>()
+                        for (file in localInput) {
+                            bootJarPath.add(file.absolutePath)
+                        }
+                        for (file in javaCompile.classpath) {
+                            if (file.absolutePath !in bootJarPath && file.exists()){
+                                if (file.isDirectory){
+                                    localInput.add(file)
+                                }else{
+                                    jarInput.add(file)
+                                }
+                            }
+                        }
+                        if (localInput.isNotEmpty()){
+                            ClassFileUtils.reflectInvokeMethod = isReflectInvokeMethod(buildTypeName,variantName)
+                            val output = File(javaCompile.destinationDirectory.asFile.orNull.toString())
+                            val task = CompileAndroidAopTask(jarInput,localInput,output,project,isApp,
+                                File(Utils.aopCompileTempDir(project,variantName)),
+                                File(Utils.invokeJsonFile(project,variantName)),
+                                variantName,false
+                            )
+                            task.taskAction()
+                        }
+                    }
+
+
+                }
+            }
+            return
         }
+
 
         val hasConfig = project.extensions.findByName("androidAopConfig") != null
         val syncConfig = !root && hasConfig && isApp
@@ -54,7 +131,14 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
             }
         }
 
+
         val kotlinCompileFilePathMap = mutableMapOf<String, KotlinCompileTool>()
+        val android = androidObject as BaseExtension
+        val variants = if (isApp or isDynamicLibrary) {
+            (android as AppExtension).applicationVariants
+        } else {
+            (android as LibraryExtension).libraryVariants
+        }
         variants.all { variant ->
             if (syncConfig){
                 AndroidAopConfig.syncConfig(project)
