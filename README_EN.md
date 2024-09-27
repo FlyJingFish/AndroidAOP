@@ -248,8 +248,8 @@ androidAop.debugMode.variantOnlyDebug = true //If this is not written by default
 ```
 
 > [!TIP]\
-> 1. If this option is not set, it will be true by default. Please note that when it is set to true, the release package will ignore the setting of `androidAop.debugMode = true` and automatically use the full packaging method. When it is set to false, there will be no such effect
-> 2. This feature is enabled by default, so the release package does not need to manually disable `androidAop.debugMode` <br>
+> 1、If this option is not set, it will be true by default. Please note that when it is set to true, the release package will ignore the setting of `androidAop.debugMode = true` and automatically use the full packaging method. When it is set to false, there will be no such effect
+> 2、This feature is enabled by default, so the release package does not need to manually disable `androidAop.debugMode` <br>
 > **3. This feature is only valid for Android libraries, not for Java or Kotlin libraries**
 
 - 4. Add the following settings to `gradle.properties` in the **root directory** (optional, you can configure this if you want to be the best)
