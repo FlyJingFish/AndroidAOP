@@ -229,7 +229,7 @@ plugins {
 
 > [!TIP]\
 > **1. This method can only apply debugMode to the modules you have added, and the related aspects in the modules that have not been added will not take effect**<br>
-> **2. If your module is a Java module, method 1 will not work. You need to use method 2 to make it work.**
+> **2. If your module is a Java or Kotlin library, this method can only enable all Android libraries. You need to use method 2 to configure your module separately for it to take effect.**
 
 
 - 2. Add the following settings in `gradle.properties` in the **root directory**

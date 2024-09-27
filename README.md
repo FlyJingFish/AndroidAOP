@@ -261,7 +261,7 @@ android {
 
 > [!TIP]\
 > **1、这个方式可以只为你加过的 module 应用 debugMode，没加的 module 里边的相关切面不会生效**<br>
-> **2、如果你的 module 是 Java 的 module，方式一不会生效，需要采用方式二为你的 Java 的 module 才会生效**
+> **2、如果你的 module 是 Java或Kotlin 的 Library，方式一只能让所有的 Android 的 Library，需要采用方式二单独为你的 module 配置才会生效**
 
 
 <p align = "left">    
