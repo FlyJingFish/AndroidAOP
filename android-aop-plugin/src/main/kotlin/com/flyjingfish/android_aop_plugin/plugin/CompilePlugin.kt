@@ -31,7 +31,7 @@ import java.io.File
 class CompilePlugin(private val root:Boolean): BasePlugin() {
     companion object{
         private const val ANDROID_EXTENSION_NAME = "android"
-        private const val DEBUGMODE_FILE_TASK_NAME = "debugModeFile"
+        private const val DEBUG_MODE_FILE_TASK_NAME = "debugModeFile"
     }
 
     override fun apply(project: Project) {
@@ -72,12 +72,12 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                     }
                     if (packageName != null){
 
-                        project.tasks.register(DEBUGMODE_FILE_TASK_NAME, DebugModeFileTask::class.java){
+                        project.tasks.register(DEBUG_MODE_FILE_TASK_NAME, DebugModeFileTask::class.java){
                             it.debugModeDir = debugModeDir.absolutePath
                             it.packageName = packageName
                         }
                         project.afterEvaluate {
-                            project.tasks.findByName("compileJava")?.dependsOn(DEBUGMODE_FILE_TASK_NAME)
+                            project.tasks.findByName("compileJava")?.dependsOn(DEBUG_MODE_FILE_TASK_NAME)
                         }
                     }
                 } catch (e: Exception) {
@@ -210,7 +210,7 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                 }
                 project
                     .tasks
-                    .register("$DEBUGMODE_FILE_TASK_NAME$variantNameCapitalized", DebugModeFileTask::class.java){
+                    .register("$DEBUG_MODE_FILE_TASK_NAME$variantNameCapitalized", DebugModeFileTask::class.java){
                         it.debugModeDir = debugModeDir.absolutePath
                         it.packageName = packageName
                     }
@@ -219,7 +219,7 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                 for (variant in variantList) {
                     val variantName = variant.name
                     val variantNameCapitalized = variantName.capitalized()
-                    project.tasks.findByName("pre${variantNameCapitalized}Build")?.finalizedBy("$DEBUGMODE_FILE_TASK_NAME$variantNameCapitalized")
+                    project.tasks.findByName("pre${variantNameCapitalized}Build")?.finalizedBy("$DEBUG_MODE_FILE_TASK_NAME$variantNameCapitalized")
                 }
             }
         }
