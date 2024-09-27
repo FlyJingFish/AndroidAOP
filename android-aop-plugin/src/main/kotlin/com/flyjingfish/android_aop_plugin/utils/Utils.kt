@@ -288,7 +288,10 @@ object Utils {
         return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempTransformIgnoreJar/".adapterOSPath()
     }
     fun aopDebugModeJavaDir(variantName:String):String{
-        return "/generated/android-aop/${variantName}/".adapterOSPath()
+        return "/generated/android_aop/${variantName}/".adapterOSPath()
+    }
+    fun aopDebugModeJavaDir4Java():String{
+        return "/generated/sources/android_aop/".adapterOSPath()
     }
     fun configJsonFile(project:Project):String{
         return project.buildDir.absolutePath+"/tmp/android-aop/config/androidAopConfig.json".adapterOSPath()

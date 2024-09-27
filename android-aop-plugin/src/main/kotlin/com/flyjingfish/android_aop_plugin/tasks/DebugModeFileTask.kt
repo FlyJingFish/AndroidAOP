@@ -24,7 +24,6 @@ abstract class DebugModeFileTask : DefaultTask() {
             return
         }
         val filePath = "$debugModeDir/${Utils.dotToSlash(packageName)}/DebugModeBuildConfig.java".adapterOSPath()
-        println("DebugModeFileTask--filePath=$filePath")
         val file = File(filePath)
         if (file.exists()){
             return
