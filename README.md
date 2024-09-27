@@ -87,7 +87,7 @@
   
   plugins {
       //必须项 👇 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五的方式二
-      id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.2.0" apply true
+      id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.2.1" apply true
   }
   ```
 
@@ -97,7 +97,7 @@
   buildscript {
       dependencies {
           //必须项 👇
-          classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.2.0'
+          classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.2.1'
       }
   }
   // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五的方式二
@@ -145,7 +145,7 @@
   //必须项 👇
   plugins {
       ...
-      id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.2.0"//最好放在最后一行
+      id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.2.1"//最好放在最后一行
   }
   ```
 
@@ -171,18 +171,18 @@ plugins {
 
 dependencies {
     //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:2.2.0'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:2.2.1'
     //非必须项 👇这个包提供了一些常见的注解切面
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-extra:2.2.0'
+    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-extra:2.2.1'
     
     //必须项 👇如果您项目内已经有了这项不用加也可以
     implementation 'androidx.appcompat:appcompat:1.3.0' // 至少在1.3.0及以上
     
     //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.2.0'
+    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.2.1'
     
     //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:2.2.0'
+    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:2.2.1'
     //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
 }
 ```
@@ -260,7 +260,8 @@ android {
 
 
 > [!TIP]\
-> **💡💡💡这个方式可以只为你加过的 module 应用 debugMode，没加的 module 里边的相关切面不会生效**
+> **1、这个方式可以只为你加过的 module 应用 debugMode，没加的 module 里边的相关切面不会生效**<br>
+> **2、如果你的 module 是 Java 的 module，方式一不会生效，需要采用方式二为你的 Java 的 module 才会生效**
 
 
 <p align = "left">    
@@ -313,6 +314,23 @@ androidAop.reflectInvokeMethod.variantOnlyDebug = true // 设置为 true 则只�
 > 2、请注意`androidAop.reflectInvokeMethod.variantOnlyDebug` 设置为 true 时 release 包会忽略 `androidAop.reflectInvokeMethod = true` 的设置自动不走反射，设为 false 时则没有这种效果（不写默认false）<br>
 > 3、在 1.8.7 及其以上的版本上，已优化到二次编译速度和开启反射速度是基本一样的
 
+
+<p align = "left">    
+<picture>
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/five.svg" media="(prefers-color-scheme: light)">
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/five_dark.svg" media="(prefers-color-scheme: dark)">
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/five.svg" align = "center"  width="22" height="22"/>
+</picture>
+在<strong>根目录</strong>的 <code>gradle.properties</code> 添加如下设置（非必须项）
+</p>  
+
+```properties
+androidAop.debugMode.buildConfig = true //设置为 true 表示导出一个 DebugModeBuildConfig.java 文件，不写默认为 true
+```
+
+> [!TIP]\
+> 1、因为有些 module 的代码只有 kotlin 代码，导致 debugMode 无法生效，设置为true可插入一个 java 代码即可生效，如果不需要，可以设置为 false，但需要你手动创建一个 java 代码 <br>
+> 2、通常不需要配置此项，除非你遇到上述情况
 
 
 ### 本库内置了一些功能注解可供你直接使用

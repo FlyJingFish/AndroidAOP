@@ -9,5 +9,5 @@ enum class RootBooleanConfig(
     INCREMENTAL("androidAop.debugMode.isIncremental", true),
     REFLECT_INVOKE_METHOD("androidAop.reflectInvokeMethod", false),
     REFLECT_INVOKE_METHOD_ONLY_DEBUG("androidAop.reflectInvokeMethod.variantOnlyDebug", false),
-    BUILD_CONFIG("androidAop.buildConfig", true);
+    BUILD_CONFIG("androidAop.debugMode.buildConfig", true);
 }
