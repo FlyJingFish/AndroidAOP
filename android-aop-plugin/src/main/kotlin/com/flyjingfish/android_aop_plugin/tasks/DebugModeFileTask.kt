@@ -35,7 +35,7 @@ abstract class DebugModeFileTask : DefaultTask() {
                 package $packageName;
 
                 public class DebugModeBuildConfig {
-                    public static String packageName = "$packageName";
+                    public static final String packageName = "$packageName";
                 }
                 
                 """.trimIndent()
