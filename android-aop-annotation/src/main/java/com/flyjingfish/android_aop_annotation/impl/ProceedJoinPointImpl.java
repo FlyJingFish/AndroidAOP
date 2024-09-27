@@ -39,7 +39,7 @@ class ProceedJoinPointImpl implements ProceedJoinPoint {
     private boolean hasNext;
 
     ProceedJoinPointImpl(@NonNull Class<?> targetClass, Object[] args, @Nullable Object target, boolean isSuspend,
-                         Method targetMethod, InvokeMethod invokeMethod, AopMethod aopMethod) {
+                         Method targetMethod, @Nullable InvokeMethod invokeMethod, AopMethod aopMethod) {
         this.targetClass = targetClass;
         this.target = target;
         this.isSuspend = isSuspend;

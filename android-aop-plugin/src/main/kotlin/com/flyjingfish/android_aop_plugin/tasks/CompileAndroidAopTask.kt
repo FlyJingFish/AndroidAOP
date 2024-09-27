@@ -40,9 +40,10 @@ class CompileAndroidAopTask(
     private val isApp:Boolean,
     private val tmpCompileDir:File,
     private val tmpJsonFile:File,
-    private val variantName:String
+    private val variantName:String,
+    private val isAndroidModule:Boolean = true
 ) {
-    private val aopTaskUtils = AopTaskUtils(project,variantName)
+    private val aopTaskUtils = AopTaskUtils(project,variantName,isAndroidModule)
 
     private lateinit var logger: Logger
     fun taskAction() {
@@ -69,6 +70,7 @@ class CompileAndroidAopTask(
     }
 
     private fun loadJoinPointConfig(){
+        if (isAndroidModule)
         WovenInfoUtils.addBaseClassInfo(project)
 
         //第一遍找配置文件

@@ -75,7 +75,7 @@ Using the **plugins DSL**:
 
 plugins {
     //Required item 👇 apply is set to true to automatically apply debugMode to all modules, if false, follow step 5 below.
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.2.0" apply true
+    id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.2.1" apply true
 }
 ```
 
@@ -86,7 +86,7 @@ plugins {
 buildscript {
      dependencies {
          //Required items 👇
-         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.2.0'
+         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.2.1'
      }
 }
 //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below.
@@ -125,7 +125,7 @@ Add directly to ```build.gradle``` of **app**
 //Required items 👇
 plugins {
      ...
-     id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.2.0"
+     id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.2.1"
 }
 ```
 
@@ -155,17 +155,17 @@ plugins {
 
 dependencies {
      //Required items 👇
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:2.2.0'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:2.2.1'
      //Optional 👇This package provides some common annotation aspects
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-extra:2.2.0'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-extra:2.2.1'
     
      //Required item 👇If you already have this item in your project, you don’t need to add it.
      implementation 'androidx.appcompat:appcompat:1.3.0' // At least in 1.3.0 and above
      
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️supports aspects written in Java and Kotlin code
-     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.2.0'
+     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.2.1'
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️only applies to aspects written in Java code
-     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:2.2.0'
+     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:2.2.1'
      //⚠️Choose one of the above android-aop-ksp and android-aop-processor
 }
 ```
@@ -218,9 +218,6 @@ Configure the project according to the above [step 1 method 1](#1-introduce-the-
 
 **Method 2:**
 
-> [!TIP]\
-> **💡💡💡This method can only apply debugMode to the modules you have added, and the related aspects in the modules that have not been added will not take effect**
-
 Please follow the above [Step 1 Method 1 to configure the project](#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required), manually set for **all sub-module modules**, for example:
 
 ```gradle
@@ -229,6 +226,11 @@ plugins {
      id 'android.aop'//It is best to put it on the last line
 }
 ```
+
+> [!TIP]\
+> **1. This method can only apply debugMode to the modules you have added, and the related aspects in the modules that have not been added will not take effect**<br>
+> **2. If your module is a Java or Kotlin library, this method can only enable all Android libraries. You need to use method 2 to configure your module separately for it to take effect.**
+
 
 - 2. Add the following settings in `gradle.properties` in the **root directory**
 
@@ -259,6 +261,15 @@ androidAop.reflectInvokeMethod.variantOnlyDebug = true //Set to true to be effec
 > 1、Reflection execution of the facet method will speed up packaging<br>
 > 2、Please note that when `androidAop.reflectInvokeMethod.variantOnlyDebug` is set to true, the release package will ignore the setting of `androidAop.reflectInvokeMethod = true` and automatically not reflect, and there will be no such effect when it is set to false (if not set, the default is false) <br>
 > 3、In versions 1.8.7 and above, the speed of secondary compilation has been optimized to be basically the same as the speed of enabling reflection.
+
+- 5. Add the following settings to `gradle.properties` in the **root directory** (optional)
+
+```properties
+androidAop.debugMode.buildConfig = true //If set to true, it means exporting a DebugModeBuildConfig.java file. If not set, the default value is true.
+```
+
+> [!TIP]\
+> Because some modules have only Kotlin code, debugMode cannot take effect. You can insert a Java code to make it effective by setting it to true. If you don't need it, you can set it to false, but you need to manually create a Java code.
 
 
 ### This library has some built-in functional annotations for you to use directly.

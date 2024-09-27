@@ -27,7 +27,7 @@ import java.io.FileInputStream
 import java.util.UUID
 import java.util.jar.JarFile
 
-class AopTaskUtils(private val project: Project,private val variantName: String) {
+class AopTaskUtils(private val project: Project,private val variantName: String, private val isAndroidModule:Boolean = true) {
     fun processFileForConfig(file : File, directory: File, directoryPath:String){
         if (file.isFile) {
             val className = file.getFileClassname(directory)
@@ -115,7 +115,7 @@ class AopTaskUtils(private val project: Project,private val variantName: String)
         WovenInfoUtils.checkLeafConfig(isApp)
     }
     fun searchJoinPointLocationStart(project:Project){
-        if (WovenInfoUtils.isHasExtendsReplace()){
+        if (WovenInfoUtils.isHasExtendsReplace() && isAndroidModule){
             val androidConfig = AndroidConfig(project)
             val list: List<File> = androidConfig.getBootClasspath()
             for (file in list) {

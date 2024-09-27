@@ -19,6 +19,7 @@ import java.util.zip.ZipInputStream
 object Utils {
     const val annotationPackage = "com.flyjingfish.android_aop_annotation"
     const val corePackage = "com.flyjingfish.android_aop_core"
+    const val extraPackage = "com.flyjingfish.android_aop_extra"
     const val JoinAnnoCutUtils = "${annotationPackage}.utils.JoinAnnoCutUtils"
     const val _CLASS = ".class"
     const val AOP_CONFIG_END_NAME = "\$\$AndroidAopClass.class"
@@ -285,6 +286,12 @@ object Utils {
 //    }
     fun aopTransformIgnoreJarDir(project:Project, variantName:String):String{
         return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempTransformIgnoreJar/".adapterOSPath()
+    }
+    fun aopDebugModeJavaDir(variantName:String):String{
+        return "/generated/android_aop/${variantName}/".adapterOSPath()
+    }
+    fun aopDebugModeJavaDir4Java():String{
+        return "/generated/sources/android_aop/".adapterOSPath()
     }
     fun configJsonFile(project:Project):String{
         return project.buildDir.absolutePath+"/tmp/android-aop/config/androidAopConfig.json".adapterOSPath()

@@ -1,0 +1,11 @@
+plugins {
+    id 'java-library'
+    id 'org.jetbrains.kotlin.jvm'
+    id 'com.google.devtools.ksp'
+    id 'android.aop'
+}
+dependencies {
+    implementation project(path: ':android-aop-annotation')
+    ksp project(':android-aop-ksp')
+}
+
