@@ -112,7 +112,7 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                         null
                     }
                     val kotlinPath = cacheDir ?: File(project.buildDir.path + "/classes/kotlin/main".adapterOSPath())
-                    doLast(project, isApp, variantName, buildTypeName, javaCompile, kotlinPath,false)
+                    doAopTask(project, isApp, variantName, buildTypeName, javaCompile, kotlinPath,false)
                 }
             }
             return
@@ -185,7 +185,7 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                 }
                 val kotlinPath = cacheDir ?: File(project.buildDir.path + "/tmp/kotlin-classes/".adapterOSPath() + variantName)
 
-                doLast(project, isApp, variantName, buildTypeName, javaCompile, kotlinPath)
+                doAopTask(project, isApp, variantName, buildTypeName, javaCompile, kotlinPath)
             }
         }
         if (hasBuildConfig()){
@@ -225,8 +225,8 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
         }
     }
 
-    private fun doLast(project: Project,isApp:Boolean,variantName: String,buildTypeName: String,
-                       javaCompile:AbstractCompile,kotlinPath: File,isAndroidModule : Boolean = true){
+    private fun doAopTask(project: Project, isApp:Boolean, variantName: String, buildTypeName: String,
+                          javaCompile:AbstractCompile, kotlinPath: File, isAndroidModule : Boolean = true){
         val logger = project.logger
         val androidAopConfig : AndroidAopConfig = if (isApp){
             val config = project.extensions.getByType(AndroidAopConfig::class.java)

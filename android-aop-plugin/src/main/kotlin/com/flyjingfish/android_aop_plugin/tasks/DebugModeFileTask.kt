@@ -26,7 +26,10 @@ abstract class DebugModeFileTask : DefaultTask() {
         val filePath = "$debugModeDir/${Utils.dotToSlash(packageName)}/DebugModeBuildConfig.java".adapterOSPath()
         val file = File(filePath)
         if (file.exists()){
-            return
+            val content = file.readText() // 返回一个包含每行的 List<String>
+            if (content.contains("\"$packageName\";")){
+                return
+            }
         }
         val javaCode = """
                 package $packageName;
