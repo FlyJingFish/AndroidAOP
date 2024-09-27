@@ -42,7 +42,7 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
         val isDynamicLibrary = project.plugins.hasPlugin(DynamicFeaturePlugin::class.java)
         val androidObject: Any? = project.extensions.findByName(ANDROID_EXTENSION_NAME)
         if (androidObject == null) {
-            if (project.rootProject == project){
+            if (project.rootProject == project || root){
                 return
             }
             if (hasBuildConfig()){
