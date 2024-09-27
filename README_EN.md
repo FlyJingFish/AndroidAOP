@@ -246,10 +246,11 @@ androidAop.debugMode=true //Set to true to use the current packaging method of y
 ```properties
 androidAop.debugMode.variantOnlyDebug = true //If this is not written by default, it is true
 ```
-> [!TIP]\
-> **If this option is not set, it will be true by default**. Please note that when it is set to true, the release package will ignore the setting of `androidAop.debugMode = true` and automatically use the full packaging method. When it is set to false, there will be no such effect
 
-> **This function is enabled by default, so the release package does not need to manually turn off `androidAop.debugMode`**
+> [!TIP]\
+> 1. If this option is not set, it will be true by default. Please note that when it is set to true, the release package will ignore the setting of `androidAop.debugMode = true` and automatically use the full packaging method. When it is set to false, there will be no such effect
+> 2. This feature is enabled by default, so the release package does not need to manually disable `androidAop.debugMode` <br>
+> **3. This feature is only valid for Android libraries, not for Java or Kotlin libraries**
 
 - 4. Add the following settings to `gradle.properties` in the **root directory** (optional, you can configure this if you want to be the best)
 
@@ -261,6 +262,7 @@ androidAop.reflectInvokeMethod.variantOnlyDebug = true //Set to true to be effec
 > 1、Reflection execution of the facet method will speed up packaging<br>
 > 2、Please note that when `androidAop.reflectInvokeMethod.variantOnlyDebug` is set to true, the release package will ignore the setting of `androidAop.reflectInvokeMethod = true` and automatically not reflect, and there will be no such effect when it is set to false (if not set, the default is false) <br>
 > 3、In versions 1.8.7 and above, the speed of secondary compilation has been optimized to be basically the same as the speed of enabling reflection.
+> **4. `androidAop.reflectInvokeMethod.variantOnlyDebug` is only valid for Android libraries, not for Java or Kotlin libraries**
 
 - 5. Add the following settings to `gradle.properties` in the **root directory** (optional)
 

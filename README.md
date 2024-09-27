@@ -294,7 +294,7 @@ androidAop.debugMode.variantOnlyDebug = true //默认不写这项就是true
 > [!TIP]\
 > 1、这项不写默认就是true，请注意设置为 true 时 release 包会忽略 `androidAop.debugMode = true` 的设置自动走全量打包方式，设为 false 时则没有这种效果 <br>
 > 2、此项功能默认开启，因此release包无需手动关闭 `androidAop.debugMode` <br>
-> **3、此项只对 Android 的 Library 有效,怼 Java 或 Kotlin 的 Library 无效**
+> **3、此项只对 Android 的 Library 有效,对 Java 或 Kotlin 的 Library 无效**
 
 <p align = "left">    
 <picture>
@@ -313,7 +313,7 @@ androidAop.reflectInvokeMethod.variantOnlyDebug = true // 设置为 true 则只�
 > 1、反射执行切面方法会加快打包速度<br>
 > 2、请注意`androidAop.reflectInvokeMethod.variantOnlyDebug` 设置为 true 时 release 包会忽略 `androidAop.reflectInvokeMethod = true` 的设置自动不走反射，设为 false 时则没有这种效果（不写默认false）<br>
 > 3、在 1.8.7 及其以上的版本上，已优化到二次编译速度和开启反射速度是基本一样的 <br>
-> **4、`androidAop.reflectInvokeMethod.variantOnlyDebug` 只对 Android 的 Library 有效,怼 Java 或 Kotlin 的 Library 无效**
+> **4、`androidAop.reflectInvokeMethod.variantOnlyDebug` 只对 Android 的 Library 有效,对 Java 或 Kotlin 的 Library 无效**
 
 
 <p align = "left">    
