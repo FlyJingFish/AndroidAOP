@@ -196,10 +196,10 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                 val variantName = variant.name
                 val path = Utils.aopDebugModeJavaDir(variantName)
                 val debugModeDir = File("${project.buildDir.absolutePath}$path")
-                if (!debugModeDir.exists()){
-                    debugModeDir.mkdirs()
-                }
                 variant.sources.java?.let { java ->
+                    if (!debugModeDir.exists()){
+                        debugModeDir.mkdirs()
+                    }
                     java.addStaticSourceDirectory("build$path")
                 }
                 val variantNameCapitalized = variantName.capitalized()
