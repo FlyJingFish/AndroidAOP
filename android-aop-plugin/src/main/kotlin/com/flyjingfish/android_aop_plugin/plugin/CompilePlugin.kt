@@ -47,12 +47,12 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
             }
             if (hasBuildConfig()){
                 try {
+                    val javaPluginExtension = project.extensions.getByType(JavaPluginExtension::class.java)
                     val path = Utils.aopDebugModeJavaDir4Java()
                     val debugModeDir = File("${project.buildDir.absolutePath}$path")
                     if (!debugModeDir.exists()){
                         debugModeDir.mkdirs()
                     }
-                    val javaPluginExtension = project.extensions.getByType(JavaPluginExtension::class.java)
                     // 设置新的 Java 源代码路径
                     javaPluginExtension.sourceSets.getByName("main").java.srcDirs("build$path")
                     var packageName :String ?=null
@@ -80,8 +80,7 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                             project.tasks.findByName("compileJava")?.dependsOn(DEBUG_MODE_FILE_TASK_NAME)
                         }
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
+                } catch (_: Exception) {
                 }
             }
 
