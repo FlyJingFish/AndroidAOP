@@ -11,17 +11,26 @@ class AndroidAopPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         project.extensions.add("androidAopConfig", AndroidAopConfig::class.java)
         if (project.rootProject == project){
-            project.rootProject.childProjects.forEach { (_,value)->
-                value.afterEvaluate {
-                    val notApp = !it.plugins.hasPlugin(AppPlugin::class.java)
-                    val noneHasAop = !it.plugins.hasPlugin("android.aop")
-                    if (notApp && noneHasAop && it.hasProperty("android")){
-                        CompilePlugin(true).apply(it)
-                    }
-                }
-            }
+            deepSetDebugMode(project.rootProject)
         }
         CompilePlugin(false).apply(project)
         TransformPlugin.apply(project)
+    }
+
+    private fun deepSetDebugMode(project: Project){
+        val childProjects = project.childProjects
+        if (childProjects.isEmpty()){
+            return
+        }
+        childProjects.forEach { (_,value)->
+            value.afterEvaluate {
+                val notApp = !it.plugins.hasPlugin(AppPlugin::class.java)
+                val noneHasAop = !it.plugins.hasPlugin("android.aop")
+                if (notApp && noneHasAop && it.hasProperty("android")){
+                    CompilePlugin(true).apply(it)
+                }
+            }
+            deepSetDebugMode(value)
+        }
     }
 }

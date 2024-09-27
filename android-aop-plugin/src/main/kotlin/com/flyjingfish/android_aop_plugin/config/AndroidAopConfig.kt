@@ -1,5 +1,7 @@
 package com.flyjingfish.android_aop_plugin.config
 
+import com.android.build.gradle.AppPlugin
+import com.flyjingfish.android_aop_plugin.plugin.CompilePlugin
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import org.gradle.api.Project
@@ -84,10 +86,19 @@ open class AndroidAopConfig {
             val androidAopConfig = project.extensions.getByType(AndroidAopConfig::class.java)
             androidAopConfig.initConfig()
 
-            for (childProject in project.rootProject.childProjects) {
-                if (project != childProject.value){
+            deepExportConfigJson(project,project.rootProject,androidAopConfig)
+        }
+
+        private fun deepExportConfigJson(appProject: Project,project: Project,androidAopConfig:AndroidAopConfig){
+            val childProjects = project.childProjects
+            if (childProjects.isEmpty()){
+                return
+            }
+            for (childProject in childProjects) {
+                if (appProject != childProject.value){
                     val configFile = File(Utils.configJsonFile(childProject.value))
                     InitConfig.exportConfigJson(configFile,androidAopConfig)
+                    deepExportConfigJson(appProject,childProject.value,androidAopConfig)
                 }
             }
         }
