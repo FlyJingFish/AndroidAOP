@@ -261,7 +261,7 @@ androidAop.reflectInvokeMethod.variantOnlyDebug = true //Set to true to be effec
 > [!TIP]\
 > 1.Reflection execution of the facet method will speed up packaging<br>
 > 2.Please note that when `androidAop.reflectInvokeMethod.variantOnlyDebug` is set to true, the release package will ignore the setting of `androidAop.reflectInvokeMethod = true` and automatically not reflect, and there will be no such effect when it is set to false (if not set, the default is false) <br>
-> 3.In versions 1.8.7 and above, the speed of secondary compilation has been optimized to be basically the same as the speed of enabling reflection.
+> 3.In versions 1.8.7 and above, the speed of secondary compilation has been optimized to be basically the same as the speed of enabling reflection.<br>
 > **4. `androidAop.reflectInvokeMethod.variantOnlyDebug` is only valid for Android libraries, not for Java or Kotlin libraries**
 
 - 5. Add the following settings to `gradle.properties` in the **root directory** (optional)
