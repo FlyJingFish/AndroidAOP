@@ -213,12 +213,11 @@ android {
 
 **Method 1 (recommended):**
 
-Configure the project according to the above [step 1 method 1](#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required), that’s it. **This method automatically applies debugMode to all modules**
-
+Follow the above [Step 1 Method 1 Configuration Project](#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required) and you are done. **This method automatically applies debugMode to all Android modules**
 
 **Method 2:**
 
-Please follow the above [Step 1 Method 1 to configure the project](#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required), manually set for **all sub-module modules**, for example:
+Please configure the project according to the above [Step 1 Method 1 to configure the project](#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required), and then manually set the required sub-module module, for example:
 
 ```gradle
 plugins {
