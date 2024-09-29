@@ -66,9 +66,19 @@ Minimum SDK version: minSdkVersion >= 21
 
 #### Method 1: ```apply``` method
 
-1. Depend on the plug-in in ```build.gradle``` in the **project root directory**
+<p align = "left">    
+<picture>
+  <!-- 亮色模式下显示的 SVG -->
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one.svg" media="(prefers-color-scheme: light)">
+  <!-- 暗黑模式下显示的 SVG -->
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one_dark.svg" media="(prefers-color-scheme: dark)">
+  <!-- 默认图片 -->
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one.svg" align = "center"  width="22" height="22" />
+</picture>
+Depend on the plug-in in <code>build.gradle</code> in the <strong>project root directory</strong>
+</p>  
 
-Using the **plugins DSL**:
+- Using the **plugins DSL**:
 
 ```gradle
 
@@ -93,9 +103,19 @@ apply plugin: "android.aop"
 ```
 </details>
 
-2. Add in ```build.gradle``` of **app**
+<p align = "left">    
+<picture>
+  <!-- 亮色模式下显示的 SVG -->
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one.svg" media="(prefers-color-scheme: light)">
+  <!-- 暗黑模式下显示的 SVG -->
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one_dark.svg" media="(prefers-color-scheme: dark)">
+  <!-- 默认图片 -->
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one.svg" align = "center"  width="22" height="22" />
+</picture>
+ Add in <code>build.gradle</code> of <strong>app</strong>
+</p>  
 
-Using the **plugins DSL**:
+- Using the **plugins DSL**:
 
 ```gradle
 //Required items 👇
