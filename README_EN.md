@@ -89,7 +89,7 @@ plugins {
 ```
 
 <details>
-<summary><strong>Using legacy plugin application:</strong></summary>
+<summary><li><strong>Using legacy plugin application:</strong></li></summary>
      
 ```gradle
 buildscript {
