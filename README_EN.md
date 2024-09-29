@@ -233,20 +233,20 @@ android {
 For <strong>all sub-modules</strong> also rely on plug-ins, please follow the above<a href="#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required">step 1 method 1 to configure the project</a>, then choose one of the following methods
 </p>  
 
-**Method 1 (recommended):**
+- **Method 1 (recommended):**
 
-Follow the above [Step 1 Method 1 Configuration Project](#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required) and you are done. **This method automatically applies debugMode to all Android modules**
+  Follow the above [Step 1 Method 1 Configuration Project](#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required) and you are done. **This method automatically applies debugMode to all Android modules**
 
-**Method 2:**
+- **Method 2:**
 
-Please configure the project according to the above [Step 1 Method 1 to configure the project](#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required), and then manually set the required sub-module module, for example:
+  Please configure the project according to the above [Step 1 Method 1 to configure the project](#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required), and then manually set the required sub-module module, for example:
 
-```gradle
-plugins {
-     ...
-     id 'android.aop'//It is best to put it on the last line
-}
-```
+  ```gradle
+  plugins {
+       ...
+       id 'android.aop'//It is best to put it on the last line
+  }
+  ```
 
 > [!TIP]\
 > **1. This method can only apply debugMode to the modules you have added, and the related aspects in the modules that have not been added will not take effect** <br>
