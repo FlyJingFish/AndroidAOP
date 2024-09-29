@@ -10,7 +10,6 @@
 [![GitHub issues](https://img.shields.io/github/issues/FlyJingFish/AndroidAop.svg)](https://github.com/FlyJingFish/AndroidAop/issues)
 [![GitHub license](https://img.shields.io/github/license/FlyJingFish/AndroidAop.svg)](https://github.com/FlyJingFish/AndroidAop/blob/master/LICENSE)
 
-### AndroidAOP is an Aop framework exclusive to Android. With just one annotation, you can request permissions, switch threads, prohibit multiple points, monitor life cycles, etc. **This library is not Aop implemented based on AspectJ**, of course you can You can customize your own Aop code. It’s better to act than to think, so use it quickly.
 
 ## Special feature
 
@@ -24,7 +23,7 @@
 
 5 . This library supports the case where the pointcut method is a Lambda expression.
 
-6 . This library supports coroutine functions whose pointcut methods are suspend-modified.
+6 . This library supports coroutine functions whose pointcut methods are suspend.
 
 7 . This library supports generating Json files of all pointcut information to facilitate an overview of all pointcut locations [Configure here](#%E5%9B%9B%E5%9C%A8-app-%E7%9A%84buildgradle%E6%B7%BB%E5%8A%A0-androidaopconfig-%E9%85%8D%E7%BD%AE%E9%A1%B9%E6%AD%A4%E6%AD%A5%E4%B8%BA%E5%8F%AF%E9%80%89%E9%85%8D%E7%BD%AE%E9%A1%B9)
 
@@ -38,7 +37,7 @@
 
 **12. Rich and complete usage documentation helps you fully understand the usage rules of this library [click here to go to the wiki document](https://github.com/FlyJingFish/AndroidAOP/wiki)**
 
-**13. There are also plug-ins that help you generate section codes for you to use [click here to download](https://github.com/FlyJingFish/AndroidAOP/wiki/AOP-%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E5%8A%A9%E6%89%8B)**
+**13. There are also plug-in assistants that help you generate section codes for your use [click here to download](https://github.com/FlyJingFish/AndroidAOP/wiki/AOP-%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E5%8A%A9%E6%89%8B)**
 
 #### [Click here to download apk, or scan the QR code below to download](https://github.com/FlyJingFish/AndroidAOP/blob/master/apk/release/app-release.apk?raw=true)
 
@@ -208,8 +207,14 @@ android {
 
 **The following configuration steps also apply to componentized scenarios [Click here to view](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98#14%E7%BB%84%E4%BB%B6%E5%8C%96%E7%9A%84%E9%A1%B9%E7%9B%AE%E4%B8%8D%E5%90%8C-module-%E9%87%87%E7%94%A8%E7%9A%84%E6%96%B9%E6%A1%88%E6%98%AF-aar-%E8%BF%99%E6%A0%B7%E7%9A%84%E4%BA%A7%E7%89%A9%E8%BF%9B%E8%A1%8C%E7%BC%96%E8%AF%91%E5%A6%82%E4%BD%95%E5%8A%A0%E5%BF%AB%E6%89%93%E5%8C%85%E9%80%9F%E5%BA%A6%E5%91%A2)**
 
-
-- 1. For **all sub-modules** also rely on plug-ins, please follow the above [step 1 method 1 to configure the project](#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required), then choose one of the following methods
+<p align = "left">    
+<picture>
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one.svg" media="(prefers-color-scheme: light)">
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one_dark.svg" media="(prefers-color-scheme: dark)">
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one.svg" align = "center"  width="22" height="22"/>
+</picture>
+For<strong>all sub-modules</strong>also rely on plug-ins, please follow the above<a href="#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required">step 1 method 1 to configure the project</a>, then choose one of the following methods
+</p>  
 
 **Method 1 (recommended):**
 
@@ -230,8 +235,14 @@ plugins {
 > **1. This method can only apply debugMode to the modules you have added, and the related aspects in the modules that have not been added will not take effect**<br>
 > **2. If your module is a Java or Kotlin library, this method can only enable all Android libraries. You need to use method 2 to configure your module separately for it to take effect.**
 
-
-- 2. Add the following settings in `gradle.properties` in the **root directory**
+<p align = "left">    
+<picture>
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two.svg" media="(prefers-color-scheme: light)">
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two_dark.svg" media="(prefers-color-scheme: dark)">
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two.svg" align = "center"  width="22" height="22"/>
+</picture>
+Add the following settings in <code>gradle.properties</code> in the <strong>root directory</strong>
+</p>  
 
 ```properties
 androidAop.debugMode=true //Set to true to use the current packaging method of your project, false to use the full packaging method, otherwise the default is false
@@ -240,7 +251,15 @@ androidAop.debugMode=true //Set to true to use the current packaging method of y
 > [!CAUTION]\
 > **⚠️⚠️⚠️ Please note that when set to true, the compilation speed will be faster but some functions will be invalid. Only the aop code will be woven into the set module. The third-party jar package will not weave in the code, so please be careful to turn it off when building the official package. Configure this and clean the project**
 
-- 3. Add the following settings in `gradle.properties` in the **root directory**
+<p align = "left">    
+<picture>
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/three.svg" media="(prefers-color-scheme: light)">
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/three_dark.svg" media="(prefers-color-scheme: dark)">
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/three.svg" align = "center"  width="22" height="22"/>
+</picture>
+Add the following settings in <code>gradle.properties</code> in the <strong>root directory</strong>
+</p> 
+
 
 ```properties
 androidAop.debugMode.variantOnlyDebug = true //If this is not written by default, it is true
@@ -251,7 +270,15 @@ androidAop.debugMode.variantOnlyDebug = true //If this is not written by default
 > 2.This feature is enabled by default, so the release package does not need to manually disable `androidAop.debugMode` <br>
 > **3. This feature is only valid for Android libraries, not for Java or Kotlin libraries**
 
-- 4. Add the following settings to `gradle.properties` in the **root directory** (optional, you can configure this if you want to be the best)
+<p align = "left">    
+<picture>
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/four.svg" media="(prefers-color-scheme: light)">
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/four_dark.svg" media="(prefers-color-scheme: dark)">
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/four.svg" align = "center"  width="22" height="22"/>
+</picture>
+Add the following settings to <code>gradle.properties</code> in the <strong>root directory</strong> (optional, you can configure this if you want to be the best)
+</p>  
+
 
 ```properties
 androidAop.reflectInvokeMethod = true //Set to true to reflect the execution of the facet method, if not set, the default is false
@@ -263,7 +290,14 @@ androidAop.reflectInvokeMethod.variantOnlyDebug = true //Set to true to be effec
 > 3.In versions 1.8.7 and above, the speed of secondary compilation has been optimized to be basically the same as the speed of enabling reflection.<br>
 > **4. `androidAop.reflectInvokeMethod.variantOnlyDebug` is only valid for Android libraries, not for Java or Kotlin libraries**
 
-- 5. Add the following settings to `gradle.properties` in the **root directory** (optional)
+<p align = "left">    
+<picture>
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/five.svg" media="(prefers-color-scheme: light)">
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/five_dark.svg" media="(prefers-color-scheme: dark)">
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/five.svg" align = "center"  width="22" height="22"/>
+</picture>
+Add the following settings to <code>gradle.properties</code> in the <strong>root directory</strong> (optional)
+</p>  
 
 ```properties
 androidAop.debugMode.buildConfig = true //If set to true, it means exporting a DebugModeBuildConfig.java file. If not set, the default value is true.
