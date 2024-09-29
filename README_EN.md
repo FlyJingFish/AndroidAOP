@@ -87,7 +87,6 @@ plugins {
     id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.2.3" apply true
 }
 ```
-<li>
 <details>
 <summary><strong>Using legacy plugin application:</strong></summary>
      
@@ -102,7 +101,6 @@ buildscript {
 apply plugin: "android.aop"
 ```
 </details>
-</li>
 <p align = "left">    
 <picture>
   <!-- 亮色模式下显示的 SVG -->
