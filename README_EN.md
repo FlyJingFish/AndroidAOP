@@ -646,7 +646,7 @@ It is extremely simple to use, the sample code has already explained
 - Kotlin
 
 ```kotlin
-objectInitCollect {
+object InitCollect {
      private val collects = mutableListOf<SubApplication>()
 
      @AndroidAopCollectMethod
