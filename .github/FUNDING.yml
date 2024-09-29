@@ -12,4 +12,4 @@ lfx_crowdfunding: # Replace with a single LFX Crowdfunding project-name e.g., cl
 polar: # Replace with a single Polar username
 buy_me_a_coffee: # Replace with a single Buy Me a Coffee username
 thanks_dev: # Replace with a single thanks.dev username
-custom: https://github.com/FlyJingFish/AndroidAOP?tab=readme-ov-file#%E8%B5%9E%E8%B5%8F
+custom: [https://github.com/FlyJingFish/AndroidAOP?tab=readme-ov-file#%E8%B5%9E%E8%B5%8F, https://github.com/FlyJingFish/AndroidAOP/blob/master/README_EN.md#appreciation]
