@@ -79,28 +79,27 @@ Depend on the plug-in in <code>build.gradle</code> in the <strong>project root d
 </p>  
 
 - Using the **plugins DSL**:
-
-```gradle
-
-plugins {
-    //Required item 👇 apply is set to true to automatically apply debugMode to all modules, if false, follow step 5 below.
-    id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.2.3" apply true
-}
-```
-<details>
-<summary><strong>Using legacy plugin application:</strong></summary>
-     
-```gradle
-buildscript {
-     dependencies {
-         //Required items 👇
-         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.2.3'
-     }
-}
-//👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below.
-apply plugin: "android.aop"
-```
-</details>
+    ```gradle
+    
+    plugins {
+        //Required item 👇 apply is set to true to automatically apply debugMode to all modules, if false, follow step 5 below.
+        id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.2.3" apply true
+    }
+    ```
+    <details>
+    <summary><strong>Using legacy plugin application:</strong></summary>
+         
+    ```gradle
+    buildscript {
+         dependencies {
+             //Required items 👇
+             classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.2.3'
+         }
+    }
+    //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below.
+    apply plugin: "android.aop"
+    ```
+    </details>
 <p align = "left">    
 <picture>
   <!-- 亮色模式下显示的 SVG -->
