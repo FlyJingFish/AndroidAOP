@@ -185,7 +185,8 @@ dependencies {
      //⚠️Choose one of the above android-aop-ksp and android-aop-processor
 }
 ```
-> **Tips: ksp or annotationProcessor only works in the current module. In whichever module there is custom aspect code, it will be added to that module. Required dependencies can only be added to the public module through the API**
+> [!TIP]\
+> Tip: ksp or annotationProcessor can only scan the current module. Custom aspect codes are added to the module where they are located. **But custom aspect codes are globally effective**; required dependencies can be added only to public modules through the API.
 
 ### 4. Add the androidAopConfig configuration item in app’s build.gradle (this step is an optional configuration item)
 
