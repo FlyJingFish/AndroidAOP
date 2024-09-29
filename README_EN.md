@@ -214,11 +214,13 @@ android {
      ...
 }
 ```
-> **Tip: Reasonable use of include and exclude can improve compilation speed. It is recommended to directly use include to set the relevant package names of your project (including app and custom module)**
+> [!TIP]\
+> **1. Include and exclude support precise setting to a class**<br>
+> **2. Reasonable use of include and exclude can improve compilation speed. It is recommended to use include to set the relevant package name of your project (including app and custom module)**<br>
+> **3. If LEAF_EXTENDS is not set for @AndroidAopMatchClassMethod and @AndroidAopCollectMethod, setting verifyLeafExtends to false can also speed up**
 
-> [!NOTE]\
-> **⚠️⚠️⚠️After setting include and exclude, all aspects are only valid within the rules you set. Please remember your settings! In addition, since Android Studio may have cache after setting this, it is recommended to clean it before continuing development**
-
+> [!CAUTION]\
+> **⚠️⚠️⚠️After setting include and exclude, all aspects are only valid within the rules you set. Please remember your settings! In addition, since Android Studio may have cache after setting here, it is recommended to clean before continuing development**
 
 ### 5. The code weaving method can be set during development (this step is an optional configuration item)
 
