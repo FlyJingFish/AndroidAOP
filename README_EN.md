@@ -213,7 +213,7 @@ android {
   <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one_dark.svg" media="(prefers-color-scheme: dark)">
   <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one.svg" align = "center"  width="22" height="22"/>
 </picture>
-For<strong>all sub-modules</strong>also rely on plug-ins, please follow the above<a href="#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required">step 1 method 1 to configure the project</a>, then choose one of the following methods
+For <strong>all sub-modules</strong> also rely on plug-ins, please follow the above<a href="#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required">step 1 method 1 to configure the project</a>, then choose one of the following methods
 </p>  
 
 **Method 1 (recommended):**
@@ -232,7 +232,7 @@ plugins {
 ```
 
 > [!TIP]\
-> **1. This method can only apply debugMode to the modules you have added, and the related aspects in the modules that have not been added will not take effect**<br>
+> **1. This method can only apply debugMode to the modules you have added, and the related aspects in the modules that have not been added will not take effect** <br>
 > **2. If your module is a Java or Kotlin library, this method can only enable all Android libraries. You need to use method 2 to configure your module separately for it to take effect.**
 
 <p align = "left">    
@@ -266,7 +266,7 @@ androidAop.debugMode.variantOnlyDebug = true //If this is not written by default
 ```
 
 > [!TIP]\
-> 1.If this option is not set, it will be true by default. Please note that when it is set to true, the release package will ignore the setting of `androidAop.debugMode = true` and automatically use the full packaging method. When it is set to false, there will be no such effect
+> 1.If this option is not set, it will be true by default. Please note that when it is set to true, the release package will ignore the setting of `androidAop.debugMode = true` and automatically use the full packaging method. When it is set to false, there will be no such effect <br>
 > 2.This feature is enabled by default, so the release package does not need to manually disable `androidAop.debugMode` <br>
 > **3. This feature is only valid for Android libraries, not for Java or Kotlin libraries**
 
@@ -285,7 +285,7 @@ androidAop.reflectInvokeMethod = true //Set to true to reflect the execution of 
 androidAop.reflectInvokeMethod.variantOnlyDebug = true //Set to true to be effective only in debug, if not set, the default is false
 ```
 > [!TIP]\
-> 1.Reflection execution of the facet method will speed up packaging<br>
+> 1.Reflection execution of the facet method will speed up packaging <br>
 > 2.Please note that when `androidAop.reflectInvokeMethod.variantOnlyDebug` is set to true, the release package will ignore the setting of `androidAop.reflectInvokeMethod = true` and automatically not reflect, and there will be no such effect when it is set to false (if not set, the default is false) <br>
 > 3.In versions 1.8.7 and above, the speed of secondary compilation has been optimized to be basically the same as the speed of enabling reflection.<br>
 > **4. `androidAop.reflectInvokeMethod.variantOnlyDebug` is only valid for Android libraries, not for Java or Kotlin libraries**
@@ -309,25 +309,27 @@ androidAop.debugMode.buildConfig = true //If set to true, it means exporting a D
 
 ### This library has some built-in functional annotations for you to use directly.
 
-| Annotation name  |                                                                            Parameter description                                                                            |                                                                          Function description                                                                           |
-|------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| @SingleClick     |                                                              value = interval of quick clicks, default 1000ms                                                               |                                      Click the annotation and add this annotation to make your method accessible only when clicked                                      |
-| @DoubleClick     |                                                           value = maximum time between two clicks, default 300ms                                                            |                                   Double-click annotation, add this annotation to make your method enterable only when double-clicked                                   |
-| @IOThread        |                                                                          ThreadType = thread type                                                                           |                      Switch to the sub-thread operation. Adding this annotation can switch the code in your method to the sub-thread for execution                      |
-| @MainThread      |                                                                                No parameters                                                                                |                The operation of switching to the main thread. Adding this annotation can switch the code in your method to the main thread for execution                |
-| @OnLifecycle     |                                                                           value = Lifecycle.Event                                                                           |              Monitor life cycle operations. Adding this annotation allows the code in your method to be executed only during the corresponding life cycle               |
-| @TryCatch        |                                                                        value = a flag you customized                                                                        |                                                Adding this annotation can wrap a layer of try catch code for your method                                                |
-| @Permission      |                                                                     value = String array of permissions                                                                     |                 The operation of applying for permissions. Adding this annotation will enable your code to be executed only after obtaining permissions                 |
-| @Scheduled       | initialDelay = delayed start time<br>interval = interval<br>repeatCount = number of repetitions<br>isOnMainThread = whether to be the main thread<br>id = unique identifier |       Scheduled tasks, add this annotation to make your method Executed every once in a while, call AndroidAop.shutdownNow(id) or AndroidAop.shutdown(id) to stop       |
-| @Delay           |                                          delay = delay time<br>isOnMainThread = whether the main thread<br>id = unique identifier                                           | Delay task, add this annotation to delay the execution of your method for a period of time, call AndroidAop.shutdownNow(id) or AndroidAop .shutdown(id) can be canceled |
-| @CheckNetwork    |                   tag = custom tag<br>toastText = toast prompt when there is no network<br>invokeListener = whether to take over the check network logic                    |                       Check whether the network is available, adding this annotation will allow your method to enter only when there is a network                       |
-| @CustomIntercept |                                                            value = a flag of a string array that you customized                                                             |                                          Custom interception, used with AndroidAop.setOnCustomInterceptListener, is a panacea                                           |
+| Annotation name          |                                                                            Parameter description                                                                            |                                                                          Function description                                                                           |
+|--------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| @SingleClick             |                                                              value = interval of quick clicks, default 1000ms                                                               |                                      Click the annotation and add this annotation to make your method accessible only when clicked                                      |
+| @DoubleClick             |                                                           value = maximum time between two clicks, default 300ms                                                            |                                   Double-click annotation, add this annotation to make your method enterable only when double-clicked                                   |
+| @IOThread                |                                                                          ThreadType = thread type                                                                           |                      Switch to the sub-thread operation. Adding this annotation can switch the code in your method to the sub-thread for execution                      |
+| @MainThread              |                                                                                No parameters                                                                                |                The operation of switching to the main thread. Adding this annotation can switch the code in your method to the main thread for execution                |
+| @OnLifecycle<sup>*</sup> |                                                                           value = Lifecycle.Event                                                                           |              Monitor life cycle operations. Adding this annotation allows the code in your method to be executed only during the corresponding life cycle               |
+| @TryCatch                |                                                                        value = a flag you customized                                                                        |                                                Adding this annotation can wrap a layer of try catch code for your method                                                |
+| @Permission<sup>*</sup>  |                                                                     value = String array of permissions                                                                     |                 The operation of applying for permissions. Adding this annotation will enable your code to be executed only after obtaining permissions                 |
+| @Scheduled               | initialDelay = delayed start time<br>interval = interval<br>repeatCount = number of repetitions<br>isOnMainThread = whether to be the main thread<br>id = unique identifier |       Scheduled tasks, add this annotation to make your method Executed every once in a while, call AndroidAop.shutdownNow(id) or AndroidAop.shutdown(id) to stop       |
+| @Delay                   |                                          delay = delay time<br>isOnMainThread = whether the main thread<br>id = unique identifier                                           | Delay task, add this annotation to delay the execution of your method for a period of time, call AndroidAop.shutdownNow(id) or AndroidAop .shutdown(id) can be canceled |
+| @CheckNetwork            |                   tag = custom tag<br>toastText = toast prompt when there is no network<br>invokeListener = whether to take over the check network logic                    |                       Check whether the network is available, adding this annotation will allow your method to enter only when there is a network                       |
+| @CustomIntercept         |                                                            value = a flag of a string array that you customized                                                             |                                          Custom interception, used with AndroidAop.setOnCustomInterceptListener, is a panacea                                           |
+
+( * Supports suspend functions, returns results when conditions are met, and supports suspend functions whose return type is not Unit type)
 
 [All examples of the above annotations are here](https://github.com/FlyJingFish/AndroidAOP/blob/master/app/src/main/java/com/flyjingfish/androidaop/MainActivity.kt#L128),[Also This](https://github.com/FlyJingFish/AndroidAOP/blob/master/app/src/main/java/com/flyjingfish/androidaop/SecondActivity.java#L64)
 
 ### Let me emphasize this @OnLifecycle
 
-- **1. The object to which the method added by @OnLifecycle must belong is a method directly or indirectly inherited from FragmentActivity or Fragment to be useful, or the object annotated method can also implement LifecycleOwner**
+- 1. **The object to which the method added by @OnLifecycle must belong is a method directly or indirectly inherited from FragmentActivity or Fragment to be useful, or the object annotated method can also implement LifecycleOwner**
 - 2. If the first point is not met, you can set the first parameter of the aspect method to the type of point 1, and you can also pass it in when calling the aspect method, for example:
 
 ```java
@@ -559,11 +561,6 @@ You can see that the type set by AndroidAopMatchClassMethod above is MatchType.E
 
 **⚠️Note: If the subclass does not have this method, the aspect will be invalid. In addition, do not match the same method multiple times in the same class, otherwise only one will take effect, Use overrideMethod to ignore this restriction [Click here for details](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)**
 
-#### Practical scenarios for matching aspects:
-
-- For example, if you want to log out of the login logic, you can use the above method. Just jump within the page to detect whether you need to log out.
-
-- Or if you want to set an aspect on a method of a third-party library, you can directly set the corresponding class name, corresponding method, and then type = MatchType.SELF. This can invade the code of the third-party library. Of course, remember to modify the above mentioned Configuration of androidAopConfig
 
 #### 3. **@AndroidAopReplaceClass** is used for replacement method calls
 
@@ -642,7 +639,7 @@ public class ReplaceImageView extends ImageView {
 }
 ```
 
-#### 5. **@AndroidAopCollectMethod** Is a collection inheritance class [detailed usage] (https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopCollectMethod)
+#### 5. **@AndroidAopCollectMethod** is a facet that collects inherited classes of a class [detailed usage] (https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopCollectMethod)
 
 It is extremely simple to use, the sample code has already explained
 
