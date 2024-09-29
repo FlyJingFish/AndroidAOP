@@ -106,11 +106,11 @@ apply plugin: "android.aop"
 <p align = "left">    
 <picture>
   <!-- 亮色模式下显示的 SVG -->
-  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one.svg" media="(prefers-color-scheme: light)">
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two.svg" media="(prefers-color-scheme: light)">
   <!-- 暗黑模式下显示的 SVG -->
-  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one_dark.svg" media="(prefers-color-scheme: dark)">
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two_dark.svg" media="(prefers-color-scheme: dark)">
   <!-- 默认图片 -->
-  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one.svg" align = "center"  width="22" height="22" />
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two.svg" align = "center"  width="22" height="22"/>
 </picture>
  Add in <code>build.gradle</code> of <strong>app</strong>
 </p>  
@@ -138,7 +138,7 @@ apply plugin: 'android.aop' //It's best to put it on the last line
 
 #### Method 2: ```plugins``` method
 
-Add directly to ```build.gradle``` of **app**
+- Add directly to ```build.gradle``` of **app**
 
 ```gradle
 //Required items 👇
@@ -154,7 +154,7 @@ plugins {
 
 ### 2. If you need to customize aspects, and the code is ```Kotlin``` (optional)
 
-1. Depend on the plug-in in ```build.gradle``` in the **project root directory**
+- Depend on the plug-in in ```build.gradle``` in the **project root directory**
 
 ```gradle
 plugins {
@@ -192,7 +192,7 @@ dependencies {
 
 ### 4. Add the androidAopConfig configuration item in app’s build.gradle (this step is an optional configuration item)
 
-- 1. Related development configurations
+- Related development configurations
 
 ```gradle
 plugins {
