@@ -639,7 +639,7 @@ public class ReplaceImageView extends ImageView {
 }
 ```
 
-#### 5. **@AndroidAopCollectMethod** is a facet that collects inherited classes of a class [detailed usage] (https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopCollectMethod)
+#### 5. **@AndroidAopCollectMethod** is a aspects that collects inherited classes of a class [detailed usage] (https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopCollectMethod)
 
 It is extremely simple to use, the sample code has already explained
 
