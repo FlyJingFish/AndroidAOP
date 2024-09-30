@@ -35,9 +35,9 @@
 
 **11. This library is not implemented based on AspectJ. The amount of woven code is very small and the intrusion is extremely low**
 
-**12. Rich and complete usage documentation helps you fully understand the usage rules of this library [click here to go to the wiki document](https://github.com/FlyJingFish/AndroidAOP/wiki)**
+**12. Rich and complete usage documentation helps you fully understand the usage rules of this library [click here to go to the wiki document](https://flyjingfish.github.io/AndroidAOP)**
 
-**13. There are also plug-in assistants that help you generate section codes for your use [click here to download](https://github.com/FlyJingFish/AndroidAOP/wiki/AOP-%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E5%8A%A9%E6%89%8B)**
+**13. There are also plug-in assistants that help you generate section codes for your use [click here to download](https://flyjingfish.github.io/AndroidAOP/AOP_Helper)**
 
 #### [Click here to download apk, or scan the QR code below to download](https://github.com/FlyJingFish/AndroidAOP/blob/master/apk/release/app-release.apk?raw=true)
 
@@ -225,7 +225,7 @@ android {
 
 ### 5. The code weaving method can be set during development (this step is an optional configuration item)
 
-**The following configuration steps also apply to componentized scenarios [Click here to view](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98#14%E7%BB%84%E4%BB%B6%E5%8C%96%E7%9A%84%E9%A1%B9%E7%9B%AE%E4%B8%8D%E5%90%8C-module-%E9%87%87%E7%94%A8%E7%9A%84%E6%96%B9%E6%A1%88%E6%98%AF-aar-%E8%BF%99%E6%A0%B7%E7%9A%84%E4%BA%A7%E7%89%A9%E8%BF%9B%E8%A1%8C%E7%BC%96%E8%AF%91%E5%A6%82%E4%BD%95%E5%8A%A0%E5%BF%AB%E6%89%93%E5%8C%85%E9%80%9F%E5%BA%A6%E5%91%A2)**
+**The following configuration steps also apply to componentized scenarios [Click here to view](https://flyjingfish.github.io/AndroidAOP/FAQ/#14-different-modules-of-componentized-projects-use-products-such-as-aar-for-compilation-how-to-speed-up-the-packaging-speed)**
 
 <p align = "left">    
 <picture>
@@ -378,7 +378,7 @@ AndroidAop.INSTANCE.setOnThrowableListener(new OnThrowableListener() {
 });
 ```
 
-- @Permission Use of this annotation must match the following settings (⚠️This step is required, otherwise it will have no effect)[Perfect usage inspiration](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%88%87%E9%9D%A2%E5%90%AF%E7%A4%BA#4%E7%9B%B8%E4%BF%A1%E5%A4%A7%E5%AE%B6%E5%9C%A8%E4%BD%BF%E7%94%A8%E6%9D%83%E9%99%90-permission-%E6%97%B6%E5%8F%AF%E8%83%BD%E4%BC%9A%E6%83%B3%E7%8E%B0%E5%9C%A8%E5%8F%AA%E6%9C%89%E8%8E%B7%E5%BE%97%E6%9D%83%E9%99%90%E8%BF%9B%E5%85%A5%E6%96%B9%E6%B3%95%E8%80%8C%E6%B2%A1%E6%9C%89%E6%97%A0%E6%9D%83%E9%99%90%E7%9A%84%E5%9B%9E%E8%B0%83%E4%B8%8B%E8%BE%B9%E4%BE%8B%E5%AD%90%E6%95%99%E4%BD%A0%E6%80%8E%E4%B9%88%E5%81%9A)
+- @Permission Use of this annotation must match the following settings (⚠️This step is required, otherwise it will have no effect)[Perfect usage inspiration](https://flyjingfish.github.io/AndroidAOP/Implications/#4-i-believe-that-when-you-use-the-permission-permission-you-may-think-that-now-you-only-get-permission-to-enter-the-method-but-there-is-no-callback-without-permission-the-following-example-teaches-you-how-to-do-it)
 ```java
 AndroidAop.INSTANCE.setOnPermissionsInterceptListener(new OnPermissionsInterceptListener() {
      @SuppressLint("CheckResult")
@@ -451,7 +451,7 @@ AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
 - @AndroidAopModifyExtendsClass is a modified inherited class
 - @AndroidAopCollectMethod Is a collection inheritance class
 
-#### 1. **@AndroidAopPointCut** is used to make aspects in the form of annotations on the method. The above annotations are all made through this. [Please see the wiki document for detailed usage](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopPointCut)
+#### 1. **@AndroidAopPointCut** is used to make aspects in the form of annotations on the method. The above annotations are all made through this. [Please see the wiki document for detailed usage](https://flyjingfish.github.io/AndroidAOP/AndroidAopPointCut)
 
 
 The following uses @CustomIntercept as an example to introduce how to use it.
@@ -500,7 +500,7 @@ class CustomInterceptCut : BasePointCut<CustomIntercept> {
 }
 ```
 
-[About ProceedJoinPoint usage instructions](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint), the same applies to ProceedJoinPoint below
+[About ProceedJoinPoint usage instructions](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint), the same applies to ProceedJoinPoint below
 
 - use
 
@@ -516,7 +516,7 @@ fun onCustomIntercept(){
 
 #### 2. **@AndroidAopMatchClassMethod** is used to match aspects of a certain class and its corresponding method.
 
-**The matching method supports accurate matching, [click here to see detailed usage documentation on the wiki](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)**
+**The matching method supports accurate matching, [click here to see detailed usage documentation on the wiki](https://flyjingfish.github.io/AndroidAOP/AndroidAopMatchClassMethod)**
 
 - Example 1
 
@@ -577,16 +577,16 @@ class MatchOnClick : MatchClassMethod {
 }
 ```
 
-You can see that the type set by AndroidAopMatchClassMethod above is MatchType.EXTENDS, which means matching all subclasses inherited from OnClickListener. For more inheritance methods, [please refer to the Wiki document](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#excludeclasses-%E6%98%AF%E6%8E%92%E9%99%A4%E6%8E%89%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB%E4%B8%AD%E7%9A%84%E4%B8%AD%E9%97%B4%E7%B1%BB%E6%95%B0%E7%BB%84)
+You can see that the type set by AndroidAopMatchClassMethod above is MatchType.EXTENDS, which means matching all subclasses inherited from OnClickListener. For more inheritance methods, [please refer to the Wiki document](https://flyjingfish.github.io/AndroidAOP/AndroidAopMatchClassMethod/#brief-description)
 
-**⚠️Note: If the subclass does not have this method, the aspect will be invalid. In addition, do not match the same method multiple times in the same class, otherwise only one will take effect, Use overrideMethod to ignore this restriction [Click here for details](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)**
+**⚠️Note: If the subclass does not have this method, the aspect will be invalid. In addition, do not match the same method multiple times in the same class, otherwise only one will take effect, Use overrideMethod to ignore this restriction [Click here for details](https://flyjingfish.github.io/AndroidAOP/AndroidAopMatchClassMethod)**
 
 
 #### 3. **@AndroidAopReplaceClass** is used for replacement method calls
 
 @AndroidAopReplaceClass and @AndroidAopReplaceMethod are used together
 
-**Detailed usage of replacement method call, [click here to see detailed usage documentation in wiki](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopReplaceClass)**
+**Detailed usage of replacement method call, [click here to see detailed usage documentation in wiki](https://flyjingfish.github.io/AndroidAOP/AndroidAopReplaceClass)**
 
 - Java writing method
 ```java
@@ -629,7 +629,7 @@ object ReplaceLog {
 }
 ```
 
-#### 4. **@AndroidAopModifyExtendsClass** is an inherited class that modifies the target class[Detailed usage](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopModifyExtendsClass)
+#### 4. **@AndroidAopModifyExtendsClass** is an inherited class that modifies the target class[Detailed usage](https://flyjingfish.github.io/AndroidAOP/AndroidAopModifyExtendsClass)
 
 Usually, you replace one layer in the inheritance relationship of a certain class, then rewrite some functions, and add some logic code you want to the rewritten functions to monitor and rewrite the original logic.
 
@@ -659,7 +659,7 @@ public class ReplaceImageView extends ImageView {
 }
 ```
 
-#### 5. **@AndroidAopCollectMethod** is a aspects that collects inherited classes of a class [detailed usage](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopCollectMethod)
+#### 5. **@AndroidAopCollectMethod** is a aspects that collects inherited classes of a class [detailed usage](https://flyjingfish.github.io/AndroidAOP/AndroidAopCollectMethod)
 
 It is extremely simple to use, the sample code has already explained
 
@@ -714,12 +714,12 @@ public class InitCollect2 {
 2. How to deal with multiple annotations or matching aspects for the same method?
 
 - When multiple aspects are superimposed on a method, annotations take precedence over matching aspects (the matching aspects above), and the annotation aspects are executed sequentially from top to bottom.
-- Call **[proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)** to execute the next aspect, and the last aspect among multiple aspects will be executed **[proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)** will call the code in the cut-in method
-- Call **[proceed(args)](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)** in the previous aspect to pass in the parameters that can be updated, and the previous aspect will also be obtained in the next aspect One layer of updated parameters
-- When there is an asynchronous call [proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint), the first asynchronous call [proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint) ) The return value of the aspect (that is, the return value of invoke) is the return value of the cut-in method;
+- Call **[proceed](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint)** to execute the next aspect, and the last aspect among multiple aspects will be executed **[proceed](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint)** will call the code in the cut-in method
+- Call **[proceed(args)](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint)** in the previous aspect to pass in the parameters that can be updated, and the previous aspect will also be obtained in the next aspect One layer of updated parameters
+- When there is an asynchronous call [proceed](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint), the first asynchronous call [proceed](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint) ) The return value of the aspect (that is, the return value of invoke) is the return value of the cut-in method;
 
 
-#### [Obfuscation rules](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%85%B3%E4%BA%8E%E6%B7%B7%E6%B7%86)
+#### [Obfuscation rules](https://flyjingfish.github.io/AndroidAOP/About_obfuscation)
 
 > The library comes with `proguard-rules.pro` rules and is automatically imported. Normally no manual import is required.
 > You can also go here to view [proguard-rules](https://github.com/FlyJingFish/AndroidAOP/blob/master/android-aop-core/proguard-rules.pro)
