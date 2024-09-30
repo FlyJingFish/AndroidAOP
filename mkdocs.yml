@@ -53,9 +53,9 @@ theme:
   font:
     text: Roboto
     code: Roboto Mono
-  favicon: assets/favicon.png
+  favicon: assets/pluginIcon.svg
   icon:
-    logo: logo
+#    logo: logo
 
 # Plugins
 plugins:
@@ -141,10 +141,10 @@ markdown_extensions:
       emoji_generator: !!python/name:pymdownx.emoji.to_svg
 
 nav:
-  - 'Home':
+  - 'English':
       - 'Overview': index.md
       - 'Getting Started': getting_started.md
-      - 'android-aop-extra': android_aop_extra.md
+      - 'Extension Library': android_aop_extra.md
       - '@AndroidAopPointCut': AndroidAopPointCut.md
       - '@AndroidAopMatchClassMethod': AndroidAopMatchClassMethod.md
       - '@AndroidAopReplaceClass': AndroidAopReplaceClass.md
