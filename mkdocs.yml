@@ -1,5 +1,13 @@
-site_name: AndroidAOP Docs
+site_name: AndroidAOP
 site_url: https://flyjingfish.github.io/AndroidAOP
+
+# Repository
+repo_name: 'AndroidAOP'
+repo_url: 'https://github.com/FlyJingFish/AndroidAOP'
+
+# Copyright
+copyright: 'Copyright &copy; 2023 FlyJingFish'
+
 # Configuration
 theme:
   name: material
@@ -85,7 +93,8 @@ extra:
       link: https://fosstodon.org/@squidfunk
     - icon: fontawesome/brands/x-twitter
       link: https://x.com/squidfunk
-
+    - icon: 'fontawesome/brands/github'
+      link: 'https://github.com/FlyJingFish/AndroidAOP'
 
 # Extensions
 markdown_extensions:
@@ -139,6 +148,7 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:pymdownx.emoji.twemoji
       emoji_generator: !!python/name:pymdownx.emoji.to_svg
+
 
 nav:
   - 'Home':
