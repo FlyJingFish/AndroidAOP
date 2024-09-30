@@ -45,7 +45,7 @@ class MyAnnoCut3 : BasePointCutSuspend<MyAnno3> {
 ```
 
 !!! note
-    1. If you do not use the `withContext` function, a `ClassCastException` exception may occur when the cut point function returns the result. The advantage of using this aspect processing class is that you can modify the return result ([detailed introduction](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%88%87%E7%82%B9%E6%96%B9%E6%B3%95%E8%BF%94%E5%9B%9E%E5%80%BC#suspend-%E5%87%BD%E6%95%B0)), and call other suspend functions <br>
+    1. If you do not use the `withContext` function, a `ClassCastException` exception may occur when the cut point function returns the result. The advantage of using this aspect processing class is that you can modify the return result ([detailed introduction](https://flyjingfish.github.io/AndroidAOP/Pointcut_return/#suspend-function)), and call other suspend functions <br>
     2. Try to use `joinPoint.proceed` or `joinPoint.proceedIgnoreOther` in the last line of the withContext function
 
 !!! warning

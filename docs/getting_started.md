@@ -160,7 +160,7 @@ android {
 
 ### 5. The code weaving method can be set during development (this step is an optional configuration item)
 
-**The following configuration steps also apply to componentized scenarios [Click here to view](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98#14%E7%BB%84%E4%BB%B6%E5%8C%96%E7%9A%84%E9%A1%B9%E7%9B%AE%E4%B8%8D%E5%90%8C-module-%E9%87%87%E7%94%A8%E7%9A%84%E6%96%B9%E6%A1%88%E6%98%AF-aar-%E8%BF%99%E6%A0%B7%E7%9A%84%E4%BA%A7%E7%89%A9%E8%BF%9B%E8%A1%8C%E7%BC%96%E8%AF%91%E5%A6%82%E4%BD%95%E5%8A%A0%E5%BF%AB%E6%89%93%E5%8C%85%E9%80%9F%E5%BA%A6%E5%91%A2)**
+**The following configuration steps also apply to componentized scenarios [Click here to view](https://flyjingfish.github.io/AndroidAOP/FAQ/#14-different-modules-of-componentized-projects-use-products-such-as-aar-for-compilation-how-to-speed-up-the-packaging-speed)**
 
 <p align = "left">    
 <picture>
@@ -272,7 +272,7 @@ androidAop.debugMode.buildConfig = true //If set to true, it means exporting a D
 
 #### **@AndroidAopPointCut** 
 
-&emsp;&emsp;It is used to make aspects in the form of annotations on the method. The above annotations are all made through this. [Please see the wiki document for detailed usage](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopPointCut)
+&emsp;&emsp;It is used to make aspects in the form of annotations on the method. The above annotations are all made through this. [Please see the wiki document for detailed usage](https://flyjingfish.github.io/AndroidAOP/AndroidAopPointCut)
 
 
 &emsp;&emsp;The following uses @CustomIntercept as an example to introduce how to use it.
@@ -321,7 +321,7 @@ androidAop.debugMode.buildConfig = true //If set to true, it means exporting a D
     }
     ```
 
-    [About ProceedJoinPoint usage instructions](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint), the same applies to ProceedJoinPoint below
+    [About ProceedJoinPoint usage instructions](/AndroidAOP/ProceedJoinPoint), the same applies to ProceedJoinPoint below
 
 - use
 
@@ -339,7 +339,7 @@ androidAop.debugMode.buildConfig = true //If set to true, it means exporting a D
 
 &emsp;&emsp;It is used to match aspects of a certain class and its corresponding method.
 
-&emsp;&emsp;**The matching method supports accurate matching, [click here to see detailed usage documentation on the wiki](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)**
+&emsp;&emsp;**The matching method supports accurate matching, [click here to see detailed usage documentation on the wiki](https://flyjingfish.github.io/AndroidAOP/AndroidAopMatchClassMethod)**
 
 - Example 1
 
@@ -400,9 +400,9 @@ androidAop.debugMode.buildConfig = true //If set to true, it means exporting a D
     }
     ```
     
-    You can see that the type set by AndroidAopMatchClassMethod above is MatchType.EXTENDS, which means matching all subclasses inherited from OnClickListener. For more inheritance methods, [please refer to the Wiki document](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#excludeclasses-%E6%98%AF%E6%8E%92%E9%99%A4%E6%8E%89%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB%E4%B8%AD%E7%9A%84%E4%B8%AD%E9%97%B4%E7%B1%BB%E6%95%B0%E7%BB%84)
+    You can see that the type set by AndroidAopMatchClassMethod above is MatchType.EXTENDS, which means matching all subclasses inherited from OnClickListener. For more inheritance methods, [please refer to the Wiki document](https://flyjingfish.github.io/AndroidAOP/AndroidAopMatchClassMethod/#brief-description)
 
-    **⚠️Note: If the subclass does not have this method, the aspect will be invalid. In addition, do not match the same method multiple times in the same class, otherwise only one will take effect, Use overrideMethod to ignore this restriction [Click here for details](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)**
+    **⚠️Note: If the subclass does not have this method, the aspect will be invalid. In addition, do not match the same method multiple times in the same class, otherwise only one will take effect, Use overrideMethod to ignore this restriction [Click here for details](https://flyjingfish.github.io/AndroidAOP/AndroidAopMatchClassMethod)**
 
 
 #### **@AndroidAopReplaceClass** 
@@ -411,7 +411,7 @@ androidAop.debugMode.buildConfig = true //If set to true, it means exporting a D
 
 &emsp;&emsp;@AndroidAopReplaceClass and @AndroidAopReplaceMethod are used together
 
-&emsp;&emsp;**Detailed usage of replacement method call, [click here to see detailed usage documentation in wiki](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopReplaceClass)**
+&emsp;&emsp;**Detailed usage of replacement method call, [click here to see detailed usage documentation in wiki](https://flyjingfish.github.io/AndroidAOP/AndroidAopReplaceClass)**
 
 - Java writing method
     ```java
@@ -456,7 +456,7 @@ androidAop.debugMode.buildConfig = true //If set to true, it means exporting a D
 
 #### **@AndroidAopModifyExtendsClass** 
 
-&emsp;&emsp;It is an inherited class that modifies the target class[Detailed usage](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopModifyExtendsClass)
+&emsp;&emsp;It is an inherited class that modifies the target class[Detailed usage](https://flyjingfish.github.io/AndroidAOP/AndroidAopModifyExtendsClass)
 
 &emsp;&emsp;Usually, you replace one layer in the inheritance relationship of a certain class, then rewrite some functions, and add some logic code you want to the rewritten functions to monitor and rewrite the original logic.
 
@@ -488,7 +488,7 @@ androidAop.debugMode.buildConfig = true //If set to true, it means exporting a D
 
 #### **@AndroidAopCollectMethod** 
 
-&emsp;&emsp;It is a aspects that collects inherited classes of a class [detailed usage](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopCollectMethod)
+&emsp;&emsp;It is a aspects that collects inherited classes of a class [detailed usage](https://flyjingfish.github.io/AndroidAOP/AndroidAopCollectMethod)
 
 &emsp;&emsp;It is extremely simple to use, the sample code has already explained
 

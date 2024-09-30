@@ -66,7 +66,7 @@ class SingleClickCut : ClickCut<SingleClick>() {
 }
 ```
 
-Then add the [@AndroidAopPointCut(SingleClickCut.class)](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopPointCut) annotation on top of your original annotation. The annotation ```@Retention``` can only set ```RUNTIME```, and ```@Target``` can only set ```METHOD```
+Then add the [@AndroidAopPointCut(SingleClickCut.class)](https://flyjingfish.github.io/AndroidAOP/AndroidAopPointCut/) annotation on top of your original annotation. The annotation ```@Retention``` can only set ```RUNTIME```, and ```@Target``` can only set ```METHOD```
 
 ```java
 //Just add such an annotation. The parameter is the section processing class SingleClickCut.class created above
@@ -149,7 +149,7 @@ public class CheckAspectJ {
     }
 } 
 ``` 
-### AndroidAOP code[@AndroidAopMatchClassMethod](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod) 
+### AndroidAOP code[@AndroidAopMatchClassMethod](https://flyjingfish.github.io/AndroidAOP/AndroidAopMatchClassMethod/) 
 ```kotlin 
 @AndroidAopMatchClassMethod(
     targetClassName = "com.flyjingfish.test.MainActivity",
@@ -194,7 +194,7 @@ public final class TestAspectJ {
 
 ### AndroidAOP code
 
-[Click here to see detailed usage of @AndroidAopReplaceClass](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopReplaceClass)
+[Click here to see detailed usage of @AndroidAopReplaceClass](https://flyjingfish.github.io/AndroidAOP/AndroidAopReplaceClass/)
 
 ```kotlin
 @AndroidAopReplaceClass("android.util.Log")
@@ -208,7 +208,7 @@ object ReplaceLog {
 ```
 
 !!! note
-    Unlike AspectJ, AndroidAOP does not retain the way to execute the original method, but you can call the original method yourself without causing infinite recursive calls (indirect calls to the original method will cause infinite recursion [here is a solution](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98#12%E5%9C%A8-androidaopreplacemethod-%E6%B3%A8%E8%A7%A3%E7%9A%84%E6%96%B9%E6%B3%95% E4%B8%AD%E8%B0%83%E7%94%A8%E5%8E%9F%E6%96%B9%E6%B3%95%E4%BC%9A%E4%B8%8D%E4%BC%9A%E9%80%A0%E6%88%90%E9%80%92%E5%BD%92%E7%9A%84%E6%83%85%E5%86%B5)), [Click here for detailed usage](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopReplaceClass)
+    Unlike AspectJ, AndroidAOP does not retain the way to execute the original method, but you can call the original method yourself without causing infinite recursive calls (indirect calls to the original method will cause infinite recursion [here is a solution](https://flyjingfish.github.io/AndroidAOP/FAQ/#12-will-calling-the-original-method-in-the-method-annotated-with-androidaopreplacemethod-cause-recursion)), [Click here for detailed usage](https://flyjingfish.github.io/AndroidAOP/AndroidAopReplaceClass)
 
 ## 4. Other aspect methods
 
@@ -217,4 +217,4 @@ object ReplaceLog {
 - @AfterReturning: Execute code after method execution, only when the method returns successfully.
 - @AfterThrowing: Execute code when a method throws an exception.
 
-All of the above can be indirectly implemented through several existing annotation aspects [click here to refer to FAQ #5 Want to insert code before and after the method](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98#5%E6%83%B3%E8%A6%81%E5%9C%A8%E6%96%B9%E6%B3%95%E5%89%8D%E5%90%8E%E6%8F%92%E5%85%A5%E4%BB%A3%E7%A0%81)
+All of the above can be indirectly implemented through several existing annotation aspects [click here to refer to FAQ #5 Want to insert code before and after the method](https://flyjingfish.github.io/AndroidAOP/FAQ/#5-want-to-insert-code-before-and-after-the-method)

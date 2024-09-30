@@ -153,7 +153,7 @@ public class MyApp extends Application {
 
 - For those who are interested in implementing Router by themselves, this aspect can help you find what you want
 
-- Adapting routing library [such as this ARouter adapts AGP8 Example](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%88%87%E9%9D%A2%E5%90%AF%E7%A4%BA#5%E4%B8%89%E6%96%B9%E8%B7%AF%E7%94%B1%E5%BA%93%E6%B2%A1%E6%9C%89%E9%80%82%E9%85%8D-agp8-%E4%B8%8B%E9%9D%A2%E4%BB%A5-arouter-%E4%B8%BA%E4%BE%8B%E6%95%99%E4%BD%A0%E5%A6%82%E4%BD%95%E5%88%A9%E7%94%A8-androidaop-%E8%A7%A3%E5%86%B3%E8%BF%99%E4%B8%AA%E9%97%AE%E9%A2%98)
+- Adapting routing library [such as this ARouter adapts AGP8 Example](/AndroidAOP/Implications/#5-is-the-third-party-routing-library-not-compatible-with-agp8-here-is-an-example-of-arouter-to-teach-you-how-to-use-androidaop-to-solve-this-problem)
 
 - Another new way to use singletons that are both thread-safe and lazy-loaded!
 ```java 

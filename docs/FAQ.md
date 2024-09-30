@@ -3,19 +3,19 @@
 - When multiple aspects are superimposed on a method, annotations take precedence over matching
   aspects, and annotation aspects are executed from top to bottom
 - The next aspect will be executed only after *
-  *[proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)** is called, and the
+  *[proceed](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint/)** is called, and the
   code in the aspect method will be called only after *
-  *[proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)** is executed on the
+  *[proceed](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint/)** is executed on the
   last aspect among multiple aspects
-- Calling **[proceed(args)](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)** in
+- Calling **[proceed(args)](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint/)** in
   the previous aspect can update the parameters passed in the method, and the updated parameters of
   the previous layer will also be obtained in the next aspect
 - When there is an asynchronous
-  call [proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint), the return value
+  call [proceed](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint/), the return value
   of the first asynchronous
-  call [proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint) (that is, the
+  call [proceed](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint/) (that is, the
   return value of invoke) is the return value of the cut-in method; otherwise, if there is no
-  asynchronous call [proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint), the
+  asynchronous call [proceed](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint/), the
   return value is the return value of the last cut-in method
 
 ### 2. Error "ZipFile invalid LOC header (bad signature)" when building
@@ -28,7 +28,7 @@
 
 ### 4. Want to see all the locations where the aspect code is added
 
-- [Add the androidAopConfig configuration item in the app's build.gradle, and set cutInfoJson to true](https://github.com/FlyJingFish/AndroidAOP?tab=readme-ov-file#%E5%9B%9B%E5%9C%A8-app-%E7%9A%84buildgradle%E6%B7%BB%E5%8A%A0-androidaopconfig-%E9%85%8D%E7%BD%AE%E9%A1%B9%E6%AD%A4%E6%AD%A5%E4%B8%BA%E5%8F%AF%E9%80%89%E9%85%8D%E7%BD%AE%E9%A1%B9)
+- [Add the androidAopConfig configuration item in the app's build.gradle, and set cutInfoJson to true](https://flyjingfish.github.io/AndroidAOP/getting_started/#4-add-the-androidaopconfig-configuration-item-in-apps-buildgradle-this-step-is-an-optional-configuration-item)
 
 ```gradle
 plugins {
@@ -234,7 +234,7 @@ Operation steps
 
 The main reason for this is that you may have used some `Router` libraries or other plugins that
 change the packaging method. You can refer to here to transform your
-project [click here](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%88%87%E9%9D%A2%E5%90%AF%E7%A4%BA#5%E4%B8%89%E6%96%B9%E8%B7%AF%E7%94%B1%E5%BA%93%E6%B2%A1%E6%9C%89%E9%80%82%E9%85%8D-agp8-%E4%B8%8B%E9%9D%A2%E4%BB%A5-arouter-%E4%B8%BA%E4%BE%8B%E6%95%99%E4%BD%A0%E5%A6%82%E4%BD%95%E5%88%A9%E7%94%A8-androidaop-%E8%A7%A3%E5%86%B3%E8%BF%99%E4%B8%AA%E9%97%AE%E9%A2%98),
+project [click here](https://flyjingfish.github.io/AndroidAOP/Implications/#5-is-the-third-party-routing-library-not-compatible-with-agp8-here-is-an-example-of-arouter-to-teach-you-how-to-use-androidaop-to-solve-this-problem),
 here is how to remove the plugin part of these libraries and use AndroidAOP to complete its plugin
 work, so you can delete these plugins to speed up packaging
 
@@ -256,7 +256,7 @@ try to change it to English and install it again
 - If it is an indirect call, it will cause recursion, such as calling methods of other classes that
   contain the original method. The framework does not handle this. If you need to do this, you can
   combine exclude To
-  use [Homepage access, step 4 is introduced](https://github.com/FlyJingFish/AndroidAOP?tab=readme-ov-file#%E5%9B%9B%E5%9C%A8-app-%E7%9A%84buildgradle%E6%B7%BB%E5%8A%A0-androidaopconfig-%E9%85%8D%E7%BD%AE%E9%A1%B9%E6%AD%A4%E6%AD%A5%E4%B8%BA%E5%8F%AF%E9%80%89%E9%85%8D%E7%BD%AE%E9%A1%B9),
+  use [Homepage access, step 4 is introduced](https://flyjingfish.github.io/AndroidAOP/getting_started/#4-add-the-androidaopconfig-configuration-item-in-apps-buildgradle-this-step-is-an-optional-configuration-item),
   use exclude to exclude the indirect call class
 
 ### 13. What should I do if I don’t want to introduce the built-in annotation aspect?
@@ -266,7 +266,7 @@ Please upgrade to version 2.1.5 or later, and check the access step 3
 ### 14. Different modules of componentized projects use products such as aar for compilation. How to speed up the packaging speed?
 
 - The answer is still to use debugMode. This homepage
-  accesses [step 5](https://github.com/FlyJingFish/AndroidAOP?tab=readme-ov-file#%E4%BA%94%E5%BC%80%E5%8F%91%E4%B8%AD%E5%8F%AF%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%A0%81%E7%BB%87%E5%85%A5%E6%96%B9%E5%BC%8F%E6%AD%A4%E6%AD%A5%E4%B8%BA%E5%8F%AF%E9%80%89%E9%85%8D%E7%BD%AE%E9%A1%B9%E5%8F%AA%E4%B8%BA%E5%9C%A8%E5%BC%80%E5%8F%91%E8%BF%87%E7%A8%8B%E4%B8%AD%E6%8F%90%E9%AB%98%E6%89%93%E5%8C%85%E9%80%9F%E5%BA%A6)
+  accesses [step 5](https://flyjingfish.github.io/AndroidAOP/getting_started/#5-the-code-weaving-method-can-be-set-during-development-this-step-is-an-optional-configuration-item)
   has been explained. For this situation, you should configure it as follows
 
 ```properties

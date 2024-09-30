@@ -57,11 +57,11 @@ interface BasePointCut<T : Annotation> {
 ```
 
 !!! note
-    If the point cutting function is suspend [Click here to view](https://github.com/FlyJingFish/AndroidAOP/wiki/Suspend-%E5%88%87%E7%82%B9%E5%87%BD%E6%95%B0)
+    If the point cutting function is suspend [Click here to view](/AndroidAOP/Suspend_cut/)
 
-- [Introduction to ProceedJoinPoint](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)
-- [Introduction to invoke return value](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%88%87%E7%82%B9%E6%96%B9%E6%B3%95%E8%BF%94%E5%9B%9E%E5%80%BC)
-- [Life Cycle](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98#6%E5%8C%B9%E9%85%8D%E5%88%87%E9%9D%A2%E5%92%8C%E6%B3%A8%E8%A7%A3%E 5%88%87%E9%9D%A2%E7%9A%84%E5%88%87%E9%9D%A2%E5%A4%84%E7%90%86%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E6%98%AF %E6%80%8E%E6%A0%B7%E7%9A%84) ### For example
+- [Introduction to ProceedJoinPoint](/AndroidAOP/ProceedJoinPoint/)
+- [Introduction to invoke return value](https://flyjingfish.github.io/AndroidAOP/Pointcut_return/)
+- [Life Cycle](https://flyjingfish.github.io/AndroidAOP/FAQ/#6-what-is-the-life-cycle-of-the-aspect-processing-class-of-the-matching-aspect-and-the-annotation-aspect) ### For example
 
 CustomInterceptCut inherits from BasePointCut. You can see that there is a generic on BasePointCut. This generic is the @CustomIntercept annotation above. The two are related to each other.
 ```kotlin

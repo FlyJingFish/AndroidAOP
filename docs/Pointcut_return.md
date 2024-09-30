@@ -81,4 +81,4 @@ class MyAnnoCut5 : BasePointCutSuspend<MyAnno5> {
 ```
 
 !!! note
-    Here onReturn The explanation is the same as [What is the return value here](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%88%87%E7%82%B9%E6%96%B9%E6%B3%95%E8%BF%94%E5%9B%9E%E5%80%BC#%E8%BF%94%E5%9B%9E%E5%80%BC%E6%98%AF%E4%BB%80%E4%B9%88)
+    Here onReturn The explanation is the same as [What is the return value here](https://flyjingfish.github.io/AndroidAOP/Pointcut_return/#what-is-the-return-value)

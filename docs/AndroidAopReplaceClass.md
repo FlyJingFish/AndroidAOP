@@ -4,16 +4,16 @@ This function belongs to the advanced function, special attention should be paid
 
 This aspect is used to replace the method call in the code, and needs to be used in conjunction with @AndroidAopReplaceMethod. When the replaced method is called, it will enter the method annotated with @AndroidAopReplaceMethod
 
-- _Note that this method is essentially different from the other two. The first two focus on the execution of the method, and automatically retain the method that can execute the original logic (i.e. [ProceedJoinPoint](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint));_
+- _Note that this method is essentially different from the other two. The first two focus on the execution of the method, and automatically retain the method that can execute the original logic (i.e. [ProceedJoinPoint](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint/));_
 - _This focuses on the method call, which replaces all the calling places with the static methods of the class you set, and does not automatically retain the method that executes the original logic_
-- **_The advantage of this method is that it can "equivalently" monitor the call of certain system methods (code in android.jar), and the first two do not have this feature, so if it is not based on this requirement, it is recommended to use [@AndroidAopMatchClassMethod](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)_**
+- **_The advantage of this method is that it can "equivalently" monitor the call of certain system methods (code in android.jar), and the first two do not have this feature, so if it is not based on this requirement, it is recommended to use [@AndroidAopMatchClassMethod](https://flyjingfish.github.io/AndroidAOP/AndroidAopMatchClassMethod/)_**
 
 !!! note
-    <li>To sum up, this function can be said to be a supplement to [@AndroidAopMatchClassMethod](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod) (the code in android.jar cannot be woven into AOP code). The reason why [ProceedJoinPoint](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint) is not used is that this method may be restricted by different versions of Android. It can neither use reflection to call the original method nor weave in AOP code, so it cannot be encapsulated with [ProceedJoinPoint](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint). If you really want to use it, it is recommended to use [MatchClassMethodProxy](#4androidaopmatchclassmethod-%E7%9A%84%E4%BB%A3%E7%90%86%E7%94%A8%E6%B3%95) </li><br> <li><strong>After you modify the configuration of this aspect, you should clean the project before continuing development</strong></li>
+    <li>To sum up, this function can be said to be a supplement to [@AndroidAopMatchClassMethod](https://flyjingfish.github.io/AndroidAOP/AndroidAopMatchClassMethod/) (the code in android.jar cannot be woven into AOP code). The reason why [ProceedJoinPoint](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint/) is not used is that this method may be restricted by different versions of Android. It can neither use reflection to call the original method nor weave in AOP code, so it cannot be encapsulated with [ProceedJoinPoint](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint). If you really want to use it, it is recommended to use [MatchClassMethodProxy](#4androidaopmatchclassmethod-%E7%9A%84%E4%BB%A3%E7%90%86%E7%94%A8%E6%B3%95) </li><br> <li><strong>After you modify the configuration of this aspect, you should clean the project before continuing development</strong></li>
 
 ## 1. Description
 
-⚠️⚠️⚠️ Note: The defined replacement class should be placed within the scan rules you set [here include exclude Rules](https://github.com/FlyJingFish/AndroidAOP?tab=readme-ov-file#%E5%9B%9B%E5%9C%A8-app-%E7%9A%84buildgradle%E6%B7%BB%E5%8A%A0-androidaopconfig-%E9%85%8D%E7%BD%AE%E9%A1%B9%E6%AD%A4%E6%AD%A5%E4%B8%BA%E5%8F%AF%E9%80%89%E9%85%8D%E7%BD%AE%E9%A1%B9), it will not work if written outside the scope
+⚠️⚠️⚠️ Note: The defined replacement class should be placed within the scan rules you set [here include exclude Rules](https://flyjingfish.github.io/AndroidAOP/getting_started/#4-add-the-androidaopconfig-configuration-item-in-apps-buildgradle-this-step-is-an-optional-configuration-item), it will not work if written outside the scope
 
 ### @AndroidAopReplaceClass
 
@@ -72,7 +72,7 @@ For example, this method changes `new Thread()` to `new MyThread()`
 
 - The annotated method must be public and static, but the method name can be defined arbitrarily
 
-- The annotated method is the replacement method; the parameter is the method to be replaced, which must include the return type and parameter type. The matching rules are as follows [matching rules](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopReplaceClass#%E4%B8%89-androidaopreplacemethod-%E5%8C%B9%E9%85%8D%E8%A7%84%E5%88%99)
+- The annotated method is the replacement method; the parameter is the method to be replaced, which must include the return type and parameter type. The matching rules are as follows [matching rules](https://flyjingfish.github.io/AndroidAOP/AndroidAopReplaceClass/#2-matching-rules)
 
 - If the replaced method is a static method of the class, the parameter type, order and number of the replacement method you define should be consistent
 
@@ -94,7 +94,7 @@ For specific writing requirements, please refer to the usage method below
 
 You can see that the return value type and parameter type are written in the example below. The following is an introduction
 
-**The difference from [@AndroidAopMatchClassMethod](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#%E5%8C%B9%E9%85%8D%E8%A7%84%E5%88%99) is that this must be an exact match, and the writing is as follows:**
+**The difference from [@AndroidAopMatchClassMethod](https://flyjingfish.github.io/AndroidAOP/AndroidAopMatchClassMethod/) is that this must be an exact match, and the writing is as follows:**
 
 Matching writing formula: **Return value type method name (parameter type, parameter type...)**
 
@@ -108,7 +108,7 @@ Matching writing formula: **Return value type method name (parameter type, param
 - Different from the replacement class name filled in, if the method parameter and return value type are inner classes, they need to be replaced with `$` instead of `.`
 
 !!! note
-    [AOP Code Generation Assistant](https://github.com/FlyJingFish/AndroidAOP/wiki/AOP-%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E5%8A%A9%E6%89%8B), can help you generate code with one click
+    [AOP Code Generation Assistant](https://flyjingfish.github.io/AndroidAOP/AOP_Helper/), can help you generate code with one click
 
 Below is a table showing different types of Kotlin vs. Java. If it is Kotlin code, please check the corresponding code
 
@@ -317,4 +317,4 @@ class ReplaceToastProxy : MatchClassMethodProxy() {
 So you can For some system methods, `ProceedJoinPoint` is used to control the method call. The key is to use `@ProxyMethod` to mark the method, so that the information returned by `ProceedJoinPoint` is the method information of the replaced class> 
 
 !!! note
-    [AOP code generation assistant](https://github.com/FlyJingFish/AndroidAOP/wiki/AOP-%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88% 90%E5%8A%A9%E6%89%8B), which can help you generate proxy usage code with one click
+    [AOP code generation assistant](https://flyjingfish.github.io/AndroidAOP/AOP_Helper/), which can help you generate proxy usage code with one click

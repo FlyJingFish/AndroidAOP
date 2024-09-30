@@ -27,11 +27,11 @@ ProceedJoinPointSuspend adds two new methods including `OnSuspendReturnListener`
 
 - The logic of the two new `proceed` methods and the original `proceed` method is different from that of ordinary functions. The return value after calling is not the return value of the pointcut function, but the other logic is the same as the two points mentioned above
 - The `OnSuspendReturnListener` passed in by the two new `proceed` methods can get the return value of the pointcut function through the callback `ProceedReturn`, and the return value of the pointcut function can be modified through `onReturn`
-- The two new `proceedIgnoreOther` methods are to stop executing the code in the pointcut function and modify the return value of the pointcut function [Click here for details](https://github.com/FlyJingFish/AndroidAOP/wiki/Suspend-%E5%88%87%E7%82%B9%E5%87%BD%E6%95%B0#%E5%8F%A6%E5%A4%96%E5%AF%B9%E4%BA%8E%E6%99%AE%E9%80 %9A%E5%88%87%E9%9D%A2%E5%A4%84%E7%90%86%E7%B1%BB%E4%B8%8D%E8%B0%83%E7%94%A8-proceed-%E7%9B%B4%E6%8E%A5%E8%BF%94%E5%9B%9E%E7%9A% 84%E4%BE%8B%E5%A6%82) ## getArgs
+- The two new `proceedIgnoreOther` methods are to stop executing the code in the pointcut function and modify the return value of the pointcut function [Click here for details](https://flyjingfish.github.io/AndroidAOP/Suspend_cut/#2-basepointcutsuspend-and-matchclassmethodsuspend-that-support-suspend) ## getArgs
 
 All the parameters passed in when the pointcut method is called
 
-[This is an introduction to the args of lambda expressions](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#%E4%BE%8B%E4%BA%8C)
+[This is an introduction to the args of lambda expressions](https://flyjingfish.github.io/AndroidAOP/AndroidAopMatchClassMethod/#example-2)
 
 ## getOriginalArgs()
 
@@ -43,13 +43,13 @@ If the pointcut method is not a static method, target is the object where the po
 
 PS: If ProceedJoinPoint.target is null, it is because the injected method is static, usually Java This situation will occur in static methods of Kotlin and functions modified by @JvmStatic, top-level functions, and lamba expressions
 
-[Here is an introduction to the target of lambda expressions](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#%E4%BE%8B%E4%BA%8C)
+[Here is an introduction to the target of lambda expressions](https://flyjingfish.github.io/AndroidAOP/AndroidAopMatchClassMethod/#example-2)
 
 ## getTargetMethod()
 
 Returns information related to the point-cut method, such as method name, parameter name, parameter type, return type, etc. ... You can check the specific information in the class returned by the method (AopMethod)
 
-[Here is an introduction to the getTargetMethod of lambda expressions](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#%E4%BE%8B%E4%BA%8C)
+[Here is an introduction to the getTargetMethod of lambda expressions](https://flyjingfish.github.io/AndroidAOP/AndroidAopMatchClassMethod/#example-2)
 
 ## getTargetClass()
 

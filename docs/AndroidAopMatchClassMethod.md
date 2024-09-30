@@ -1,6 +1,6 @@
 ## Brief description
 
-This aspect is used to match a class and its corresponding method. This aspect focuses on the execution of the method (Method Execution). Please note the difference between it and [@AndroidAopReplaceClass](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopReplaceClass).
+This aspect is used to match a class and its corresponding method. This aspect focuses on the execution of the method (Method Execution). Please note the difference between it and [@AndroidAopReplaceClass](/AndroidAOP/AndroidAopReplaceClass).
 
 ```kotlin
 @AndroidAopMatchClassMethod(
@@ -35,7 +35,7 @@ This aspect is used to match a class and its corresponding method. This aspect f
 
 !!! note
     In addition, not all classes can be hooked in<br> <li>```type``` Type is ```SELF``` When ```targetClassName``` is set, the class must be the code in the installation package.
-    For example: if this class (such as Toast) is in **android.jar**, it will not work. If you have such a requirement, you should use [@AndroidAopReplaceClass](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopReplaceClass)</li><br> <li>```type``` When the type is not ```SELF```, this aspect needs to have a matching method to work. If the subclass does not override the matching method, the subclass will not be matched. Use overrideMethod to ignore this restriction</li> <br> <li><strong>When you modify the configuration of this aspect, in most cases you should clean the project and continue development</strong></li>
+    For example: if this class (such as Toast) is in **android.jar**, it will not work. If you have such a requirement, you should use [@AndroidAopReplaceClass](/AndroidAOP/AndroidAopReplaceClass)</li><br> <li>```type``` When the type is not ```SELF```, this aspect needs to have a matching method to work. If the subclass does not override the matching method, the subclass will not be matched. Use overrideMethod to ignore this restriction</li> <br> <li><strong>When you modify the configuration of this aspect, in most cases you should clean the project and continue development</strong></li>
 
 ## Create an aspect processing class
 
@@ -48,18 +48,18 @@ interface MatchClassMethod {
 ```
 
 !!! note
-    If the point function is suspend [Click here to view](https://github.com/FlyJingFish/AndroidAOP/wiki/Suspend-%E5%88%87%E7%82%B9%E5%87%BD%E6%95%B0)
+    If the point function is suspend [Click here to view](/AndroidAOP/AOP_Helper/)
 
-- [ProceedJoinPoint Introduction](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)
-- [Introduction to invoke return value](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%88%87%E7%82%B9%E6%96%B9%E6%B3%95%E8%BF%94%E5%9B%9E%E5%80%BC)
-- [Life Cycle](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98#6%E5%8C%B9%E9%85%8D%E5%88%87%E9%9D%A2%E5%92%8C%E6%B3%A8%E8%A7%A3% E5%88%87%E9%9D%A2%E7%9A%84%E5%88%87%E9%9D%A2%E5%A4%84%E7%90%86%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E6%98%AF% E6%80%8E%E6%A0%B7%E7%9A%84) ## Matching rules
+- [ProceedJoinPoint Introduction](/AndroidAOP/ProceedJoinPoint/)
+- [Introduction to invoke return value](https://flyjingfish.github.io/AndroidAOP/Pointcut_return/)
+- [Life Cycle](/AndroidAOP/FAQ/#6-what-is-the-life-cycle-of-the-aspect-processing-class-of-the-matching-aspect-and-the-annotation-aspect) ## Matching rules
 
 You can see that in the following examples, some of the method names are set with only the method name, while others also have the return value type and parameter type. The following is an introduction
 
 ### Fuzzy matching
 
-- 1. When targetClassName ends with `.*` and has other characters, and `type = MatchType.SELF`, it matches all classes under the package, including subpackages [as shown in Example 9 below](#%E4%BE%8B%E4%B9%9D)
-- 2. When methodName has only one method name `*`, it matches all methods in the class [as shown in Example 8 below](#%E4%BE%8B%E5%85%AB)
+- 1. When targetClassName ends with `.*` and has other characters, and `type = MatchType.SELF`, it matches all classes under the package, including subpackages [as shown in Example 9 below](#example-9)
+- 2. When methodName has only one method name `*`, it matches all methods in the class [as shown in Example 8 below](#example-8)
 - 3. When methodName only writes the method name but does not write the return type and parameter type, it is also a fuzzy match, which will add all methods with the same name in the target class to the cut point
 
 !!! note
@@ -83,7 +83,7 @@ Matching formula: **Return value type method name (parameter type, parameter typ
 - Different from targetClassName, if the method parameter and return value type are inner classes, they need to be replaced with `$` instead of `.`
 
 !!! note
-    [AOP Code Generation Assistant](https://github.com/FlyJingFish/AndroidAOP/wiki/AOP-%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E5%8A%A9%E6%89%8B), which can help you generate code with one click
+    [AOP Code Generation Assistant](/AndroidAOP/AOP_Helper/), which can help you generate code with one click
 
 Below is a comparison table of Kotlin and Java with different types. If it is Kotlin code, please check the corresponding code
 
@@ -348,9 +348,9 @@ class MatchTestBean : MatchClassMethod {
 
 If the cut point method is ```suspend``` What about modified functions?
 
-- You can directly use [Fuzzy Matching](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#%E6%A8%A1%E7%B3%8A%E5%8C%B9%E9%85%8D)
+- You can directly use [Fuzzy Matching](#fuzzy-matching)
 
-- If you want to use [Exact Matching](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#%E7%B2%BE%E5%87%86%E5%8C%B9%E9%85%8D), the writing is as follows. For specific rules, see [Exact Matching](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#%E7%B2%BE%E5%87%86%E5%8C%B9%E9%85%8D)
+- If you want to use [Exact Matching](#precise-matching), the writing is as follows. For specific rules, see [Exact Matching](#precise-matching)
 
 ```kotlin
 package -
@@ -372,7 +372,7 @@ class MainActivity : BaseActivity2() {
 }
 ```
 
-The exact match is written as follows. Regardless of the return value type of the matching function, write ```suspend```. For details, see the [Exact Matching Part](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#%E7%B2%BE%E5%87%86%E5%8C%B9%E9%85%8D)
+The exact match is written as follows. Regardless of the return value type of the matching function, write ```suspend```. For details, see the [Exact Matching Part](#precise-matching)
 
 ```kotlin
 @AndroidAopMatchClassMethod(
@@ -393,6 +393,25 @@ class MatchAllMethod : MatchClassMethod {
     override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
         Log.e("MatchMainAllMethod", "AllMethod======$methodName"); return joinPoint.proceed()
     }
+}
+```
+Write only one method name and fill in * to match all methods
+
+#### Example 8
+
+Want to match all methods of a class
+
+```kotlin
+@AndroidAopMatchClassMethod(
+targetClassName = "com.flyjingfish.androidaop.SecondActivity",
+methodName = ["*"],
+type = MatchType.SELF
+)
+class MatchAllMethod : MatchClassMethod {
+override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
+Log.e("MatchMainAllMethod", "AllMethod======$methodName");
+return joinPoint.proceed()
+}
 }
 ```
 Write only one method name and fill in * to match all methods
