@@ -66,7 +66,7 @@ class MatchTestMatchMethod : MatchClassMethod {
 <details>
 <summary><strong>Click here for more details</strong></summary>
 
-- Annotation aspect
+<li> Annotation aspect</li>
 
 ```kotlin
 class CustomInterceptCut : BasePointCut<CustomIntercept> {
@@ -82,7 +82,7 @@ class CustomInterceptCut : BasePointCut<CustomIntercept> {
 }
 ```
 
-- Replace the aspect
+<li> Replace the aspect</li>
 
 ```kotlin
 @AndroidAopReplaceClass("android.util.Log")
@@ -98,8 +98,8 @@ object ReplaceLog {
 }
 ```
 
-- `AspectJ`'s `@AfterReturning` and `@AfterThrowing`
-  **We will match the aspect Let's take an example**
+<li> <code>AspectJ</code>'s <code>@AfterReturning</code> and <code>@AfterThrowing</code></li>
+  <strong>We will match the aspect Let's take an example</strong>
 
 ```kotlin
 @AndroidAopMatchClassMethod(
