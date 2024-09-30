@@ -1,0 +1,4 @@
+site_name: AndroidAOP Docs
+site_url: https://flyjingfish.github.io/AndroidAOP
+theme:
+  name: material
