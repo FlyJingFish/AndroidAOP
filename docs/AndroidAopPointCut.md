@@ -61,7 +61,9 @@ interface BasePointCut<T : Annotation> {
 
 - [Introduction to ProceedJoinPoint](/AndroidAOP/ProceedJoinPoint/)
 - [Introduction to invoke return value](https://flyjingfish.github.io/AndroidAOP/Pointcut_return/)
-- [Life Cycle](https://flyjingfish.github.io/AndroidAOP/FAQ/#6-what-is-the-life-cycle-of-the-aspect-processing-class-of-the-matching-aspect-and-the-annotation-aspect) ### For example
+- [Life Cycle](https://flyjingfish.github.io/AndroidAOP/FAQ/#6-what-is-the-life-cycle-of-the-aspect-processing-class-of-the-matching-aspect-and-the-annotation-aspect) 
+
+### For example
 
 CustomInterceptCut inherits from BasePointCut. You can see that there is a generic on BasePointCut. This generic is the @CustomIntercept annotation above. The two are related to each other.
 ```kotlin
@@ -70,7 +72,7 @@ class CustomInterceptCut : BasePointCut<CustomIntercept> {
         joinPoint: ProceedJoinPoint,
         annotation: CustomIntercept//annotation is the annotation you added to the method
     ): Any? {
-// Write your logic here
+        // Write your logic here
         return joinPoint.proceed()
     }
 }

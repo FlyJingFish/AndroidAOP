@@ -151,12 +151,12 @@ android {
 }
 ```
 !!! note
-    1. Include and exclude support precise setting to a class**<br>
-    2. Reasonable use of include and exclude can improve compilation speed. It is recommended to use include to set the relevant package name of your project (including app and custom module)**<br>
-    3. If `LEAF_EXTENDS` is not set for `@AndroidAopMatchClassMethod` and `@AndroidAopCollectMethod`, setting `verifyLeafExtends` to false can also speed up**
+    1. Include and exclude support precise setting to a class<br>
+    2. Reasonable use of include and exclude can improve compilation speed. It is recommended to use include to set the relevant package name of your project (including app and custom module)<br>
+    3. If `LEAF_EXTENDS` is not set for `@AndroidAopMatchClassMethod` and `@AndroidAopCollectMethod`, setting `verifyLeafExtends` to false can also speed up
 
 !!! warning
-    ⚠️⚠️⚠️After setting include and exclude, all aspects are only valid within the rules you set. Please remember your settings! In addition, since Android Studio may have cache after setting here, it is recommended to clean before continuing development**
+    ⚠️⚠️⚠️After setting include and exclude, all aspects are only valid within the rules you set. Please remember your settings! In addition, since Android Studio may have cache after setting here, it is recommended to clean before continuing development
 
 ### 5. The code weaving method can be set during development (this step is an optional configuration item)
 
@@ -187,8 +187,8 @@ For <strong>all sub-modules</strong> also rely on plug-ins, please follow the ab
     ```
 
 !!! note
-    1. This method can only apply debugMode to the modules you have added, and the related aspects in the modules that have not been added will not take effect** <br>
-    2. If your module is a Java or Kotlin library, this method can only enable all Android libraries. You need to use method 2 to configure your module separately for it to take effect.**
+    1. This method can only apply debugMode to the modules you have added, and the related aspects in the modules that have not been added will not take effect <br>
+    2. If your module is a Java or Kotlin library, this method can only enable all Android libraries. You need to use method 2 to configure your module separately for it to take effect.
 
 <p align = "left">    
 <picture>
@@ -204,7 +204,7 @@ androidAop.debugMode=true //Set to true to use the current packaging method of y
 ```
 
 !!! warning
-    ⚠️⚠️⚠️ Please note that when set to true, the compilation speed will be faster but some functions will be invalid. Only the aop code will be woven into the set module. The third-party jar package will not weave in the code, so please be careful to turn it off when building the official package. Configure this and clean the project**
+    ⚠️⚠️⚠️ Please note that when set to true, the compilation speed will be faster but some functions will be invalid. Only the aop code will be woven into the set module. The third-party jar package will not weave in the code, so please be careful to turn it off when building the official package. Configure this and clean the project
 
 <p align = "left">    
 <picture>

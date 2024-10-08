@@ -127,104 +127,100 @@ I will not go into details about this, you will know it after using it yourself;
 ### 4. I believe that when you use the permission `@Permission`, you may think that now you only get permission to enter the method, but there is no callback without permission. The following example teaches you how to do it
 
 - First, define an interface for permission rejection. Here, I define one callback as `@Permission` and the other as the result returned by the permission framework (here I use rxpermissions, you can use it at will)
-
-```kotlin
-interface PermissionRejectListener {
-    fun onReject(
-        permission: com.flyjingfish.android_aop_core.annotations.Permission,
-        permissionResult: Permission
-    )
-}
-```
+    ```kotlin
+    interface PermissionRejectListener {
+        fun onReject(
+            permission: com.flyjingfish.android_aop_core.annotations.Permission,
+            permissionResult: Permission
+        )
+    }
+    ```
 - Use the `@Permission` permission annotation and implement the `PermissionRejectListener` interface for the object where its method is located
-
-```kotlin
-// Implement PermissionRejectListener on the object using @Permission Interface 
-class MainActivity : BaseActivity2(), PermissionRejectListener {
-    lateinit var binding: ActivityMainBinding
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState) binding = ActivityMainBinding . inflate (layoutInflater) setContentView (binding.root) binding . btnPermission . setOnClickenerListener { toGetPicture() } binding . btnPermission2 . setOnClickListener { toOpenCamera() }
-    }
-
-    @Permission(
-        tag = "toGetPicture",
-        value = [Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE]
-    )
-    fun toGetPicture() { //Find pictures } @Permission(tag = "toOpenCamera",value = [Manifest.permission.CAMERA]) fun toOpenCamera(){
-//Open the camera
-    }
-
-    override fun onReject(
-        permission: Permission,
-        permissionResult: com.tbruyelle.rxpermissions3.Permission
-    ) {
-//Use the tag to distinguish which method's permission is denied
-        if (permission.tag == "toGetPicture") {
-
-        } else if (permission.tag == "toOpenCamera") {
-
+    ```kotlin
+    // Implement PermissionRejectListener on the object using @Permission Interface 
+    class MainActivity : BaseActivity2(), PermissionRejectListener {
+        lateinit var binding: ActivityMainBinding
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState) binding = ActivityMainBinding . inflate (layoutInflater) setContentView (binding.root) binding . btnPermission . setOnClickenerListener { toGetPicture() } binding . btnPermission2 . setOnClickListener { toOpenCamera() }
+        }
+    
+        @Permission(
+            tag = "toGetPicture",
+            value = [Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE]
+        )
+        fun toGetPicture() { //Find pictures } @Permission(tag = "toOpenCamera",value = [Manifest.permission.CAMERA]) fun toOpenCamera(){
+    //Open the camera
+        }
+    
+        override fun onReject(
+            permission: Permission,
+            permissionResult: com.tbruyelle.rxpermissions3.Permission
+        ) {
+    //Use the tag to distinguish which method's permission is denied
+            if (permission.tag == "toGetPicture") {
+    
+            } else if (permission.tag == "toOpenCamera") {
+    
+            }
         }
     }
-}
-```
+    ```
 - Set the code for requesting permissions on your `Application`
-
-
-```kotlin
-class MyApp2 : Application() {
-    override fun onCreate() {
-        super.onCreate()
-        AndroidAop.setOnPermissionsInterceptListener(object : OnPermissionsInterceptListener {
-            @SuppressLint("CheckResult")
-            override fun requestPermission(
-                joinPoint: ProceedJoinPoint,
-                permission: Permission,
-                call: OnRequestPermissionListener
-            ) {
-                val target = joinPoint.getTarget()
-                val permissions: Array<out String> = permission.value
-                when (target) {
-                    is FragmentActivity -> {
-                        val rxPermissions = RxPermissions((target as FragmentActivity?)!!)
-                        rxPermissions.requestEach(*permissions)
-                            .subscribe { permissionResult: com.tbruyelle.rxpermissions3.Permission ->
-                                call.onCall(permissionResult.granted)
-                                //👇The key is here👇
-                                if (!permissionResult.granted && target is PermissionRejectListener) {
-                                    (target as PermissionRejectListener).onReject(
-                                        permission,
-                                        permissionResult
-                                    )
+    ```kotlin
+    class MyApp2 : Application() {
+        override fun onCreate() {
+            super.onCreate()
+            AndroidAop.setOnPermissionsInterceptListener(object : OnPermissionsInterceptListener {
+                @SuppressLint("CheckResult")
+                override fun requestPermission(
+                    joinPoint: ProceedJoinPoint,
+                    permission: Permission,
+                    call: OnRequestPermissionListener
+                ) {
+                    val target = joinPoint.getTarget()
+                    val permissions: Array<out String> = permission.value
+                    when (target) {
+                        is FragmentActivity -> {
+                            val rxPermissions = RxPermissions((target as FragmentActivity?)!!)
+                            rxPermissions.requestEach(*permissions)
+                                .subscribe { permissionResult: com.tbruyelle.rxpermissions3.Permission ->
+                                    call.onCall(permissionResult.granted)
+                                    //👇The key is here👇
+                                    if (!permissionResult.granted && target is PermissionRejectListener) {
+                                        (target as PermissionRejectListener).onReject(
+                                            permission,
+                                            permissionResult
+                                        )
+                                    }
                                 }
-                            }
-                    }
-
-                    is Fragment -> {
-                        val rxPermissions = RxPermissions((target as Fragment?)!!)
-                        rxPermissions.requestEach(*permissions)
-                            .subscribe { permissionResult: com.tbruyelle.rxpermissions3.Permission ->
-                                call.onCall(permissionResult.granted)
-                                //👇The key is here👇
-                                if (!permissionResult.granted && target is PermissionRejectListener) {
-                                    (target as PermissionRejectListener).onReject(
-                                        permission,
-                                        permissionResult
-                                    )
+                        }
+    
+                        is Fragment -> {
+                            val rxPermissions = RxPermissions((target as Fragment?)!!)
+                            rxPermissions.requestEach(*permissions)
+                                .subscribe { permissionResult: com.tbruyelle.rxpermissions3.Permission ->
+                                    call.onCall(permissionResult.granted)
+                                    //👇The key is here👇
+                                    if (!permissionResult.granted && target is PermissionRejectListener) {
+                                        (target as PermissionRejectListener).onReject(
+                                            permission,
+                                            permissionResult
+                                        )
+                                    }
                                 }
-                            }
-                    }
-
-                    else -> {
-                        // TODO: target is not FragmentActivity or Fragment, indicating that the method where the annotation is located is not in it. Please handle this situation yourself.
-                        // Suggestion: The first parameter of the cut point method can be set to FragmentActivity or Fragment, and then joinPoint.args[0] can be obtained
+                        }
+    
+                        else -> {
+                            // TODO: target is not FragmentActivity or Fragment, indicating that the method where the annotation is located is not in it. Please handle this situation yourself.
+                            // Suggestion: The first parameter of the cut point method can be set to FragmentActivity or Fragment, and then joinPoint.args[0] can be obtained
+                        }
                     }
                 }
-            }
-        })
-
+            })
+    
+        }
     }
-}
-```
+    ```
 
 
 !!! note
