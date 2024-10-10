@@ -76,6 +76,7 @@ plugins:
 
 # Additional configuration
 extra:
+#  generator: false
   status:
     new: Recently added
     deprecated: Deprecated
@@ -84,17 +85,7 @@ extra:
     property: !ENV GOOGLE_ANALYTICS_KEY
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/squidfunk
-    - icon: fontawesome/brands/docker
-      link: https://hub.docker.com/r/squidfunk/mkdocs-material/
-    - icon: fontawesome/brands/python
-      link: https://pypi.org/project/mkdocs-material/
-    - icon: fontawesome/brands/mastodon
-      link: https://fosstodon.org/@squidfunk
-    - icon: fontawesome/brands/x-twitter
-      link: https://x.com/squidfunk
-    - icon: 'fontawesome/brands/github'
-      link: 'https://github.com/FlyJingFish/AndroidAOP'
+      link: https://github.com/FlyJingFish
 
 # Extensions
 markdown_extensions:
@@ -145,6 +136,8 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
+  - pymdownx.critic:
+      mode: view
   - pymdownx.emoji:
       emoji_index: !!python/name:pymdownx.emoji.twemoji
       emoji_generator: !!python/name:pymdownx.emoji.to_svg
