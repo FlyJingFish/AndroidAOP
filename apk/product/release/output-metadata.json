@@ -5,7 +5,7 @@
     "kind": "Directory"
   },
   "applicationId": "com.flyjingfish.androidaop",
-  "variantName": "release",
+  "variantName": "productRelease",
   "elements": [
     {
       "type": "SINGLE",
@@ -13,7 +13,7 @@
       "attributes": [],
       "versionCode": 1,
       "versionName": "1.0",
-      "outputFile": "app-release.apk"
+      "outputFile": "app-product-release.apk"
     }
   ],
   "elementType": "File"
