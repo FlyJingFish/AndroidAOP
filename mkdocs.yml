@@ -1,13 +1,13 @@
-site_name: 'AndroidAOP'
-site_description: 'Help you transform into an Android platform framework with AOP architecture'
-site_author: 'FlyJingFish'
-site_url:   'https://flyjingfish.github.io/AndroidAOP/'
+site_name: AndroidAOP
+site_description: Help you transform into an Android platform framework with AOP architecture
+site_author: FlyJingFish
+site_url:   https://flyjingfish.github.io/AndroidAOP/
 remote_branch: gh-pages
 edit_uri: "edit/master/docs/"
 
 # Repository
-repo_name: 'FlyJingFish/AndroidAOP'
-repo_url: 'https://github.com/FlyJingFish/AndroidAOP'
+repo_name: FlyJingFish/AndroidAOP
+repo_url: https://github.com/FlyJingFish/AndroidAOP
 
 # Copyright
 copyright: 'Copyright &copy; 2024 FlyJingFish'
