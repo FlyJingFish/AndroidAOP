@@ -3,8 +3,8 @@
      xmlns="http://www.w3.org/2000/svg"
      xmlns:xlink="http://www.w3.org/1999/xlink"
      width="13px" height="13px">
-    <circle cx="6.5px" cy="6.5px" r="6.5px" stroke="black" stroke-width="0" fill="#000"/>
+    <circle cx="6.5px" cy="6.5px" r="6.5px" stroke="black" stroke-width="0" fill="#fff"/>
     <text font-size="5px" x="1.5px" y="8">
-        <tspan fill="white">AOP</tspan>
+        <tspan fill="black">AOP</tspan>
     </text>
 </svg>
