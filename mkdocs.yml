@@ -1,12 +1,16 @@
 site_name: AndroidAOP
+site_description: 'Help you transform into an Android platform framework with AOP architecture'
+site_author: 'FlyJingFish'
 site_url: https://flyjingfish.github.io/AndroidAOP
+remote_branch: gh-pages
+edit_uri: ""
 
 # Repository
 repo_name: 'AndroidAOP'
 repo_url: 'https://github.com/FlyJingFish/AndroidAOP'
 
 # Copyright
-copyright: 'Copyright &copy; 2023 FlyJingFish'
+copyright: 'Copyright &copy; 2024 FlyJingFish'
 
 # Configuration
 theme:
@@ -46,7 +50,7 @@ theme:
         name: Switch to light mode
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: indigo
+      primary: white
       accent: indigo
       toggle:
         icon: material/toggle-switch
@@ -70,8 +74,8 @@ plugins:
   - blog
   - search:
       separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
-#  - minify:
-#      minify_html: true
+  - minify:
+      minify_html: true
 
 
 # Additional configuration
@@ -86,6 +90,9 @@ extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/FlyJingFish
+# CSS
+extra_css:
+  - 'css/site.css'
 
 # Extensions
 markdown_extensions:
@@ -162,3 +169,10 @@ nav:
       - 'Implications': Implications.md
       - 'AspectJ Migration Guide': AspectJ_Migration_Guide.md
       - 'FAQ': FAQ.md
+
+
+validation:
+  links:
+    absolute_links: ignore
+  nav:
+    omitted_files: ignore
