@@ -2,6 +2,9 @@
   <strong>简体中文</strong> | <a href="https://github.com/FlyJingFish/AndroidAOP/blob/master/README_EN.md">English</a>
 </h4>
 
+<div align="center">
+    <img src="/docs/assets/web_logo.svg" width="200" height="200"/>
+</div>
 # AndroidAOP
 
 [![Maven central](https://img.shields.io/maven-central/v/io.github.FlyJingFish.AndroidAop/android-aop-plugin)](https://central.sonatype.com/search?q=io.github.FlyJingFish.AndroidAop)
@@ -11,9 +14,7 @@
 [![GitHub license](https://img.shields.io/github/license/FlyJingFish/AndroidAop.svg)](https://github.com/FlyJingFish/AndroidAop/blob/master/LICENSE)
 
 
-<div style="text-align: center;">
-    <img src="/docs/assets/web_logo.svg" width="200" height="200"/>
-</div>
+
 
 # README.md
 - en [English](https://github.com/FlyJingFish/AndroidAOP/blob/master/README_EN.md)
