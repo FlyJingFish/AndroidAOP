@@ -3,7 +3,7 @@ site_description: Help you transform into an Android platform framework with AOP
 site_author: FlyJingFish
 site_url:   https://flyjingfish.github.io/AndroidAOP/
 remote_branch: gh-pages
-edit_uri: "edit/master/docs/"
+edit_uri: ""
 
 # Repository
 repo_name: FlyJingFish/AndroidAOP

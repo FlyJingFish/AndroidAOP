@@ -10,6 +10,11 @@
 [![GitHub issues](https://img.shields.io/github/issues/FlyJingFish/AndroidAop.svg)](https://github.com/FlyJingFish/AndroidAop/issues)
 [![GitHub license](https://img.shields.io/github/license/FlyJingFish/AndroidAop.svg)](https://github.com/FlyJingFish/AndroidAop/blob/master/LICENSE)
 
+
+<div style="text-align: center;">
+    <img src="/docs/assets/web_logo.svg" width="200" height="200"/>
+</div>
+
 # README.md
 - en [English](https://github.com/FlyJingFish/AndroidAOP/blob/master/README_EN.md)
 - zh_CN [简体中文](https://github.com/FlyJingFish/AndroidAOP/blob/master/README.md)

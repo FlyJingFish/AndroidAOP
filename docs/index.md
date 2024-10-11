@@ -1,6 +1,6 @@
 
 <div style="text-align: center;">
-    <img src="assets/web_logo.svg" width="200" height="200""/>
+    <img src="assets/web_logo.svg" width="200" height="200"/>
 </div>
 
 Welcome to the AndroidAOP wiki document, click on the left navigation bar to see what you want to see👈👈👈
