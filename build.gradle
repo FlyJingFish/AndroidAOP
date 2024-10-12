@@ -79,6 +79,10 @@ task aaBumpVersion() {
 
         updateREADME("README.md",oldVersionName,newVersionName)
         updateREADME("README_EN.md",oldVersionName,newVersionName)
+        updateREADME("docs/getting_started.md",oldVersionName,newVersionName)
+        updateREADME("docs/android_aop_extra.md",oldVersionName,newVersionName)
+        updateREADME("docs/zh/getting_started.md",oldVersionName,newVersionName)
+        updateREADME("docs/zh/android_aop_extra.md",oldVersionName,newVersionName)
 
         File gradleFile = new File("gradle.properties")
         String gradleText = gradleFile.text

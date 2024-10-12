@@ -41,8 +41,8 @@ public @interface CustomIntercept {
 - **@AndroidAopPointCut**'s **CustomInterceptCut.class** is the class that handles the section for you (described below)
 
 - **@Target** only works on methods, and setting other ones has no effect
-- For Java, you can set ElementType.METHOD
-- For Kotlin, you can set AnnotationTarget.FUNCTION,AnnotationTarget.PROPERTY_GETTER,AnnotationTarget.PROPERTY_SETTER
+- For Java, you can set `ElementType.METHOD`
+- For Kotlin, you can set `AnnotationTarget.FUNCTION`,`AnnotationTarget.PROPERTY_GETTER`,`AnnotationTarget.PROPERTY_SETTER`
 
 - **@Retention** can only use RetentionPolicy.RUNTIME
 

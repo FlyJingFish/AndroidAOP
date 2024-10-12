@@ -19,7 +19,7 @@ Minimum SDK version: minSdkVersion >= 21
 
 Welcome to the AndroidAOP wiki document, click on the left navigation bar to see what you want to see👈👈👈
 
-It is recommended that you first browse the [Getting Started](/AndroidAOP/getting_started/#custom-aspects) to quickly understand how to use this library, form a general idea, and then read the wiki document.
+It is recommended that you first browse [Getting Started](/AndroidAOP/getting_started/#custom-aspects) to quickly understand how to use this library and form a general idea before reading other content.
 
 Choosing the right method can help you write beautiful code. If you encounter any problem, please browse the wiki document first. If you can't solve it, go to the homepage [join the group](#contact-information) to communicate
 

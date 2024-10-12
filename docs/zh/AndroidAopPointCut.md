@@ -43,8 +43,8 @@ public @interface CustomIntercept {
 - **@AndroidAopPointCut** 的 **CustomInterceptCut.class** 为您处理切面的类（下文有介绍）
 
 - **@Target** 只作用在方法上，设置其他无作用
-    - 对于 Java 可以设置 ElementType.METHOD 这一个
-    - 对于 Kotlin 可以设置 AnnotationTarget.FUNCTION,AnnotationTarget.PROPERTY_GETTER,AnnotationTarget.PROPERTY_SETTER 这三个
+    - 对于 Java 可以设置 `ElementType.METHOD` 这一个
+    - 对于 Kotlin 可以设置 `AnnotationTarget.FUNCTION`,`AnnotationTarget.PROPERTY_GETTER`,`AnnotationTarget.PROPERTY_SETTER` 这三个
 
 - **@Retention** 只可以用 RetentionPolicy.RUNTIME
 
