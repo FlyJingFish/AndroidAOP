@@ -4,7 +4,7 @@ import com.flyjingfish.android_aop_annotation.enums.CollectType
 
 /**
  * 定义收集类切面，如果想收集对象，则收集的对象不会是抽象类或接口，如果想收集 Class 则无此限制
- * [wiki 文档使用说明](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopCollectMethod)
+ * [wiki 文档使用说明](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopCollectMethod)
  */
 @Target(
     AnnotationTarget.FUNCTION

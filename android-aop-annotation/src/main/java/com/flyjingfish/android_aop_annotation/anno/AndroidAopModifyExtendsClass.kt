@@ -2,7 +2,7 @@ package com.flyjingfish.android_aop_annotation.anno
 
 /**
  * 定义修改类的继承类，并且这个类也是修改的继承类
- * [wiki 文档使用说明](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopModifyExtendsClass)
+ * [wiki 文档使用说明](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopModifyExtendsClass)
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)

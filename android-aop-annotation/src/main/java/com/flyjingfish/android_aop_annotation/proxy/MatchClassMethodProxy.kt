@@ -13,7 +13,7 @@ import com.flyjingfish.android_aop_annotation.proxy.impl.ProceedJoinPointProxy
  *
  * 使用这个必须使用[ProxyMethod]来标记 [AndroidAopReplaceClass] 中的替换方法
  *
- * [wiki 文档使用说明](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopReplaceClass)
+ * [wiki 文档使用说明](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopReplaceClass)
  */
 abstract class MatchClassMethodProxy:MatchClassMethod {
 

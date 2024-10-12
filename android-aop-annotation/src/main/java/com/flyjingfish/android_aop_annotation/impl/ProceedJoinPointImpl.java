@@ -14,11 +14,11 @@ import com.flyjingfish.android_aop_annotation.utils.Utils;
 import java.lang.reflect.Method;
 
 /**
- * 切点相关信息类，<a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint">wiki 文档使用说明</a>
+ * 切点相关信息类，<a href = "https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint/">wiki 文档使用说明</a>
  */
 class ProceedJoinPointImpl implements ProceedJoinPoint {
     /**
-     * <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#args">wiki 文档使用说明</a>
+     * <a href = "https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint/#getargs">wiki 文档使用说明</a>
      */
     @Nullable
     private final Object[] args;
@@ -75,7 +75,7 @@ class ProceedJoinPointImpl implements ProceedJoinPoint {
     /**
      * 调用切点方法内代码
      *
-     * @return 返回切点方法返回值 <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#proceed">wiki 文档使用说明</a>
+     * @return 返回切点方法返回值 <a href = "https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint/#proceed">wiki 文档使用说明</a>
      */
     @Nullable
     @Override
@@ -87,7 +87,7 @@ class ProceedJoinPointImpl implements ProceedJoinPoint {
      * 调用切点方法内代码
      *
      * @param args 切点方法参数数组
-     * @return 返回切点方法返回值 <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#proceed">wiki 文档使用说明</a>
+     * @return 返回切点方法返回值 <a href = "https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint/#proceed">wiki 文档使用说明</a>
      */
     @Nullable
     @Override
@@ -125,7 +125,7 @@ class ProceedJoinPointImpl implements ProceedJoinPoint {
     /**
      * 和 {@link ProceedJoinPointImpl#args} 相比，返回的引用地址不同，但数组里边的对象一致
      *
-     * @return 最开始进入方法时的参数  <a href = "https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint#args">wiki 文档使用说明</a>
+     * @return 最开始进入方法时的参数  <a href = "https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint/#getargs">wiki 文档使用说明</a>
      */
     @Nullable
     @Override

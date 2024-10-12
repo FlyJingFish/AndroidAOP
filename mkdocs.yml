@@ -182,7 +182,7 @@ nav:
       - 'AspectJ Migration Guide': AspectJ_Migration_Guide.md
       - 'FAQ': FAQ.md
   - '中文':
-      - 'Overview': zh/index.md
+      - '概述': zh/index.md
       - '入门': zh/getting_started.md
       - '扩展库': zh/android_aop_extra.md
       - '@AndroidAopPointCut': zh/AndroidAopPointCut.md

@@ -14,7 +14,7 @@ interface BasePointCutSuspend<T : Annotation>:BasePointCut<T> {
      *
      * 并且注意最好在实现方法内使用 withContext 等函数包裹您的代码，否则可能有Bug
      *
-     * [详细使用说明看这里](https://github.com/FlyJingFish/AndroidAOP/wiki/Suspend-%E5%88%87%E7%82%B9%E5%87%BD%E6%95%B0#2%E6%94%AF%E6%8C%81-suspend-%E7%9A%84-basepointcutsuspend-%E5%92%8C-matchclassmethodsuspend)
+     * [详细使用说明看这里](https://flyjingfish.github.io/AndroidAOP/zh/Suspend_cut/#2-suspend-basepointcutsuspend-matchclassmethodsuspend)
      * @param joinPoint 切点相关信息
      * @param anno 切点设置的注解
      */
