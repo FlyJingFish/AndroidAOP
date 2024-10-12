@@ -524,6 +524,8 @@ fun onCustomIntercept(){
 
 ```
 
+##### [This library has some built-in functional annotations for you to use directly](https://flyjingfish.github.io/AndroidAOP/android_aop_extra/)
+
 #### 2. **@AndroidAopMatchClassMethod** is used to match aspects of a certain class and its corresponding method.
 
 **The matching method supports accurate matching, [click here to see detailed usage documentation on the wiki](https://flyjingfish.github.io/AndroidAOP/AndroidAopMatchClassMethod)**

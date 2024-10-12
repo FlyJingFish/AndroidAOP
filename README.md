@@ -565,6 +565,8 @@ fun onCustomIntercept(){
 
 ```
 
+##### [本库内置了一些功能注解可供你直接使用](https://flyjingfish.github.io/AndroidAOP/zh/android_aop_extra/)
+
 #### 二、**@AndroidAopMatchClassMethod** 是做匹配某类及其对应方法的切面的
 
 **匹配方法支持精准匹配，[点此看wiki详细使用文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopMatchClassMethod)**
