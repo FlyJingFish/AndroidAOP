@@ -455,18 +455,6 @@ public class InitCollect2 {
 
 
 
-### [常见问题](https://flyjingfish.github.io/AndroidAOP/zh/FAQ/)
-
-1、 同一个方法存在多个注解或匹配切面时，怎么处理的
-
-- 多个切面叠加到一个方法上时注解优先于匹配切面（上文的匹配切面），注解切面之间从上到下依次执行
-- 调用 **[proceed](https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint)** 才会执行下一个切面，多个切面中最后一个切面执行 **[proceed](https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint)** 才会调用切入方法内的代码
-- 在前边切面中调用 **[proceed(args)](https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint)** 可更新方法传入参数，并在下一个切面中也会拿到上一层更新的参数
-- 存在异步调用[proceed](https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint)时，第一个异步调用 [proceed](https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint) 切面的返回值（就是 invoke 的返回值）就是切入方法的返回值；否则没有异步调用[proceed](https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint)，则返回值就是最后一个切面的返回值
-
-2、 想 Hook 安装包以外的代码？
-
-- AndroidAOP 这个库顾名思义就不是 Hook 库，它是致力于打造 AOP 思想的库，所以它只能 Hook 安装包以内的代码
 
 #### [关于混淆](https://flyjingfish.github.io/AndroidAOP/zh/About_obfuscation/)
 
