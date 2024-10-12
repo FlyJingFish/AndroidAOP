@@ -198,7 +198,8 @@ dependencies {
 ```
 
 > [!TIP]\
-> 提示：ksp 或 annotationProcessor只能扫描当前 module ，在哪个 module 中有自定义切面代码就加在哪个 module，**但是自定义的切面代码是全局生效的**；必须依赖项可以通过 api 方式只加到公共 module 上
+> 1、ksp 或 annotationProcessor只能扫描当前 module ，在哪个 module 中有自定义切面代码就加在哪个 module，**但是自定义的切面代码是全局生效的**；必须依赖项可以通过 api 方式只加到公共 module 上 <br>
+> 2、["android-aop-extra" 使用教程](https://flyjingfish.github.io/AndroidAOP/zh/android_aop_extra/)
 
 ### 四、在 app 的build.gradle添加 androidAopConfig 配置项（此步为可选配置项）
 
@@ -489,7 +490,7 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
 
 
 
-## 此外本库也同样支持让你自己做切面，实现起来非常简单！
+## 自定义切面
 
 ### 本库通过以下五种注解，实现自定义切面
 
@@ -565,7 +566,7 @@ fun onCustomIntercept(){
 
 ```
 
-##### [本库内置了一些功能注解可供你直接使用](https://flyjingfish.github.io/AndroidAOP/zh/android_aop_extra/)
+[本库内置了一些功能注解可供你直接使用](https://flyjingfish.github.io/AndroidAOP/zh/android_aop_extra/)
 
 #### 二、**@AndroidAopMatchClassMethod** 是做匹配某类及其对应方法的切面的
 

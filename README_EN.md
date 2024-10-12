@@ -190,7 +190,8 @@ dependencies {
 }
 ```
 > [!TIP]\
-> Tip: ksp or annotationProcessor can only scan the current module. Custom aspect codes are added to the module where they are located. **But custom aspect codes are globally effective**; required dependencies can be added only to public modules through the API.
+> 1、ksp or annotationProcessor can only scan the current module. Custom aspect codes are added to the module where they are located. **But custom aspect codes are globally effective**; required dependencies can be added only to public modules through the API. <br>
+> ["android-aop-extra" usage tutorial](https://flyjingfish.github.io/AndroidAOP/android_aop_extra/)
 
 ### 4. Add the androidAopConfig configuration item in app’s build.gradle (this step is an optional configuration item)
 
@@ -451,7 +452,7 @@ AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
 
 
 
-## In addition, this library also supports you to make aspects by yourself, which is very simple to implement!
+## Custom Aspects
 
 ### This library uses the following five annotations to implement custom aspects
 
@@ -524,7 +525,7 @@ fun onCustomIntercept(){
 
 ```
 
-##### [This library has some built-in functional annotations for you to use directly](https://flyjingfish.github.io/AndroidAOP/android_aop_extra/)
+[This library has some built-in functional annotations for you to use directly](https://flyjingfish.github.io/AndroidAOP/android_aop_extra/)
 
 #### 2. **@AndroidAopMatchClassMethod** is used to match aspects of a certain class and its corresponding method.
 
