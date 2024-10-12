@@ -105,6 +105,9 @@ extra:
 extra_css:
   - 'css/site.css'
 
+extra_javascript:
+  - js/language-switch.js
+
 # Extensions
 markdown_extensions:
   - codehilite
@@ -181,6 +184,7 @@ nav:
       - 'Implications': Implications.md
       - 'AspectJ Migration Guide': AspectJ_Migration_Guide.md
       - 'FAQ': FAQ.md
+      - 'Donation List': give_list.md
   - '中文':
       - '概述': zh/index.md
       - '入门': zh/getting_started.md
