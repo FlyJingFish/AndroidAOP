@@ -736,7 +736,7 @@ You’ve all seen it here. If you like AndroidAOP, or feel that AndroidAOP has h
 
 If you feel that AndroidAOP has saved you a lot of development time and added luster to your project, you can also scan the QR code below and invite the author for a cup of coffee ☕
 
-#### [Donation List](https://github.com/FlyJingFish/AndroidAOP/blob/master/give_list.md)
+#### [Donation List](https://flyjingfish.github.io/AndroidAOP/zh/give_list/)
 
 <div>
 <img src="/screenshot/IMG_4075.PNG" width="280" height="350">

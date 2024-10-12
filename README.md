@@ -45,9 +45,9 @@
 
 **11、本库不是基于 AspectJ 实现的，织入代码量极少，侵入性极低**
 
-**12、丰富完善的使用文档助你完全理解本库的使用规则[点此前往wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki)**
+**12、丰富完善的使用文档助你完全理解本库的使用规则[点此前往wiki文档](https://flyjingfish.github.io/AndroidAOP/zh/)**
 
-**13、更有帮助你生成切面代码的插件助手供你使用[点此前往下载](https://github.com/FlyJingFish/AndroidAOP/wiki/AOP-%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E5%8A%A9%E6%89%8B)**
+**13、更有帮助你生成切面代码的插件助手供你使用[点此前往下载](https://flyjingfish.github.io/AndroidAOP/zh/AOP_Helper/)**
 
 
 #### [点此下载apk,也可扫下边二维码下载](https://github.com/FlyJingFish/AndroidAOP/blob/master/apk/product/release/app-product-release.apk?raw=true)
@@ -239,7 +239,7 @@ android {
 
 ![Stargazers over time](https://github.com/FlyJingFish/AndroidAOP/blob/master/screenshot/warning_debug_mode.svg)
 
-**以下的配置步骤同样也适用于 组件化的场景 [点此查看](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98#14%E7%BB%84%E4%BB%B6%E5%8C%96%E7%9A%84%E9%A1%B9%E7%9B%AE%E4%B8%8D%E5%90%8C-module-%E9%87%87%E7%94%A8%E7%9A%84%E6%96%B9%E6%A1%88%E6%98%AF-aar-%E8%BF%99%E6%A0%B7%E7%9A%84%E4%BA%A7%E7%89%A9%E8%BF%9B%E8%A1%8C%E7%BC%96%E8%AF%91%E5%A6%82%E4%BD%95%E5%8A%A0%E5%BF%AB%E6%89%93%E5%8C%85%E9%80%9F%E5%BA%A6%E5%91%A2)**
+**以下的配置步骤同样也适用于 组件化的场景 [点此查看](https://flyjingfish.github.io/AndroidAOP/zh/FAQ/#14-module-aar)**
 
 
 <p align = "left">    
@@ -394,7 +394,7 @@ AndroidAop.INSTANCE.setOnThrowableListener(new OnThrowableListener() {
 
 - @Permission 使用此注解必须配合以下设置（⚠️此步为必须设置的，否则是没效果的）
 
-💡💡💡[完善使用启示](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%88%87%E9%9D%A2%E5%90%AF%E7%A4%BA#4%E7%9B%B8%E4%BF%A1%E5%A4%A7%E5%AE%B6%E5%9C%A8%E4%BD%BF%E7%94%A8%E6%9D%83%E9%99%90-permission-%E6%97%B6%E5%8F%AF%E8%83%BD%E4%BC%9A%E6%83%B3%E7%8E%B0%E5%9C%A8%E5%8F%AA%E6%9C%89%E8%8E%B7%E5%BE%97%E6%9D%83%E9%99%90%E8%BF%9B%E5%85%A5%E6%96%B9%E6%B3%95%E8%80%8C%E6%B2%A1%E6%9C%89%E6%97%A0%E6%9D%83%E9%99%90%E7%9A%84%E5%9B%9E%E8%B0%83%E4%B8%8B%E8%BE%B9%E4%BE%8B%E5%AD%90%E6%95%99%E4%BD%A0%E6%80%8E%E4%B9%88%E5%81%9A)
+💡💡💡[完善使用启示](https://flyjingfish.github.io/AndroidAOP/zh/Implications/#4-permission)
 
 ```java
 AndroidAop.INSTANCE.setOnPermissionsInterceptListener(new OnPermissionsInterceptListener() {
@@ -486,7 +486,7 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
 
 ### 本库通过以下五种注解，实现自定义切面
 
-本篇介绍是大纲式的大致讲解，[详细点此查看](https://github.com/FlyJingFish/AndroidAOP/wiki)
+本篇介绍是大纲式的大致讲解，[详细点此查看](https://flyjingfish.github.io/AndroidAOP/zh/)
 
 - @AndroidAopPointCut 是为方法加注解的切面
 - @AndroidAopMatchClassMethod 是匹配类的方法的切面
@@ -496,7 +496,7 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
 
 
 
-#### 一、**@AndroidAopPointCut** 是在方法上通过注解的形式做切面的，上述中注解都是通过这个做的，[详细使用请看wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopPointCut)
+#### 一、**@AndroidAopPointCut** 是在方法上通过注解的形式做切面的，上述中注解都是通过这个做的，[详细使用请看wiki文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopPointCut)
 
 下面以 @CustomIntercept 为例介绍下该如何使用
 
@@ -544,7 +544,7 @@ class CustomInterceptCut : BasePointCut<CustomIntercept> {
 }
 ```
 
-[关于 ProceedJoinPoint 使用说明](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)，下文的 ProceedJoinPoint 同理
+[关于 ProceedJoinPoint 使用说明](https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint)，下文的 ProceedJoinPoint 同理
 
 - 使用
 
@@ -560,7 +560,7 @@ fun onCustomIntercept(){
 
 #### 二、**@AndroidAopMatchClassMethod** 是做匹配某类及其对应方法的切面的
 
-**匹配方法支持精准匹配，[点此看wiki详细使用文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)**
+**匹配方法支持精准匹配，[点此看wiki详细使用文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopMatchClassMethod)**
 
 
 - 例子一
@@ -625,13 +625,13 @@ class MatchOnClick : MatchClassMethod {
 }
 ```
 
-可以看到上方 AndroidAopMatchClassMethod 设置的 type 是 MatchType.EXTENDS 表示匹配所有继承自 OnClickListener 的子类，另外更多继承方式，[请参考Wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#excludeclasses-%E6%98%AF%E6%8E%92%E9%99%A4%E6%8E%89%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB%E4%B8%AD%E7%9A%84%E4%B8%AD%E9%97%B4%E7%B1%BB%E6%95%B0%E7%BB%84)
+可以看到上方 AndroidAopMatchClassMethod 设置的 type 是 MatchType.EXTENDS 表示匹配所有继承自 OnClickListener 的子类，另外更多继承方式，[请参考Wiki文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopMatchClassMethod)
 
-**⚠️注意：如果子类没有该方法，则切面无效，使用 overrideMethod 可忽略此限制[详情点此](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)**
+**⚠️注意：如果子类没有该方法，则切面无效，使用 overrideMethod 可忽略此限制[详情点此](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopMatchClassMethod)**
 
 #### 三、**@AndroidAopReplaceClass** 是做替换方法调用的
 
-此方式是对 @AndroidAopMatchClassMethod 的一个补充，[点此看wiki详细说明文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopReplaceClass)
+此方式是对 @AndroidAopMatchClassMethod 的一个补充，[点此看wiki详细说明文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopReplaceClass)
 
 - Java写法
 ```java
@@ -685,7 +685,7 @@ object ReplaceLog {
 
 #### 四、**@AndroidAopModifyExtendsClass** 是修改目标类的继承类
 
-通常是在某个类的继承关系中替换掉其中一层，然后重写一些函数，在重写的函数中加入一些你想加的逻辑代码，起到监听、改写原有逻辑的作用，[详细使用方式](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopModifyExtendsClass)
+通常是在某个类的继承关系中替换掉其中一层，然后重写一些函数，在重写的函数中加入一些你想加的逻辑代码，起到监听、改写原有逻辑的作用，[详细使用方式](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopModifyExtendsClass)
 
 
 ```java
@@ -707,7 +707,7 @@ public class ReplaceImageView extends ImageView {
 
 #### 五、**@AndroidAopCollectMethod** 是收集继承类
 
-使用起来极其简单，示例代码已经说明了[详细使用方式](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopCollectMethod)
+使用起来极其简单，示例代码已经说明了[详细使用方式](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopCollectMethod)
 
 - Kotlin
 
@@ -760,20 +760,20 @@ public class InitCollect2 {
 }
 ```
 
-### [常见问题](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
+### [常见问题](https://flyjingfish.github.io/AndroidAOP/zh/FAQ/)
 
 1、 同一个方法存在多个注解或匹配切面时，怎么处理的
 
 - 多个切面叠加到一个方法上时注解优先于匹配切面（上文的匹配切面），注解切面之间从上到下依次执行
-- 调用 **[proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)** 才会执行下一个切面，多个切面中最后一个切面执行 **[proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)** 才会调用切入方法内的代码
-- 在前边切面中调用 **[proceed(args)](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)** 可更新方法传入参数，并在下一个切面中也会拿到上一层更新的参数
-- 存在异步调用[proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)时，第一个异步调用 [proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint) 切面的返回值（就是 invoke 的返回值）就是切入方法的返回值；否则没有异步调用[proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)，则返回值就是最后一个切面的返回值
+- 调用 **[proceed](https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint)** 才会执行下一个切面，多个切面中最后一个切面执行 **[proceed](https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint)** 才会调用切入方法内的代码
+- 在前边切面中调用 **[proceed(args)](https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint)** 可更新方法传入参数，并在下一个切面中也会拿到上一层更新的参数
+- 存在异步调用[proceed](https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint)时，第一个异步调用 [proceed](https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint) 切面的返回值（就是 invoke 的返回值）就是切入方法的返回值；否则没有异步调用[proceed](https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint)，则返回值就是最后一个切面的返回值
 
 2、 想 Hook 安装包以外的代码？
 
 - AndroidAOP 这个库顾名思义就不是 Hook 库，它是致力于打造 AOP 思想的库，所以它只能 Hook 安装包以内的代码
 
-#### [关于混淆](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%85%B3%E4%BA%8E%E6%B7%B7%E6%B7%86)
+#### [关于混淆](https://flyjingfish.github.io/AndroidAOP/zh/About_obfuscation/)
 
 > 此资源库自带[混淆规则](https://github.com/FlyJingFish/AndroidAOP/blob/master/android-aop-core/proguard-rules.pro)，并且会自动导入，正常情况下无需手动导入。
 
@@ -785,7 +785,7 @@ public class InitCollect2 {
 
 如果感觉 AndroidAOP 为您节约了大量开发时间、为您的项目增光添彩，您也可以扫描下面的二维码，请作者喝杯咖啡 ☕
 
-#### [捐赠列表](https://github.com/FlyJingFish/AndroidAOP/blob/master/give_list.md)
+#### [捐赠列表](https://flyjingfish.github.io/AndroidAOP/zh/give_list/)
 
 <div>
 <img src="/screenshot/IMG_4075.PNG" width="280" height="350">
