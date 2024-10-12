@@ -100,19 +100,22 @@
       id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.2.3" apply true
   }
   ```
-
-- 或者老版本
+  <details>
+  <summary><strong>或者老版本</strong></summary>
 
   ```gradle
-  buildscript {
-      dependencies {
-          //必须项 👇
-          classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.2.3'
-      }
-  }
-  // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五的方式二
-  apply plugin: "android.aop"
-  ```
+    buildscript {
+        dependencies {
+            //必须项 👇
+            classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.2.3'
+        }
+    }
+    // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五的方式二
+    apply plugin: "android.aop"
+    ```
+  </details>
+
+  
 
 <p align = "left">    
 <picture>
@@ -135,13 +138,17 @@
       id 'android.aop'//最好放在最后一行
   }
   ```
-
-- 或者老版本
+  
+  <details>
+  <summary><strong>或者老版本</strong></summary>
 
   ```gradle
   //必须项 👇
   apply plugin: 'android.aop' //最好放在最后一行
   ```
+  </details>
+
+ 
 
 > [!CAUTION]\
 > **⚠️⚠️⚠️`id 'android.aop'` 这句尽量放在最后一行，尤其是必须在 `id 'com.android.application'` 或 `id 'com.android.library'` 的后边**
