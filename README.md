@@ -6,7 +6,7 @@
     <a href = "https://flyjingfish.github.io/AndroidAOP/zh/"><img src="/docs/assets/web_logo.svg" width="200" height="200"/></a>
 </div>
 
-# AndroidAOP
+---
 
 [![Maven central](https://img.shields.io/maven-central/v/io.github.FlyJingFish.AndroidAop/android-aop-plugin)](https://central.sonatype.com/search?q=io.github.FlyJingFish.AndroidAop)
 [![GitHub stars](https://img.shields.io/github/stars/FlyJingFish/AndroidAop.svg)](https://github.com/FlyJingFish/AndroidAop/stargazers)
@@ -20,6 +20,10 @@
 # README.md
 - en [English](https://github.com/FlyJingFish/AndroidAOP/blob/master/README_EN.md)
 - zh_CN [简体中文](https://github.com/FlyJingFish/AndroidAOP/blob/master/README.md)
+
+# 简述
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这是一个帮助 Android App 改造成AOP架构的框架，只需一个注解就可以请求权限、切换线程、禁止多点、一次监测所有点击事件、监测生命周期等等，没有使用 AspectJ，也可以定制出属于你的 Aop 代码
 
 ## 特色功能
 
