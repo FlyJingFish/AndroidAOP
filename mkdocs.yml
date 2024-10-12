@@ -15,6 +15,7 @@ copyright: 'Copyright &copy; 2024 FlyJingFish'
 # Configuration
 theme:
   name: material
+  language: en
   features:
     - announce.dismiss
     - content.action.edit
@@ -92,12 +93,21 @@ extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/FlyJingFish
+  alternate:
+    - name: English
+      link: /
+      lang: en
+    - name: 中文
+      link: zh/
+      lang: zh
+
 # CSS
 extra_css:
   - 'css/site.css'
 
 # Extensions
 markdown_extensions:
+  - codehilite
   - abbr
   - admonition
   - attr_list
@@ -153,7 +163,7 @@ markdown_extensions:
 
 
 nav:
-  - 'Home':
+  - 'English':
       - 'Overview': index.md
       - 'Getting Started': getting_started.md
       - 'Extension Library': android_aop_extra.md
@@ -171,6 +181,24 @@ nav:
       - 'Implications': Implications.md
       - 'AspectJ Migration Guide': AspectJ_Migration_Guide.md
       - 'FAQ': FAQ.md
+  - '中文':
+      - 'Overview': zh/index.md
+      - '入门': zh/getting_started.md
+      - '扩展库': zh/android_aop_extra.md
+      - '@AndroidAopPointCut': zh/AndroidAopPointCut.md
+      - '@AndroidAopMatchClassMethod': zh/AndroidAopMatchClassMethod.md
+      - '@AndroidAopReplaceClass': zh/AndroidAopReplaceClass.md
+      - '@AndroidAopModifyExtendsClass': zh/AndroidAopModifyExtendsClass.md
+      - '@AndroidAopCollectMethod': zh/AndroidAopCollectMethod.md
+      - 'AOP 代码生成助手': zh/AOP_Helper.md
+      - 'ProceedJoinPoint': zh/ProceedJoinPoint.md
+      - 'ProceedReturn': zh/ProceedReturn.md
+      - '切点方法返回值': zh/Pointcut_return.md
+      - 'Suspend 切点函数': zh/Suspend_cut.md
+      - '关于混淆': zh/About_obfuscation.md
+      - '切面启示': zh/Implications.md
+      - 'AspectJ 迁移指南': zh/AspectJ_Migration_Guide.md
+      - '常见问题': zh/FAQ.md
 
 
 validation:

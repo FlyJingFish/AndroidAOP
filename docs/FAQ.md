@@ -30,7 +30,7 @@
 
 - [Add the androidAopConfig configuration item in the app's build.gradle, and set cutInfoJson to true](https://flyjingfish.github.io/AndroidAOP/getting_started/#4-add-the-androidaopconfig-configuration-item-in-apps-buildgradle-this-step-is-an-optional-configuration-item)
 
-```gradle
+```groovy
 plugins {
 ...
 }
@@ -63,65 +63,63 @@ class MatchTestMatchMethod : MatchClassMethod {
 }
 ```
 
-<details>
-<summary><strong>Click here for more details</strong></summary>
-
-<li> Annotation aspect</li>
-
-```kotlin
-class CustomInterceptCut : BasePointCut<CustomIntercept> {
-    override fun invoke(
-        joinPoint: ProceedJoinPoint,
-        annotation: CustomIntercept //annotation is the annotation you add to the method
-    ): Any? {
-        //Insert code before the method
-        val value = joinPoint.proceed()
-        //Insert code after the method
-        return value
-    }
-}
-```
-
-<li> Replace the aspect</li>
-
-```kotlin
-@AndroidAopReplaceClass("android.util.Log")
-object ReplaceLog {
-    @AndroidAopReplaceMethod("int e(java.lang.String,java.lang.String)")
-    @JvmStatic
-    fun e(tag: String, msg: String): Int {
-        //Insert code before the method
-        val log = Log.e(tag, "ReplaceLog-$msg")
-        //Insert code after the method
-        return log
-    }
-}
-```
-
-<li> <code>AspectJ</code>'s <code>@AfterReturning</code> and <code>@AfterThrowing</code></li>
-  <strong>We will match the aspect Let's take an example</strong>
-
-```kotlin
-@AndroidAopMatchClassMethod(
-    targetClassName = "com.flyjingfish.test_lib.TestMatch",
-    methodName = ["test2"],
-    type = MatchType.SELF
-)
-class MatchTestMatchMethod : MatchClassMethod {
-    override fun invoke(joinPoint: ProceedJoinPoint, anno: TryCatch): Any? {
-        return try {
+??? note "Click here for more details"
+    
+    -  Annotation aspect
+    
+    ```kotlin
+    class CustomInterceptCut : BasePointCut<CustomIntercept> {
+        override fun invoke(
+            joinPoint: ProceedJoinPoint,
+            annotation: CustomIntercept //annotation is the annotation you add to the method
+        ): Any? {
+            //Insert code before the method
             val value = joinPoint.proceed()
-            // Here is @AfterReturning
-            value
-        } catch (e: Throwable) {
-            // Here is @AfterThrowing
-            throw RuntimeException(e)
+            //Insert code after the method
+            return value
         }
     }
-}
-```
+    ```
+    
+    -  Replace the aspect
+    
+    ```kotlin
+    @AndroidAopReplaceClass("android.util.Log")
+    object ReplaceLog {
+        @AndroidAopReplaceMethod("int e(java.lang.String,java.lang.String)")
+        @JvmStatic
+        fun e(tag: String, msg: String): Int {
+            //Insert code before the method
+            val log = Log.e(tag, "ReplaceLog-$msg")
+            //Insert code after the method
+            return log
+        }
+    }
+    ```
+    
+    -  `AspectJ`'s `@AfterReturning` and `@AfterThrowing`
+      **We will match the aspect Let's take an example**
+    
+    ```kotlin
+    @AndroidAopMatchClassMethod(
+        targetClassName = "com.flyjingfish.test_lib.TestMatch",
+        methodName = ["test2"],
+        type = MatchType.SELF
+    )
+    class MatchTestMatchMethod : MatchClassMethod {
+        override fun invoke(joinPoint: ProceedJoinPoint, anno: TryCatch): Any? {
+            return try {
+                val value = joinPoint.proceed()
+                // Here is @AfterReturning
+                value
+            } catch (e: Throwable) {
+                // Here is @AfterThrowing
+                throw RuntimeException(e)
+            }
+        }
+    }
+    ```
 
-</details>
 
 ### 6. What is the life cycle of the aspect processing class of the matching aspect and the annotation aspect?
 
@@ -165,70 +163,67 @@ just optimizes and solves this problem.
 - Otherwise, please try the following steps (⚠️⚠️⚠️Please note that the following is only for
        Windows computers, and Mac computers should not have this problem)
 
-<details>
-<summary><strong>Click here to expand and view details</strong></summary>
+??? note "Click here for more details"
 
-<li>First, make sure that running <code>./gradlew --stop</code> directly can succeed. If it fails, please check it online and then proceed to the following steps</li>
-<img width="848" alt="image" src="https://github.com/FlyJingFish/AndroidAOP/assets/96164429/c9a6a314-b422-48b0-b41c-80aca32f729c"/>
+    - First, make sure that running `./gradlew --stop` directly can succeed. If it fails, please check it online and then proceed to the following steps
+    <img width="848" alt="image" src="https://github.com/FlyJingFish/AndroidAOP/assets/96164429/c9a6a314-b422-48b0-b41c-80aca32f729c"/>
+    
+    - Click on the run configuration
+           <img width="848" alt="image" src="https://github.com/FlyJingFish/AndroidAOP/assets/96164429/430e64c6-b21a-4db6-9f48-b69988e8698e"/>
+    - Add the `Run External tool` task type based on the original one
+           <img width="848" alt="image" src="https://github.com/FlyJingFish/AndroidAOP/assets/96164429/36057e2b-115d-41c4-b46a-eea1fdb6dea3"/>
+  
+    - Configure as follows
+           <img width="848" alt="image" src="https://github.com/FlyJingFish/AndroidAOP/assets/96164429/d79429a0-ecff-4151-84f6-8778177d72ca"/>
+    
+    > Parameters:<br>
+    > Program: ```The absolute path of the project\gradlew.bat```<br>
+    > Arguments: ```./gradlew --stop```<br>
+    > Working directory: ```The absolute path of the project\```<br>
+    
+    - Adjust the order to the top
+           <img width="848" alt="image" src="https://github.com/FlyJingFish/AndroidAOP/assets/96164429/c52c856d-7325-4e59-85b1-6f2008317733"/>
+    
+    - Click OK to complete
+          <img width="848" alt="image" src="https://github.com/FlyJingFish/AndroidAOP/assets/96164429/ffe00da7-c466-4f3a-81ed-78f75c79279b"/>
+  
+    - Run the project directly. If the following situation occurs, it means that the configuration is successful
+           <img width="848" alt="image" src="https://github.com/FlyJingFish/AndroidAOP/assets/96164429/148d6ee9-2f73-4e45-b831-51c55483f6e2"/>
+  
+    - In addition, some netizens mentioned that changing `ksp` to `kapt` can also solve the problem
 
-<li>Click on the run configuration</li>
-       <img width="848" alt="image" src="https://github.com/FlyJingFish/AndroidAOP/assets/96164429/430e64c6-b21a-4db6-9f48-b69988e8698e"/>
-<li>Add the <code>Run External tool</code> task type based on the original one</li>
-       <img width="848" alt="image" src="https://github.com/FlyJingFish/AndroidAOP/assets/96164429/36057e2b-115d-41c4-b46a-eea1fdb6dea3"/>
-
-<li>Configure as follows</li>
-       <img width="848" alt="image" src="https://github.com/FlyJingFish/AndroidAOP/assets/96164429/d79429a0-ecff-4151-84f6-8778177d72ca"/>
-
-> Parameters:<br>
-> Program: ```The absolute path of the project\gradlew.bat```<br>
-> Arguments: ```./gradlew --stop```<br>
-> Working directory: ```The absolute path of the project\```<br>
-
-<li>Adjust the order to the top</li>
-       <img width="848" alt="image" src="https://github.com/FlyJingFish/AndroidAOP/assets/96164429/c52c856d-7325-4e59-85b1-6f2008317733"/>
-
-<li>Click OK to complete</li>
-      <img width="848" alt="image" src="https://github.com/FlyJingFish/AndroidAOP/assets/96164429/ffe00da7-c466-4f3a-81ed-78f75c79279b"/>
-
-<li>Run the project directly. If the following situation occurs, it means that the configuration is successful</li>
-       <img width="848" alt="image" src="https://github.com/FlyJingFish/AndroidAOP/assets/96164429/148d6ee9-2f73-4e45-b831-51c55483f6e2"/>
-
-<li>In addition, some netizens mentioned that changing <code>ksp</code> to <code>kapt</code> can also solve the problem</li>
-
-</details>
 
 ### 8. "Caused by: java.lang.SecurityException: digest error" related errors (The bug has been fixed in [1.5.5](https://github.com/FlyJingFish/AndroidAOP/releases/tag/1.5.5) version, and it is recommended to upgrade first)
 
-<details>
-<summary><strong>Click here to expand and view details</strong></summary>
 
-The jar package you added contains the following files, please delete them and import the jar
-package locally instead <br>
+??? note "Click here for more details"
 
-<img src="https://github.com/FlyJingFish/AndroidAOP/assets/96164429/88023c1a-6710-4d93-a372-0b3ec32bf673" alt="show" width="600px" />
-<br>
+    The jar package you added contains the following files, please delete them and import the jar
+    package locally instead <br>
+    
+    <img src="https://github.com/FlyJingFish/AndroidAOP/assets/96164429/88023c1a-6710-4d93-a372-0b3ec32bf673" alt="show" width="600px" />
+    <br>
+    
+    Operation steps
+    
+    - **Open the directory where the jar package is located**`cd /Users/a111/Downloads/ida-android-new/app/libs`
+    
+    - **Unzip the jar package** `jar -xvf bcprov-jdk15on-1.69.jar`
+    
+    <img src="https://github.com/FlyJingFish/AndroidAOP/assets/96164429/933aaa72-ab29-48d7-a0cd-f58ad064fee9" alt="show" width="600px" />
+    
+    - **After unzipping**
+    
+    <img src="https://github.com/FlyJingFish/AndroidAOP/assets/96164429/ccc46723-eb4a-4591-a7dc-6967d28f85bc" alt="show" width="600px" />
+    
+    - **Open META-INF and delete the following files**
+    
+    <img src="https://github.com/FlyJingFish/AndroidAOP/assets/96164429/9403e083-ff4d-4a45-8d7d-d08b869d5736" alt="show" width="600px" />
+    
+    - **Packaging, you can use it later**`jar -cfm0 bcprov-jdk15on-1.69.jar META-INF/MANIFEST.MF org`
+    
+    <img src="https://github.com/FlyJingFish/AndroidAOP/assets/96164429/8cd8f0a8-e6e6-4d34-8b39-425cf810c783" alt="show" width="600px" />
 
-Operation steps
-
-<li><strong>Open the directory where the jar package is located</strong><code>cd /Users/a111/Downloads/ida-android-new/app/libs</code></li>
-
-<li><strong>Unzip the jar package</strong> <code>jar -xvf bcprov-jdk15on-1.69.jar</code></li>
-
-<img src="https://github.com/FlyJingFish/AndroidAOP/assets/96164429/933aaa72-ab29-48d7-a0cd-f58ad064fee9" alt="show" width="600px" />
-
-<li><strong>After unzipping</strong></li>
-
-<img src="https://github.com/FlyJingFish/AndroidAOP/assets/96164429/ccc46723-eb4a-4591-a7dc-6967d28f85bc" alt="show" width="600px" />
-
-<li><strong>Open META-INF and delete the following files</strong></li>
-
-<img src="https://github.com/FlyJingFish/AndroidAOP/assets/96164429/9403e083-ff4d-4a45-8d7d-d08b869d5736" alt="show" width="600px" />
-
-<li><strong>Packaging, you can use it later</strong><code>jar -cfm0 bcprov-jdk15on-1.69.jar META-INF/MANIFEST.MF org</code></li>
-
-<img src="https://github.com/FlyJingFish/AndroidAOP/assets/96164429/8cd8f0a8-e6e6-4d34-8b39-425cf810c783" alt="show" width="600px" />
-
-</details>
 
 ### 9. Why do I still feel that the package compilation is slow even though I have enabled `androidAop.debugMode = true`?
 
@@ -296,7 +291,7 @@ Some people may still have questions, how should they be used in the final packa
   processed by AOP according to the above steps. You do not need to do it again when packaging. You
   can remove it under the app module, for example:
 
-```gradle
+```groovy
 androidAopConfig {
     //👇 Exclude the aar packages that have been processed by AOP, and you can still read the aspect configuration of these packages
     exclude 'aar package name 1', 'aar package name 2'

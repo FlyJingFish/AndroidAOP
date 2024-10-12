@@ -9,7 +9,7 @@ Some friends will find that before obfuscation, the line number after the error 
 - 1. First, you need to confirm whether your class is a class that has been processed by AOP (you can check the cut point [cutInfo.json](/AndroidAOP/getting_started/#4-add-the-androidaopconfig-configuration-item-in-apps-buildgradle-this-step-is-an-optional-configuration-item)), if yes, follow the next step to continue trying<br>
 - 2. You just need to invalidate AndroidAOP and then generate an obfuscated package again, that is, generate a mapping file that does not contain AOP again. Configure it as follows under the application module<br>
 
-```gradle
+```groovy
 androidAopConfig {
     //Set to false to disable AndroidAOP
     enabled false

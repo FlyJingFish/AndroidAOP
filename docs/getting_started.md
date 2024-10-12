@@ -18,7 +18,7 @@ Depend on the plug-in in <code>build.gradle</code> in the <strong>project root d
 </p>  
 
 - Using the **plugins DSL**:
-  ```gradle
+  ```groovy
   
   plugins {
       //Required item 👇 apply is set to true to automatically apply debugMode to all modules, if false, follow step 5 below.
@@ -28,7 +28,7 @@ Depend on the plug-in in <code>build.gradle</code> in the <strong>project root d
   <details>
   <summary><strong>Using legacy plugin application:</strong></summary>
 
-  ```gradle
+  ```groovy
   buildscript {
        dependencies {
            //Required items 👇
@@ -53,7 +53,7 @@ Depend on the plug-in in <code>build.gradle</code> in the <strong>project root d
 </p>  
 
 - Using the **plugins DSL**:
-  ```gradle
+  ```groovy
   //Required items 👇
   plugins {
        ...
@@ -63,7 +63,7 @@ Depend on the plug-in in <code>build.gradle</code> in the <strong>project root d
   <details>
   <summary><strong>Using legacy plugin application:</strong></summary>
 
-  ```gradle
+  ```groovy
   //Required items 👇
   apply plugin: 'android.aop' //It's best to put it on the last line
   ```
@@ -73,7 +73,7 @@ Depend on the plug-in in <code>build.gradle</code> in the <strong>project root d
 #### ~~Method 2: ```plugins``` method~~
 
 - Add directly to ```build.gradle``` of **app**
-  ```gradle
+  ```groovy
   //Required items 👇
   plugins {
        ...
@@ -88,7 +88,7 @@ Depend on the plug-in in <code>build.gradle</code> in the <strong>project root d
 ### 2. If you need to customize aspects, and the code is ```Kotlin``` (optional)
 
 - Depend on the plug-in in ```build.gradle``` in the **project root directory**
-```gradle
+```groovy
 plugins {
      //Optional 👇, if you need to customize aspects and use the android-aop-ksp library, you need to configure it. The version number below is determined according to the Kotlin version of your project
      id 'com.google.devtools.ksp' version '1.8.0-1.0.9' apply false
@@ -98,7 +98,7 @@ plugins {
 
 ### 3. Introduce dependent libraries (required)
 
-```gradle
+```groovy
 plugins {
      //Optional 👇, if you need to customize aspects and use the android-aop-ksp library, you need to configure it
      id 'com.google.devtools.ksp'
@@ -127,7 +127,7 @@ dependencies {
 
 - Related development configurations
 
-```gradle
+```groovy
 plugins {
      ...
      id 'android.aop'//It is best to put it on the last line
@@ -179,7 +179,7 @@ For <strong>all sub-modules</strong> also rely on plug-ins, please follow the ab
   
     Please configure the project according to the above [Step 1 Method 1 to configure the project](#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required), and then manually set the required sub-module module, for example:
 
-    ```gradle
+    ```groovy
     plugins {
          ...
          id 'android.aop'//It is best to put it on the last line
