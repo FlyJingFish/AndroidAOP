@@ -492,7 +492,7 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
 
 ## 自定义切面
 
-### 本库通过以下五种注解，实现自定义切面
+**本库通过以下五种注解，实现自定义切面**
 
 本篇介绍是大纲式的大致讲解，[详细点此查看](https://flyjingfish.github.io/AndroidAOP/zh/)
 
@@ -503,8 +503,7 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
 - @AndroidAopCollectMethod 是收集继承类
 
 
-
-#### 一、**@AndroidAopPointCut** 是在方法上通过注解的形式做切面的，上述中注解都是通过这个做的，[详细使用请看wiki文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopPointCut)
+#### 一、**@AndroidAopPointCut** 是在方法上通过注解的形式做切面的，上述中注解都是通过这个做的，[wiki文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopPointCut)
 
 - 创建注解(将 @AndroidAopPointCut 加到你的注解上)
 
@@ -564,7 +563,7 @@ fun onCustomIntercept(){
 
 [本库内置了一些功能注解可供你直接使用](https://flyjingfish.github.io/AndroidAOP/zh/android_aop_extra/)
 
-#### 二、**@AndroidAopMatchClassMethod** 是做匹配某类及其对应方法的切面的,[点此看wiki详细使用文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopMatchClassMethod)
+#### 二、**@AndroidAopMatchClassMethod** 是做匹配某类及其对应方法的切面的,[wiki文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopMatchClassMethod)
 
 假如想 Hook 所有的 android.view.View.OnClickListener 的 onClick，说白了就是想全局监测所有的设置 OnClickListener 的点击事件，代码如下：
 
@@ -583,11 +582,12 @@ class MatchOnClick : MatchClassMethod {
 }
 ```
 
-#### 三、**@AndroidAopReplaceClass** 是做替换方法调用的，[点此看wiki详细说明文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopReplaceClass)
+#### 三、**@AndroidAopReplaceClass** 是做替换方法调用的，[wiki文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopReplaceClass)
 
 此方式是对 @AndroidAopMatchClassMethod 的一个补充
 
-- Kotlin写法
+Kotlin写法
+
 ```kotlin
 
 @AndroidAopReplaceClass("android.util.Log")
@@ -605,7 +605,7 @@ object ReplaceLog {
 该例意思就是凡是代码中写```Log.e```的地方都被替换成```ReplaceLog.e```
 
 <details>
-<summary><strong>Java写法:</strong></summary>
+<summary>Java写法</summary>
 
 ```java
 @AndroidAopReplaceClass(
@@ -640,9 +640,9 @@ public class ReplaceToast {
 </details>
 
 
-#### 四、**@AndroidAopModifyExtendsClass** 是修改目标类的继承类
+#### 四、**@AndroidAopModifyExtendsClass** 是修改目标类的继承类，[wiki文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopModifyExtendsClass)
 
-通常是在某个类的继承关系中替换掉其中一层，然后重写一些函数，在重写的函数中加入一些你想加的逻辑代码，起到监听、改写原有逻辑的作用，[详细使用方式](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopModifyExtendsClass)
+通常是在某个类的继承关系中替换掉其中一层，然后重写一些函数，在重写的函数中加入一些你想加的逻辑代码，起到监听、改写原有逻辑的作用
 
 
 ```java
@@ -662,11 +662,11 @@ public class ReplaceImageView extends ImageView {
 
 该例就是要把 ```AppCompatImageView``` 的继承类替换成 ```ReplaceImageView```
 
-#### 五、**@AndroidAopCollectMethod** 是收集继承类
+#### 五、**@AndroidAopCollectMethod** 是收集继承类，[wiki文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopCollectMethod)
 
-使用起来极其简单，示例代码已经说明了[详细使用方式](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopCollectMethod)
+使用起来极其简单，示例代码已经说明了
 
-- Kotlin
+- Kotlin 写法
 
 ```kotlin
 object InitCollect {
@@ -693,7 +693,7 @@ object InitCollect {
 ```
 
 <details>
-<summary><strong>Java写法:</strong></summary>
+<summary>Java写法</summary>
 
 ```java
 public class InitCollect2 {

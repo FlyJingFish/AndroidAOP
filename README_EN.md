@@ -462,10 +462,8 @@ AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
 - @AndroidAopModifyExtendsClass is a modified inherited class
 - @AndroidAopCollectMethod Is a collection inheritance class
 
-#### 1. **@AndroidAopPointCut** is used to make aspects in the form of annotations on the method. The above annotations are all made through this. [Please see the wiki document for detailed usage](https://flyjingfish.github.io/AndroidAOP/AndroidAopPointCut)
+#### 1. **@AndroidAopPointCut** is used to make aspects in the form of annotations on the method. The above annotations are all made through this. [Wiki documentation](https://flyjingfish.github.io/AndroidAOP/AndroidAopPointCut)
 
-
-The following uses @CustomIntercept as an example to introduce how to use it.
 
 - Create annotations(You need to implement the BasePointCut interface, and fill in the annotations above for its generic type)
 
@@ -511,8 +509,6 @@ class CustomInterceptCut : BasePointCut<CustomIntercept> {
 }
 ```
 
-[About ProceedJoinPoint usage instructions](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint), the same applies to ProceedJoinPoint below
-
 - use
 
 Directly add the annotation you wrote to any method, for example, to onCustomIntercept(). When onCustomIntercept() is called, it will first enter the invoke method of CustomInterceptCut mentioned above.
@@ -527,51 +523,8 @@ fun onCustomIntercept(){
 
 [This library has some built-in functional annotations for you to use directly](https://flyjingfish.github.io/AndroidAOP/android_aop_extra/)
 
-#### 2. **@AndroidAopMatchClassMethod** is used to match aspects of a certain class and its corresponding method.
+#### 2. **@AndroidAopMatchClassMethod** is used to match aspects of a certain class and its corresponding method, [Wiki documentation](https://flyjingfish.github.io/AndroidAOP/AndroidAopMatchClassMethod)
 
-**The matching method supports accurate matching, [click here to see detailed usage documentation on the wiki](https://flyjingfish.github.io/AndroidAOP/AndroidAopMatchClassMethod)**
-
-- Example 1
-
-```java
-package com.flyjingfish.test_lib;
-
-public class TestMatch {
-     public void test1(int value1,String value2){
-
-     }
-
-     public String test2(int value1,String value2){
-         return value1+value2;
-     }
-}
-
-```
-
-If TestMatch is the class to be matched, and you want to match the test2 method, the following is how to write the match:
-
-
-```kotlin
-package com.flyjingfish.test_lib.mycut;
-
-@AndroidAopMatchClassMethod(
-         targetClassName = "com.flyjingfish.test_lib.TestMatch",
-         methodName = ["test2"],
-         type = MatchType.SELF
-)
-class MatchTestMatchMethod : MatchClassMethod {
-   override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
-     Log.e("MatchTestMatchMethod","======"+methodName+",getParameterTypes="+joinPoint.getTargetMethod().getParameterTypes().length);
-     //Write your logic here
-     //If you don’t want to execute the original method logic, 👇 don’t call the following sentence
-     return joinPoint.proceed()
-   }
-}
-
-```
-
-You can see that the type set by AndroidAopMatchClassMethod above is MatchType.SELF, which means that it only matches the TestMatch class itself, regardless of its subclasses.
-- Example 2
 
 If you want to Hook all onClicks of android.view.View.OnClickListener, to put it bluntly, you want to globally monitor all click events of OnClickListener. The code is as follows:
 
@@ -590,18 +543,27 @@ class MatchOnClick : MatchClassMethod {
 }
 ```
 
-You can see that the type set by AndroidAopMatchClassMethod above is MatchType.EXTENDS, which means matching all subclasses inherited from OnClickListener. For more inheritance methods, [please refer to the Wiki document](https://flyjingfish.github.io/AndroidAOP/AndroidAopMatchClassMethod/#brief-description)
 
-**⚠️Note: If the subclass does not have this method, the aspect will be invalid. In addition, do not match the same method multiple times in the same class, otherwise only one will take effect, Use overrideMethod to ignore this restriction [Click here for details](https://flyjingfish.github.io/AndroidAOP/AndroidAopMatchClassMethod)**
+#### 3. **@AndroidAopReplaceClass** is used for replacement method calls, [Wiki documentation](https://flyjingfish.github.io/AndroidAOP/AndroidAopReplaceClass)
 
+This method is a supplement to @AndroidAopMatchClassMethod
 
-#### 3. **@AndroidAopReplaceClass** is used for replacement method calls
+Kotlin writing method
 
-@AndroidAopReplaceClass and @AndroidAopReplaceMethod are used together
+```kotlin
+@AndroidAopReplaceClass("android.util.Log")
+object ReplaceLog {
+    @AndroidAopReplaceMethod("int e(java.lang.String,java.lang.String)")
+    @JvmStatic
+    fun e( tag:String, msg:String) :Int{
+        return Log.e(tag, "ReplaceLog-$msg")
+    }
+}
+```
 
-**Detailed usage of replacement method call, [click here to see detailed usage documentation in wiki](https://flyjingfish.github.io/AndroidAOP/AndroidAopReplaceClass)**
+<details>
+<summary>Java writing method</summary>
 
-- Java writing method
 ```java
 @AndroidAopReplaceClass(
          "android.widget.Toast"
@@ -630,25 +592,11 @@ public class ReplaceToast {
     }
 }
 ```
-- Kotlin writing method
-```kotlin
-@AndroidAopReplaceClass("android.util.Log")
-object ReplaceLog {
-    @AndroidAopReplaceMethod("int e(java.lang.String,java.lang.String)")
-    @JvmStatic
-    fun e( tag:String, msg:String) :Int{
-        return Log.e(tag, "ReplaceLog-$msg")
-    }
-}
-```
+</details>
 
-#### 4. **@AndroidAopModifyExtendsClass** is an inherited class that modifies the target class[Detailed usage](https://flyjingfish.github.io/AndroidAOP/AndroidAopModifyExtendsClass)
+#### 4. **@AndroidAopModifyExtendsClass** is an inherited class that modifies the target class[Wiki documentation](https://flyjingfish.github.io/AndroidAOP/AndroidAopModifyExtendsClass)
 
-Usually, you replace one layer in the inheritance relationship of a certain class, then rewrite some functions, and add some logic code you want to the rewritten functions to monitor and rewrite the original logic.
-
-As shown in the following example, you need to replace the inherited class of ```AppCompatImageView``` with ```ReplaceImageView```
-
-Application scenario: non-invasively implement the function of monitoring large image loading
+Usually, you replace one layer in the inheritance relationship of a class, then rewrite some functions, and add some logic code you want to add to the rewritten functions to monitor and rewrite the original logic.
 
 ```java
 @AndroidAopModifyExtendsClass("androidx.appcompat.widget.AppCompatImageView")
@@ -672,11 +620,11 @@ public class ReplaceImageView extends ImageView {
 }
 ```
 
-#### 5. **@AndroidAopCollectMethod** is a aspects that collects inherited classes of a class [detailed usage](https://flyjingfish.github.io/AndroidAOP/AndroidAopCollectMethod)
+#### 5. **@AndroidAopCollectMethod** is a aspects that collects inherited classes of a class [Wiki documentation](https://flyjingfish.github.io/AndroidAOP/AndroidAopCollectMethod)
 
 It is extremely simple to use, the sample code has already explained
 
-- Kotlin
+Kotlin
 
 ```kotlin
 object InitCollect {
@@ -697,25 +645,29 @@ object InitCollect {
 }
 ```
 
-- Java
+
+<details>
+<summary>Java writing method</summary>
 
 ```java
 public class InitCollect2 {
-     private static List<SubApplication2> collects = new ArrayList<>();
-     @AndroidAopCollectMethod
-     public static void collect(SubApplication2 sub){
-         collects.add(sub);
-     }
-    
-     // Call this method directly. The collects collection contains data.
-     public static void init(Application application){
-         Log.e("InitCollect2","----init----");
-         for (SubApplication2 collect : collects) {
-             collect.onCreate(application);
-         }
-     }
+  private static List<SubApplication2> collects = new ArrayList<>();
+  @AndroidAopCollectMethod
+  public static void collect(SubApplication2 sub){
+    collects.add(sub);
+  }
+
+  // Call this method directly. The collects collection contains data.
+  public static void init(Application application){
+    Log.e("InitCollect2","----init----");
+    for (SubApplication2 collect : collects) {
+      collect.onCreate(application);
+    }
+  }
 }
 ```
+</details>
+
 
 ### common problem
 
