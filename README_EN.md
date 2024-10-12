@@ -422,20 +422,6 @@ public class InitCollect2 {
 </details>
 
 
-### common problem
-
-1. Build reports an error "ZipFile invalid LOC header (bad signature)"
-
-- Please restart Android Studio and clean the project
-
-
-2. How to deal with multiple annotations or matching aspects for the same method?
-
-- When multiple aspects are superimposed on a method, annotations take precedence over matching aspects (the matching aspects above), and the annotation aspects are executed sequentially from top to bottom.
-- Call **[proceed](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint)** to execute the next aspect, and the last aspect among multiple aspects will be executed **[proceed](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint)** will call the code in the cut-in method
-- Call **[proceed(args)](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint)** in the previous aspect to pass in the parameters that can be updated, and the previous aspect will also be obtained in the next aspect One layer of updated parameters
-- When there is an asynchronous call [proceed](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint), the first asynchronous call [proceed](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint) ) The return value of the aspect (that is, the return value of invoke) is the return value of the cut-in method;
-
 
 #### [Obfuscation rules](https://flyjingfish.github.io/AndroidAOP/About_obfuscation)
 
