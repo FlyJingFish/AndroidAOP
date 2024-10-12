@@ -426,6 +426,7 @@ class MatchOnClick : MatchClassMethod {
 此方式是对 @AndroidAopMatchClassMethod 的一个补充，[点此看wiki详细说明文档](/AndroidAOP/zh/AndroidAopReplaceClass)
 
 - Java写法
+
 ```java
 @AndroidAopReplaceClass(
         "android.widget.Toast"
@@ -458,6 +459,7 @@ public class ReplaceToast {
 该例意思就是凡是代码中写```Toast.makeText```和```Toast.show```  ...的地方都被替换成```ReplaceToast.makeText```和```ReplaceToast.show``` ...
 
 - Kotlin写法
+
 ```kotlin
 
 @AndroidAopReplaceClass("android.util.Log")
