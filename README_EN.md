@@ -454,6 +454,14 @@ AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
 
 ## Custom Aspects
 
+### This library uses the following five annotations to implement custom aspects
+
+- @AndroidAopPointCut is an aspect that annotates methods
+- @AndroidAopMatchClassMethod is the aspect of matching class methods
+- @AndroidAopReplaceClass is called by the replacement method
+- @AndroidAopModifyExtendsClass is a modified inherited class
+- @AndroidAopCollectMethod Is a collection inheritance class
+
 #### 1. **@AndroidAopPointCut** is used to make aspects in the form of annotations on the method. The above annotations are all made through this. [Wiki documentation](https://flyjingfish.github.io/AndroidAOP/AndroidAopPointCut)
 
 

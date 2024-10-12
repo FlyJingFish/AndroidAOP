@@ -492,6 +492,16 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
 
 ## 自定义切面
 
+**本库通过以下五种注解，实现自定义切面**
+
+本篇介绍是大纲式的大致讲解，[详细点此查看](https://flyjingfish.github.io/AndroidAOP/zh/)
+
+- @AndroidAopPointCut 是为方法加注解的切面
+- @AndroidAopMatchClassMethod 是匹配类的方法的切面
+- @AndroidAopReplaceClass 是替换方法调用的
+- @AndroidAopModifyExtendsClass 是修改继承类
+- @AndroidAopCollectMethod 是收集继承类
+
 
 #### 一、**@AndroidAopPointCut** 是在方法上通过注解的形式做切面的，上述中注解都是通过这个做的，[wiki文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopPointCut)
 
