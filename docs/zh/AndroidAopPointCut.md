@@ -61,12 +61,12 @@ interface BasePointCut<T : Annotation> {
 
 
 !!! note
-    如果切点函数是 suspend [点此前往查看](https://github.com/FlyJingFish/AndroidAOP/wiki/Suspend-%E5%88%87%E7%82%B9%E5%87%BD%E6%95%B0)
+    如果切点函数是 suspend [点此前往查看](/AndroidAOP/zh/Suspend_cut)
 
 
-- [ProceedJoinPoint介绍](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)
-- [invoke返回值介绍](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%88%87%E7%82%B9%E6%96%B9%E6%B3%95%E8%BF%94%E5%9B%9E%E5%80%BC)
-- [生命周期](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98#6%E5%8C%B9%E9%85%8D%E5%88%87%E9%9D%A2%E5%92%8C%E6%B3%A8%E8%A7%A3%E5%88%87%E9%9D%A2%E7%9A%84%E5%88%87%E9%9D%A2%E5%A4%84%E7%90%86%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84)
+- [ProceedJoinPoint介绍](/AndroidAOP/zh/ProceedJoinPoint)
+- [invoke返回值介绍](/AndroidAOP/zh/Pointcut_return)
+- [生命周期](/AndroidAOP/zh/FAQ/#6)
 
 ### 举例
 

@@ -1,9 +1,9 @@
 ### 1、 同一个方法存在多个注解或匹配切面时，怎么处理的
 
 - 多个切面叠加到一个方法上时注解优先于匹配切面，注解切面之间从上到下依次执行
-- 调用 **[proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)** 才会执行下一个切面，多个切面中最后一个切面执行 **[proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)** 才会调用切面方法内的代码
-- 在前边切面中调用 **[proceed(args)](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)** 可更新方法传入参数，并在下一个切面中也会拿到上一层更新的参数
-- 存在异步调用[proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)时，第一个异步调用 [proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint) 切面的返回值（就是 invoke 的返回值）就是切入方法的返回值；否则没有异步调用[proceed](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)，则返回值就是最后一个切面的返回值
+- 调用 **[proceed](/AndroidAOP/zh/ProceedJoinPoint)** 才会执行下一个切面，多个切面中最后一个切面执行 **[proceed](/AndroidAOP/zh/ProceedJoinPoint)** 才会调用切面方法内的代码
+- 在前边切面中调用 **[proceed(args)](/AndroidAOP/zh/ProceedJoinPoint)** 可更新方法传入参数，并在下一个切面中也会拿到上一层更新的参数
+- 存在异步调用[proceed](/AndroidAOP/zh/ProceedJoinPoint)时，第一个异步调用 [proceed](/AndroidAOP/zh/ProceedJoinPoint) 切面的返回值（就是 invoke 的返回值）就是切入方法的返回值；否则没有异步调用[proceed](/AndroidAOP/zh/ProceedJoinPoint)，则返回值就是最后一个切面的返回值
 
 
 ### 2、Build时报错 "ZipFile invalid LOC header (bad signature)"
@@ -15,7 +15,7 @@
 - 这种情况一般是因为你在切面处理类做了强引用
 
 ### 4、 想要看到所有的加入切面代码的位置
-- [在 app 的build.gradle添加 androidAopConfig 配置项，cutInfoJson 设置为 true](https://github.com/FlyJingFish/AndroidAOP?tab=readme-ov-file#%E5%9B%9B%E5%9C%A8-app-%E7%9A%84buildgradle%E6%B7%BB%E5%8A%A0-androidaopconfig-%E9%85%8D%E7%BD%AE%E9%A1%B9%E6%AD%A4%E6%AD%A5%E4%B8%BA%E5%8F%AF%E9%80%89%E9%85%8D%E7%BD%AE%E9%A1%B9)
+- [在 app 的build.gradle添加 androidAopConfig 配置项，cutInfoJson 设置为 true](/AndroidAOP/zh/getting_started/#app-buildgradle-androidaopconfig)
 
 ```groovy
 plugins {
@@ -212,7 +212,7 @@ class MatchTestMatchMethod : MatchClassMethod {
 
 ### 9、为什么我开启了 `androidAop.debugMode = true` 依然感觉打包编译慢？
 
-造成这种情况的主要原因在于你可能用到了一些 `Router` 库，或者其他改变打包方式的插件。您可参考这里去改造你的项目[点此前往](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%88%87%E9%9D%A2%E5%90%AF%E7%A4%BA#5%E4%B8%89%E6%96%B9%E8%B7%AF%E7%94%B1%E5%BA%93%E6%B2%A1%E6%9C%89%E9%80%82%E9%85%8D-agp8-%E4%B8%8B%E9%9D%A2%E4%BB%A5-arouter-%E4%B8%BA%E4%BE%8B%E6%95%99%E4%BD%A0%E5%A6%82%E4%BD%95%E5%88%A9%E7%94%A8-androidaop-%E8%A7%A3%E5%86%B3%E8%BF%99%E4%B8%AA%E9%97%AE%E9%A2%98)，这里演示了如何去除这些库的插件部分，用 AndroidAOP 去完成它的插件的工作，这样你就可以删掉这些插件加快打包速度
+造成这种情况的主要原因在于你可能用到了一些 `Router` 库，或者其他改变打包方式的插件。您可参考这里去改造你的项目[点此前往](/AndroidAOP/zh/Implications/#5-agp8-arouter-androidaop)，这里演示了如何去除这些库的插件部分，用 AndroidAOP 去完成它的插件的工作，这样你就可以删掉这些插件加快打包速度
 
 ### 10、可变参数如何进行匹配？
 
@@ -226,7 +226,7 @@ Kotlin 中的 `vararg str : String` 相当于 Java 中的 `String...`，这种�
 
 - 如果是直接调用就不会造成递归，框架已作处理
 
-- 如果属于间接调用就会造成递归，例如调用包含的原方法的其他类的方法，框架对此不做处理，如需这么做可以结合 exclude 来使用[首页接入第四步有介绍](https://github.com/FlyJingFish/AndroidAOP?tab=readme-ov-file#%E5%9B%9B%E5%9C%A8-app-%E7%9A%84buildgradle%E6%B7%BB%E5%8A%A0-androidaopconfig-%E9%85%8D%E7%BD%AE%E9%A1%B9%E6%AD%A4%E6%AD%A5%E4%B8%BA%E5%8F%AF%E9%80%89%E9%85%8D%E7%BD%AE%E9%A1%B9)，使用exclude排除掉间接调用类即可
+- 如果属于间接调用就会造成递归，例如调用包含的原方法的其他类的方法，框架对此不做处理，如需这么做可以结合 exclude 来使用[首页接入第四步有介绍](/AndroidAOP/zh/getting_started/#app-buildgradle-androidaopconfig)，使用exclude排除掉间接调用类即可
 
 ### 13、不想引入内置的注解切面，怎么办？
 
@@ -234,7 +234,7 @@ Kotlin 中的 `vararg str : String` 相当于 Java 中的 `String...`，这种�
 
 ### 14、组件化的项目不同 module 采用的方案是 aar 这样的产物进行编译，如何加快打包速度呢？
 
-- 答案依旧还是使用 debugMode ，这个首页接入[步骤五](https://github.com/FlyJingFish/AndroidAOP?tab=readme-ov-file#%E4%BA%94%E5%BC%80%E5%8F%91%E4%B8%AD%E5%8F%AF%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%A0%81%E7%BB%87%E5%85%A5%E6%96%B9%E5%BC%8F%E6%AD%A4%E6%AD%A5%E4%B8%BA%E5%8F%AF%E9%80%89%E9%85%8D%E7%BD%AE%E9%A1%B9%E5%8F%AA%E4%B8%BA%E5%9C%A8%E5%BC%80%E5%8F%91%E8%BF%87%E7%A8%8B%E4%B8%AD%E6%8F%90%E9%AB%98%E6%89%93%E5%8C%85%E9%80%9F%E5%BA%A6)已经进行了说明，针对这种情况你应按照如下方法进行配置
+- 答案依旧还是使用 debugMode ，这个首页接入[步骤五](/AndroidAOP/zh/getting_started/)已经进行了说明，针对这种情况你应按照如下方法进行配置
 
 
 ```properties

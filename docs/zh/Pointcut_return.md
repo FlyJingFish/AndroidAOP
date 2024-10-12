@@ -24,9 +24,9 @@ interface MatchClassMethod {
 
 ### 返回值是什么
 
-- 如果切面方法**有返回值**，**invoke** 的返回值就是切面方法返回值
-- 另外如果切面方法**有返回值**，**invoke** 的返回值类型要和切面方法返回类型保持一致
-- 如果切面方法**没有返回值**，这块返回什么无所谓的
+- 如果切面方法 **有返回值** ，**invoke** 的返回值就是切面方法返回值
+- 另外如果切面方法 **有返回值** ，**invoke** 的返回值类型要和切面方法返回类型保持一致
+- 如果切面方法 **没有返回值** ，这块返回什么无所谓的
 
 ```java
 @MyAnno
@@ -85,6 +85,6 @@ class MyAnnoCut5 : BasePointCutSuspend<MyAnno5> {
 ```
 
 > [!TIP]\
-> 此处 onReturn 的解释同[此处的返回值是什么](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%88%87%E7%82%B9%E6%96%B9%E6%B3%95%E8%BF%94%E5%9B%9E%E5%80%BC#%E8%BF%94%E5%9B%9E%E5%80%BC%E6%98%AF%E4%BB%80%E4%B9%88)
+> 此处 onReturn 的解释同[此处的返回值是什么](/AndroidAOP/zh/Pointcut_return/#_2)
 
 

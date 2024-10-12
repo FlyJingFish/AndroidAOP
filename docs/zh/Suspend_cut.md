@@ -44,7 +44,7 @@ class MyAnnoCut3 : BasePointCutSuspend<MyAnno3> {
 ```
 
 !!! note
-    1、如果你不使用 `withContext` 函数，有可能会出现切点函数返回结果时的 `ClassCastException` 异常。使用这个切面处理类的好处是可以修改返回结果（[具体介绍](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%88%87%E7%82%B9%E6%96%B9%E6%B3%95%E8%BF%94%E5%9B%9E%E5%80%BC#suspend-%E5%87%BD%E6%95%B0)），可以调用其他 suspend 函数 <br>
+    1、如果你不使用 `withContext` 函数，有可能会出现切点函数返回结果时的 `ClassCastException` 异常。使用这个切面处理类的好处是可以修改返回结果（[具体介绍](/AndroidAOP/zh/Pointcut_return/#suspend)），可以调用其他 suspend 函数 <br>
     2、在withContext函数最后一行尽量是 `joinPoint.proceed` 或 `joinPoint.proceedIgnoreOther`
 
 !!! warning

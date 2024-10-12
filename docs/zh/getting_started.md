@@ -169,7 +169,7 @@ android {
 
 ![Stargazers over time](../../svg/warning_debug_mode.svg)
 
-**以下的配置步骤同样也适用于 组件化的场景 [点此查看](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98#14%E7%BB%84%E4%BB%B6%E5%8C%96%E7%9A%84%E9%A1%B9%E7%9B%AE%E4%B8%8D%E5%90%8C-module-%E9%87%87%E7%94%A8%E7%9A%84%E6%96%B9%E6%A1%88%E6%98%AF-aar-%E8%BF%99%E6%A0%B7%E7%9A%84%E4%BA%A7%E7%89%A9%E8%BF%9B%E8%A1%8C%E7%BC%96%E8%AF%91%E5%A6%82%E4%BD%95%E5%8A%A0%E5%BF%AB%E6%89%93%E5%8C%85%E9%80%9F%E5%BA%A6%E5%91%A2)**
+**以下的配置步骤同样也适用于 组件化的场景 [点此查看](/AndroidAOP/zh/FAQ/#14-module-aar)**
 
 
 <p align = "left">    
@@ -178,18 +178,18 @@ android {
   <source srcset="../../svg/one_dark.svg" media="(prefers-color-scheme: dark)">
   <img src="../../svg/one.svg" align = "center"  width="22" height="22"/>
 </picture>
-为<strong>所有的子module</strong>也依赖插件，请按照上述<a href="#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB">步骤一的方式一配置项目</a>，然后以下方式二选一
+为<strong>所有的子module</strong>也依赖插件，请按照上述<a href="#apply">步骤一的方式一配置项目</a>，然后以下方式二选一
 </p>  
 
 
 - **方式一：（推荐）**
 
-    按照上述[步骤一的方式一配置项目](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB)，就可以了。**这个方式自动为所有 Android 的 module 应用 debugMode**
+    按照上述[步骤一的方式一配置项目](#apply)，就可以了。**这个方式自动为所有 Android 的 module 应用 debugMode**
 
 
 - ~~**方式二：（不推荐）**~~
 
-    请按照上述[步骤一的方式一配置项目](#%E4%B8%80%E5%BC%95%E5%85%A5%E6%8F%92%E4%BB%B6%E4%B8%8B%E8%BE%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BA%8C%E9%80%89%E4%B8%80%E5%BF%85%E9%A1%BB)后，手动为**需要的子 module 模块**设置，例如：
+    请按照上述[步骤一的方式一配置项目](#apply)后，手动为**需要的子 module 模块**设置，例如：
 
     ```groovy
     plugins {
@@ -278,7 +278,7 @@ androidAop.debugMode.buildConfig = true //设置为 true 表示导出一个 Debu
 
 ### 本库通过以下五种注解，实现自定义切面
 
-本篇介绍是大纲式的大致讲解，[详细点此查看](https://github.com/FlyJingFish/AndroidAOP/wiki)
+本篇介绍是大纲式的大致讲解
 
 - @AndroidAopPointCut 是为方法加注解的切面
 - @AndroidAopMatchClassMethod 是匹配类的方法的切面
@@ -288,7 +288,7 @@ androidAop.debugMode.buildConfig = true //设置为 true 表示导出一个 Debu
 
 
 
-#### 一、**@AndroidAopPointCut** 是在方法上通过注解的形式做切面的，上述中注解都是通过这个做的，[详细使用请看wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopPointCut)
+#### 一、**@AndroidAopPointCut** 是在方法上通过注解的形式做切面的，上述中注解都是通过这个做的，[详细使用请看wiki文档](/AndroidAOP/zh/AndroidAopPointCut)
 
 下面以 @CustomIntercept 为例介绍下该如何使用
 
@@ -336,7 +336,7 @@ class CustomInterceptCut : BasePointCut<CustomIntercept> {
 }
 ```
 
-[关于 ProceedJoinPoint 使用说明](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)，下文的 ProceedJoinPoint 同理
+[关于 ProceedJoinPoint 使用说明](/AndroidAOP/zh/ProceedJoinPoint)，下文的 ProceedJoinPoint 同理
 
 - 使用
 
@@ -352,7 +352,7 @@ fun onCustomIntercept(){
 
 #### 二、**@AndroidAopMatchClassMethod** 是做匹配某类及其对应方法的切面的
 
-**匹配方法支持精准匹配，[点此看wiki详细使用文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)**
+**匹配方法支持精准匹配，[点此看wiki详细使用文档](/AndroidAOP/zh/AndroidAopMatchClassMethod)**
 
 
 - 例子一
@@ -417,13 +417,13 @@ class MatchOnClick : MatchClassMethod {
 }
 ```
 
-可以看到上方 AndroidAopMatchClassMethod 设置的 type 是 MatchType.EXTENDS 表示匹配所有继承自 OnClickListener 的子类，另外更多继承方式，[请参考Wiki文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#excludeclasses-%E6%98%AF%E6%8E%92%E9%99%A4%E6%8E%89%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB%E4%B8%AD%E7%9A%84%E4%B8%AD%E9%97%B4%E7%B1%BB%E6%95%B0%E7%BB%84)
+可以看到上方 AndroidAopMatchClassMethod 设置的 type 是 MatchType.EXTENDS 表示匹配所有继承自 OnClickListener 的子类，另外更多继承方式，[请参考Wiki文档](/AndroidAOP/zh/@AndroidAopMatchClassMethod/#_1)
 
-**⚠️注意：如果子类没有该方法，则切面无效，使用 overrideMethod 可忽略此限制[详情点此](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)**
+**⚠️注意：如果子类没有该方法，则切面无效，使用 overrideMethod 可忽略此限制[详情点此](/AndroidAOP/zh/AndroidAopMatchClassMethod)**
 
 #### 三、**@AndroidAopReplaceClass** 是做替换方法调用的
 
-此方式是对 @AndroidAopMatchClassMethod 的一个补充，[点此看wiki详细说明文档](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopReplaceClass)
+此方式是对 @AndroidAopMatchClassMethod 的一个补充，[点此看wiki详细说明文档](/AndroidAOP/zh/AndroidAopReplaceClass)
 
 - Java写法
 ```java
@@ -477,7 +477,7 @@ object ReplaceLog {
 
 #### 四、**@AndroidAopModifyExtendsClass** 是修改目标类的继承类
 
-通常是在某个类的继承关系中替换掉其中一层，然后重写一些函数，在重写的函数中加入一些你想加的逻辑代码，起到监听、改写原有逻辑的作用，[详细使用方式](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopModifyExtendsClass)
+通常是在某个类的继承关系中替换掉其中一层，然后重写一些函数，在重写的函数中加入一些你想加的逻辑代码，起到监听、改写原有逻辑的作用，[详细使用方式](/AndroidAOP/zh/AndroidAopModifyExtendsClass)
 
 
 ```java
@@ -499,7 +499,7 @@ public class ReplaceImageView extends ImageView {
 
 #### 五、**@AndroidAopCollectMethod** 是收集继承类
 
-使用起来极其简单，示例代码已经说明了[详细使用方式](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopCollectMethod)
+使用起来极其简单，示例代码已经说明了[详细使用方式](/AndroidAOP/zh/AndroidAopCollectMethod)
 
 - Kotlin
 

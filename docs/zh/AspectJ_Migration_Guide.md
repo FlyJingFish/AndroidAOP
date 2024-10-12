@@ -65,7 +65,7 @@ class SingleClickCut : ClickCut<SingleClick>() {//这块范型填写你原有的
 }
 ```
 
-然后在你原有注解之上添加 [@AndroidAopPointCut(SingleClickCut.class)](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopPointCut) 注解，注解 ```@Retention``` 只能设置 ```RUNTIME```，```@Target``` 只能设置 ```METHOD```
+然后在你原有注解之上添加 [@AndroidAopPointCut(SingleClickCut.class)](/AndroidAOP/zh/AndroidAopPointCut) 注解，注解 ```@Retention``` 只能设置 ```RUNTIME```，```@Target``` 只能设置 ```METHOD```
 
 ```java
 //只需添加这样一个注解即可，参数就是上边创建的切面处理类 SingleClickCut.class
@@ -152,7 +152,7 @@ public class CheckAspectJ {
 
 ### AndroidAOP 代码
 
-[点此看@AndroidAopMatchClassMethod详细使用方法](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)
+[点此看@AndroidAopMatchClassMethod详细使用方法](/AndroidAOP/zh/AndroidAopMatchClassMethod)
 
 ```kotlin
 @AndroidAopMatchClassMethod(
@@ -197,7 +197,7 @@ public final class TestAspectJ {
 
 ### AndroidAOP 代码
 
-[点此看@AndroidAopReplaceClass详细使用方法](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopReplaceClass)
+[点此看@AndroidAopReplaceClass详细使用方法](/AndroidAOP/zh/AndroidAopReplaceClass)
 
 ```kotlin
 @AndroidAopReplaceClass("android.util.Log")
@@ -210,7 +210,7 @@ object ReplaceLog {
 }
 ```
 !!! note
-    不同于 AspectJ 的是，AndroidAOP 不会保留执行原来方法的方式，但你可以自己调原来的方法，并且不会造成无限递归调用的情况（间接调用原来方法会造成无限递归[这里有解决方法](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98#12%E5%9C%A8-androidaopreplacemethod-%E6%B3%A8%E8%A7%A3%E7%9A%84%E6%96%B9%E6%B3%95%E4%B8%AD%E8%B0%83%E7%94%A8%E5%8E%9F%E6%96%B9%E6%B3%95%E4%BC%9A%E4%B8%8D%E4%BC%9A%E9%80%A0%E6%88%90%E9%80%92%E5%BD%92%E7%9A%84%E6%83%85%E5%86%B5)），[详细使用方法点此前往](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopReplaceClass)
+    不同于 AspectJ 的是，AndroidAOP 不会保留执行原来方法的方式，但你可以自己调原来的方法，并且不会造成无限递归调用的情况（间接调用原来方法会造成无限递归[这里有解决方法](/AndroidAOP/zh/FAQ/#12-androidaopreplacemethod)），[详细使用方法点此前往](/AndroidAOP/zh/AndroidAopReplaceClass)
 
 ## 4、其他切面方式
 
@@ -219,7 +219,7 @@ object ReplaceLog {
 - @AfterReturning：在方法执行后执行代码，仅在方法成功返回时执行。
 - @AfterThrowing：在方法抛出异常时执行代码。
 
-上述几种均可通过现有的几种注解切面间接实现[点此参考 常见问题#5想要在方法前后插入代码](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98#5%E6%83%B3%E8%A6%81%E5%9C%A8%E6%96%B9%E6%B3%95%E5%89%8D%E5%90%8E%E6%8F%92%E5%85%A5%E4%BB%A3%E7%A0%81)
+上述几种均可通过现有的几种注解切面间接实现[点此参考 常见问题#5想要在方法前后插入代码](/AndroidAOP/zh/FAQ/#5)
 
 
 

@@ -352,13 +352,6 @@ If the cut point method is ```suspend``` What about modified functions?
 
 - If you want to use [Exact Matching](#precise-matching), the writing is as follows. For specific rules, see [Exact Matching](#precise-matching)
 
-```kotlin
-package -
-
-你可以直接使用[模糊匹配](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#%E6%A8%A1%E7%B3%8A%E5%8C%B9%E9%85%8D)
-
--如果想要使用[精准匹配](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#%E7%B2%BE%E5%87%86%E5%8C%B9%E9%85%8D),则写法如下，具体规则 [看精准匹配部分](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#%E7%B2%BE%E5%87%86%E5%8C%B9%E9%85%8D)
-
 
 ```kotlin
 package com.flyjingfish.androidaop
@@ -384,18 +377,9 @@ class MatchSuspend : MatchClassMethod {
     override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
         Log.e("MatchSuspend", "======$methodName") return joinPoint.proceed()
     }
-} `` #### Example 8 Want to match all methods of a class ``kotlin @AndroidAopMatchClassMethod(
-    targetClassName = "com.flyjingfish. androidaop.SecondActivity",
-    methodName = ["*"],
-    type = MatchType.SELF
-)
-class MatchAllMethod : MatchClassMethod {
-    override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
-        Log.e("MatchMainAllMethod", "AllMethod======$methodName"); return joinPoint.proceed()
-    }
-}
-```
-Write only one method name and fill in * to match all methods
+} 
+``` 
+
 
 #### Example 8
 

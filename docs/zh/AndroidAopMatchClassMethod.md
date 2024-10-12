@@ -1,7 +1,7 @@
 ## 简述
 
 
-此切面是做匹配某类及其对应方法的切面的，这个切面方式关注的是方法的执行（Method Execution） 注意区分和[@AndroidAopReplaceClass](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopReplaceClass)的区别。
+此切面是做匹配某类及其对应方法的切面的，这个切面方式关注的是方法的执行（Method Execution） 注意区分和[@AndroidAopReplaceClass](/AndroidAOP/zh/AndroidAopReplaceClass)的区别。
 
 
 
@@ -41,7 +41,7 @@
 
 !!! note 
     另外不是所有类都可以Hook进去<br> <li>```type``` 类型为 ```SELF``` 时，```targetClassName``` 所设置的类必须是安装包里的代码。
-    例如：如果这个类（如：Toast）在 **android.jar** 里边是不行的。如有这种需求应该使用[@AndroidAopReplaceClass](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopReplaceClass)</li><br> <li>```type``` 类型不是 ```SELF``` 时，这个切面要想有作用需要有匹配的那个方法，如果子类没有重写匹配的方法，子类就不会被匹配到，使用 overrideMethod 可忽略此限制 </li> <br> <li><strong>当你修改这个切面的配置后多数情况下你应该clean项目再继续开发</strong></li>
+    例如：如果这个类（如：Toast）在 **android.jar** 里边是不行的。如有这种需求应该使用[@AndroidAopReplaceClass](/AndroidAOP/zh/AndroidAopReplaceClass)</li><br> <li>```type``` 类型不是 ```SELF``` 时，这个切面要想有作用需要有匹配的那个方法，如果子类没有重写匹配的方法，子类就不会被匹配到，使用 overrideMethod 可忽略此限制 </li> <br> <li><strong>当你修改这个切面的配置后多数情况下你应该clean项目再继续开发</strong></li>
 
 
 ## 创建切面处理类
@@ -55,12 +55,11 @@ interface MatchClassMethod {
 ```
 
 !!! note
-    如果切点函数是 suspend [点此前往查看](https://github.com/FlyJingFish/AndroidAOP/wiki/Suspend-%E5%88%87%E7%82%B9%E5%87%BD%E6%95%B0)
+    如果切点函数是 suspend [点此前往查看](/AndroidAOP/zh/Suspend_cut)
 
-
-- [ProceedJoinPoint介绍](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)
-- [invoke返回值介绍](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%88%87%E7%82%B9%E6%96%B9%E6%B3%95%E8%BF%94%E5%9B%9E%E5%80%BC)
-- [生命周期](https://github.com/FlyJingFish/AndroidAOP/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98#6%E5%8C%B9%E9%85%8D%E5%88%87%E9%9D%A2%E5%92%8C%E6%B3%A8%E8%A7%A3%E5%88%87%E9%9D%A2%E7%9A%84%E5%88%87%E9%9D%A2%E5%A4%84%E7%90%86%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84)
+- [ProceedJoinPoint介绍](/AndroidAOP/zh/ProceedJoinPoint)
+- [invoke返回值介绍](/AndroidAOP/zh/Pointcut_return)
+- [生命周期](/AndroidAOP/zh/FAQ/#6)
 
 ## 匹配规则
 
@@ -68,8 +67,8 @@ interface MatchClassMethod {
 
 ### 模糊匹配
 
-- 1、targetClassName 最后以 `.*` 结尾且有其他字符，并且 `type = MatchType.SELF` 时，则匹配该包下所有类，包括子包 [如下边的例九](#%E4%BE%8B%E4%B9%9D)
-- 2、methodName 有且只有一个方法名为 `*` 的则匹配类中的所有方法 [如下边的例八](#%E4%BE%8B%E5%85%AB)
+- 1、targetClassName 最后以 `.*` 结尾且有其他字符，并且 `type = MatchType.SELF` 时，则匹配该包下所有类，包括子包 [如下边的例九](#_15)
+- 2、methodName 有且只有一个方法名为 `*` 的则匹配类中的所有方法 [如下边的例八](#_14)
 - 3、methodName 只写方法名但不写返回类型和参数类型也是模糊匹配，这将会使目标类中所有同名方法都加入切点
 
 !!! note
@@ -95,7 +94,7 @@ methodName 方法名写上返回类型、参数类型，这样就可以精准到
 - 与targetClassName不同的是方法参数和返回值类型如果是内部类则需要用`$`而不能用`.`代替
 
 !!! note
-    [AOP 代码生成助手](https://github.com/FlyJingFish/AndroidAOP/wiki/AOP-%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E5%8A%A9%E6%89%8B)，可辅助你一键生成代码
+    [AOP 代码生成助手](/AndroidAOP/zh/AOP_Helper)，可辅助你一键生成代码
 
 下边给出类型表示不同的 Kotlin 对 Java 对照表，如果是 Kotlin 代码请对号入座
 
@@ -362,9 +361,9 @@ class MatchTestBean : MatchClassMethod {
 
 如果切点方法是 ```suspend``` 修饰的函数怎么办？
 
-- 你可以直接使用 [模糊匹配](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#%E6%A8%A1%E7%B3%8A%E5%8C%B9%E9%85%8D)
+- 你可以直接使用 [模糊匹配](#_4)
 
-- 如果想要使用 [精准匹配](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#%E7%B2%BE%E5%87%86%E5%8C%B9%E9%85%8D),则写法如下，具体规则 [看精准匹配部分](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#%E7%B2%BE%E5%87%86%E5%8C%B9%E9%85%8D)
+- 如果想要使用 [精准匹配](#_5),则写法如下，具体规则 [看精准匹配部分](#_5)
 
 
 ```kotlin
@@ -379,7 +378,7 @@ class MainActivity: BaseActivity2() {
 }
 ```
 
-精准匹配写法如下，匹配的函数返回值类型无论是哪种，都写 ```suspend``` ,具体说明看上文的[精准匹配部分](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#%E7%B2%BE%E5%87%86%E5%8C%B9%E9%85%8D)
+精准匹配写法如下，匹配的函数返回值类型无论是哪种，都写 ```suspend``` ,具体说明看上文的[精准匹配部分](#_5)
 
 ```kotlin
 @AndroidAopMatchClassMethod(

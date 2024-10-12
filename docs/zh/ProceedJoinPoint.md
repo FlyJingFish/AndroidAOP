@@ -27,14 +27,14 @@ ProceedJoinPointSuspend 新增两个包含 `OnSuspendReturnListener` 的 `procee
 
 - 新增的两个 `proceed` 方法 和 原本的 `proceed` 方法，逻辑和普通函数有所不同，调用后返回值不是切点函数的返回值，但其他逻辑和上边所述两点是一样的
 - 新增的两个 `proceed` 方法传入的 `OnSuspendReturnListener` 可以通过回调的 `ProceedReturn` 拿到切点函数返回值，并且通过 `onReturn` 可以修改切点函数的返回值
-- 新增的两个 `proceedIgnoreOther` 方法是不再执行切点函数内代码并修改切点函数的返回值 [详情点此查看](https://github.com/FlyJingFish/AndroidAOP/wiki/Suspend-%E5%88%87%E7%82%B9%E5%87%BD%E6%95%B0#%E5%8F%A6%E5%A4%96%E5%AF%B9%E4%BA%8E%E6%99%AE%E9%80%9A%E5%88%87%E9%9D%A2%E5%A4%84%E7%90%86%E7%B1%BB%E4%B8%8D%E8%B0%83%E7%94%A8-proceed-%E7%9B%B4%E6%8E%A5%E8%BF%94%E5%9B%9E%E7%9A%84%E4%BE%8B%E5%A6%82)
+- 新增的两个 `proceedIgnoreOther` 方法是不再执行切点函数内代码并修改切点函数的返回值 [详情点此查看](/AndroidAOP/zh/Suspend_cut/#proceed)
 
 
 ## getArgs
 
 就是切点方法被调用时的传入的所有参数
 
-[这块有关于 lambda 表达式的 args 是咋回事介绍](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#%E4%BE%8B%E4%BA%8C)
+[这块有关于 lambda 表达式的 args 是咋回事介绍](/AndroidAOP/zh/AndroidAopMatchClassMethod/#_8)
 
 ## getOriginalArgs()
 
@@ -46,13 +46,13 @@ ProceedJoinPointSuspend 新增两个包含 `OnSuspendReturnListener` 的 `procee
 
 PS：ProceedJoinPoint.target 如果为null的话是因为注入的方法是静态的，一般是 Java 的静态方法和 Kotlin 的被@JvmStatic修饰的函数、顶层函数、lamaba表达式会出现这种情况
 
-[这块有关于 lambda 表达式的 target 是咋回事介绍](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#%E4%BE%8B%E4%BA%8C)
+[这块有关于 lambda 表达式的 target 是咋回事介绍](/AndroidAOP/zh/AndroidAopMatchClassMethod/#_8)
 
 ## getTargetMethod()
 
 返回切点方法相关信息，例如方法名，参数名，参数类型，返回类型等等……具体的可以在方法返回的类里(AopMethod)去查看
 
-[这块有关于 lambda 表达式的 getTargetMethod 是咋回事介绍](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#%E4%BE%8B%E4%BA%8C)
+[这块有关于 lambda 表达式的 getTargetMethod 是咋回事介绍](/AndroidAOP/zh/AndroidAopMatchClassMethod/#_8)
 
 
 

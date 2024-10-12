@@ -2,18 +2,18 @@
 
 此切面是做替换代码中的方法调用的，需要与@AndroidAopReplaceMethod配合使用，被替换方法调用时会进入@AndroidAopReplaceMethod注解的方法
 
-- _注意这种方式和其他两种有着本质的区别，前两种关注的是方法的执行，并且会自动保留可以执行原有逻辑的方法（即[ProceedJoinPoint](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)）；_
+- _注意这种方式和其他两种有着本质的区别，前两种关注的是方法的执行，并且会自动保留可以执行原有逻辑的方法（即[ProceedJoinPoint](/AndroidAOP/zh/ProceedJoinPoint)）；_
 - _这个关注的是方法的调用，是将所有调用的地方替换为您设置的类的静态方法，并且不会自动保留执行原有逻辑的方法_
-- **_这个方式的优点在于“相当于”可以监测到某些系统方法（android.jar里的代码）的调用，前两者不具备这个特点，所以如果不是基于此种需求，建议使用 [@AndroidAopMatchClassMethod](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)_**
+- **_这个方式的优点在于“相当于”可以监测到某些系统方法（android.jar里的代码）的调用，前两者不具备这个特点，所以如果不是基于此种需求，建议使用 [@AndroidAopMatchClassMethod](/AndroidAOP/zh/AndroidAopMatchClassMethod)_**
 
 
 !!! note
-    <li>综上所述这个功能可以说是[@AndroidAopMatchClassMethod](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)的一种补充（android.jar里的代码无法织入AOP代码），之所以不使用[ProceedJoinPoint](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)也是因为这种方法可能受到Android不同版本的限制，既不可以使用反射来调用原方法，也不可以织入AOP代码，所以就不可以去用[ProceedJoinPoint](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)封装了，如果实在想用，建议使用 [MatchClassMethodProxy](#4androidaopmatchclassmethod-%E7%9A%84%E4%BB%A3%E7%90%86%E7%94%A8%E6%B3%95) </li><br> <li><strong>当你修改这个切面的相关配置后你应该clean项目后再继续开发</strong></li>
+    <li>综上所述这个功能可以说是[@AndroidAopMatchClassMethod](/AndroidAOP/zh/AndroidAopMatchClassMethod)的一种补充（android.jar里的代码无法织入AOP代码），之所以不使用[ProceedJoinPoint](/AndroidAOP/zh/ProceedJoinPoint)也是因为这种方法可能受到Android不同版本的限制，既不可以使用反射来调用原方法，也不可以织入AOP代码，所以就不可以去用[ProceedJoinPoint](/AndroidAOP/zh/ProceedJoinPoint)封装了，如果实在想用，建议使用 [MatchClassMethodProxy](#4androidaopmatchclassmethod) </li><br> <li><strong>当你修改这个切面的相关配置后你应该clean项目后再继续开发</strong></li>
 
 
 ## 一、说明
 
-⚠️⚠️⚠️ 注意：定义的替换类要放到你设置的扫描规则之内 [就是这里 include exclude 的规则](https://github.com/FlyJingFish/AndroidAOP?tab=readme-ov-file#%E5%9B%9B%E5%9C%A8-app-%E7%9A%84buildgradle%E6%B7%BB%E5%8A%A0-androidaopconfig-%E9%85%8D%E7%BD%AE%E9%A1%B9%E6%AD%A4%E6%AD%A5%E4%B8%BA%E5%8F%AF%E9%80%89%E9%85%8D%E7%BD%AE%E9%A1%B9)，写在范围以外是不起作用的
+⚠️⚠️⚠️ 注意：定义的替换类要放到你设置的扫描规则之内 [就是这里 include exclude 的规则](/AndroidAOP/zh/getting_started/#app-buildgradle-androidaopconfig)，写在范围以外是不起作用的
 
 ### @AndroidAopReplaceClass
 
@@ -76,7 +76,7 @@
 
 - 注解的方法必须是公共且静态的，但方法名随便定义
 
-- 注解的方法就是替换的方法；参数填写的是被替换的方法，必须包含返回类型和参数类型，填写匹配规则如下[匹配规则](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopReplaceClass#%E4%B8%89-androidaopreplacemethod-%E5%8C%B9%E9%85%8D%E8%A7%84%E5%88%99)
+- 注解的方法就是替换的方法；参数填写的是被替换的方法，必须包含返回类型和参数类型，填写匹配规则如下[匹配规则](#_3)
 
 - 填写的被替换的方法如果是类的静态方法，那么你定义的替换方法的参数类型、顺序以及个数保持一致
 
@@ -99,7 +99,7 @@
 可以看到下边例子中都写上了返回值类型和参数类型，下边介绍下
 
 
-**与 [@AndroidAopMatchClassMethod](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod#%E5%8C%B9%E9%85%8D%E8%A7%84%E5%88%99) 不同的是这个必须是精准匹配，写法如下：**
+**与 [@AndroidAopMatchClassMethod](/AndroidAOP/zh/AndroidAopMatchClassMethod) 不同的是这个必须是精准匹配，写法如下：**
 
 
 匹配的写法公式： **返回值类型 方法名(参数类型,参数类型...)**
@@ -115,7 +115,7 @@
 - 与填写的替换类名不同的是方法参数和返回值类型如果是内部类则需要用`$`不能用`.`代替
 
 !!!note
-    [AOP 代码生成助手](https://github.com/FlyJingFish/AndroidAOP/wiki/AOP-%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E5%8A%A9%E6%89%8B)，可辅助你一键生成代码
+    [AOP 代码生成助手](/AndroidAOP/zh/AOP_Helper)，可辅助你一键生成代码
 
 下边给出类型表示不同的 Kotlin 对 Java 对照表，如果是 Kotlin 代码请对号入座
 
@@ -321,5 +321,5 @@ class ReplaceToastProxy : MatchClassMethodProxy() {
 
 这样你就可以对某些系统方法使用 `ProceedJoinPoint` 来控制方法的调用了，**关键在于要使用 `@ProxyMethod` 来标记方法**，这样 `ProceedJoinPoint` 返回的信息就是被替换类的方法信息了
 !!! note
-    [AOP 代码生成助手](https://github.com/FlyJingFish/AndroidAOP/wiki/AOP-%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E5%8A%A9%E6%89%8B)，可辅助你一键生成代理用法代码
+    [AOP 代码生成助手](/AndroidAOP/zh/AOP_Helper)，可辅助你一键生成代理用法代码
 

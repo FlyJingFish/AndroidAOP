@@ -18,16 +18,16 @@
 - **@AndroidAopModifyExtendsClass** 是修改继承类，会将目标类的继承类换成所注解的类
 - **@AndroidAopCollectMethod** 是收集继承类
 
-除了 @AndroidAopPointCut 都可以利用 [“AOP 代码生成助手”](https://github.com/FlyJingFish/AndroidAOP/wiki/AOP-%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E5%8A%A9%E6%89%8B)辅助你使用本库
+除了 @AndroidAopPointCut 都可以利用 [“AOP 代码生成助手”](AOP_Helper/)辅助你使用本库
 
 ### 其区别如下：
 - **@AndroidAopMatchClassMethod 和 @AndroidAopPointCut 关注的是方法的执行（Method execution）**
 
 - **@AndroidAopReplaceClass 关注的是方法的调用（Method call）**
 
-- **注意@AndroidAopReplaceClass 和其他两种的有着本质的区别，前两种关注的是方法的执行，并且会自动保留可以执行原有逻辑的方法（即[ProceedJoinPoint](https://github.com/FlyJingFish/AndroidAOP/wiki/ProceedJoinPoint)）；**
+- **注意@AndroidAopReplaceClass 和其他两种的有着本质的区别，前两种关注的是方法的执行，并且会自动保留可以执行原有逻辑的方法（即[ProceedJoinPoint](ProceedJoinPoint/)）；**
 
 - **@AndroidAopReplaceClass 关注的是方法的调用，是将所有调用的地方替换为您设置的类的静态方法，并且不会自动保留执行原有逻辑的方法**
 
-- **_@AndroidAopReplaceClass 的优点在于“相当于”可以监测到某些系统方法（android.jar里的代码）的调用，前两者不具备这个特点，所以如果不是基于此种需求，建议使用 [@AndroidAopMatchClassMethod](https://github.com/FlyJingFish/AndroidAOP/wiki/@AndroidAopMatchClassMethod)_**
+- **_@AndroidAopReplaceClass 的优点在于“相当于”可以监测到某些系统方法（android.jar里的代码）的调用，前两者不具备这个特点，所以如果不是基于此种需求，建议使用 [@AndroidAopMatchClassMethod](AndroidAopMatchClassMethod/)_**
 
