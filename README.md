@@ -506,8 +506,6 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
 
 #### 一、**@AndroidAopPointCut** 是在方法上通过注解的形式做切面的，上述中注解都是通过这个做的，[详细使用请看wiki文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopPointCut)
 
-下面以 @CustomIntercept 为例介绍下该如何使用
-
 - 创建注解(将 @AndroidAopPointCut 加到你的注解上)
 
 ```kotlin
@@ -552,8 +550,6 @@ class CustomInterceptCut : BasePointCut<CustomIntercept> {
 }
 ```
 
-[关于 ProceedJoinPoint 使用说明](https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint)，下文的 ProceedJoinPoint 同理
-
 - 使用
 
 直接将你写的注解加到任意一个方法上，例如加到了 onCustomIntercept() 当 onCustomIntercept() 被调用时首先会进入到上文提到的 CustomInterceptCut 的 invoke 方法上
@@ -568,55 +564,7 @@ fun onCustomIntercept(){
 
 [本库内置了一些功能注解可供你直接使用](https://flyjingfish.github.io/AndroidAOP/zh/android_aop_extra/)
 
-#### 二、**@AndroidAopMatchClassMethod** 是做匹配某类及其对应方法的切面的
-
-**匹配方法支持精准匹配，[点此看wiki详细使用文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopMatchClassMethod)**
-
-
-- 例子一
-
-```java
-package com.flyjingfish.test_lib;
-
-public class TestMatch {
-    public void test1(int value1,String value2){
-
-    }
-
-    public String test2(int value1,String value2){
-        return value1+value2;
-    }
-}
-
-```
-
-假如 TestMatch 是要匹配的类，而你想要匹配到 test2 这个方法，下边是匹配写法：
-
-
-```kotlin
-package com.flyjingfish.test_lib.mycut;
-
-@AndroidAopMatchClassMethod(
-        targetClassName = "com.flyjingfish.test_lib.TestMatch",
-        methodName = ["test2"],
-        type = MatchType.SELF
-)
-class MatchTestMatchMethod : MatchClassMethod {
-  override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
-    Log.e("MatchTestMatchMethod","======"+methodName+",getParameterTypes="+joinPoint.getTargetMethod().getParameterTypes().length);
-    // 在此写你的逻辑 
-    //不想执行原来方法逻辑，👇就不调用下边这句
-    return joinPoint.proceed()
-  }
-}
-
-```
-
-可以看到上方 AndroidAopMatchClassMethod 设置的 type 是 MatchType.SELF 表示只匹配 TestMatch 这个类自身，不考虑其子类
-
-⚠️⚠️⚠️ 不是所有类都可以Hook进去，```type``` 类型为 ```SELF``` 时，```targetClassName``` 所设置的类必须是安装包里的代码。例如：Toast 这个类在 **android.jar** 里边是不行的
-
-- 例子二
+#### 二、**@AndroidAopMatchClassMethod** 是做匹配某类及其对应方法的切面的,[点此看wiki详细使用文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopMatchClassMethod)
 
 假如想 Hook 所有的 android.view.View.OnClickListener 的 onClick，说白了就是想全局监测所有的设置 OnClickListener 的点击事件，代码如下：
 
@@ -635,15 +583,30 @@ class MatchOnClick : MatchClassMethod {
 }
 ```
 
-可以看到上方 AndroidAopMatchClassMethod 设置的 type 是 MatchType.EXTENDS 表示匹配所有继承自 OnClickListener 的子类，另外更多继承方式，[请参考Wiki文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopMatchClassMethod)
+#### 三、**@AndroidAopReplaceClass** 是做替换方法调用的，[点此看wiki详细说明文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopReplaceClass)
 
-**⚠️注意：如果子类没有该方法，则切面无效，使用 overrideMethod 可忽略此限制[详情点此](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopMatchClassMethod)**
+此方式是对 @AndroidAopMatchClassMethod 的一个补充
 
-#### 三、**@AndroidAopReplaceClass** 是做替换方法调用的
+- Kotlin写法
+```kotlin
 
-此方式是对 @AndroidAopMatchClassMethod 的一个补充，[点此看wiki详细说明文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopReplaceClass)
+@AndroidAopReplaceClass("android.util.Log")
+object ReplaceLog {
+    @AndroidAopReplaceMethod("int e(java.lang.String,java.lang.String)")
+    @JvmStatic
+    fun e( tag:String, msg:String) :Int{
+        return Log.e(tag, "ReplaceLog-$msg")
+    }
+}
 
-- Java写法
+
+```
+
+该例意思就是凡是代码中写```Log.e```的地方都被替换成```ReplaceLog.e```
+
+<details>
+<summary><strong>Java写法:</strong></summary>
+
 ```java
 @AndroidAopReplaceClass(
         "android.widget.Toast"
@@ -674,23 +637,7 @@ public class ReplaceToast {
 ```
 
 该例意思就是凡是代码中写```Toast.makeText```和```Toast.show```  ...的地方都被替换成```ReplaceToast.makeText```和```ReplaceToast.show``` ...
-
-- Kotlin写法
-```kotlin
-
-@AndroidAopReplaceClass("android.util.Log")
-object ReplaceLog {
-    @AndroidAopReplaceMethod("int e(java.lang.String,java.lang.String)")
-    @JvmStatic
-    fun e( tag:String, msg:String) :Int{
-        return Log.e(tag, "ReplaceLog-$msg")
-    }
-}
-
-
-```
-
-该例意思就是凡是代码中写```Log.e```的地方都被替换成```ReplaceLog.e```
+</details>
 
 
 #### 四、**@AndroidAopModifyExtendsClass** 是修改目标类的继承类
@@ -745,30 +692,37 @@ object InitCollect {
 }
 ```
 
-- Java
+<details>
+<summary><strong>Java写法:</strong></summary>
 
 ```java
 public class InitCollect2 {
-    private static final List<SubApplication2> collects = new ArrayList<>();
-    private static final List<Class<? extends SubApplication2>> collectClazz = new ArrayList<>();
-    @AndroidAopCollectMethod
-    public static void collect(SubApplication2 sub){
-        collects.add(sub);
-    }
+  private static final List<SubApplication2> collects = new ArrayList<>();
+  private static final List<Class<? extends SubApplication2>> collectClazz = new ArrayList<>();
 
-    @AndroidAopCollectMethod
-    public static void collect3(Class<? extends SubApplication2> sub){
-        collectClazz.add(sub);
-    }
+  @AndroidAopCollectMethod
+  public static void collect(SubApplication2 sub) {
+    collects.add(sub);
+  }
+
+  @AndroidAopCollectMethod
+  public static void collect3(Class<? extends SubApplication2> sub) {
+    collectClazz.add(sub);
+  }
+
   //直接调这个方法（方法名不限）上边的函数会被悉数回调
-    public static void init(Application application){
-        Log.e("InitCollect2","----init----");
-        for (SubApplication2 collect : collects) {
-            collect.onCreate(application);
-        }
+  public static void init(Application application) {
+    Log.e("InitCollect2", "----init----");
+    for (SubApplication2 collect : collects) {
+      collect.onCreate(application);
     }
+  }
 }
 ```
+</details>
+
+
+
 
 ### [常见问题](https://flyjingfish.github.io/AndroidAOP/zh/FAQ/)
 
