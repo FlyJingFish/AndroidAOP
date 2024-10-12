@@ -1,6 +1,8 @@
 
 ## Steps for usage
 
+**Can you give the project a Star before starting? Thank you very much, your support is my only motivation. Stars and Issues are welcome!**
+
 ### 1. Introduce the plug-in, choose one of the two methods below (required)
 
 #### Method 1: ```apply``` method

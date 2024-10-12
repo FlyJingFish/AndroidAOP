@@ -199,7 +199,7 @@ nav:
       - '切面启示': zh/Implications.md
       - 'AspectJ 迁移指南': zh/AspectJ_Migration_Guide.md
       - '常见问题': zh/FAQ.md
-
+      - '捐赠列表': zh/give_list.md
 
 validation:
   links:

@@ -3,7 +3,7 @@
 
 **在开始之前可以给项目一个Star吗？非常感谢，你的支持是我唯一的动力。欢迎Star和Issues!**
 
-![Stargazers over time](../../svg/warning_maven_central.svg)
+![Stargazers over time](../../screenshot/warning_maven_central.svg)
 
 ### 一、引入插件，下边两种方式二选一（必须）
 
@@ -167,7 +167,7 @@ android {
 
 ### 五、开发中可设置代码织入方式（此步为可选配置项，只为在开发过程中提高打包速度）
 
-![Stargazers over time](../../svg/warning_debug_mode.svg)
+![Stargazers over time](../../screenshot/warning_debug_mode.svg)
 
 **以下的配置步骤同样也适用于 组件化的场景 [点此查看](/AndroidAOP/zh/FAQ/#14-module-aar)**
 
