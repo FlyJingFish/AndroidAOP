@@ -346,6 +346,9 @@ androidAop.debugMode.buildConfig = true //设置为 true 表示导出一个 Debu
 
 ### 本库内置了一些功能注解可供你直接使用
 
+<details>
+<summary><strong>内置功能注解介绍</strong></summary>
+
 | 注解名称                     |                                                参数说明                                                 |                                        功能说明                                         |
 |--------------------------|:---------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------:|
 | @SingleClick             |                                      value = 快速点击的间隔，默认1000ms                                       |                             单击注解，加入此注解，可使你的方法只有单击时才可进入                              |
@@ -481,6 +484,10 @@ AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener()
     ```
 
 👆以上所有的的监听，最好放到你的 application 中
+</details>
+
+
+
 
 ## 此外本库也同样支持让你自己做切面，实现起来非常简单！
 

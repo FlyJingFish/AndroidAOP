@@ -330,8 +330,11 @@ androidAop.debugMode.buildConfig = true //If set to true, it means exporting a D
 > [!TIP]\
 > Because some modules have only Kotlin code, debugMode cannot take effect. You can insert a Java code to make it effective by setting it to true. If you don't need it, you can set it to false, but you need to manually create a Java code.
 
-
 ### This library has some built-in functional annotations for you to use directly.
+
+<details>
+<summary><strong>Introduction to built-in function annotations</strong></summary>
+
 
 | Annotation name          |                                                                            Parameter description                                                                            |                                                                          Function description                                                                           |
 |--------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
@@ -444,6 +447,9 @@ AndroidAop.INSTANCE.setOnToastListener(new OnToastListener() {
 ```
 
 👆The above three monitors are best placed in your application
+</details>
+
+
 
 ## In addition, this library also supports you to make aspects by yourself, which is very simple to implement!
 
