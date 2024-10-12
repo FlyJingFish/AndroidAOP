@@ -95,7 +95,7 @@ extra:
       link: https://github.com/FlyJingFish
   alternate:
     - name: English
-      link: /
+      link: ''
       lang: en
     - name: 中文
       link: zh/
