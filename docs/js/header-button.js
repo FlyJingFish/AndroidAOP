@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var img = document.createElement('img');
         img.src = '/AndroidAOP/svg/star.svg';
         img.alt = 'Icon';
+        img.classList.add('dark-mode-image');
         label.appendChild(img);
         div.appendChild(label);
         div.addEventListener('click', function() {
