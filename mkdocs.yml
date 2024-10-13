@@ -107,6 +107,7 @@ extra_css:
 
 extra_javascript:
   - js/language-switch.js
+  - js/header-button.js
 
 # Extensions
 markdown_extensions:
@@ -184,7 +185,7 @@ nav:
       - 'Implications': Implications.md
       - 'AspectJ Migration Guide': AspectJ_Migration_Guide.md
       - 'FAQ': FAQ.md
-      - 'Donation List': give_list.md
+      - 'Tips': give_list.md
   - '中文':
       - '概述': zh/index.md
       - '入门': zh/getting_started.md
@@ -203,7 +204,7 @@ nav:
       - '切面启示': zh/Implications.md
       - 'AspectJ 迁移指南': zh/AspectJ_Migration_Guide.md
       - '常见问题': zh/FAQ.md
-      - '捐赠列表': zh/give_list.md
+      - '打赏本库': zh/give_list.md
 
 validation:
   links:
