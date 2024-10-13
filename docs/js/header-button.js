@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // 创建 img 元素，指向外部的 SVG 文件
         var img = document.createElement('img');
-        img.src = '../svg/star.svg';
+        img.src = '/AndroidAOP/svg/star.svg';
         img.alt = 'Icon';
         label.appendChild(img);
         div.appendChild(label);
