@@ -5,6 +5,9 @@
 .md-grid {
   max-width: 70rem;
 }
+.md-tabs{
+    display: none;
+}
 
 .star-center {
     position: absolute;

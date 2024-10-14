@@ -107,7 +107,6 @@ extra_css:
 
 extra_javascript:
   - js/language-switch.js
-  - js/language-save.js
   - js/header-button.js
 
 # Extensions
