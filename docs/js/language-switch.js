@@ -18,12 +18,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (isZh) {//在中文网页
 					if(selectedLang == "en"){
 						window.location.href = currentPath.replace('/zh/', '/');
+						//在这保存2
+//						localStorage.setItem("isZh", "false");
 					}else{
 						window.location.reload();
 					}
                 }else{//英文网页
                 	if(selectedLang == "zh"){
                 		window.location.href = currentPath.replace('/AndroidAOP/', '/AndroidAOP/zh/');
+                		//在这保存2
+//                		localStorage.setItem("isZh", "true");
                 	}else{
 						window.location.reload();
                 	}
