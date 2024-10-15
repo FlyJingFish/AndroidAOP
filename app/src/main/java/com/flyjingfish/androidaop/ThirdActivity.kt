@@ -94,7 +94,7 @@ class ThirdActivity : BaseActivity() , PermissionRejectListener {
         //间接调用 suspend 中包含切换一个线程的 函数
         GlobalScope.launch {
             val arg1 = getData1(1)
-            getDataArray(1)
+//            getDataArray(1)
             Log.e("MyAnnoCut","=====test0=====$arg1")
         }
     }
