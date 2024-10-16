@@ -1,6 +1,6 @@
 
 <div style="text-align: center;">
-    <object  type="image/svg+xml" data="/AndroidAOP/assets/webp/anim_mouse.svg" width="250" height="250"></object>
+    <img src="assets/web_logo.svg" width="200" height="200"/>
 </div>
 
 ## Version restrictions
