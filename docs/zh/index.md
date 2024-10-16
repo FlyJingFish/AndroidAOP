@@ -1,5 +1,85 @@
 <div align="center">
-    <object  type="image/svg+xml" data="/AndroidAOP/assets/webp/anim_mouse.svg" width="250" height="250"></object>
+    <svg width="250" height="250" xmlns="http://www.w3.org/2000/svg" id="svgAnimation">
+    <script>
+        const totalFrames = 315; // 总帧数
+        const frameRate = 30;    // 帧率 (每秒帧数)
+        const svgElement = document.getElementById('svgAnimation');
+    
+        // 动态创建并添加帧
+        for (let i = 1; i &lt;= totalFrames; i++) {
+            const image = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+            image.setAttributeNS(null, 'x', '0');
+            image.setAttributeNS(null, 'y', '0');
+            image.setAttributeNS(null, 'width', '250');
+            image.setAttributeNS(null, 'height', '250');
+            const formattedNumber = i.toString().padStart(4, '0');
+            image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `/AndroidAOP/assets/webp/${formattedNumber}.webp`); // 设置每个帧的图片源
+            image.style.display = 'none'; // 初始隐藏
+            svgElement.appendChild(image);
+        }
+    
+        let currentFrame = 0;
+        const images = svgElement.getElementsByTagName('image');
+        //显示第一帧
+        images[0].style.display = 'block';
+        // 帧切换函数
+        function switchFrame() {
+            // 隐藏当前帧
+            images[currentFrame].style.display = 'none';
+            // 切换到下一帧
+            currentFrame = (currentFrame + 1) % totalFrames;
+            // 显示下一帧
+            images[currentFrame].style.display = 'block';
+        }
+        var start = false;
+        var intervalId = 0;
+    function startAnim() {
+        start = true;
+        intervalId = setInterval(switchFrame, 1000 / frameRate); // 每帧的切换时间
+    }
+    function stopAnim() {
+        start = false;
+        clearInterval(intervalId);
+        for (let i = 0; i &lt; totalFrames; i++) {
+            images[i].style.display = 'none';
+        }
+        images[0].style.display = 'block';
+        currentFrame = 0;
+    }
+
+
+
+
+
+    function isMobileDevice() {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+        // 检查是否包含常见的移动设备标识符
+        return /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i.test(userAgent);
+    }
+
+    if (isMobileDevice()) {
+        svgElement.addEventListener('click', () => {
+            if (start) {
+                stopAnim()
+            }else{
+                startAnim()
+            }
+        });
+    } else {
+        // 鼠标悬停时，改变帧位置来播放动画
+        svgElement.addEventListener('mouseenter', () => {
+            startAnim()
+        });
+
+        // 鼠标移开时，回到初始帧
+        svgElement.addEventListener('mouseleave', () => {
+            stopAnim()
+        });
+    }
+    </script>
+    </svg>  
+
 </div>
 
 ## 版本限制
