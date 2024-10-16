@@ -48,25 +48,35 @@
         currentFrame = 0;
     }
 
-    // 鼠标悬停时，改变帧位置来播放动画
-    svgElement.addEventListener('mouseenter', () => {
-        startAnim()
-    });
 
-    // 鼠标移开时，回到初始帧
-    svgElement.addEventListener('mouseleave', () => {
-        stopAnim()
-    });
 
-    // 鼠标悬停时，改变帧位置来播放动画
-    svgElement.addEventListener('click', () => {
-        if (start) {
-            stopAnim()
-        }else{
+
+
+    function isMobileDevice() {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+        // 检查是否包含常见的移动设备标识符
+        return /iPhone|iPad|iPod|Android|Windows Phone|BlackBerry|IEMobile|Mobile|webOS/i.test(userAgent);
+    }
+
+    if (isMobileDevice()) {
+        svgElement.addEventListener('click', () => {
+            if (start) {
+                stopAnim()
+            }else{
+                startAnim()
+            }
+        });
+    } else {
+        // 鼠标悬停时，改变帧位置来播放动画
+        svgElement.addEventListener('mouseenter', () => {
             startAnim()
-        }
-    });
+        });
 
-
+        // 鼠标移开时，回到初始帧
+        svgElement.addEventListener('mouseleave', () => {
+            stopAnim()
+        });
+    }
     </script>
 </svg>
