@@ -1,11 +1,11 @@
 <svg width="250" height="250" xmlns="http://www.w3.org/2000/svg" id="svgAnimation">
     <script>
-        const totalFrames = 315; // 总帧数
+        const totalFrames = 316; // 总帧数
         const frameRate = 30;    // 帧率 (每秒帧数)
         const svgElement = document.getElementById('svgAnimation');
 
         // 动态创建并添加帧
-        for (let i = 1; i &lt;= totalFrames; i++) {
+        for (let i = 0; i &lt; totalFrames; i++) {
         const image = document.createElementNS('http://www.w3.org/2000/svg', 'image');
         image.setAttributeNS(null, 'x', '0');
         image.setAttributeNS(null, 'y', '0');
