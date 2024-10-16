@@ -56,7 +56,7 @@
         const userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
         // 检查是否包含常见的移动设备标识符
-        return /iPhone|iPad|iPod|Android|Windows Phone|BlackBerry|IEMobile|Mobile|webOS/i.test(userAgent);
+        return /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i.test(userAgent);
     }
 
     if (isMobileDevice()) {
