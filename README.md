@@ -15,7 +15,7 @@
 [![GitHub license](https://img.shields.io/github/license/FlyJingFish/AndroidAop.svg)](https://github.com/FlyJingFish/AndroidAop/blob/master/LICENSE)
 
 
-
+![GitHub license](https://flyjingfish.github.io/AndroidAOP/assets/webp/anim.svg)
 
 # README.md
 - en [English](https://github.com/FlyJingFish/AndroidAOP/blob/master/README_EN.md)
