@@ -55,5 +55,15 @@
         svgElement.addEventListener('mouseleave', () => {
             stopAnim()
         });
+
+        // 鼠标悬停时，改变帧位置来播放动画
+        svgElement.addEventListener('ontouchstart', () => {
+            startAnim()
+        });
+
+        // 鼠标移开时，回到初始帧
+        svgElement.addEventListener('ontouchend', () => {
+            stopAnim()
+        });
     </script>
 </svg>
