@@ -29,7 +29,8 @@
     // 帧切换函数
     function switchFrame() {
         // 隐藏当前帧
-        images[currentFrame].style.display = 'none';
+        var current = currentFrame % totalFrames;
+        images[current].style.display = 'none';
         // 切换到下一帧
         currentFrame++;
         var next = currentFrame % totalFrames;
