@@ -54,5 +54,9 @@ document.addEventListener("DOMContentLoaded", function () {
         start = true;
         const div = document.getElementById('logo_anim_div')
         div.classList.add('svg-anim-frame-animation1');
+        div.addEventListener('animationend', function(event) {
+            start = false;
+            div.removeEventListener('animationend', this);
+        }, false);
     });
 });
