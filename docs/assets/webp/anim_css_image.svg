@@ -6,7 +6,7 @@
                     width: 250px;
                     height: 250px;
                     background-size: cover;
-                    animation: playFrames 10s steps(316) infinite; /* 10s 进行一次完整的100帧动画 */
+                    animation: playFrames 10s steps(316) both infinite;
                 }
 
                 @keyframes playFrames {
