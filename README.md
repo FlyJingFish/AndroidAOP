@@ -3,7 +3,7 @@
 </h4>
 
 <div align="center">
-    <a href = "https://flyjingfish.github.io/AndroidAOP/zh/"><img src="/docs/assets/webp/0000.webp" width="200" height="200"/></a>
+    <a href = "https://flyjingfish.github.io/AndroidAOP/zh/"><img src="https://flyjingfish.github.io/AndroidAOP/assets/webp/anim_css_image.svg" width="200" height="200"/></a>
 </div>
 
 # AndroidAOP
