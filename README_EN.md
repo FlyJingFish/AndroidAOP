@@ -35,13 +35,16 @@
     alt="Sponsors"
   /></a>
 </p>
-# Brief Description
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is a framework that helps Android App transform into AOP architecture. With just one annotation, you can request permissions, switch threads, prohibit multiple clicks, monitor all click events at once, monitor the life cycle, etc. You can also customize your own Aop code without using AspectJ.
 
 # README.md
 - en [English](https://github.com/FlyJingFish/AndroidAOP/blob/master/README_EN.md)
 - zh_CN [简体中文](https://github.com/FlyJingFish/AndroidAOP/blob/master/README.md)
+
+# Brief Description
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is a framework that helps Android App transform into AOP architecture. With just one annotation, you can request permissions, switch threads, prohibit multiple clicks, monitor all click events at once, monitor the life cycle, etc. You can also customize your own Aop code without using AspectJ.
+
 
 ## Special feature
 
