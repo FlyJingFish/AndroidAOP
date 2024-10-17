@@ -104,10 +104,12 @@ extra:
 # CSS
 extra_css:
   - 'css/site.css'
+  - 'css/logo_anim.css'
 
 extra_javascript:
   - js/language-switch.js
   - js/header-button.js
+  - js/logo_anim.js
 
 # Extensions
 markdown_extensions:
