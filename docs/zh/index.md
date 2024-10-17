@@ -1,4 +1,5 @@
 
+
 <div style="text-align: center;">
     <svg width="250" height="250" xmlns="http://www.w3.org/2000/svg" id="svgAnimation">
     <script>
@@ -18,7 +19,9 @@
         image.style.display = 'none'; // 初始隐藏
         svgElement.appendChild(image);
     }
-
+    var start = false;
+    var intervalId = 0;
+    var once = false;
     let currentFrame = 0;
     const images = svgElement.getElementsByTagName('image');
     //显示第一帧
@@ -33,12 +36,11 @@
         // 显示下一帧
         images[next].style.display = 'block';
         if (once && next == 0 && currentFrame > 0) {
+            once = false;
             stopAnim();
         }
     }
-    var start = false;
-    var intervalId = 0;
-    var once = false;
+    
     function startAnim() {
         start = true;
         intervalId = setInterval(switchFrame, 1000 / frameRate); // 每帧的切换时间
@@ -76,12 +78,16 @@
         } else {
             // 鼠标悬停时，改变帧位置来播放动画
             svgElement.addEventListener('mouseenter', () => {
-                startAnim()
+                if (!start) {
+                    startAnim()
+                }
             });
     
             // 鼠标移开时，回到初始帧
             svgElement.addEventListener('mouseleave', () => {
-                stopAnim()
+                if (start) {
+                    stopAnim()
+                }
             });
         }
         once = true;
