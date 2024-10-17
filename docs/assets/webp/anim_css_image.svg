@@ -3,10 +3,10 @@
         <div xmlns="http://www.w3.org/1999/xhtml">
             <style>
                 .frame-animation {
+                    will-change: content;
                     width: 250px;
                     height: 250px;
-                    background-size: cover;
-                    animation: playFrames 10s steps(316) both infinite;
+                    animation: playFrames 11s steps(316) both infinite;
                 }
 
                 @keyframes playFrames {
