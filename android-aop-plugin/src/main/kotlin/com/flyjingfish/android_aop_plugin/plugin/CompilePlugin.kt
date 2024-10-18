@@ -202,10 +202,49 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                     java.addStaticSourceDirectory("build$path")
                 }
                 val variantNameCapitalized = variantName.capitalized()
-                val packageName = if (android.namespace == null || android.namespace == "null"){
+                var packageName = if (android.namespace == null || android.namespace == "null"){
                     android.defaultConfig.applicationId.toString()
                 }else{
                     android.namespace.toString()
+                }
+
+                if (packageName == "null"){
+                    for (sourceSet in android.sourceSets) {
+//                        println("Source set name: ${sourceSet.name}")
+//                        println("Java srcDirs: ${sourceSet.java.srcDirs}")
+//                        println("Res srcDirs: ${sourceSet.res.srcDirs}")
+                        if (sourceSet.name == "main"){
+                            val pkName = getPackageName(sourceSet.java.srcDirs,debugModeDir)
+                            if (pkName != null){
+                                packageName = pkName
+                                break
+                            }
+                        }
+                    }
+                }
+
+                if (packageName == "null"){
+                    for (sourceSet in android.sourceSets) {
+                        if (sourceSet.name == "release"){
+                            val pkName = getPackageName(sourceSet.java.srcDirs,debugModeDir)
+                            if (pkName != null){
+                                packageName = pkName
+                                break
+                            }
+                        }
+                    }
+                }
+
+                if (packageName == "null"){
+                    for (sourceSet in android.sourceSets) {
+                        if (sourceSet.name == "debug"){
+                            val pkName = getPackageName(sourceSet.java.srcDirs,debugModeDir)
+                            if (pkName != null){
+                                packageName = pkName
+                                break
+                            }
+                        }
+                    }
                 }
                 project
                     .tasks
@@ -222,6 +261,26 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                 }
             }
         }
+    }
+
+    private fun getPackageName(srcDirs :Set<File>,debugModeDir:File):String?{
+        for (srcDir in srcDirs) {
+            if (srcDir.absolutePath != debugModeDir.absolutePath){
+                if (srcDir.exists()){
+                    //说明这个才是真正的源码所在路径
+                    val packageFile = getPackageNameFile(srcDir,0)
+                    val relativePath = packageFile.getRelativePath(srcDir).replace(File.separator,".")
+                    return if (relativePath.endsWith(".")){
+                        relativePath.substring(0,relativePath.length-1)
+                    }else{
+                        relativePath
+                    }
+
+                }
+            }
+        }
+
+        return null
     }
 
     private fun doAopTask(project: Project, isApp:Boolean, variantName: String, buildTypeName: String,
@@ -310,18 +369,18 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
         }
         val files = file.listFiles()
         if (files != null){
-            if (files.size == 1){
+            return if (files.size == 1){
                 if (files[0].isDirectory){
-                    return getPackageNameFile(files[0],deep+1)
+                    getPackageNameFile(files[0],deep+1)
                 }else{
-                    return files[0].parentFile
+                    files[0].parentFile
                 }
 
             }else{
                 if (files.isNotEmpty()){
-                    return getPackageNameFile(files[0],deep+1)
+                    getPackageNameFile(files[0],deep+1)
                 }else{
-                    return file
+                    file
                 }
             }
         }else{

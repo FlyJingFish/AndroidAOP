@@ -20,7 +20,7 @@ abstract class DebugModeFileTask : DefaultTask() {
     @TaskAction
     fun taskAction() {
         val packageName = this.packageName
-        if (packageName.isNullOrEmpty()){
+        if (packageName.isNullOrEmpty() || packageName == "null"){
             return
         }
         val filePath = "$debugModeDir/${Utils.dotToSlash(packageName)}/DebugModeBuildConfig.java".adapterOSPath()
