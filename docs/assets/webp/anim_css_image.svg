@@ -6,6 +6,10 @@
                     will-change: content;
                     width: 250px;
                     height: 250px;
+                     -webkit-animation: playFrames 11s steps(316) infinite;
+                      -moz-animation: playFrames 11s steps(316) infinite;
+                      -ms-animation: playFrames 11s steps(316) infinite;
+                      -o-animation: playFrames 11s steps(316) infinite;
                     animation: playFrames 11s steps(316) both infinite;
                 }
 
