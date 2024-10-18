@@ -1,6 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250">
     <foreignObject width="100%" height="100%">
-    <meta http-equiv="Content-Security-Policy" content="default-src *;img-src 'self' data: base64; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'"/>
         <div xmlns="http://www.w3.org/1999/xhtml">
             <style>
                 .frame-animation {
