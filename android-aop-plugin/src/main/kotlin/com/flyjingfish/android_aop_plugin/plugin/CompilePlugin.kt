@@ -45,6 +45,8 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
             if (project.rootProject == project || root){
                 return
             }
+            val buildTypeName = "release"
+            val variantName = "release"
             if (hasBuildConfig()){
                 try {
                     val javaPluginExtension = project.extensions.getByType(JavaPluginExtension::class.java)
@@ -75,6 +77,9 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                         project.tasks.register(DEBUG_MODE_FILE_TASK_NAME, DebugModeFileTask::class.java){
                             it.debugModeDir = debugModeDir.absolutePath
                             it.packageName = packageName
+                            it.variantName = variantName
+                            it.buildTypeName = buildTypeName
+                            it.isAndroidModule = false
                         }
                         project.afterEvaluate {
                             project.tasks.findByName("compileJava")?.dependsOn(DEBUG_MODE_FILE_TASK_NAME)
@@ -102,8 +107,7 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                     }
                     val compileKotlin = compileKotlinTask.get()
 
-                    val buildTypeName = "release"
-                    val variantName = "release"
+
 
                     val cacheDir = try {
                         compileKotlin.destinationDirectory.get().asFile
@@ -183,7 +187,6 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                     null
                 }
                 val kotlinPath = cacheDir ?: File(project.buildDir.path + "/tmp/kotlin-classes/".adapterOSPath() + variantName)
-
                 doAopTask(project, isApp, variantName, buildTypeName, javaCompile, kotlinPath)
             }
         }
@@ -246,11 +249,15 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                         }
                     }
                 }
+                val buildTypeName: String? = variant.buildType
                 project
                     .tasks
                     .register("$DEBUG_MODE_FILE_TASK_NAME$variantNameCapitalized", DebugModeFileTask::class.java){
                         it.debugModeDir = debugModeDir.absolutePath
                         it.packageName = packageName
+                        it.variantName = variantName
+                        it.buildTypeName = buildTypeName
+                        it.isAndroidModule = true
                     }
             }
             project.afterEvaluate {
@@ -269,7 +276,7 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                 if (srcDir.exists()){
                     //说明这个才是真正的源码所在路径
                     val packageFile = getPackageNameFile(srcDir,0)
-                    val relativePath = packageFile.getRelativePath(srcDir).replace(File.separator,".")
+                    val relativePath = packageFile.getRelativePath(srcDir).replace("/",".")
                     return if (relativePath.endsWith(".")){
                         relativePath.substring(0,relativePath.length-1)
                     }else{
