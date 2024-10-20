@@ -4,7 +4,7 @@
 ```groovy
 dependencies {
      //Optional 👇This package provides some common annotation aspects
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-extra:2.2.4'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-extra:2.2.5'
 }
 ```
 
