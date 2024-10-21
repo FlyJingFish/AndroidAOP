@@ -3,7 +3,7 @@
 </h4>
 
 <div align="center">
-    <a href = "https://flyjingfish.github.io/AndroidAOP/"><img src="docs/assets/webp/anim_css_image_pos.svg" width="200" height="200"/></a>
+    <a href = "https://flyjingfish.github.io/AndroidAOP/"><img src="https://flyjingfish.github.io/AndroidAOP/assets/webp/anim_css_image_pos.svg" width="200" height="200"/></a>
 </div>
 
 <p align="center">
@@ -235,6 +235,26 @@ dependencies {
 ### This library has some built-in functional annotations for you to use directly.
 
 [Click here to see how to configure](https://flyjingfish.github.io/AndroidAOP/android_aop_extra/)
+
+### This library has some built-in functional annotations for you to use directly.
+
+| Annotation name          |                                                                            Parameter description                                                                            |                                                                          Function description                                                                           |
+|--------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| @SingleClick             |                                                              value = interval of quick clicks, default 1000ms                                                               |                                      Click the annotation and add this annotation to make your method accessible only when clicked                                      |
+| @DoubleClick             |                                                           value = maximum time between two clicks, default 300ms                                                            |                                   Double-click annotation, add this annotation to make your method enterable only when double-clicked                                   |
+| @IOThread                |                                                                          ThreadType = thread type                                                                           |                      Switch to the sub-thread operation. Adding this annotation can switch the code in your method to the sub-thread for execution                      |
+| @MainThread              |                                                                                No parameters                                                                                |                The operation of switching to the main thread. Adding this annotation can switch the code in your method to the main thread for execution                |
+| @OnLifecycle<sup>*</sup> |                                                                           value = Lifecycle.Event                                                                           |              Monitor life cycle operations. Adding this annotation allows the code in your method to be executed only during the corresponding life cycle               |
+| @TryCatch                |                                                                        value = a flag you customized                                                                        |                                                Adding this annotation can wrap a layer of try catch code for your method                                                |
+| @Permission<sup>*</sup>  |                                                                     value = String array of permissions                                                                     |                 The operation of applying for permissions. Adding this annotation will enable your code to be executed only after obtaining permissions                 |
+| @Scheduled               | initialDelay = delayed start time<br>interval = interval<br>repeatCount = number of repetitions<br>isOnMainThread = whether to be the main thread<br>id = unique identifier |       Scheduled tasks, add this annotation to make your method Executed every once in a while, call AndroidAop.shutdownNow(id) or AndroidAop.shutdown(id) to stop       |
+| @Delay                   |                                          delay = delay time<br>isOnMainThread = whether the main thread<br>id = unique identifier                                           | Delay task, add this annotation to delay the execution of your method for a period of time, call AndroidAop.shutdownNow(id) or AndroidAop .shutdown(id) can be canceled |
+| @CheckNetwork            |                   tag = custom tag<br>toastText = toast prompt when there is no network<br>invokeListener = whether to take over the check network logic                    |                       Check whether the network is available, adding this annotation will allow your method to enter only when there is a network                       |
+| @CustomIntercept         |                                                            value = a flag of a string array that you customized                                                             |                                          Custom interception, used with AndroidAop.setOnCustomInterceptListener, is a panacea                                           |
+
+> [!TIP]\
+> The above functions are located in the `android-aop-extra` library. [For detailed instructions, please see the documentation](https://flyjingfish.github.io/AndroidAOP/android_aop_extra/)
+
 
 ## Custom Aspects
 
