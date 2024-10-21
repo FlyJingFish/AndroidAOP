@@ -22,27 +22,51 @@
 在<strong>项目根目录</strong>的 <code>build.gradle</code> 里依赖插件
 </p>  
 
-- 新版本
+=== "Groovy"
 
-    ```groovy
-    
-    plugins {
-        //必须项 👇 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五的方式二
-        id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.2.5" apply true
-    }
-    ```
+    - 新版本
 
-- 或者老版本
-    ```groovy
-    buildscript {
-        dependencies {
-            //必须项 👇
-            classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.2.5'
+        ```groovy
+        
+        plugins {
+            //必须项 👇 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五的方式二
+            id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.2.5" apply true
         }
-    }
-    // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五的方式二
-    apply plugin: "android.aop"
-    ```
+        ```
+
+    - 或者老版本
+        ```groovy
+        buildscript {
+          dependencies {
+              //必须项 👇
+              classpath "io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.2.5"
+          }
+        }
+        // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五的方式二
+        apply plugin: "android.aop"
+        ```
+=== "Kotlin"
+
+    - 新版本
+
+        ```kotlin
+        plugins {
+            //必须项 👇 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五的方式二
+            id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.2.5" apply true
+        }
+        ```
+
+    - 或者老版本
+        ```kotlin
+        buildscript {
+          dependencies {
+              //必须项 👇
+              classpath("io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.2.5")
+          }
+        }
+        // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五的方式二
+        apply(plugin = "android.aop")
+        ```
 
 <p align = "left">    
 <picture>
@@ -56,22 +80,43 @@
 在<strong>app</strong>的 <code>build.gradle</code> 添加
 </p> 
 
-- 新版本
+=== "Groovy"
 
-    ```groovy
-    //必须项 👇
-    plugins {
-        ...
-        id 'android.aop'//最好放在最后一行
-    }
-    ```
+    - 新版本
+    
+        ```groovy
+        //必须项 👇
+        plugins {
+            ...
+            id 'android.aop'//最好放在最后一行
+        }
+        ```
 
-- 或者老版本
+    - 或者老版本
 
-    ```groovy
-    //必须项 👇
-    apply plugin: 'android.aop' //最好放在最后一行
-    ```
+        ```groovy
+        //必须项 👇
+        apply plugin: 'android.aop' //最好放在最后一行
+        ```
+
+=== "Kotlin"
+
+    - 新版本
+    
+        ```kotlin
+        //必须项 👇
+        plugins {
+            ...
+            id("android.aop")//最好放在最后一行
+        }
+        ```
+
+    - 或者老版本
+
+        ```kotlin
+        //必须项 👇
+        apply(plugin = "android.aop") //最好放在最后一行
+        ```
 
 !!! warning
     **⚠️⚠️⚠️`id 'android.aop'` 这句尽量放在最后一行，尤其是必须在 `id 'com.android.application'` 或 `id 'com.android.library'` 的后边**
@@ -81,6 +126,8 @@
 
 - 直接在 **app** 的 ```build.gradle``` 添加
 
+=== "Groovy"
+
     ```groovy
     //必须项 👇
     plugins {
@@ -89,43 +136,90 @@
     }
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    //必须项 👇
+    plugins {
+        ...
+        id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.2.5"//最好放在最后一行
+    }
+    ```
+
 ### 二、如果你需要自定义切面，并且代码是 ```Kotlin``` (非必须)
 
 - 在 **项目根目录** 的 ```build.gradle``` 里依赖插件
 
-```groovy
-plugins {
-    //非必须项 👇，如果需要自定义切面，并且使用 android-aop-ksp 这个库的话需要配置 ，下边版本号根据你项目的 Kotlin 版本决定
-    id 'com.google.devtools.ksp' version '1.8.0-1.0.9' apply false
-}
-```
+=== "Groovy"
+
+    ```groovy
+    plugins {
+        //非必须项 👇，如果需要自定义切面，并且使用 android-aop-ksp 这个库的话需要配置 ，下边版本号根据你项目的 Kotlin 版本决定
+        id 'com.google.devtools.ksp' version '1.8.0-1.0.9' apply false
+    }
+    ```
+=== "Kotlin"
+
+    ```kotlin
+        plugins {
+        //非必须项 👇，如果需要自定义切面，并且使用 android-aop-ksp 这个库的话需要配置 ，下边版本号根据你项目的 Kotlin 版本决定
+        id("com.google.devtools.ksp") version "1.8.0-1.0.9" apply false
+    }
+    ```
+
 [Kotlin 和 KSP Github 的匹配版本号列表](https://github.com/google/ksp/releases)
 
 ### 三、引入依赖库(必须)
+=== "Groovy"
 
-```groovy
-plugins {
-    //非必须项 👇，如果需要自定义切面，并且使用 android-aop-ksp 这个库的话需要配置 
-    id 'com.google.devtools.ksp'
-}
+    ```groovy
+    plugins {
+        //非必须项 👇，如果需要自定义切面，并且使用 android-aop-ksp 这个库的话需要配置 
+        id 'com.google.devtools.ksp'
+    }
+    
+    dependencies {
+        //必须项 👇
+        implementation "io.github.FlyJingFish.AndroidAop:android-aop-core:2.2.5"
+        //非必须项 👇这个包提供了一些常见的注解切面
+        implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.2.5"
+        
+        //必须项 👇如果您项目内已经有了这项不用加也可以
+        implementation "androidx.appcompat:appcompat:1.3.0' // 至少在1.3.0及以上
+        
+        //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
+        ksp "io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.2.5"
+        
+        //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
+        annotationProcessor "io.github.FlyJingFish.AndroidAop:android-aop-processor:2.2.5"
+        //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
+    }
+    ```
+=== "Kotlin"
 
-dependencies {
-    //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:2.2.5'
-    //非必须项 👇这个包提供了一些常见的注解切面
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-extra:2.2.5'
+    ```kotlin
+    plugins {
+        //非必须项 👇，如果需要自定义切面，并且使用 android-aop-ksp 这个库的话需要配置 
+        id("com.google.devtools.ksp")
+    }
     
-    //必须项 👇如果您项目内已经有了这项不用加也可以
-    implementation 'androidx.appcompat:appcompat:1.3.0' // 至少在1.3.0及以上
-    
-    //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.2.5'
-    
-    //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:2.2.5'
-    //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
-}
-```
+    dependencies {
+        //必须项 👇
+        implementation("io.github.FlyJingFish.AndroidAop:android-aop-core:2.2.5")
+        //非必须项 👇这个包提供了一些常见的注解切面
+        implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.2.5")
+        
+        //必须项 👇如果您项目内已经有了这项不用加也可以
+        implementation("androidx.appcompat:appcompat:1.3.0") // 至少在1.3.0及以上
+        
+        //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
+        ksp("io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.2.5")
+        
+        //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
+        annotationProcessor("io.github.FlyJingFish.AndroidAop:android-aop-processor:2.2.5")
+        //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
+    }
+    ```
 
 !!! note
     提示：ksp 或 annotationProcessor只能扫描当前 module ，在哪个 module 中有自定义切面代码就加在哪个 module，**但是自定义的切面代码是全局生效的**；必须依赖项可以通过 api 方式只加到公共 module 上
@@ -134,29 +228,58 @@ dependencies {
 
 - 相关开发配置
 
-```groovy
-plugins {
-    ...
-    id 'android.aop'//最好放在最后一行
-}
-androidAopConfig {
-    // enabled 为 false 切面不再起作用，默认不写为 true
-    enabled true 
-    // include 不设置默认全部扫描，设置后只扫描设置的包名的代码
-    include '你项目的包名','自定义module的包名','自定义module的包名'
-    // exclude 是扫描时排除的包
-    // 可排除 kotlin 相关，提高速度
-    exclude 'kotlin.jvm', 'kotlin.internal','kotlinx.coroutines.internal', 'kotlinx.coroutines.android'
-    
-    // verifyLeafExtends 是否开启验证叶子继承，默认打开，@AndroidAopMatchClassMethod 和 @AndroidAopCollectMethod 如果没有设置 LEAF_EXTENDS，可以关闭
-    verifyLeafExtends true
-    //默认关闭，开启在 Build 或 打包后 将会生成切点信息json文件在 app/build/tmp/cutInfo.json
-    cutInfoJson false
-}
-android {
-    ...
-}
-```
+=== "Groovy"
+
+    ```groovy
+    plugins {
+        ...
+        id 'android.aop'//最好放在最后一行
+    }
+    androidAopConfig {
+        // enabled 为 false 切面不再起作用，默认不写为 true
+        enabled true 
+        // include 不设置默认全部扫描，设置后只扫描设置的包名的代码
+        include '你项目的包名','自定义module的包名','自定义module的包名'
+        // exclude 是扫描时排除的包
+        // 可排除 kotlin 相关，提高速度
+        exclude 'kotlin.jvm', 'kotlin.internal','kotlinx.coroutines.internal', 'kotlinx.coroutines.android'
+        
+        // verifyLeafExtends 是否开启验证叶子继承，默认打开，@AndroidAopMatchClassMethod 和 @AndroidAopCollectMethod 如果没有设置 LEAF_EXTENDS，可以关闭
+        verifyLeafExtends true
+        //默认关闭，开启在 Build 或 打包后 将会生成切点信息json文件在 app/build/tmp/cutInfo.json
+        cutInfoJson false
+    }
+    android {
+        ...
+    }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    plugins {
+        ...
+        id("android.aop")//最好放在最后一行
+    }
+    androidAopConfig {
+        // enabled 为 false 切面不再起作用，默认不写为 true
+        enabled = true 
+        // include 不设置默认全部扫描，设置后只扫描设置的包名的代码
+        include("你项目的包名","自定义module的包名","自定义module的包名")
+        // exclude 是扫描时排除的包
+        // 可排除 kotlin 相关，提高速度
+        exclude("kotlin.jvm", "kotlin.internal","kotlinx.coroutines.internal", "kotlinx.coroutines.android")
+        
+        // verifyLeafExtends 是否开启验证叶子继承，默认打开，@AndroidAopMatchClassMethod 和 @AndroidAopCollectMethod 如果没有设置 LEAF_EXTENDS，可以关闭
+        verifyLeafExtends = true
+        //默认关闭，开启在 Build 或 打包后 将会生成切点信息json文件在 app/build/tmp/cutInfo.json
+        cutInfoJson = false
+    }
+    android {
+        ...
+    }
+    ```
+
 !!! note
     **1、include 和 exclude支持精确设置为一个类**<br>
     **2、合理使用 include 和 exclude 可提高编译速度，建议直接使用 include 设置你项目的相关包名（包括 app 和自定义 module 的）**<br>
@@ -190,13 +313,22 @@ android {
 - ~~**方式二：（不推荐）**~~
 
     请按照上述[步骤一的方式一配置项目](#apply)后，手动为 **需要的子 module 模块** 设置，例如：
+    === "Groovy"
 
-    ```groovy
-    plugins {
-        ...
-        id 'android.aop'//最好放在最后一行，尤其是必须在 `id 'com.android.application'` 或 `id 'com.android.library'` 的后边
-    }
-    ```
+        ```groovy
+        plugins {
+            ...
+            id 'android.aop'//最好放在最后一行，尤其是必须在 `id 'com.android.application'` 或 `id 'com.android.library'` 的后边
+        }
+        ```
+    === "Kotlin"
+
+        ```kotlin
+        plugins {
+            ...
+            id("android.aop")//最好放在最后一行，尤其是必须在 `id("com.android.application")` 或 `id("com.android.library")` 的后边
+        }
+        ```
 
 
 !!! note
@@ -314,31 +446,31 @@ androidAop.debugMode.buildConfig = true //设置为 true 表示导出一个 Debu
 
 - 创建注解(将 @AndroidAopPointCut 加到你的注解上)
 
-```kotlin
-@AndroidAopPointCut(CustomInterceptCut::class)
-@Target(
-        AnnotationTarget.FUNCTION,
-        AnnotationTarget.PROPERTY_GETTER,
-        AnnotationTarget.PROPERTY_SETTER
-)
-@Retention(
-        AnnotationRetention.RUNTIME
-)
-annotation class CustomIntercept(vararg val value: String = [])
-```
+=== "Kotlin"
+    
+    ```kotlin
+    @AndroidAopPointCut(CustomInterceptCut::class)
+    @Target(
+            AnnotationTarget.FUNCTION,
+            AnnotationTarget.PROPERTY_GETTER,
+            AnnotationTarget.PROPERTY_SETTER
+    )
+    @Retention(
+            AnnotationRetention.RUNTIME
+    )
+    annotation class CustomIntercept(vararg val value: String = [])
+    ```
 
-<details>
-<summary><strong>Java写法:</strong></summary>
+=== "Java"
 
-```java
-@AndroidAopPointCut(CustomInterceptCut.class)
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface CustomIntercept {
-    String[] value() default {};
-}
-```
-</details>
+    ```java
+    @AndroidAopPointCut(CustomInterceptCut.class)
+    @Target({ElementType.METHOD})
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface CustomIntercept {
+        String[] value() default {};
+    }
+    ```
 
 - 创建注解处理切面的类（需要实现 BasePointCut 接口，它的泛型填上边的注解）
 
@@ -523,53 +655,53 @@ public class ReplaceImageView extends ImageView {
 
 使用起来极其简单，示例代码已经说明了[详细使用方式](/AndroidAOP/zh/AndroidAopCollectMethod)
 
-- Kotlin
+=== "Kotlin"
 
-```kotlin
-object InitCollect {
-    private val collects = mutableListOf<SubApplication>()
-    private val collectClazz: MutableList<Class<out SubApplication>> = mutableListOf()
-
-    @AndroidAopCollectMethod
-    @JvmStatic
-    fun collect(sub: SubApplication){
-      collects.add(sub)
-    }
-    @AndroidAopCollectMethod
-    @JvmStatic
-    fun collect2(sub:Class<out SubApplication>){
-      collectClazz.add(sub)
-    }
-  //直接调这个方法（方法名不限）上边的函数会被悉数回调
-    fun init(application: Application){
-        for (collect in collects) {
-            collect.onCreate(application)
+    ```kotlin
+    object InitCollect {
+        private val collects = mutableListOf<SubApplication>()
+        private val collectClazz: MutableList<Class<out SubApplication>> = mutableListOf()
+    
+        @AndroidAopCollectMethod
+        @JvmStatic
+        fun collect(sub: SubApplication){
+          collects.add(sub)
+        }
+        @AndroidAopCollectMethod
+        @JvmStatic
+        fun collect2(sub:Class<out SubApplication>){
+          collectClazz.add(sub)
+        }
+      //直接调这个方法（方法名不限）上边的函数会被悉数回调
+        fun init(application: Application){
+            for (collect in collects) {
+                collect.onCreate(application)
+            }
         }
     }
-}
-```
+    ```
+=== "Java"
 
-- Java
+    ```java
+    public class InitCollect2 {
+        private static final List<SubApplication2> collects = new ArrayList<>();
+        private static final List<Class<? extends SubApplication2>> collectClazz = new ArrayList<>();
 
-```java
-public class InitCollect2 {
-    private static final List<SubApplication2> collects = new ArrayList<>();
-    private static final List<Class<? extends SubApplication2>> collectClazz = new ArrayList<>();
-    @AndroidAopCollectMethod
-    public static void collect(SubApplication2 sub){
-        collects.add(sub);
-    }
-
-    @AndroidAopCollectMethod
-    public static void collect3(Class<? extends SubApplication2> sub){
-        collectClazz.add(sub);
-    }
-  //直接调这个方法（方法名不限）上边的函数会被悉数回调
-    public static void init(Application application){
-        Log.e("InitCollect2","----init----");
-        for (SubApplication2 collect : collects) {
-            collect.onCreate(application);
+        @AndroidAopCollectMethod
+        public static void collect(SubApplication2 sub){
+            collects.add(sub);
+        }
+    
+        @AndroidAopCollectMethod
+        public static void collect3(Class<? extends SubApplication2> sub){
+            collectClazz.add(sub);
+        }
+      //直接调这个方法（方法名不限）上边的函数会被悉数回调
+        public static void init(Application application){
+            Log.e("InitCollect2","----init----");
+            for (SubApplication2 collect : collects) {
+                collect.onCreate(application);
+            }
         }
     }
-}
-```
+    ```

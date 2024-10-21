@@ -19,28 +19,51 @@
 Depend on the plug-in in <code>build.gradle</code> in the <strong>project root directory</strong>
 </p>  
 
-- Using the **plugins DSL**:
-  ```groovy
-  
-  plugins {
-      //Required item 👇 apply is set to true to automatically apply debugMode to all modules, if false, follow step 5 below.
-      id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.2.5" apply true
-  }
-  ```
-  <details>
-  <summary><strong>Using legacy plugin application:</strong></summary>
+=== "Groovy"
 
-  ```groovy
-  buildscript {
-       dependencies {
-           //Required items 👇
-           classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.2.5'
-       }
-  }
-  //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below.
-  apply plugin: "android.aop"
-  ```
-  </details>
+    - Using the **plugins DSL**:
+        ```groovy
+        
+        plugins {
+          //Required item 👇 apply is set to true to automatically apply debugMode to all modules, if false, follow step 5 below.
+          id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.2.5" apply true
+        }
+        ```
+    - Using **legacy plugin application**:
+    
+        ```groovy
+        buildscript {
+             dependencies {
+                 //Required items 👇
+                 classpath "io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.2.5"
+             }
+        }
+        //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below.
+        apply plugin: "android.aop"
+        ```
+
+=== "Kotlin"
+
+    - Using the **plugins DSL**:
+        ```kotlin
+        
+        plugins {
+          //Required item 👇 apply is set to true to automatically apply debugMode to all modules, if false, follow step 5 below.
+          id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.2.5" apply true
+        }
+        ```
+    - Using **legacy plugin application**:
+    
+        ```kotlin
+        buildscript {
+             dependencies {
+                 //Required items 👇
+                 classpath("io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.2.5")
+             }
+        }
+        //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below.
+        apply(plugin = "android.aop")
+        ```
 
 <p align = "left">    
 <picture>
@@ -54,74 +77,148 @@ Depend on the plug-in in <code>build.gradle</code> in the <strong>project root d
  Add in <code>build.gradle</code> of <strong>app</strong>
 </p>  
 
-- Using the **plugins DSL**:
-  ```groovy
-  //Required items 👇
-  plugins {
-       ...
-       id 'android.aop'//It is best to put it on the last line
-  }
-  ```
-  <details>
-  <summary><strong>Using legacy plugin application:</strong></summary>
+=== "Groovy"
 
-  ```groovy
-  //Required items 👇
-  apply plugin: 'android.aop' //It's best to put it on the last line
-  ```
+    - Using the **plugins DSL**:
 
-  </details>
+        ```groovy
+        //Required items 👇
+        plugins {
+            ...
+            id 'android.aop'//It is best to put it on the last line
+        }
+        ```
+    
+    - Using **legacy plugin application**:
+    
+        ```groovy
+        //Required items 👇
+        apply plugin: 'android.aop' //It's best to put it on the last line
+        ```
+
+=== "Kotlin"
+
+    - Using the **plugins DSL**:
+
+        ```kotlin
+        //Required items 👇
+        plugins {
+            ...
+            id("android.aop")//It is best to put it on the last line
+        }
+        ```
+    
+    - Using **legacy plugin application**:
+    
+        ```kotlin
+        //Required items 👇
+        apply(plugin = "android.aop") //It's best to put it on the last line
+        ```
+
 
 #### ~~Method 2: ```plugins``` method~~
 
 - Add directly to ```build.gradle``` of **app**
-  ```groovy
-  //Required items 👇
-  plugins {
+
+=== "Groovy"
+
+    ```groovy
+    //Required items 👇
+    plugins {
        ...
        id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.2.5"
-  }
-  ```
+    }
+    ```
 
+=== "Kotlin"
 
-
-
+    ```kotlin
+    //Required items 👇
+    plugins {
+       ...
+       id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.2.5"
+    }
+    ```
 
 ### 2. If you need to customize aspects, and the code is ```Kotlin``` (optional)
 
 - Depend on the plug-in in ```build.gradle``` in the **project root directory**
-```groovy
-plugins {
-     //Optional 👇, if you need to customize aspects and use the android-aop-ksp library, you need to configure it. The version number below is determined according to the Kotlin version of your project
-     id 'com.google.devtools.ksp' version '1.8.0-1.0.9' apply false
-}
-```
+
+=== "Groovy"
+
+    ```groovy
+    
+    plugins {
+        //Optional 👇, if you need to customize aspects and use the android-aop-ksp library, you need to configure it. The version number below is determined according to the Kotlin version of your project
+        id 'com.google.devtools.ksp' version '1.8.0-1.0.9' apply false
+    }
+    ```
+
+=== "Kotlin"
+
+
+    ```kotlin
+    
+    plugins {
+        //Optional 👇, if you need to customize aspects and use the android-aop-ksp library, you need to configure it. The version number below is determined according to the Kotlin version of your project
+        id("com.google.devtools.ksp") version "1.8.0-1.0.9" apply false
+    }
+    ```
+
 [List of matching version numbers for Kotlin and KSP Github](https://github.com/google/ksp/releases)
 
 ### 3. Introduce dependent libraries (required)
 
-```groovy
-plugins {
-     //Optional 👇, if you need to customize aspects and use the android-aop-ksp library, you need to configure it
-     id 'com.google.devtools.ksp'
-}
+=== "Groovy"
 
-dependencies {
-     //Required items 👇
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:2.2.5'
-     //Optional 👇This package provides some common annotation aspects
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-extra:2.2.5'
+    ```groovy
+    plugins {
+         //Optional 👇, if you need to customize aspects and use the android-aop-ksp library, you need to configure it
+         id 'com.google.devtools.ksp'
+    }
     
-     //Required item 👇If you already have this item in your project, you don’t need to add it.
-     implementation 'androidx.appcompat:appcompat:1.3.0' // At least in 1.3.0 and above
-     
-     //Optional 👇, if you want to customize aspects, you need to use them, ⚠️supports aspects written in Java and Kotlin code
-     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.2.5'
-     //Optional 👇, if you want to customize aspects, you need to use them, ⚠️only applies to aspects written in Java code
-     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:2.2.5'
-     //⚠️Choose one of the above android-aop-ksp and android-aop-processor
-}
-```
+    dependencies {
+         //Required items 👇
+         implementation "io.github.FlyJingFish.AndroidAop:android-aop-core:2.2.5"
+         //Optional 👇This package provides some common annotation aspects
+         implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.2.5"
+        
+         //Required item 👇If you already have this item in your project, you don’t need to add it.
+         implementation "androidx.appcompat:appcompat:1.3.0" // At least in 1.3.0 and above
+         
+         //Optional 👇, if you want to customize aspects, you need to use them, ⚠️supports aspects written in Java and Kotlin code
+         ksp "io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.2.5"
+         //Optional 👇, if you want to customize aspects, you need to use them, ⚠️only applies to aspects written in Java code
+         annotationProcessor "io.github.FlyJingFish.AndroidAop:android-aop-processor:2.2.5"
+         //⚠️Choose one of the above android-aop-ksp and android-aop-processor
+    }
+    ```
+
+=== "Kotlin"
+    
+    ```kotlin
+    plugins {
+         //Optional 👇, if you need to customize aspects and use the android-aop-ksp library, you need to configure it
+         id("com.google.devtools.ksp")
+    }
+    
+    dependencies {
+         //Required items 👇
+         implementation("io.github.FlyJingFish.AndroidAop:android-aop-core:2.2.5")
+         //Optional 👇This package provides some common annotation aspects
+         implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.2.5")
+        
+         //Required item 👇If you already have this item in your project, you don’t need to add it.
+         implementation("androidx.appcompat:appcompat:1.3.0") // At least in 1.3.0 and above
+         
+         //Optional 👇, if you want to customize aspects, you need to use them, ⚠️supports aspects written in Java and Kotlin code
+         ksp("io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.2.5")
+         //Optional 👇, if you want to customize aspects, you need to use them, ⚠️only applies to aspects written in Java code
+         annotationProcessor("io.github.FlyJingFish.AndroidAop:android-aop-processor:2.2.5")
+         //⚠️Choose one of the above android-aop-ksp and android-aop-processor
+    }
+    ```
+
 !!! note
     Tip: ksp or annotationProcessor can only scan the current module. Custom aspect codes are added to the module where they are located. **But custom aspect codes are globally effective**; required dependencies can be added only to public modules through the API.
 
@@ -129,29 +226,59 @@ dependencies {
 
 - Related development configurations
 
-```groovy
-plugins {
-     ...
-     id 'android.aop'//It is best to put it on the last line
-}
-androidAopConfig {
-     // enabled is false, the aspect no longer works, the default is not written as true
-     enabled true
-     // include does not set all scans by default. After setting, only the code of the set package name will be scanned.
-     include 'Package name of your project', 'Package name of custom module', 'Package name of custom module'
-     // exclude is the package excluded during scanning
-     // Can exclude kotlin related and improve speed
-     exclude 'kotlin.jvm', 'kotlin.internal','kotlinx.coroutines.internal', 'kotlinx.coroutines.android'
+=== "Groovy"
+
+    ```groovy
+    plugins {
+         ...
+         id 'android.aop'//It is best to put it on the last line
+    }
+    androidAopConfig {
+         // enabled is false, the aspect no longer works, the default is not written as true
+         enabled true
+         // include does not set all scans by default. After setting, only the code of the set package name will be scanned.
+         include 'Package name of your project', 'Package name of custom module', 'Package name of custom module'
+         // exclude is the package excluded during scanning
+         // Can exclude kotlin related and improve speed
+         exclude 'kotlin.jvm', 'kotlin.internal','kotlinx.coroutines.internal', 'kotlinx.coroutines.android'
+        
+         // verifyLeafExtends Whether to turn on verification leaf inheritance, it is turned on by default. If type = MatchType.LEAF_EXTENDS of @AndroidAopMatchClassMethod is not set, it can be turned off.
+         verifyLeafExtends true
+         //Off by default, if enabled in Build or after packaging, the point cut information json file will be generated in app/build/tmp/cutInfo.json
+         cutInfoJson false
+    }
+    android {
+         ...
+    }
+    ```
+
+=== "Kotlin"
+
     
-     // verifyLeafExtends Whether to turn on verification leaf inheritance, it is turned on by default. If type = MatchType.LEAF_EXTENDS of @AndroidAopMatchClassMethod is not set, it can be turned off.
-     verifyLeafExtends true
-     //Off by default, if enabled in Build or after packaging, the point cut information json file will be generated in app/build/tmp/cutInfo.json
-     cutInfoJson false
-}
-android {
-     ...
-}
-```
+    ```kotlin
+    plugins {
+         ...
+         id("android.aop")//It is best to put it on the last line
+    }
+    androidAopConfig {
+         // enabled is false, the aspect no longer works, the default is not written as true
+         enabled = true
+         // include does not set all scans by default. After setting, only the code of the set package name will be scanned.
+         include("Package name of your project", "Package name of custom module", "Package name of custom module")
+         // exclude is the package excluded during scanning
+         // Can exclude kotlin related and improve speed
+         exclude("kotlin.jvm", "kotlin.internal","kotlinx.coroutines.internal", "kotlinx.coroutines.android")
+        
+         // verifyLeafExtends Whether to turn on verification leaf inheritance, it is turned on by default. If type = MatchType.LEAF_EXTENDS of @AndroidAopMatchClassMethod is not set, it can be turned off.
+         verifyLeafExtends = true
+         //Off by default, if enabled in Build or after packaging, the point cut information json file will be generated in app/build/tmp/cutInfo.json
+         cutInfoJson = false
+    }
+    android {
+         ...
+    }
+    ```
+
 !!! note
     1. Include and exclude support precise setting to a class<br>
     2. Reasonable use of include and exclude can improve compilation speed. It is recommended to use include to set the relevant package name of your project (including app and custom module)<br>
@@ -181,12 +308,23 @@ For <strong>all sub-modules</strong> also rely on plug-ins, please follow the ab
   
     Please configure the project according to the above [Step 1 Method 1 to configure the project](#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required), and then manually set the required sub-module module, for example:
 
-    ```groovy
-    plugins {
-         ...
-         id 'android.aop'//It is best to put it on the last line
-    }
-    ```
+    === "Groovy"
+
+        ```groovy
+        plugins {
+             ...
+             id 'android.aop'//It is best to put it on the last line
+        }
+        ```
+
+    === "Kotlin"
+
+        ```kotlin
+        plugins {
+             ...
+             id("android.aop")//It is best to put it on the last line
+        }
+        ```
 
 !!! note
     1. This method can only apply debugMode to the modules you have added, and the related aspects in the modules that have not been added will not take effect <br>
@@ -299,31 +437,30 @@ androidAop.debugMode.buildConfig = true //If set to true, it means exporting a D
 
 - Create annotations(You need to implement the BasePointCut interface, and fill in the annotations above for its generic type)
 
-    ```kotlin
-    @AndroidAopPointCut(CustomInterceptCut::class)
-    @Target(
-        AnnotationTarget.FUNCTION,
-        AnnotationTarget.PROPERTY_GETTER,
-        AnnotationTarget.PROPERTY_SETTER
-    )
-    @Retention(
-        AnnotationRetention.RUNTIME
-    )
-    annotation class CustomIntercept(vararg val value: String = [])
-    ```
+    === "Kotlin"
     
-    <details>
-    <summary><strong>Java writing method:</strong></summary>
+        ```kotlin
+        @AndroidAopPointCut(CustomInterceptCut::class)
+        @Target(
+            AnnotationTarget.FUNCTION,
+            AnnotationTarget.PROPERTY_GETTER,
+            AnnotationTarget.PROPERTY_SETTER
+        )
+        @Retention(
+            AnnotationRetention.RUNTIME
+        )
+        annotation class CustomIntercept(vararg val value: String = [])
+        ```
     
-    ```java
-    @AndroidAopPointCut(CustomInterceptCut.class)
-    @Target({ElementType.METHOD})
-    @Retention(RetentionPolicy.RUNTIME)
-    public @interface CustomIntercept {
-        String[] value() default {};
-    }
-    ```
-    </details>
+    === "Java"
+        ```java
+        @AndroidAopPointCut(CustomInterceptCut.class)
+        @Target({ElementType.METHOD})
+        @Retention(RetentionPolicy.RUNTIME)
+        public @interface CustomIntercept {
+            String[] value() default {};
+        }
+        ```
 
 - Create a class that annotates the aspect (needs to implement the BasePointCut interface, and fill in the above annotation with its generic type)
 
@@ -512,43 +649,57 @@ androidAop.debugMode.buildConfig = true //If set to true, it means exporting a D
 
 &emsp;&emsp;It is extremely simple to use, the sample code has already explained
 
-- Kotlin
+- Example
 
-    ```kotlin
-    object InitCollect {
-         private val collects = mutableListOf<SubApplication>()
+    === "Kotlin"
     
-         @AndroidAopCollectMethod
-         @JvmStatic
-         fun collect(sub: SubApplication){
-           collects.add(sub)
-         }
-      
-         // Call this method directly. The collects collection contains data.
-         fun init(application: Application){
-             for (collect in collects) {
-                 collect.onCreate(application)
-             }
-         }
-    }
-    ```
-
-- Java
-
-    ```java
-    public class InitCollect2 {
-         private static List<SubApplication2> collects = new ArrayList<>();
-         @AndroidAopCollectMethod
-         public static void collect(SubApplication2 sub){
-             collects.add(sub);
-         }
+        ```kotlin
+        object InitCollect {
+            private val collects = mutableListOf<SubApplication>()
+            private val collectClazz: MutableList<Class<out SubApplication>> = mutableListOf()
         
-         // Call this method directly. The collects collection contains data.
-         public static void init(Application application){
-             Log.e("InitCollect2","----init----");
-             for (SubApplication2 collect : collects) {
-                 collect.onCreate(application);
-             }
-         }
-    }
-    ```
+            @AndroidAopCollectMethod
+            @JvmStatic
+            fun collect(sub: SubApplication){
+              collects.add(sub)
+            }
+            @AndroidAopCollectMethod
+            @JvmStatic
+            fun collect2(sub:Class<out SubApplication>){
+              collectClazz.add(sub)
+            }
+            // Call this method directly. The collects collection contains data.
+            fun init(application: Application){
+                for (collect in collects) {
+                    collect.onCreate(application)
+                }
+            }
+        }
+        ```
+    
+    === "Java"
+    
+        ```java
+        public class InitCollect2 {
+            private static final List<SubApplication2> collects = new ArrayList<>();
+            private static final List<Class<? extends SubApplication2>> collectClazz = new ArrayList<>();
+    
+            @AndroidAopCollectMethod
+            public static void collect(SubApplication2 sub){
+                collects.add(sub);
+            }
+        
+            @AndroidAopCollectMethod
+            public static void collect3(Class<? extends SubApplication2> sub){
+                collectClazz.add(sub);
+            }
+            // Call this method directly. The collects collection contains data.
+            public static void init(Application application){
+                Log.e("InitCollect2","----init----");
+                for (SubApplication2 collect : collects) {
+                    collect.onCreate(application);
+                }
+            }
+        }
+    
+        ```
