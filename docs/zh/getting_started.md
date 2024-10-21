@@ -185,7 +185,7 @@
         implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.2.5"
         
         //必须项 👇如果您项目内已经有了这项不用加也可以
-        implementation "androidx.appcompat:appcompat:1.3.0' // 至少在1.3.0及以上
+        implementation "androidx.appcompat:appcompat:1.3.0" // 至少在1.3.0及以上
         
         //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
         ksp "io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.2.5"
