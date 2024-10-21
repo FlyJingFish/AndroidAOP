@@ -1,12 +1,23 @@
 
 ### 引入依赖库
 
-```groovy
-dependencies {
-     //非必须项 👇这个包提供了一些常见的注解切面
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-extra:2.2.5'
-}
-```
+=== "Groovy"
+
+    ```groovy
+    dependencies {
+        //非必须项 👇这个包提供了一些常见的注解切面
+        implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.2.5"
+    }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    dependencies {
+        //非必须项 👇这个包提供了一些常见的注解切面
+        implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.2.5")
+    }
+    ```
 
 ### 本库内置了一些功能注解可供你直接使用
 

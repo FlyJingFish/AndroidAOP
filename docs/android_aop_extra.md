@@ -1,12 +1,23 @@
 
 ### Introduce dependent libraries 
 
-```groovy
-dependencies {
-     //Optional 👇This package provides some common annotation aspects
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-extra:2.2.5'
-}
-```
+=== "Groovy"
+
+    ```groovy
+    dependencies {
+         //Optional 👇This package provides some common annotation aspects
+         implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.2.5"
+    }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    dependencies {
+         //Optional 👇This package provides some common annotation aspects
+         implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.2.5")
+    }
+    ```
 
 ### This library has some built-in functional annotations for you to use directly.
 
