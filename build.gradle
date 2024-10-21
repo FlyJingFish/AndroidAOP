@@ -86,7 +86,7 @@ task aaBumpVersion() {
 
         File gradleFile = new File("gradle.properties")
         String gradleText = gradleFile.text
-        String text2 = gradleText.replaceAll("TestVersion = "+oldVersionName,"TestVersion = "+newVersionName)
+        String text2 = gradleText.replace("TestVersion = "+oldVersionName,"TestVersion = "+newVersionName)
 
 
         gradleFile.write(text2)
@@ -98,13 +98,14 @@ task aaBumpVersion() {
 def updateREADME(readme,oldVersionName,newVersionName) {
     File configFile = new File(readme)
     String exportText = configFile.text
-    String text = exportText.replaceAll("io.github.FlyJingFish.AndroidAop:android-aop-plugin:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-plugin:"+newVersionName)
-    text = text.replaceAll("io.github.FlyJingFish.AndroidAop:android-aop-core:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-core:"+newVersionName)
-    text = text.replaceAll("io.github.FlyJingFish.AndroidAop:android-aop-annotation:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-annotation:"+newVersionName)
-    text = text.replaceAll("io.github.FlyJingFish.AndroidAop:android-aop-extra:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-extra:"+newVersionName)
-    text = text.replaceAll("io.github.FlyJingFish.AndroidAop:android-aop-processor:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-processor:"+newVersionName)
-    text = text.replaceAll("io.github.FlyJingFish.AndroidAop:android-aop-ksp:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-ksp:"+newVersionName)
-    text = text.replaceAll("id \"io.github.FlyJingFish.AndroidAop.android-aop\" version \""+oldVersionName+"\"","id \"io.github.FlyJingFish.AndroidAop.android-aop\" version \""+newVersionName+"\"")
+    String text = exportText.replace("io.github.FlyJingFish.AndroidAop:android-aop-plugin:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-plugin:"+newVersionName)
+    text = text.replace("io.github.FlyJingFish.AndroidAop:android-aop-core:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-core:"+newVersionName)
+    text = text.replace("io.github.FlyJingFish.AndroidAop:android-aop-annotation:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-annotation:"+newVersionName)
+    text = text.replace("io.github.FlyJingFish.AndroidAop:android-aop-extra:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-extra:"+newVersionName)
+    text = text.replace("io.github.FlyJingFish.AndroidAop:android-aop-processor:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-processor:"+newVersionName)
+    text = text.replace("io.github.FlyJingFish.AndroidAop:android-aop-ksp:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-ksp:"+newVersionName)
+    text = text.replace("id \"io.github.FlyJingFish.AndroidAop.android-aop\" version \""+oldVersionName+"\"","id \"io.github.FlyJingFish.AndroidAop.android-aop\" version \""+newVersionName+"\"")
+    text = text.replace("id(\"io.github.FlyJingFish.AndroidAop.android-aop\") version \""+oldVersionName+"\"","id(\"io.github.FlyJingFish.AndroidAop.android-aop\") version \""+newVersionName+"\"")
     configFile.write(text)
 }
 
