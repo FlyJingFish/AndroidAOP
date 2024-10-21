@@ -66,7 +66,7 @@ AndroidAop.INSTANCE.setOnThrowableListener(new OnThrowableListener() {
 });
 ```
 
-- @Permission 使用此注解必须配合以下设置（⚠️此步为必须设置的，否则是没效果的）
+- @Permission 使用此注解必须配合以下设置（:warning:此步为必须设置的，否则是没效果的）
 
     💡💡💡[完善使用启示](https://flyjingfish.github.io/AndroidAOP/zh/Implications/#4-permission)
 
@@ -104,7 +104,7 @@ AndroidAop.INSTANCE.setOnThrowableListener(new OnThrowableListener() {
     ```
 
     
-- @CustomIntercept 使用此注解你必须配合以下设置（⚠️此步为必须设置的，否则还有什么意义呢？）
+- @CustomIntercept 使用此注解你必须配合以下设置（:warning:此步为必须设置的，否则还有什么意义呢？）
     ```java
     AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener() {
         @Nullable

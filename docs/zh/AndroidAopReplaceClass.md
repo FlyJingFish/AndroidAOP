@@ -13,7 +13,7 @@
 
 ## 一、说明
 
-⚠️⚠️⚠️ 注意：定义的替换类要放到你设置的扫描规则之内 [就是这里 include exclude 的规则](/AndroidAOP/zh/getting_started/#app-buildgradle-androidaopconfig)，写在范围以外是不起作用的
+:warning::warning::warning: 注意：定义的替换类要放到你设置的扫描规则之内 [就是这里 include exclude 的规则](/AndroidAOP/zh/getting_started/#app-buildgradle-androidaopconfig)，写在范围以外是不起作用的
 
 ### @AndroidAopReplaceClass
 

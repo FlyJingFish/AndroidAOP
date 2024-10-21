@@ -141,7 +141,7 @@ public class MatchActivityMethod implements MatchClassMethod {
 }
 ```
 
-**⚠️Note: For matching subclass methods, if the subclass does not override the matching method, it is invalid. Use overrideMethod to ignore this limitation**
+**:warning:Note: For matching subclass methods, if the subclass does not override the matching method, it is invalid. Use overrideMethod to ignore this limitation**
 
 #### Example 2
 

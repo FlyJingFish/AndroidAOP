@@ -135,7 +135,7 @@ class MatchTestMatchMethod : MatchClassMethod {
 <img width="848" alt="image" src="https://github.com/user-attachments/assets/7b0ddabc-650b-40a2-8d9c-2a62f919ae66">
 
 
-- 3、否则请按如下步骤进行尝试(⚠️⚠️⚠️请注意以下只针对 Windows 电脑，mac电脑不应有此问题)
+- 3、否则请按如下步骤进行尝试(:warning::warning::warning:请注意以下只针对 Windows 电脑，mac电脑不应有此问题)
 
 ??? note "点此看更多详情"
 

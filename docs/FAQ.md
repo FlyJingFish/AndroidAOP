@@ -160,7 +160,7 @@ just optimizes and solves this problem.
 
 <img width="848" alt="image" src="https://github.com/user-attachments/assets/7b0ddabc-650b-40a2-8d9c-2a62f919ae66">
 
-- Otherwise, please try the following steps (⚠️⚠️⚠️Please note that the following is only for
+- Otherwise, please try the following steps (:warning::warning::warning:Please note that the following is only for
        Windows computers, and Mac computers should not have this problem)
 
 ??? note "Click here for more details"

@@ -70,7 +70,7 @@ AndroidAop.INSTANCE.setOnThrowableListener(new OnThrowableListener() {
 });
 ```
 
-- @Permission Use of this annotation must match the following settings (⚠️This step is required, otherwise it will have no effect)[Perfect usage inspiration](/AndroidAOP/Implications/#4-i-believe-that-when-you-use-the-permission-permission-you-may-think-that-now-you-only-get-permission-to-enter-the-method-but-there-is-no-callback-without-permission-the-following-example-teaches-you-how-to-do-it)
+- @Permission Use of this annotation must match the following settings (:warning:This step is required, otherwise it will have no effect)[Perfect usage inspiration](/AndroidAOP/Implications/#4-i-believe-that-when-you-use-the-permission-permission-you-may-think-that-now-you-only-get-permission-to-enter-the-method-but-there-is-no-callback-without-permission-the-following-example-teaches-you-how-to-do-it)
 ```java
 AndroidAop.INSTANCE.setOnPermissionsInterceptListener(new OnPermissionsInterceptListener() {
      @SuppressLint("CheckResult")
@@ -91,7 +91,7 @@ AndroidAop.INSTANCE.setOnPermissionsInterceptListener(new OnPermissionsIntercept
 });
 ```
 
-- @CustomIntercept To use this annotation you must match the following settings (⚠️This step is required, otherwise what’s the point?)
+- @CustomIntercept To use this annotation you must match the following settings (:warning:This step is required, otherwise what’s the point?)
 ```java
 AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener() {
     @Nullable

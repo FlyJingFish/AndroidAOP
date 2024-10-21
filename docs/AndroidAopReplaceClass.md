@@ -13,7 +13,7 @@ This aspect is used to replace the method call in the code, and needs to be used
 
 ## 1. Description
 
-⚠️⚠️⚠️ Note: The defined replacement class should be placed within the scan rules you set [here include exclude Rules](https://flyjingfish.github.io/AndroidAOP/getting_started/#4-add-the-androidaopconfig-configuration-item-in-apps-buildgradle-this-step-is-an-optional-configuration-item), it will not work if written outside the scope
+:warning::warning::warning: Note: The defined replacement class should be placed within the scan rules you set [here include exclude Rules](https://flyjingfish.github.io/AndroidAOP/getting_started/#4-add-the-androidaopconfig-configuration-item-in-apps-buildgradle-this-step-is-an-optional-configuration-item), it will not work if written outside the scope
 
 ### @AndroidAopReplaceClass
 

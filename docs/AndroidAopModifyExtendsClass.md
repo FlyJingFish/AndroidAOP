@@ -6,7 +6,7 @@ This function is relatively simple. It modifies the inherited class of a class. 
 
 In addition, if the class name is an internal class, do not use the `$` character, but `.`
 
-**⚠️⚠️⚠️But it should be noted that the modified inherited class cannot inherit the modified class. The inherited class of the modified class is generally set to the inherited class of the class before modification**
+**:warning::warning::warning:But it should be noted that the modified inherited class cannot inherit the modified class. The inherited class of the modified class is generally set to the inherited class of the class before modification**
 
 ## Usage example
 

@@ -154,7 +154,7 @@ public class MatchActivityMethod implements MatchClassMethod {
 }
 ```
 
-**⚠️注意：对于匹配子类方法的，如果子类没有重写匹配的方法，是无效的，使用 overrideMethod 可忽略此限制**
+**:warning:注意：对于匹配子类方法的，如果子类没有重写匹配的方法，是无效的，使用 overrideMethod 可忽略此限制**
 
 #### 例二
 
