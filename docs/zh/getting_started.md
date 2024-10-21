@@ -119,7 +119,7 @@
         ```
 
 !!! warning
-    **⚠️⚠️⚠️`id 'android.aop'` 这句尽量放在最后一行，尤其是必须在 `id 'com.android.application'` 或 `id 'com.android.library'` 的后边**
+    **:warning::warning::warning:`id 'android.aop'` 这句尽量放在最后一行，尤其是必须在 `id 'com.android.application'` 或 `id 'com.android.library'` 的后边**
 
 
 #### ~~方式二：```plugins``` 方式（不推荐）~~
@@ -286,7 +286,7 @@
     **3、@AndroidAopMatchClassMethod 和 @AndroidAopCollectMethod 如果没有设置 LEAF_EXTENDS,就主动设置 verifyLeafExtends 为 false 也可以提速**
 
 !!! warning
-    **⚠️⚠️⚠️设置完了 include 和 exclude 所有切面只在您设置规则之内才有效，麻烦记住自己的设置！另外设置此处之后由于 Android Studio 可能有缓存，建议先 clean 再继续开发**
+    **:warning::warning::warning:设置完了 include 和 exclude 所有切面只在您设置规则之内才有效，麻烦记住自己的设置！另外设置此处之后由于 Android Studio 可能有缓存，建议先 clean 再继续开发**
 
 ### 五、开发中可设置代码织入方式（此步为可选配置项，只为在开发过程中提高打包速度）
 
@@ -349,7 +349,7 @@
 androidAop.debugMode=true //设置为 true 走您项目当前的打包方式 ，false 则为全量打包方式，不写默认false
 ```
 !!! warning
-    **⚠️⚠️⚠️请注意设置为 true 时编译速度会变快但部分功能将失效，只会为设置的 module 织入 aop 代码，三方jar包 不会织入代码，因此打正式包时请注意关闭此项配置并clean项目**
+    **:warning::warning::warning:请注意设置为 true 时编译速度会变快但部分功能将失效，只会为设置的 module 织入 aop 代码，三方jar包 不会织入代码，因此打正式包时请注意关闭此项配置并clean项目**
 
 <p align = "left">    
 <picture>
@@ -548,7 +548,7 @@ androidAop.debugMode.buildConfig = true //设置为 true 表示导出一个 Debu
 
     可以看到上方 AndroidAopMatchClassMethod 设置的 type 是 MatchType.SELF 表示只匹配 TestMatch 这个类自身，不考虑其子类
     
-    ⚠️⚠️⚠️ 不是所有类都可以Hook进去，```type``` 类型为 ```SELF``` 时，```targetClassName``` 所设置的类必须是安装包里的代码。例如：Toast 这个类在 **android.jar** 里边是不行的
+    :warning: :warning: :warning: 不是所有类都可以Hook进去，```type``` 类型为 ```SELF``` 时，```targetClassName``` 所设置的类必须是安装包里的代码。例如：Toast 这个类在 **android.jar** 里边是不行的
 
 - 例子二
 
@@ -571,7 +571,7 @@ androidAop.debugMode.buildConfig = true //设置为 true 表示导出一个 Debu
     
     可以看到上方 AndroidAopMatchClassMethod 设置的 type 是 MatchType.EXTENDS 表示匹配所有继承自 OnClickListener 的子类，另外更多继承方式，[请参考Wiki文档](/AndroidAOP/zh/@AndroidAopMatchClassMethod/#_1)
     
-    **⚠️注意：如果子类没有该方法，则切面无效，使用 overrideMethod 可忽略此限制[详情点此](/AndroidAOP/zh/AndroidAopMatchClassMethod)**
+    **:warning:注意：如果子类没有该方法，则切面无效，使用 overrideMethod 可忽略此限制[详情点此](/AndroidAOP/zh/AndroidAopMatchClassMethod)**
 
 #### 三、**@AndroidAopReplaceClass** 是做替换方法调用的
 

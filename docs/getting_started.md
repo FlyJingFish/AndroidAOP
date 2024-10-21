@@ -115,6 +115,9 @@ Depend on the plug-in in <code>build.gradle</code> in the <strong>project root d
         apply(plugin = "android.aop") //It's best to put it on the last line
         ```
 
+!!! warning
+    **:warning::warning::warning:`id 'android.aop'` should be placed at the last line, especially after `id 'com.android.application'` or `id 'com.android.library'`**
+
 
 #### ~~Method 2: ```plugins``` method~~
 
@@ -285,7 +288,7 @@ Depend on the plug-in in <code>build.gradle</code> in the <strong>project root d
     3. If `LEAF_EXTENDS` is not set for `@AndroidAopMatchClassMethod` and `@AndroidAopCollectMethod`, setting `verifyLeafExtends` to false can also speed up
 
 !!! warning
-    ⚠️⚠️⚠️After setting include and exclude, all aspects are only valid within the rules you set. Please remember your settings! In addition, since Android Studio may have cache after setting here, it is recommended to clean before continuing development
+    :warning::warning::warning:After setting include and exclude, all aspects are only valid within the rules you set. Please remember your settings! In addition, since Android Studio may have cache after setting here, it is recommended to clean before continuing development
 
 ### 5. The code weaving method can be set during development (this step is an optional configuration item)
 
@@ -344,7 +347,7 @@ androidAop.debugMode=true //Set to true to use the current packaging method of y
 ```
 
 !!! warning
-    ⚠️⚠️⚠️ Please note that when set to true, the compilation speed will be faster but some functions will be invalid. Only the aop code will be woven into the set module. The third-party jar package will not weave in the code, so please be careful to turn it off when building the official package. Configure this and clean the project
+    :warning::warning::warning: Please note that when set to true, the compilation speed will be faster but some functions will be invalid. Only the aop code will be woven into the set module. The third-party jar package will not weave in the code, so please be careful to turn it off when building the official package. Configure this and clean the project
 
 <p align = "left">    
 <picture>
@@ -559,7 +562,7 @@ androidAop.debugMode.buildConfig = true //If set to true, it means exporting a D
     
     You can see that the type set by AndroidAopMatchClassMethod above is MatchType.EXTENDS, which means matching all subclasses inherited from OnClickListener. For more inheritance methods, [please refer to the Wiki document](https://flyjingfish.github.io/AndroidAOP/AndroidAopMatchClassMethod/#brief-description)
 
-    **⚠️Note: If the subclass does not have this method, the aspect will be invalid. In addition, do not match the same method multiple times in the same class, otherwise only one will take effect, Use overrideMethod to ignore this restriction [Click here for details](https://flyjingfish.github.io/AndroidAOP/AndroidAopMatchClassMethod)**
+    **:warning:Note: If the subclass does not have this method, the aspect will be invalid. In addition, do not match the same method multiple times in the same class, otherwise only one will take effect, Use overrideMethod to ignore this restriction [Click here for details](https://flyjingfish.github.io/AndroidAOP/AndroidAopMatchClassMethod)**
 
 
 #### **@AndroidAopReplaceClass** 
