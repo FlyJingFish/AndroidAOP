@@ -240,10 +240,6 @@ dependencies {
 
 [点此查看如何配置](https://flyjingfish.github.io/AndroidAOP/zh/getting_started/#_4)
 
-### 本库内置了一些功能注解可供你直接使用
-
-[点此查看如何配置](https://flyjingfish.github.io/AndroidAOP/zh/android_aop_extra/)
-
 
 ### 本库内置了一些功能注解可供你直接使用
 

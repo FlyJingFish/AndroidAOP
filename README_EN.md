@@ -234,10 +234,6 @@ dependencies {
 
 ### This library has some built-in functional annotations for you to use directly.
 
-[Click here to see how to configure](https://flyjingfish.github.io/AndroidAOP/android_aop_extra/)
-
-### This library has some built-in functional annotations for you to use directly.
-
 | Annotation name          |                                                                            Parameter description                                                                            |                                                                          Function description                                                                           |
 |--------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
 | @SingleClick             |                                                              value = interval of quick clicks, default 1000ms                                                               |                                      Click the annotation and add this annotation to make your method accessible only when clicked                                      |
