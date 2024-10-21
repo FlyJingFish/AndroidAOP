@@ -76,9 +76,9 @@ object Utils {
         }
 
         val realPackageName = if (packageName.contains("/")) {
-            packageName.replace("/", File.separator)
+            packageName.replace("/", ".")
         } else if (packageName.contains("\\")) {
-            packageName.replace("\\", File.separator)
+            packageName.replace("\\", ".")
         } else {
             packageName
         }
