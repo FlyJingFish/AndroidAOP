@@ -1,4 +1,12 @@
 
+## Version restrictions
+
+Minimum Gradle version: 7.6👇 (supports 8.0 and above)
+
+<img src="../screenshot/gradle_version.png" alt="show" />
+
+Minimum SDK version: minSdkVersion >= 21
+
 ## Steps for usage
 
 **Can you give the project a Star before starting? Thank you very much, your support is my only motivation. Stars and Issues are welcome!**

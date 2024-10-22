@@ -1,4 +1,12 @@
 
+## 版本限制
+
+最低Gradle版本：7.6👇（支持8.0以上）
+
+<img src="../../screenshot/gradle_version.png" alt="show" />
+
+最低SDK版本：minSdkVersion >= 21
+
 ## 使用步骤
 
 **在开始之前可以给项目一个Star吗？非常感谢，你的支持是我唯一的动力。欢迎Star和Issues!**
