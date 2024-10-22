@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
             var target = event.target || event.srcElement;      // 兼容处理
             if (target.nodeName.toLocaleLowerCase() === "a") {    // 判断是否匹配目标元素
                 const href = target.getAttribute("href");
-                if(href == '..' || href == '.'){
+                if(href == '..' || href == '.' || href == '../..'){
                     localStorage.setItem('isZh', "false");
                 }else{
                     localStorage.setItem('isZh', "true");
