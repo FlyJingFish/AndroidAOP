@@ -1,17 +1,32 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const languageSelectors = document.querySelectorAll(".md-select__item");
+    let currentPath = window.location.pathname;
+    const isZh = currentPath.includes("/zh/");
 
+    const languageSelectorsLink = document.querySelectorAll(".md-select__link");
+    languageSelectorsLink.forEach(function(element) {
+        var attributeValue = element.getAttribute('hreflang'); // 获取每个元素的 data-id 属性值
+//        console.log('itemLang='+attributeValue);
+        if(isZh){
+            if (attributeValue == "zh") {
+               element.parentElement.style.display = 'none';
+            }
+        }else{
+            if (attributeValue != "zh") {
+               element.parentElement.style.display = 'none';
+            }
+        }
+    });
+
+    const languageSelectors = document.querySelectorAll(".md-select__item");
     languageSelectors.forEach(selector => {
         selector.addEventListener("click", function () {
             var target = event.target || event.srcElement;      // 兼容处理
             if (target.nodeName.toLocaleLowerCase() === "a") {    // 判断是否匹配目标元素
                 const selectedLang = target.getAttribute("hreflang");
-                let currentPath = window.location.pathname;
 				// let hash = window.location.hash;
                 // console.log('currentPath='+currentPath);
                 // console.log('selectedLang='+selectedLang);
                 event.preventDefault();
-                const isZh = currentPath.includes("/zh/");
 				// console.log('isZh='+isZh);
 				// console.log('hash='+hash);
 				
@@ -39,7 +54,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 
-    let currentPath = window.location.pathname;
 
     // 可以在这里操作 DOM
     if(currentPath == "/AndroidAOP/"){//首页
@@ -51,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     //在这保存1
-    const isZh = currentPath.includes("/zh/");
+
     localStorage.setItem("isZh",isZh+"");
 
     const languageSelectors2 = document.querySelectorAll(".md-tabs__link");
