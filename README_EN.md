@@ -76,13 +76,13 @@
 
 #### [Click here to download apk, or scan the QR code below to download](https://github.com/FlyJingFish/AndroidAOP/blob/master/apk/product/release/app-product-release.apk?raw=true)
 
-<img src="/screenshot/qrcode.png" alt="show" width="200px" />
+<img src="/docs/screenshot/qrcode.png" alt="show" width="200px" />
 
 ### Version restrictions
 
 Minimum Gradle version: 7.6👇
 
-<img src="/screenshot/gradle_version.png" alt="show" />
+<img src="/docs/screenshot/gradle_version.png" alt="show" />
 
 
 Minimum SDK version: minSdkVersion >= 21
@@ -104,11 +104,11 @@ Minimum SDK version: minSdkVersion >= 21
 <p align = "left">    
 <picture>
   <!-- 亮色模式下显示的 SVG -->
-  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one.svg" media="(prefers-color-scheme: light)">
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/docs/svg/one.svg" media="(prefers-color-scheme: light)">
   <!-- 暗黑模式下显示的 SVG -->
-  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one_dark.svg" media="(prefers-color-scheme: dark)">
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/docs/svg/one_dark.svg" media="(prefers-color-scheme: dark)">
   <!-- 默认图片 -->
-  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one.svg" align = "center"  width="22" height="22" />
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/docs/svg/one.svg" align = "center"  width="22" height="22" />
 </picture>
 Depend on the plug-in in <code>build.gradle</code> in the <strong>project root directory</strong>
 </p>  
@@ -139,11 +139,11 @@ Depend on the plug-in in <code>build.gradle</code> in the <strong>project root d
 <p align = "left">    
 <picture>
   <!-- 亮色模式下显示的 SVG -->
-  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two.svg" media="(prefers-color-scheme: light)">
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/docs/svg/two.svg" media="(prefers-color-scheme: light)">
   <!-- 暗黑模式下显示的 SVG -->
-  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two_dark.svg" media="(prefers-color-scheme: dark)">
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/docs/svg/two_dark.svg" media="(prefers-color-scheme: dark)">
   <!-- 默认图片 -->
-  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two.svg" align = "center"  width="22" height="22"/>
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/docs/svg/two.svg" align = "center"  width="22" height="22"/>
 </picture>
  Add in <code>build.gradle</code> of <strong>app</strong>
 </p>  
@@ -486,8 +486,8 @@ If you feel that AndroidAOP has saved you a lot of development time and added lu
 #### [Donation List](https://flyjingfish.github.io/AndroidAOP/zh/give_list/)
 
 <div>
-<img src="/screenshot/IMG_4075.PNG" width="280" height="350">
-<img src="/screenshot/IMG_4076.JPG" width="280" height="350">
+<img src="/docs/screenshot/IMG_4075.PNG" width="280" height="350">
+<img src="/docs/screenshot/IMG_4076.JPG" width="280" height="350">
 </div>
 
 If you comment on the name in the donation message, it will be recorded in the list~ If you are also a GitHub open source author, you can leave the GitHub project address or personal homepage address when donating, and the link will be added to the list.
@@ -496,7 +496,7 @@ If you comment on the name in the donation message, it will be recorded in the l
 
 * If you have any questions, you can join the group to communicate [QQ: 641697838](https://qm.qq.com/cgi-bin/qm/qr?k=w2qDbv_5bpLl0lO0qjXxijl3JHCQgtXx&jump_from=webapi&authKey=Q6/YB+7q9BvOGbYv1qXZGAZLigsfwaBxDC8kz03/5Pwy7018XunUcHoC11kVLqCb)
 
-<img src="/screenshot/qq.png" width="220"/>
+<img src="/docs/screenshot/qq.png" width="220"/>
 
 ### Finally, I recommend some other libraries I wrote
 

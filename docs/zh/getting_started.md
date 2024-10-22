@@ -3,7 +3,7 @@
 
 **在开始之前可以给项目一个Star吗？非常感谢，你的支持是我唯一的动力。欢迎Star和Issues!**
 
-![Stargazers over time](../../screenshot/warning_maven_central.svg)
+<p style="color:red;">本库仓库地址在 Maven central，当你获取不到依赖包时，请将 阿里等镜像地址 放在 mavenCentral() 之后</p>
 
 ### 一、引入插件，下边两种方式二选一（必须）
 
@@ -290,7 +290,7 @@
 
 ### 五、开发中可设置代码织入方式（此步为可选配置项，只为在开发过程中提高打包速度）
 
-![Stargazers over time](../../screenshot/warning_debug_mode.svg)
+<p style="color:red;">如果你配置这一步的 DebugMode ，请务必仔细看好下边每一行的说明，不要无脑复制，尤其是想切三方 jar 包的</p>
 
 **以下的配置步骤同样也适用于 组件化的场景 [点此查看](/AndroidAOP/zh/FAQ/#14-module-aar)**
 

@@ -76,13 +76,13 @@
 
 #### [点此下载apk,也可扫下边二维码下载](https://github.com/FlyJingFish/AndroidAOP/blob/master/apk/product/release/app-product-release.apk?raw=true)
 
-<img src="/screenshot/qrcode.png" alt="show" width="200px" />
+<img src="/docs/screenshot/qrcode.png" alt="show" width="200px" />
 
 ### 版本限制
 
 最低Gradle版本：7.6👇（支持8.0以上）
 
-<img src="/screenshot/gradle_version.png" alt="show" />
+<img src="/docs/screenshot/gradle_version.png" alt="show" />
 
 最低SDK版本：minSdkVersion >= 21
 
@@ -96,7 +96,7 @@
 
 **在开始之前可以给项目一个Star吗？非常感谢，你的支持是我唯一的动力。欢迎Star和Issues!**
 
-![Stargazers over time](https://github.com/FlyJingFish/AndroidAOP/blob/master/screenshot/warning_maven_central.svg)
+![Stargazers over time](https://github.com/FlyJingFish/AndroidAOP/blob/master/docs/screenshot/warning_maven_central.svg)
 
 ### 一、引入插件，下边两种方式二选一（必须）
 
@@ -106,11 +106,11 @@
 <p align = "left">    
 <picture>
   <!-- 亮色模式下显示的 SVG -->
-  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one.svg" media="(prefers-color-scheme: light)">
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/docs/svg/one.svg" media="(prefers-color-scheme: light)">
   <!-- 暗黑模式下显示的 SVG -->
-  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one_dark.svg" media="(prefers-color-scheme: dark)">
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/docs/svg/one_dark.svg" media="(prefers-color-scheme: dark)">
   <!-- 默认图片 -->
-  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/one.svg" align = "center"  width="22" height="22" />
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/docs/svg/one.svg" align = "center"  width="22" height="22" />
 </picture>
 在<strong>项目根目录</strong>的 <code>build.gradle</code> 里依赖插件
 </p>  
@@ -144,11 +144,11 @@
 <p align = "left">    
 <picture>
   <!-- 亮色模式下显示的 SVG -->
-  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two.svg" media="(prefers-color-scheme: light)">
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/docs/svg/two.svg" media="(prefers-color-scheme: light)">
   <!-- 暗黑模式下显示的 SVG -->
-  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two_dark.svg" media="(prefers-color-scheme: dark)">
+  <source srcset="https://github.com/FlyJingFish/AndroidAOP/blob/master/docs/svg/two_dark.svg" media="(prefers-color-scheme: dark)">
   <!-- 默认图片 -->
-  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/svg/two.svg" align = "center"  width="22" height="22"/>
+  <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/docs/svg/two.svg" align = "center"  width="22" height="22"/>
 </picture>
 在<strong>app</strong>的 <code>build.gradle</code> 添加
 </p> 
@@ -512,8 +512,8 @@ public class InitCollect2 {
 #### [捐赠列表](https://flyjingfish.github.io/AndroidAOP/zh/give_list/)
 
 <div>
-<img src="/screenshot/IMG_4075.PNG" width="280" height="350">
-<img src="/screenshot/IMG_4076.JPG" width="280" height="350">
+<img src="/docs/screenshot/IMG_4075.PNG" width="280" height="350">
+<img src="/docs/screenshot/IMG_4076.JPG" width="280" height="350">
 </div>
 
 如果在捐赠留言中备注名称，将会被记录到列表中~ 如果你也是github开源作者，捐赠时可以留下github项目地址或者个人主页地址，链接将会被添加到列表中
@@ -524,7 +524,7 @@ public class InitCollect2 {
 
 * 有问题可以加群大家一起交流 [点此加QQ群：641697838](https://qm.qq.com/cgi-bin/qm/qr?k=w2qDbv_5bpLl0lO0qjXxijl3JHCQgtXx&jump_from=webapi&authKey=Q6/YB+7q9BvOGbYv1qXZGAZLigsfwaBxDC8kz03/5Pwy7018XunUcHoC11kVLqCb)
 
-<img src="/screenshot/qq.png" width="220"/>
+<img src="/docs/screenshot/qq.png" width="220"/>
 
 ### 最后推荐我写的另外一些库
 

@@ -3,6 +3,8 @@
 
 **Can you give the project a Star before starting? Thank you very much, your support is my only motivation. Stars and Issues are welcome!**
 
+<p style="color:red;">The repository address of this library is in Maven central. If you cannot get the dependent package, please put the mirror address such as Alibaba after mavenCentral()</p>
+
 ### 1. Introduce the plug-in, choose one of the two methods below (required)
 
 #### Method 1: ```apply``` method
@@ -291,6 +293,8 @@ Depend on the plug-in in <code>build.gradle</code> in the <strong>project root d
     :warning::warning::warning:After setting include and exclude, all aspects are only valid within the rules you set. Please remember your settings! In addition, since Android Studio may have cache after setting here, it is recommended to clean before continuing development
 
 ### 5. The code weaving method can be set during development (this step is an optional configuration item)
+
+<p style="color:red;">If you configure DebugMode in this step, please read the instructions in each line below carefully and do not copy them blindly, especially if you want to cut third-party jar packages.</p>
 
 **The following configuration steps also apply to componentized scenarios [Click here to view](https://flyjingfish.github.io/AndroidAOP/FAQ/#14-different-modules-of-componentized-projects-use-products-such-as-aar-for-compilation-how-to-speed-up-the-packaging-speed)**
 
