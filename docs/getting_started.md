@@ -299,7 +299,7 @@ Add in `build.gradle` of **app**
 **The following configuration steps also apply to componentized scenarios [Click here to view](https://flyjingfish.github.io/AndroidAOP/FAQ/#14-different-modules-of-componentized-projects-use-products-such-as-aar-for-compilation-how-to-speed-up-the-packaging-speed)**
 
 <img src="/AndroidAOP/svg/one.svg#only-light" align = "center" />
-<img src="/AndroidAOP/svg/one.svg#only-dark" align = "center" />
+<img src="/AndroidAOP/svg/one_dark.svg#only-dark" align = "center" />
 For **all sub-modules** also rely on plug-ins, please follow the above [step 1 method 1 to configure the project](#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required), then choose one of the following methods
 
 - **Method 1 (recommended):**
