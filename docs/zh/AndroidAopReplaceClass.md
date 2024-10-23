@@ -32,10 +32,10 @@
 - 注解的类替换方法内存在对应的被替换方法时不会参与方法替换
 
 - type 有四种类型（不设置默认 ```SELF```，注意区分和 ```@AndroidAopMatchClassMethod``` 的区别，两者不设置时默认的类型不一样）：
-    - ```SELF``` 表示匹配的是 value 所设置类的**自身**
-    - ```EXTENDS``` 表示匹配的是**所有继承于** value 所设置的类
-    - ```DIRECT_EXTENDS``` 表示匹配的是 **<em><strong>直接继承于</strong></em>** value 所设置的类
-    - ```LEAF_EXTENDS``` 表示匹配的是 **<em><strong>末端继承（就是没有子类了）</strong></em>** value 所设置的类
+    - ```SELF``` 表示匹配的是 value 所设置类的 **自身**
+    - ```EXTENDS``` 表示匹配的是 **所有继承于** value 所设置的类
+    - ```DIRECT_EXTENDS``` 表示匹配的是 _**直接继承于**_ value 所设置的类
+    - ```LEAF_EXTENDS``` 表示匹配的是 _**末端继承（就是没有子类了）**_ value 所设置的类
   
     ``` mermaid
     graph LR
