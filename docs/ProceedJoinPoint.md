@@ -21,6 +21,17 @@ When there are multiple annotations or matching aspects for the same method, `pr
 - Calling ```proceed(args)``` in the previous facet can update the parameters passed in by the method, and the next facet will also get the parameters updated in the previous layer
 - When there is an asynchronous call ```proceed```, the return value of the first asynchronous call ```proceed``` facet (that is, the return value of invoke) is the return value of the entry method; otherwise, if there is no asynchronous call ```proceed```, the return value is the return value of the last facet
 
+``` mermaid
+graph LR
+X[call method] ---> |enter section| A[annotation A];
+A[annotation A] ---> |proceed| B[annotation B];
+B ---> |proceed| C[annotation C];
+B ---> |return without calling proceed| X;
+C ---> |return after asynchronous proceed will directly return to the call site, but will continue the logic of the next section| X;
+C ---> |proceed 「including asynchronous」| D[matching section];
+D ---> |proceed| E[execute original method];
+```
+
 #### 3. `ProceedJoinPointSuspend`'s `proceed` method
 
 ProceedJoinPointSuspend adds two new methods including `OnSuspendReturnListener` `proceed` method, two `proceedIgnoreOther` methods containing `OnSuspendReturnListener2` are added
