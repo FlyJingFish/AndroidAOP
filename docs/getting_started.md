@@ -404,6 +404,10 @@ androidAop.debugMode.buildConfig = true //If set to true, it means exporting a D
 
 ## Custom Aspects
 
+*[Custom Aspects]: Using the following features means you must choose one of <code>android-aop-ksp</code> and <code>android-aop-processor</code> as a dependency
+
+This introduction is a general outline.
+
 - @AndroidAopPointCut is an aspect that annotates methods
 - @AndroidAopMatchClassMethod is the aspect of matching class methods
 - @AndroidAopReplaceClass is called by the replacement method
