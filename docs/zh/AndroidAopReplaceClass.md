@@ -45,7 +45,7 @@
     C ---->|LEAF_EXTENDS / EXTENDS| A[ A 类];
     ```
 
-简单来说，```LEAF_EXTENDS```和```DIRECT_EXTENDS```是两个极端，前者关注的是继承关系中最后一个节点，后者关注的是继承关系中第一个节点。
+    简单来说，```LEAF_EXTENDS```和```DIRECT_EXTENDS```是两个极端，前者关注的是继承关系中最后一个节点，后者关注的是继承关系中第一个节点。
 
 
 
