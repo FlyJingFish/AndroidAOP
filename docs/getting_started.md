@@ -17,17 +17,9 @@ Minimum SDK version: minSdkVersion >= 21
 
 #### Method 1: ```apply``` method
 
-<p align = "left">    
-<picture>
-  <!-- 亮色模式下显示的 SVG -->
-  <source srcset="../svg/one.svg" media="(prefers-color-scheme: light)">
-  <!-- 暗黑模式下显示的 SVG -->
-  <source srcset="../svg/one_dark.svg" media="(prefers-color-scheme: dark)">
-  <!-- 默认图片 -->
-  <img src="../svg/one.svg" align = "center"  width="22" height="22" />
-</picture>
-Depend on the plug-in in <code>build.gradle</code> in the <strong>project root directory</strong>
-</p>  
+<img src="/AndroidAOP/svg/one.svg#only-light" align = "center" />
+<img src="/AndroidAOP/svg/one_dark.svg#only-dark" align = "center" />
+Depend on the plug-in in `build.gradle` in the **project root directory**
 
 === "Groovy"
 
@@ -75,17 +67,9 @@ Depend on the plug-in in <code>build.gradle</code> in the <strong>project root d
         apply(plugin = "android.aop")
         ```
 
-<p align = "left">    
-<picture>
-  <!-- 亮色模式下显示的 SVG -->
-  <source srcset="../svg/two.svg" media="(prefers-color-scheme: light)">
-  <!-- 暗黑模式下显示的 SVG -->
-  <source srcset="../svg/two_dark.svg" media="(prefers-color-scheme: dark)">
-  <!-- 默认图片 -->
-  <img src="../svg/two.svg" align = "center"  width="22" height="22"/>
-</picture>
- Add in <code>build.gradle</code> of <strong>app</strong>
-</p>  
+<img src="/AndroidAOP/svg/two.svg#only-light" align = "center" />
+<img src="/AndroidAOP/svg/two_dark.svg#only-dark" align = "center" />
+Add in `build.gradle` of **app**
 
 === "Groovy"
 
@@ -314,14 +298,9 @@ Depend on the plug-in in <code>build.gradle</code> in the <strong>project root d
 
 **The following configuration steps also apply to componentized scenarios [Click here to view](https://flyjingfish.github.io/AndroidAOP/FAQ/#14-different-modules-of-componentized-projects-use-products-such-as-aar-for-compilation-how-to-speed-up-the-packaging-speed)**
 
-<p align = "left">    
-<picture>
-  <source srcset="../svg/one.svg" media="(prefers-color-scheme: light)">
-  <source srcset="../svg/one_dark.svg" media="(prefers-color-scheme: dark)">
-  <img src="../svg/one.svg" align = "center"  width="22" height="22"/>
-</picture>
-For <strong>all sub-modules</strong> also rely on plug-ins, please follow the above<a href="#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required">step 1 method 1 to configure the project</a>, then choose one of the following methods
-</p>  
+<img src="/AndroidAOP/svg/one.svg#only-light" align = "center" />
+<img src="/AndroidAOP/svg/one.svg#only-dark" align = "center" />
+For **all sub-modules** also rely on plug-ins, please follow the above [step 1 method 1 to configure the project](#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required), then choose one of the following methods
 
 - **Method 1 (recommended):**
   
@@ -353,14 +332,10 @@ For <strong>all sub-modules</strong> also rely on plug-ins, please follow the ab
     1. This method can only apply debugMode to the modules you have added, and the related aspects in the modules that have not been added will not take effect <br>
     2. If your module is a Java or Kotlin library, this method can only enable all Android libraries. You need to use method 2 to configure your module separately for it to take effect.
 
-<p align = "left">    
-<picture>
-  <source srcset="../svg/two.svg" media="(prefers-color-scheme: light)">
-  <source srcset="../svg/two_dark.svg" media="(prefers-color-scheme: dark)">
-  <img src="../svg/two.svg" align = "center"  width="22" height="22"/>
-</picture>
-Add the following settings in <code>gradle.properties</code> in the <strong>root directory</strong>
-</p>  
+<img src="/AndroidAOP/svg/two.svg#only-light" align = "center" />
+<img src="/AndroidAOP/svg/two_dark.svg#only-dark" align = "center" />
+Add the following settings in `gradle.properties` in the **root directory**
+
 
 ```properties
 androidAop.debugMode=true //Set to true to use the current packaging method of your project, false to use the full packaging method, otherwise the default is false
@@ -369,15 +344,9 @@ androidAop.debugMode=true //Set to true to use the current packaging method of y
 !!! warning
     :warning::warning::warning: Please note that when set to true, the compilation speed will be faster but some functions will be invalid. Only the aop code will be woven into the set module. The third-party jar package will not weave in the code, so please be careful to turn it off when building the official package. Configure this and clean the project
 
-<p align = "left">    
-<picture>
-  <source srcset="../svg/three.svg" media="(prefers-color-scheme: light)">
-  <source srcset="../svg/three_dark.svg" media="(prefers-color-scheme: dark)">
-  <img src="../svg/three.svg" align = "center"  width="22" height="22"/>
-</picture>
-Add the following settings in <code>gradle.properties</code> in the <strong>root directory</strong>
-</p> 
-
+<img src="/AndroidAOP/svg/three.svg#only-light" align = "center" />
+<img src="/AndroidAOP/svg/three_dark.svg#only-dark" align = "center" />
+Add the following settings in `gradle.properties` in the **root directory**
 
 ```properties
 androidAop.debugMode.variantOnlyDebug = true //If this is not written by default, it is true
@@ -388,15 +357,9 @@ androidAop.debugMode.variantOnlyDebug = true //If this is not written by default
     2.This feature is enabled by default, so the release package does not need to manually disable `androidAop.debugMode` <br>
     **3. This feature is only valid for Android libraries, not for Java or Kotlin libraries**
 
-<p align = "left">    
-<picture>
-  <source srcset="../svg/four.svg" media="(prefers-color-scheme: light)">
-  <source srcset="../svg/four_dark.svg" media="(prefers-color-scheme: dark)">
-  <img src="../svg/four.svg" align = "center"  width="22" height="22"/>
-</picture>
-Add the following settings to <code>gradle.properties</code> in the <strong>root directory</strong> (optional, you can configure this if you want to be the best)
-</p>  
-
+<img src="/AndroidAOP/svg/four.svg#only-light" align = "center" />
+<img src="/AndroidAOP/svg/four_dark.svg#only-dark" align = "center" />
+Add the following settings to `gradle.properties` in the **root directory** (optional, you can configure this if you want to be the best)
 
 ```properties
 androidAop.reflectInvokeMethod = true //Set to true to reflect the execution of the facet method, if not set, the default is false
@@ -408,14 +371,10 @@ androidAop.reflectInvokeMethod.variantOnlyDebug = true //Set to true to be effec
     3.In versions 1.8.7 and above, the speed of secondary compilation has been optimized to be basically the same as the speed of enabling reflection.<br>
     **4. `androidAop.reflectInvokeMethod.variantOnlyDebug` is only valid for Android libraries, not for Java or Kotlin libraries**
 
-<p align = "left">    
-<picture>
-  <source srcset="../svg/five.svg" media="(prefers-color-scheme: light)">
-  <source srcset="../svg/five_dark.svg" media="(prefers-color-scheme: dark)">
-  <img src="../svg/five.svg" align = "center"  width="22" height="22"/>
-</picture>
-Add the following settings to <code>gradle.properties</code> in the <strong>root directory</strong> (optional)
-</p>  
+<img src="/AndroidAOP/svg/five.svg#only-light" align = "center" />
+<img src="/AndroidAOP/svg/five_dark.svg#only-dark" align = "center" />
+Add the following settings to `gradle.properties` in the **root directory** (optional)
+
 
 ```properties
 androidAop.debugMode.buildConfig = true //If set to true, it means exporting a DebugModeBuildConfig.java file. If not set, the default value is true.

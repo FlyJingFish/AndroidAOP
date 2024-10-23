@@ -18,17 +18,9 @@
 
 #### 方式一：```apply``` 方式（推荐）
 
-<p align = "left">    
-<picture>
-  <!-- 亮色模式下显示的 SVG -->
-  <source srcset="../../svg/one.svg" media="(prefers-color-scheme: light)">
-  <!-- 暗黑模式下显示的 SVG -->
-  <source srcset="../../svg/one_dark.svg" media="(prefers-color-scheme: dark)">
-  <!-- 默认图片 -->
-  <img src="../../svg/one.svg" align = "center"  width="22" height="22" />
-</picture>
-在<strong>项目根目录</strong>的 <code>build.gradle</code> 里依赖插件
-</p>  
+<img src="../../svg/one.svg#only-light" align = "center" />
+<img src="../../svg/one_dark.svg#only-dark" align = "center" />
+在 **项目根目录** 的 `build.gradle` 里依赖插件
 
 === "Groovy"
 
@@ -76,17 +68,9 @@
         apply(plugin = "android.aop")
         ```
 
-<p align = "left">    
-<picture>
-  <!-- 亮色模式下显示的 SVG -->
-  <source srcset="../../svg/two.svg" media="(prefers-color-scheme: light)">
-  <!-- 暗黑模式下显示的 SVG -->
-  <source srcset="../../svg/two_dark.svg" media="(prefers-color-scheme: dark)">
-  <!-- 默认图片 -->
-  <img src="../../svg/two.svg" align = "center"  width="22" height="22"/>
-</picture>
-在<strong>app</strong>的 <code>build.gradle</code> 添加
-</p> 
+<img src="../../svg/two.svg#only-light" align = "center" />
+<img src="../../svg/two_dark.svg#only-dark" align = "center" />
+在 **app** 的 `build.gradle` 添加
 
 === "Groovy"
 
@@ -312,15 +296,9 @@
 **以下的配置步骤同样也适用于 组件化的场景 [点此查看](/AndroidAOP/zh/FAQ/#14-module-aar)**
 
 
-<p align = "left">    
-<picture>
-  <source srcset="../../svg/one.svg" media="(prefers-color-scheme: light)">
-  <source srcset="../../svg/one_dark.svg" media="(prefers-color-scheme: dark)">
-  <img src="../../svg/one.svg" align = "center"  width="22" height="22"/>
-</picture>
-为<strong>所有的子module</strong>也依赖插件，请按照上述<a href="#apply">步骤一的方式一配置项目</a>，然后以下方式二选一
-</p>  
-
+<img src="../../svg/one.svg#only-light" align = "center" />
+<img src="../../svg/one_dark.svg#only-dark" align = "center" />
+为 **所有的子module** 也依赖插件，请按照上述 [步骤一的方式一配置项目](#apply)，然后以下方式二选一
 
 - **方式一：（推荐）**
 
@@ -353,14 +331,9 @@
     **2、如果你的 module 是 Java或Kotlin 的 Library，方式一只能让所有的 Android 的 Library，需要采用方式二单独为你的 module 配置才会生效**
 
 
-<p align = "left">    
-<picture>
-  <source srcset="../../svg/two.svg" media="(prefers-color-scheme: light)">
-  <source srcset="../../svg/two_dark.svg" media="(prefers-color-scheme: dark)">
-  <img src="../../svg/two.svg" align = "center"  width="22" height="22"/>
-</picture>
-在<strong>根目录</strong>的 <code>gradle.properties</code> 添加如下设置
-</p>  
+<img src="../../svg/two.svg#only-light" align = "center" />
+<img src="../../svg/two_dark.svg#only-dark" align = "center" />
+在 **根目录** 的 `gradle.properties` 添加如下设置
 
 ```properties
 androidAop.debugMode=true //设置为 true 走您项目当前的打包方式 ，false 则为全量打包方式，不写默认false
@@ -368,14 +341,9 @@ androidAop.debugMode=true //设置为 true 走您项目当前的打包方式 ，
 !!! warning
     **:warning::warning::warning:请注意设置为 true 时编译速度会变快但部分功能将失效，只会为设置的 module 织入 aop 代码，三方jar包 不会织入代码，因此打正式包时请注意关闭此项配置并clean项目**
 
-<p align = "left">    
-<picture>
-  <source srcset="../../svg/three.svg" media="(prefers-color-scheme: light)">
-  <source srcset="../../svg/three_dark.svg" media="(prefers-color-scheme: dark)">
-  <img src="../../svg/three.svg" align = "center"  width="22" height="22"/>
-</picture>
-在<strong>根目录</strong>的 <code>gradle.properties</code> 添加如下设置
-</p>  
+<img src="../../svg/three.svg#only-light" align = "center" />
+<img src="../../svg/three_dark.svg#only-dark" align = "center" />
+在 **根目录** 的 `gradle.properties` 添加如下设置
 
 ```properties
 androidAop.debugMode.variantOnlyDebug = true //默认不写这项就是true
@@ -385,14 +353,9 @@ androidAop.debugMode.variantOnlyDebug = true //默认不写这项就是true
     2、此项功能默认开启，因此release包无需手动关闭 `androidAop.debugMode` <br>
     **3、此项只对 Android 的 Library 有效,对 Java 或 Kotlin 的 Library 无效**
 
-<p align = "left">    
-<picture>
-  <source srcset="../../svg/four.svg" media="(prefers-color-scheme: light)">
-  <source srcset="../../svg/four_dark.svg" media="(prefers-color-scheme: dark)">
-  <img src="../../svg/four.svg" align = "center"  width="22" height="22"/>
-</picture>
-在<strong>根目录</strong>的 <code>gradle.properties</code> 添加如下设置（选填，追求极致可以配置这项）
-</p>  
+<img src="../../svg/four.svg#only-light" align = "center" />
+<img src="../../svg/four_dark.svg#only-dark" align = "center" />
+在 **根目录** 的 `gradle.properties` 添加如下设置（选填，追求极致可以配置这项）
 
 ```properties
 androidAop.reflectInvokeMethod = true //设置为 true 反射执行切面方法 ，不写默认 false
@@ -405,14 +368,9 @@ androidAop.reflectInvokeMethod.variantOnlyDebug = true // 设置为 true 则只�
     **4、`androidAop.reflectInvokeMethod.variantOnlyDebug` 只对 Android 的 Library 有效,对 Java 或 Kotlin 的 Library 无效**
 
 
-<p align = "left">    
-<picture>
-  <source srcset="../../svg/five.svg" media="(prefers-color-scheme: light)">
-  <source srcset="../../svg/five_dark.svg" media="(prefers-color-scheme: dark)">
-  <img src="../../svg/five.svg" align = "center"  width="22" height="22"/>
-</picture>
-在<strong>根目录</strong>的 <code>gradle.properties</code> 添加如下设置（非必须项）
-</p>  
+<img src="../../svg/five.svg#only-light" align = "center"/>
+<img src="../../svg/five_dark.svg#only-dark" align = "center"/>
+在 **根目录** 的 `gradle.properties` 添加如下设置（非必须项）
 
 ```properties
 androidAop.debugMode.buildConfig = true //设置为 true 表示导出一个 DebugModeBuildConfig.java 文件，不写默认为 true
