@@ -42,6 +42,14 @@ This aspect collects inherited classes or classes that match regular expressions
 
 > **💡💡💡If the parameter is set to Object or Any, this setting will be ignored, but `regex` must be filled in**
 
+``` mermaid
+graph LR
+C[C class] ---> |C class inherits from B class| B{ B class };
+B --->|B class inherits from A class| A[ A class];
+B --->|DIRECT_EXTENDS / EXTENDS| A[ A class];
+C ---->|LEAF_EXTENDS / EXTENDS| A[ A class];
+```
+
 ### regex fill in `Regular expression`
 
 After setting the regular expression, the class name that meets the requirements will be found according to the regular expression you set

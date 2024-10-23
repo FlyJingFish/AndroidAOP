@@ -14,15 +14,3 @@
     font-weight: bold;
     font-size: .5rem
 }
-
-@media (prefers-color-scheme: dark) {
-    .dark-mode-image {
-        content: url('/AndroidAOP/svg/star_dark.svg');
-    }
-}
-
-@media (prefers-color-scheme: light) {
-    .dark-mode-image {
-        content: url('/AndroidAOP/svg/star.svg');
-    }
-}

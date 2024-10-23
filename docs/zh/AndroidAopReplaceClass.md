@@ -36,12 +36,16 @@
     - ```EXTENDS``` 表示匹配的是**所有继承于** value 所设置的类
     - ```DIRECT_EXTENDS``` 表示匹配的是 **<em><strong>直接继承于</strong></em>** value 所设置的类
     - ```LEAF_EXTENDS``` 表示匹配的是 **<em><strong>末端继承（就是没有子类了）</strong></em>** value 所设置的类
+  
+    ``` mermaid
+    graph LR
+    C[C 类] ---> |C类继承于B类| B{ B 类 };
+    B --->|B类继承于A类| A[ A 类];
+    B --->|DIRECT_EXTENDS / EXTENDS| A[ A 类];
+    C ---->|LEAF_EXTENDS / EXTENDS| A[ A 类];
+    ```
 
 简单来说，```LEAF_EXTENDS```和```DIRECT_EXTENDS```是两个极端，前者关注的是继承关系中最后一个节点，后者关注的是继承关系中第一个节点。
-
-```diff
--另外注意 当 type 不是 [SELF] 时会拖慢打包速度，请酌情使用，能不用尽量不用
-```
 
 
 

@@ -9,10 +9,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // 创建 img 元素，指向外部的 SVG 文件
         var img = document.createElement('img');
-        img.src = '/AndroidAOP/svg/star.svg';
-        img.alt = 'Icon';
-        img.classList.add('dark-mode-image');
+        img.src = '/AndroidAOP/svg/star.svg#only-light';
+        img.alt = 'Star';
         label.appendChild(img);
+        var img1 = document.createElement('img');
+        img1.src = '/AndroidAOP/svg/star_dark.svg#only-dark';
+        img1.alt = 'Star';
+        label.appendChild(img1);
         div.appendChild(label);
         div.addEventListener('click', function() {
             window.location.href = "https://github.com/FlyJingFish/AndroidAOP";

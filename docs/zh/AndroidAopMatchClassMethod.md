@@ -19,14 +19,21 @@
 
 
 - type 有四种类型（不设置默认 ```EXTENDS```）：
-    - ```SELF``` 表示匹配的是 targetClassName 所设置类的**自身**
-    - ```EXTENDS``` 表示匹配的是**所有继承于** targetClassName 所设置的类
-    - ```DIRECT_EXTENDS``` 表示匹配的是 **<em><strong>直接继承于</strong></em>** targetClassName 所设置的类
-    - ```LEAF_EXTENDS``` 表示匹配的是 **<em><strong>末端继承（就是没有子类了）</strong></em>** targetClassName 所设置的类
+    - ```SELF``` 表示匹配的是 targetClassName 所设置类的 **自身**
+    - ```EXTENDS``` 表示匹配的是 **所有继承于** targetClassName 所设置的类
+    - ```DIRECT_EXTENDS``` 表示匹配的是 <em><strong>直接继承于</strong></em> targetClassName 所设置的类
+    - ```LEAF_EXTENDS``` 表示匹配的是 <em><strong>末端继承（就是没有子类了）</strong></em> targetClassName 所设置的类
 
     简单来说，```LEAF_EXTENDS```和```DIRECT_EXTENDS```是两个极端，前者关注的是继承关系中最后一个节点，后者关注的是继承关系中第一个节点。另外注意 ```EXTENDS``` 这种匹配类型范围比较大，所有继承的中间类也可能会加入切面代码
 
-
+    ``` mermaid
+    graph LR
+    C[C 类] ---> |C类继承于B类| B{ B 类 };
+    B --->|B类继承于A类| A[ A 类];
+    B --->|DIRECT_EXTENDS / EXTENDS| A[ A 类];
+    C ---->|LEAF_EXTENDS / EXTENDS| A[ A 类];
+    ```
+  
 - excludeClasses
     - 如果 targetClassName 是类名，就是排除掉继承关系中的一些类，可以设置多个，且 type 不是 SELF 才有效
     - 如果 targetClassName 是包名，就是排除掉匹配到的一些类，可以设置多个，且 type 是 SELF 才有效

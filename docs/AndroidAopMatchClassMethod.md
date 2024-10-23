@@ -19,6 +19,14 @@ This aspect is used to match a class and its corresponding method. This aspect f
     - ```DIRECT_EXTENDS``` means that the match is **<em><strong>directly inherited from</strong></em>** the class set by targetClassName
     - ```LEAF_EXTENDS``` means that the match is **<em><strong>Terminal inheritance (no subclasses)</strong></em>** The class set by targetClassName
 
+    ``` mermaid
+    graph LR
+    C[C class] ---> |C class inherits from B class| B{ B class };
+    B --->|B class inherits from A class| A[ A class];
+    B --->|DIRECT_EXTENDS / EXTENDS| A[ A class];
+    C ---->|LEAF_EXTENDS / EXTENDS| A[ A class];
+    ```
+  
     Simply put, ```LEAF_EXTENDS``` and ```DIRECT_EXTENDS``` are two extremes. The former focuses on the last node in the inheritance relationship, while the latter focuses on the first node in the inheritance relationship. Also note that ```EXTENDS``` This type of match has a wide range, and all inherited intermediate classes may also add aspect codes
 
 - excludeClasses

@@ -45,6 +45,14 @@
 
 > **💡💡💡如果设置参数为Object或Any时，则此项设置将会被忽略，但是 `regex` 必须要填写**
 
+``` mermaid
+graph LR
+C[C 类] ---> |C类继承于B类| B{ B 类 };
+B --->|B类继承于A类| A[ A 类];
+B --->|DIRECT_EXTENDS / EXTENDS| A[ A 类];
+C ---->|LEAF_EXTENDS / EXTENDS| A[ A 类];
+```
+
 
 ### regex 填写 `正则表达式`
 

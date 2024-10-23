@@ -36,6 +36,14 @@ This aspect is used to replace the method call in the code, and needs to be used
     - ```DIRECT_EXTENDS``` means that the class set by **<em><strong>directly inherited</strong></em>** is matched
     - ```LEAF_EXTENDS``` means matching the class set by **<em><strong>terminal inheritance (no subclasses)</strong></em>** value
 
+    ``` mermaid
+    graph LR
+    C[C class] ---> |C class inherits from B class| B{ B class };
+    B --->|B class inherits from A class| A[ A class];
+    B --->|DIRECT_EXTENDS / EXTENDS| A[ A class];
+    C ---->|LEAF_EXTENDS / EXTENDS| A[ A class];
+    ```
+  
     In simple terms, ```LEAF_EXTENDS``` and ```DIRECT_EXTENDS``` are two extremes. The former focuses on the last node in the inheritance relationship, while the latter focuses on the first node in the inheritance relationship.
 
 !!! warning
