@@ -26,9 +26,9 @@ graph LR
 X[调用方法] --> |进入切面| A[注解A];
 A[注解A] --> |proceed| B[注解B];
 B --> |proceed| C[注解C];
-B --> |不调用proceed直接return| X;
-C --> |异步proceed之后return会直接返回调用处，但仍会继续下一个切面的逻辑| X;
-C --> |proceed「包括异步」| D[匹配切面];
+B --> |<span style='color:red'>不调用proceed直接return</span>| X;
+C --> |<span style='color:#00A600'>异步proceed之后return会直接返回调用处，但仍会继续下一个切面的逻辑</span>| X;
+C --> |proceed「<span style='color:#00A600'>包括异步</span>」| D[匹配切面];
 D --> |proceed| E[执行原方法];
 E --> |return| X;
 ```
@@ -41,6 +41,11 @@ ProceedJoinPointSuspend 新增两个包含 `OnSuspendReturnListener` 的 `procee
 - 新增的两个 `proceed` 方法传入的 `OnSuspendReturnListener` 可以通过回调的 `ProceedReturn` 拿到切点函数返回值，并且通过 `onReturn` 可以修改切点函数的返回值
 - 新增的两个 `proceedIgnoreOther` 方法是不再执行切点函数内代码并修改切点函数的返回值 [详情点此查看](/AndroidAOP/zh/Suspend_cut/#proceed)
 
+!!! note
+    `ProceedJoinPointSuspend` 新增的这几个方法都是用来修改调用切点 suspend 函数处的返回值的，suspend 的函数不可以再通过修改return值修改调用处的返回值 <br> 
+    1、调用 **新增的proceed函数** 在回调里使用 `ProceedReturn.proceed` 才相当于上图中各个切面间调用 `proceed` 的过程 <br>
+    2、调用 **新增的proceedIgnoreOther函数** 在回调里相当于上图中 <span style='color:red'>不调用proceed直接return</span> <br>
+    3、在 suspend 的切面中必须要调用上述两个方法，否则会出问题
 
 ## getArgs
 

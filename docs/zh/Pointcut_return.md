@@ -17,8 +17,8 @@ interface MatchClassMethod {
 }
 ```
 
-> [!TIP]\
-> 可以看到 两个 invoke 方法都有一个返回值，这个返回值将会替换掉切入点方法的返回值，并且会自动转化为原方法的返回类型，但是以下两种类型，则没有返回值
+!!! note
+    可以看到 两个 invoke 方法都有一个返回值，这个返回值将会替换掉切入点方法的返回值，并且会自动转化为原方法的返回类型，但是以下两种类型，则没有返回值
 
 
 
@@ -65,8 +65,8 @@ interface MatchClassMethodSuspend : MatchClassMethod {
 }
 ```
 
-> [!TIP]\
-> 对于切点函数是 **suspend** 函数的，采用上述两种类型更好一些，如果继续使用 `BasePointCut`、`MatchClassMethod` 其返回值必须是 `joinPoint.proceed()` 的返回值，如需修改返回值请看如下代码：
+!!! note
+    对于切点函数是 **suspend** 函数的，采用上述两种类型更好一些，如果继续使用 `BasePointCut`、`MatchClassMethod` 其返回值必须是 `joinPoint.proceed()` 的返回值，如需修改返回值请看如下代码：
 
 ```kotlin
 class MyAnnoCut5 : BasePointCutSuspend<MyAnno5> {
@@ -84,7 +84,7 @@ class MyAnnoCut5 : BasePointCutSuspend<MyAnno5> {
 }
 ```
 
-> [!TIP]\
-> 此处 onReturn 的解释同[此处的返回值是什么](/AndroidAOP/zh/Pointcut_return/#_2)
+!!! note
+    此处 onReturn 的解释同[此处的返回值是什么](/AndroidAOP/zh/Pointcut_return/#_2)
 
 

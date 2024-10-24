@@ -23,13 +23,13 @@ When there are multiple annotations or matching aspects for the same method, `pr
 
 ``` mermaid
 graph LR
-X[call method] --> |enter section| A[annotation A];
-A[annotation A] --> |proceed| B[annotation B];
-B --> |proceed| C[annotation C];
-B --> |return without calling proceed| X;
-C --> |return after asynchronous proceed will directly return to the call site, but will continue the logic of the next section| X;
-C --> |proceed 「including asynchronous」| D[matching section];
-D --> |proceed| E[execute original method];
+X[Call method] --> |Enter section| A[Annotation A];
+A[Annotation A] --> |proceed| B[Annotation B];
+B --> |proceed| C[Annotation C];
+B --> |<span style='color:red'>Do not call proceed directly return</span>| X;
+C --> |<span style='color:#00A600'>After asynchronous proceed, return will directly return to the call site, but will continue the logic of the next section</span>| X;
+C --> |proceed「<span style='color:#00A600'>Include asynchronous</span>」| D[Match section];
+D --> |proceed| E[Execute original method];
 E --> |return| X;
 ```
 
@@ -39,7 +39,15 @@ ProceedJoinPointSuspend adds two new methods including `OnSuspendReturnListener`
 
 - The logic of the two new `proceed` methods and the original `proceed` method is different from that of ordinary functions. The return value after calling is not the return value of the pointcut function, but the other logic is the same as the two points mentioned above
 - The `OnSuspendReturnListener` passed in by the two new `proceed` methods can get the return value of the pointcut function through the callback `ProceedReturn`, and the return value of the pointcut function can be modified through `onReturn`
-- The two new `proceedIgnoreOther` methods are to stop executing the code in the pointcut function and modify the return value of the pointcut function [Click here for details](https://flyjingfish.github.io/AndroidAOP/Suspend_cut/#2-basepointcutsuspend-and-matchclassmethodsuspend-that-support-suspend) ## getArgs
+- The two new `proceedIgnoreOther` methods are to stop executing the code in the pointcut function and modify the return value of the pointcut function [Click here for details](https://flyjingfish.github.io/AndroidAOP/Suspend_cut/#2-basepointcutsuspend-and-matchclassmethodsuspend-that-support-suspend) 
+
+!!! note
+    `ProceedJoinPointSuspend` The newly added methods are used to modify the return value of the call point suspend function. The suspend function can no longer modify the return value of the call point by modifying the return value <br>
+    1. Calling **the newly added proceed function** Using `ProceedReturn.proceed` in the callback is equivalent to the process of calling `proceed` between each section in the above figure <br>
+    2. Calling **the newly added proceedIgnoreOther function** in the callback is equivalent to <span style='color:red'>Do not call proceed directly return</span> in the above figure <br>
+    3. The above two methods must be called in the suspend aspect, otherwise problems will occur
+
+## getArgs
 
 All the parameters passed in when the pointcut method is called
 
