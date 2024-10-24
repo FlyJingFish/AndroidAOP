@@ -26,10 +26,12 @@
 
     ``` mermaid
     graph LR
-    C[C 类] ---> |C类继承于B类| B{ B 类 };
-    B --->|B类继承于A类| A[ A 类];
-    B --->|DIRECT_EXTENDS / EXTENDS| A[ A 类];
-    C ---->|LEAF_EXTENDS / EXTENDS| A[ A 类];
+    C(C 类) ---> |C类继承于B类| B{ B 类 };
+    B --->|B类继承于A类| A[A 类];
+    B --->|DIRECT_EXTENDS / EXTENDS| A;
+    C ---->|LEAF_EXTENDS / EXTENDS| A;
+    D(D 类) --->|D类继承于A类| A;
+    D --->|DIRECT_EXTENDS/ LEAF_EXTENDS / EXTENDS| A;
     ```
 
     简单来说，```LEAF_EXTENDS```和```DIRECT_EXTENDS```是两个极端，前者关注的是继承关系中最后一个节点，后者关注的是继承关系中第一个节点。另外注意 ```EXTENDS``` 这种匹配类型范围比较大，所有继承的中间类也可能会加入切面代码

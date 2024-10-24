@@ -21,10 +21,12 @@ This aspect is used to match a class and its corresponding method. This aspect f
 
     ``` mermaid
     graph LR
-    C[C class] ---> |C class inherits from B class| B{ B class };
-    B --->|B class inherits from A class| A[ A class];
-    B --->|DIRECT_EXTENDS / EXTENDS| A[ A class];
-    C ---->|LEAF_EXTENDS / EXTENDS| A[ A class];
+    C(Class C) ---> |Class C inherits from Class B| B{Class B};
+    B --->|Class B inherits from Class A| A[Class A];
+    B --->|DIRECT_EXTENDS / EXTENDS| A;
+    C ---->|LEAF_EXTENDS / EXTENDS| A;
+    D(Class D) --->|Class D inherits from Class A| A;
+    D --->|DIRECT_EXTENDS/ LEAF_EXTENDS / EXTENDS| A;
     ```
   
     Simply put, ```LEAF_EXTENDS``` and ```DIRECT_EXTENDS``` are two extremes. The former focuses on the last node in the inheritance relationship, while the latter focuses on the first node in the inheritance relationship. Also note that ```EXTENDS``` This type of match has a wide range, and all inherited intermediate classes may also add aspect codes

@@ -47,10 +47,12 @@
 
 ``` mermaid
 graph LR
-C[C 类] ---> |C类继承于B类| B{ B 类 };
-B --->|B类继承于A类| A[ A 类];
-B --->|DIRECT_EXTENDS / EXTENDS| A[ A 类];
-C ---->|LEAF_EXTENDS / EXTENDS| A[ A 类];
+C(C 类) ---> |C类继承于B类| B{ B 类 };
+B --->|B类继承于A类| A[A 类];
+B --->|DIRECT_EXTENDS / EXTENDS| A;
+C ---->|LEAF_EXTENDS / EXTENDS| A;
+D(D 类) --->|D类继承于A类| A;
+D --->|DIRECT_EXTENDS/ LEAF_EXTENDS / EXTENDS| A;
 ```
 
 

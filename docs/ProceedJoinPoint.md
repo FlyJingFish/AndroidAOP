@@ -23,14 +23,14 @@ When there are multiple annotations or matching aspects for the same method, `pr
 
 ``` mermaid
 graph LR
-X[call method] ---> |enter section| A[annotation A];
-A[annotation A] ---> |proceed| B[annotation B];
-B ---> |proceed| C[annotation C];
-B ---> |return without calling proceed| X;
-C ---> |return after asynchronous proceed will directly return to the call site, but will continue the logic of the next section| X;
-C ---> |proceed 「including asynchronous」| D[matching section];
-D ---> |proceed| E[execute original method];
-E ---> |return| X;
+X[call method] --> |enter section| A[annotation A];
+A[annotation A] --> |proceed| B[annotation B];
+B --> |proceed| C[annotation C];
+B --> |return without calling proceed| X;
+C --> |return after asynchronous proceed will directly return to the call site, but will continue the logic of the next section| X;
+C --> |proceed 「including asynchronous」| D[matching section];
+D --> |proceed| E[execute original method];
+E --> |return| X;
 ```
 
 #### 3. `ProceedJoinPointSuspend`'s `proceed` method

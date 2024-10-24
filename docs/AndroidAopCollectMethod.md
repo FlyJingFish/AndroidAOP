@@ -44,10 +44,12 @@ This aspect collects inherited classes or classes that match regular expressions
 
 ``` mermaid
 graph LR
-C[C class] ---> |C class inherits from B class| B{ B class };
-B --->|B class inherits from A class| A[ A class];
-B --->|DIRECT_EXTENDS / EXTENDS| A[ A class];
-C ---->|LEAF_EXTENDS / EXTENDS| A[ A class];
+C(Class C) ---> |Class C inherits from Class B| B{Class B};
+B --->|Class B inherits from Class A| A[Class A];
+B --->|DIRECT_EXTENDS / EXTENDS| A;
+C ---->|LEAF_EXTENDS / EXTENDS| A;
+D(Class D) --->|Class D inherits from Class A| A;
+D --->|DIRECT_EXTENDS/ LEAF_EXTENDS / EXTENDS| A;
 ```
 
 ### regex fill in `Regular expression`
