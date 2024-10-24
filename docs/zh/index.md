@@ -18,13 +18,74 @@
     </svg>
 </div>
 
-## 版本限制
+<p align="center">
+  <strong>
+    🔥🔥🔥帮助 Android App 改造成AOP架构的框架
+    <a href="https://flyjingfish.github.io/AndroidAOP/zh/">AndroidAOP</a>
+  </strong>
+</p>
 
-最低Gradle版本：7.6👇（支持8.0以上）
+<p align="center">
+  <a href="https://central.sonatype.com/search?q=io.github.FlyJingFish.AndroidAop"><img
+    src="https://img.shields.io/maven-central/v/io.github.FlyJingFish.AndroidAop/android-aop-plugin"
+    alt="Build"
+  /></a>
+  <a href="https://github.com/FlyJingFish/AndroidAop/stargazers"><img
+    src="https://img.shields.io/github/stars/FlyJingFish/AndroidAop.svg"
+    alt="Downloads"
+  /></a>
+  <a href="https://github.com/FlyJingFish/AndroidAop/network/members"><img
+    src="https://img.shields.io/github/forks/FlyJingFish/AndroidAop.svg"
+    alt="Python Package Index"
+  /></a>
+  <a href="https://github.com/FlyJingFish/AndroidAop/issues"><img
+    src="https://img.shields.io/github/issues/FlyJingFish/AndroidAop.svg"
+    alt="Docker Pulls"
+  /></a>
+  <a href="https://github.com/FlyJingFish/AndroidAop/blob/master/LICENSE"><img
+    src="https://img.shields.io/github/license/FlyJingFish/AndroidAop.svg"
+    alt="Sponsors"
+  /></a>
+</p>
 
-<img src="../screenshot/gradle_version.png" alt="show" />
 
-最低SDK版本：minSdkVersion >= 21
+## 简述
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这是一个帮助 Android App 改造成AOP架构的框架，只需一个注解就可以请求权限、切换线程、禁止多点、一次监测所有点击事件、监测生命周期等等，没有使用 AspectJ，也可以定制出属于你的 Aop 代码
+
+## 特色功能
+
+1、本库内置了开发中常用的一些切面注解供你使用
+
+2、本库支持让你自己做切面，语法简单易上手
+
+3、本库同步支持 Java项目 和 Kotlin项目
+
+4、本库支持切入三方库
+
+5、本库支持切点方法为 Lambda 表达式的情况
+
+6、本库支持切点方法为 suspend 修饰的协程函数
+
+7、本库支持生成所有切点信息Json文件，方便一览所有切点位置[在此配置](#%E5%9B%9B%E5%9C%A8-app-%E7%9A%84buildgradle%E6%B7%BB%E5%8A%A0-androidaopconfig-%E9%85%8D%E7%BD%AE%E9%A1%B9%E6%AD%A4%E6%AD%A5%E4%B8%BA%E5%8F%AF%E9%80%89%E9%85%8D%E7%BD%AE%E9%A1%B9)
+
+**8、本库支持 debug 快速开发模式，让你打包速度几乎不变[在此配置](#%E4%BA%94%E5%BC%80%E5%8F%91%E4%B8%AD%E5%8F%AF%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%A0%81%E7%BB%87%E5%85%A5%E6%96%B9%E5%BC%8F%E6%AD%A4%E6%AD%A5%E4%B8%BA%E5%8F%AF%E9%80%89%E9%85%8D%E7%BD%AE%E9%A1%B9%E5%8F%AA%E4%B8%BA%E5%9C%A8%E5%BC%80%E5%8F%91%E8%BF%87%E7%A8%8B%E4%B8%AD%E6%8F%90%E9%AB%98%E6%89%93%E5%8C%85%E9%80%9F%E5%BA%A6)**
+
+**9、本库支持 组件化开发[在此配置](#%E4%BA%94%E5%BC%80%E5%8F%91%E4%B8%AD%E5%8F%AF%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%A0%81%E7%BB%87%E5%85%A5%E6%96%B9%E5%BC%8F%E6%AD%A4%E6%AD%A5%E4%B8%BA%E5%8F%AF%E9%80%89%E9%85%8D%E7%BD%AE%E9%A1%B9%E5%8F%AA%E4%B8%BA%E5%9C%A8%E5%BC%80%E5%8F%91%E8%BF%87%E7%A8%8B%E4%B8%AD%E6%8F%90%E9%AB%98%E6%89%93%E5%8C%85%E9%80%9F%E5%BA%A6)**
+
+**10、本库是纯静态织入AOP代码**
+
+**11、本库不是基于 AspectJ 实现的，织入代码量极少，侵入性极低**
+
+**12、丰富完善的使用文档助你完全理解本库的使用规则[点此前往wiki文档](https://flyjingfish.github.io/AndroidAOP/zh/)**
+
+**13、更有帮助你生成切面代码的插件助手供你使用[点此前往下载](https://flyjingfish.github.io/AndroidAOP/zh/AOP_Helper/)**
+
+
+#### [点此下载apk,也可扫下边二维码下载](https://github.com/FlyJingFish/AndroidAOP/blob/master/apk/product/release/app-product-release.apk?raw=true)
+
+<img src="/AndroidAOP/screenshot/qrcode.png" alt="show" width="200px" />
+
 
 ## Star趋势图
 

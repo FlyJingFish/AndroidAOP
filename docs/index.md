@@ -17,13 +17,74 @@
     </svg>
 </div>
 
-## Version restrictions
+<p align="center">
+  <strong>
+    🔥🔥🔥Help you transform into an Android platform framework with AOP architecture
+    <a href="https://flyjingfish.github.io/AndroidAOP/">AndroidAOP</a>
+  </strong>
+</p>
 
-Minimum Gradle version: 7.6👇 (supports 8.0 and above)
+<p align="center">
+  <a href="https://central.sonatype.com/search?q=io.github.FlyJingFish.AndroidAop"><img
+    src="https://img.shields.io/maven-central/v/io.github.FlyJingFish.AndroidAop/android-aop-plugin"
+    alt="Build"
+  /></a>
+  <a href="https://github.com/FlyJingFish/AndroidAop/stargazers"><img
+    src="https://img.shields.io/github/stars/FlyJingFish/AndroidAop.svg"
+    alt="Downloads"
+  /></a>
+  <a href="https://github.com/FlyJingFish/AndroidAop/network/members"><img
+    src="https://img.shields.io/github/forks/FlyJingFish/AndroidAop.svg"
+    alt="Python Package Index"
+  /></a>
+  <a href="https://github.com/FlyJingFish/AndroidAop/issues"><img
+    src="https://img.shields.io/github/issues/FlyJingFish/AndroidAop.svg"
+    alt="Docker Pulls"
+  /></a>
+  <a href="https://github.com/FlyJingFish/AndroidAop/blob/master/LICENSE"><img
+    src="https://img.shields.io/github/license/FlyJingFish/AndroidAop.svg"
+    alt="Sponsors"
+  /></a>
+</p>
 
-<img src="screenshot/gradle_version.png" alt="show" />
 
-Minimum SDK version: minSdkVersion >= 21
+## Brief Description
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is a framework that helps Android App transform into AOP architecture. With just one annotation, you can request permissions, switch threads, prohibit multiple clicks, monitor all click events at once, monitor the life cycle, etc. You can also customize your own Aop code without using AspectJ.
+
+
+## Special feature
+
+1 . This library has built-in some aspect annotations commonly used in development for you to use.
+
+2 . This library supports you to make aspects by yourself, and the syntax is simple and easy to use.
+
+3 . This library supports Java and Kotlin code simultaneously
+
+4 . This library supports switching into third-party libraries
+
+5 . This library supports the case where the pointcut method is a Lambda expression.
+
+6 . This library supports coroutine functions whose pointcut methods are suspend.
+
+7 . This library supports generating Json files of all pointcut information to facilitate an overview of all pointcut locations [Configure here](#4-add-the-androidaopconfig-configuration-item-in-apps-buildgradle-this-step-is-an-optional-configuration-item)
+
+**8 . This library supports debug rapid development mode, allowing you to package at almost the same speed**
+
+**9 . This library supports component-based development mode**
+
+**10. This library is pure static weaving into AOP code**
+
+**11. This library is not implemented based on AspectJ. The amount of woven code is very small and the intrusion is extremely low**
+
+**12. Rich and complete usage documentation helps you fully understand the usage rules of this library [click here to go to the wiki document](https://flyjingfish.github.io/AndroidAOP)**
+
+**13. There are also plug-in assistants that help you generate section codes for your use [click here to download](https://flyjingfish.github.io/AndroidAOP/AOP_Helper)**
+
+#### [Click here to download apk, or scan the QR code below to download](https://github.com/FlyJingFish/AndroidAOP/blob/master/apk/product/release/app-product-release.apk?raw=true)
+
+<img src="/AndroidAOP/screenshot/qrcode.png" alt="show" width="200px" />
+
 
 ## Star trend chart
 
