@@ -21,17 +21,48 @@
 - 在前边切面中调用 ```proceed(args)``` 可更新方法传入参数，并在下一个切面中也会拿到上一层更新的参数
 - 存在异步调用 ```proceed``` 时，第一个异步调用 ```proceed``` 切面的返回值（就是 invoke 的返回值）就是切入方法的返回值；否则没有异步调用 ```proceed```，则返回值就是最后一个切面的返回值
 
+<p align="center" style="font-size:14px">
+👇执行顺序及返回示意图👇
+</p>
+
 ``` mermaid
 graph LR
-X[调用方法] --> |进入切面| A[注解A];
-A[注解A] --> |proceed| B[注解B];
-B --> |proceed| C[注解C];
-B --> |<span style='color:red'>不调用proceed直接return</span>| X;
-C --> |<span style='color:#00A600'>异步proceed之后return会直接返回调用处，但仍会继续下一个切面的逻辑</span>| X;
-C --> |proceed「<span style='color:#00A600'>包括异步</span>」| D[匹配切面];
-D --> |proceed| E[执行原方法];
-E --> |return| X;
+Call[调用方法] --> |进入切面| A[注解切面1];
+A --> |同步proceed| B[注解切面2];
+B --> |同步proceed| C[匹配切面];
+C --> |同步proceed| From[执行原方法];
+From --> |return| C;
+C --> |return| B;
+B --> |return| A;
+A --> |return| Call;
 ```
+
+<p align="center" style="font-size:14px">
+👇存在异步调用的示意图👇
+</p>
+
+``` mermaid
+graph LR
+Call[调用方法] --> |进入切面| A[切面];
+A --> |开启异步线程| B[线程];
+B --> |异步proceed| From[其余切面];
+From --> |return| B;
+A --> |<span style='color:red'>因为异步线程会直接return</span>| Call;
+```
+
+<p align="center" style="font-size:14px">
+👇不调用proceed示意图👇
+</p>
+
+``` mermaid
+graph LR
+Call[调用方法] --> |进入切面| A[注解切面1];
+A -..-> |<span style='color:red'>X</span>| B[注解切面2];
+B ~~~ C[匹配切面];
+C ~~~ From[执行原方法];
+A --> |<span style='color:red'>不调用proceed直接return</span>| Call;
+```
+
 
 #### 3、`ProceedJoinPointSuspend` 的 `proceed` 方法
 

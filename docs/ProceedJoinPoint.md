@@ -21,16 +21,46 @@ When there are multiple annotations or matching aspects for the same method, `pr
 - Calling ```proceed(args)``` in the previous facet can update the parameters passed in by the method, and the next facet will also get the parameters updated in the previous layer
 - When there is an asynchronous call ```proceed```, the return value of the first asynchronous call ```proceed``` facet (that is, the return value of invoke) is the return value of the entry method; otherwise, if there is no asynchronous call ```proceed```, the return value is the return value of the last facet
 
+<p align="center" style="font-size:14px">
+👇Execution order and return diagram👇
+</p>
+
 ``` mermaid
 graph LR
-X[Call method] --> |Enter section| A[Annotation A];
-A[Annotation A] --> |proceed| B[Annotation B];
-B --> |proceed| C[Annotation C];
-B --> |<span style='color:red'>Do not call proceed directly return</span>| X;
-C --> |<span style='color:#00A600'>After asynchronous proceed, return will directly return to the call site, but will continue the logic of the next section</span>| X;
-C --> |proceed「<span style='color:#00A600'>Include asynchronous</span>」| D[Match section];
-D --> |proceed| E[Execute original method];
-E --> |return| X;
+Call[Calling method] --> |Enter section| A[Annotation section 1];
+A --> |Synchronous proceed| B[Annotation section 2];
+B --> |Synchronous proceed| C[Matching section];
+C --> |Synchronous proceed| From[Execute original method];
+From --> |return| C;
+C --> |return| B;
+B --> |return| A;
+A --> |return| Call;
+```
+
+<p align="center" style="font-size:14px">
+👇Schematic diagram of asynchronous call👇
+</p>
+
+``` mermaid
+graph LR
+Call[Calling method] --> |Enter section| A[Section];
+A --> |Start asynchronous thread| B[thread];
+B --> |asynchronous proceed| From[other aspects];
+From --> |return| B;
+A --> |<span style='color:red'>because asynchronous threads will return directly</span>| Call;
+```
+
+<p align="center" style="font-size:14px">
+👇Sketch of not calling proceed👇
+</p>
+
+``` mermaid
+graph LR
+Call[call method] --> |enter aspect| A[annotation aspect 1];
+A -..-> |<span style='color:red'>X</span>| B[annotation aspect 2];
+B ~~~ C[matching aspect];
+C ~~~ From[execute original method];
+A --> |<span style='color:red'>do not call proceed and return directly</span>| Call;
 ```
 
 #### 3. `ProceedJoinPointSuspend`'s `proceed` method
