@@ -94,7 +94,7 @@
 
 Welcome to the AndroidAOP wiki document, click on the left navigation bar to see what you want to see👈👈👈
 
-It is recommended that you first browse [Getting Started](/AndroidAOP/getting_started/#custom-aspects) to quickly understand how to use this library and form a general idea before reading other content.
+It is recommended that you first browse [Getting Started](/AndroidAOP/getting_started/) to quickly understand how to use this library and form a general idea before reading other content.
 
 Choosing the right method can help you write beautiful code. If you encounter any problem, please browse the wiki document first. If you can't solve it, go to the homepage [join the group](#contact-information) to communicate
 
@@ -107,11 +107,13 @@ Choosing the right method can help you write beautiful code. If you encounter an
 - **@AndroidAopReplaceClass** is a replacement aspect. All calls to the method of the set class will be replaced with the method of the replacement aspect class
 
 - **@AndroidAopModifyExtendsClass** It modifies the inherited class and replaces the inherited class of the target class with the annotated class
+
 - **@AndroidAopCollectMethod** collects inherited classes
 
 Except @AndroidAopPointCut, you can use [“AOP Code Generation Assistant”](https://flyjingfish.github.io/AndroidAOP/AOP_Helper/) to assist you in using this library
 
 ### The differences are as follows:
+
 - **@AndroidAopMatchClassMethod and @AndroidAopPointCut focus on method execution**
 
 - **@AndroidAopReplaceClass focuses on method call**
