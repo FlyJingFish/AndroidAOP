@@ -58,7 +58,7 @@ A --> |<span style='color:red'>because asynchronous threads will return directly
 graph LR
 Call[Calling method] --> |Enter section| A[Section 1];
 A --> |proceed| B[Section 2];
-B -..-> |<span style='color:red'>X</span>| C[Section 2];
+B -..-> |<span style='color:red'>X</span>| C[Section 3];
 C -..-> |<span style='color:red'>X</span>| From[Execute original method];
 B --> |<span style='color:red'>Do not call proceed directly return</span>| A;
 A --> |return| Call;

@@ -58,7 +58,7 @@ A --> |<span style='color:red'>因为异步线程会直接return</span>| Call;
 graph LR
 Call[调用方法] --> |进入切面| A[切面1];
 A --> |proceed| B[切面2];
-B -..-> |<span style='color:red'>X</span>| C[切面2];
+B -..-> |<span style='color:red'>X</span>| C[切面3];
 C -..-> |<span style='color:red'>X</span>| From[执行原方法];
 B --> |<span style='color:red'>不调用proceed直接return</span>| A;
 A --> |return| Call;
