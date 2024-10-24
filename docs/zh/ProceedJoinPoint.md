@@ -56,11 +56,12 @@ A --> |<span style='color:red'>因为异步线程会直接return</span>| Call;
 
 ``` mermaid
 graph LR
-Call[调用方法] --> |进入切面| A[注解切面1];
-A -..-> |<span style='color:red'>X</span>| B[注解切面2];
-B ~~~ C[匹配切面];
-C ~~~ From[执行原方法];
-A --> |<span style='color:red'>不调用proceed直接return</span>| Call;
+Call[调用方法] --> |进入切面| A[切面1];
+A --> |proceed| B[切面2];
+B -..-> |<span style='color:red'>X</span>| C[切面2];
+C -..-> |<span style='color:red'>X</span>| From[执行原方法];
+B --> |<span style='color:red'>不调用proceed直接return</span>| A;
+A --> |return| Call;
 ```
 
 

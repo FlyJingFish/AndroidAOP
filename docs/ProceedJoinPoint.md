@@ -56,11 +56,12 @@ A --> |<span style='color:red'>because asynchronous threads will return directly
 
 ``` mermaid
 graph LR
-Call[call method] --> |enter aspect| A[annotation aspect 1];
-A -..-> |<span style='color:red'>X</span>| B[annotation aspect 2];
-B ~~~ C[matching aspect];
-C ~~~ From[execute original method];
-A --> |<span style='color:red'>do not call proceed and return directly</span>| Call;
+Call[Calling method] --> |Enter section| A[Section 1];
+A --> |proceed| B[Section 2];
+B -..-> |<span style='color:red'>X</span>| C[Section 2];
+C -..-> |<span style='color:red'>X</span>| From[Execute original method];
+B --> |<span style='color:red'>Do not call proceed directly return</span>| A;
+A --> |return| Call;
 ```
 
 #### 3. `ProceedJoinPointSuspend`'s `proceed` method
