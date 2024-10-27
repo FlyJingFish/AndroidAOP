@@ -128,7 +128,7 @@ open class ReplaceBaseClassVisitor(
                 val cp = ClassPoolUtils.getNewClassPool()
                 val ctClass = cp.get(extendClass)
                 val has = ctClass.getConstructor(descriptor) != null
-                ctClass.detach()
+//                ctClass.detach()
                 has
             } catch (e: Exception) {
                 false

@@ -294,10 +294,10 @@ class AopTaskUtils(private val project: Project,private val variantName: String,
                     }
                 }
             }
-            for (allMethod in allMethods) {
-                allMethod.declaringClass.detach()
-            }
-            ctClass.detach()
+//            for (allMethod in allMethods) {
+//                allMethod.declaringClass.detach()
+//            }
+//            ctClass.detach()
         }
     }
 

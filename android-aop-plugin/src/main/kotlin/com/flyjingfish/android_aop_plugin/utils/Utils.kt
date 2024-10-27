@@ -462,8 +462,8 @@ fun String.instanceof(instanceofClassNameKey: String): Boolean {
         val clazz = pool!!.get(className)
         val instanceofClazz = pool.get(instanceofClassName)
         val subtypeOf = clazz.subtypeOf(instanceofClazz)
-        clazz.detach()
-        instanceofClazz.detach()
+//        clazz.detach()
+//        instanceofClazz.detach()
         subtypeOf
     } catch (e: Exception) {
         false

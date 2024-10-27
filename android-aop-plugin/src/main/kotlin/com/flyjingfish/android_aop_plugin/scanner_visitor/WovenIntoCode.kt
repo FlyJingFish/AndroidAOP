@@ -313,7 +313,7 @@ object WovenIntoCode {
                     WovenInfoUtils.recordOverrideClassname(value.overrideClassname,value.methodName, value.descriptor)
                 } catch (_: Exception) {
                 }
-                ctClass.detach()
+//                ctClass.detach()
             }
         }
         thisCollectClassName?.let {
@@ -489,7 +489,7 @@ object WovenIntoCode {
             }
         }
         val wovenBytes = ctClass.toBytecode()
-        ctClass.detach()
+//        ctClass.detach()
         return wovenBytes
     }
 
@@ -794,7 +794,7 @@ object WovenIntoCode {
                             }else{
                                 iterator.remove()
                             }
-                            ctClass.detach()
+//                            ctClass.detach()
                         } catch (_: Exception) {
                         }
                     }

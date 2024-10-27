@@ -69,7 +69,7 @@ object ClassFileUtils {
             outFile.checkExist()
             classByteData.saveFile(outFile)
             cacheFiles.add(path)
-            ctClass.detach()
+//            ctClass.detach()
         }
         return cacheFiles
     }
