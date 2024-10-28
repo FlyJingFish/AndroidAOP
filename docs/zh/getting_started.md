@@ -153,7 +153,7 @@
 === "Kotlin"
 
     ```kotlin
-        plugins {
+    plugins {
         //非必须项 👇，如果需要自定义切面，并且使用 android-aop-ksp 这个库的话需要配置 ，下边版本号根据你项目的 Kotlin 版本决定
         id("com.google.devtools.ksp") version "1.8.0-1.0.9" apply false
     }
