@@ -102,4 +102,27 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
+
+    const languageSelectors4 = document.querySelectorAll(".md-nav__link");
+
+    languageSelectors4.forEach(selector => {
+//        console.log("DOM 完全加载和解析完成，selector1="+selector.tagName);
+        selector.addEventListener("click", function () {
+            var target = event.target || event.srcElement;      // 兼容处理
+            if (target.nodeName.toLocaleLowerCase() === "a") {    // 判断是否匹配目标元素
+                const href = target.getAttribute("href");
+                if(href == '..' || href == '.'){
+                    localStorage.setItem('isZh', "false");
+                }else{
+                    localStorage.setItem('isZh', "true");
+                }
+
+                event.preventDefault();
+                window.location.href = href
+
+            }
+
+
+        });
+    });
 });
