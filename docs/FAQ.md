@@ -2,10 +2,8 @@
 
 - When multiple aspects are superimposed on a method, annotations take precedence over matching
   aspects, and annotation aspects are executed from top to bottom
-- The next aspect will be executed only after *
-  *[proceed](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint/)** is called, and the
-  code in the aspect method will be called only after *
-  *[proceed](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint/)** is executed on the
+- The next aspect will be executed only after **[proceed](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint/)** is called, and the
+  code in the aspect method will be called only after **[proceed](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint/)** is executed on the
   last aspect among multiple aspects
 - Calling **[proceed(args)](https://flyjingfish.github.io/AndroidAOP/ProceedJoinPoint/)** in
   the previous aspect can update the parameters passed in the method, and the updated parameters of
@@ -127,14 +125,14 @@ The aspect processing class is bound to the corresponding method of the class, w
 into two cases
 
 - a. If the pointcut method is **not static**
-- The aspect processing class will be recycled as the object where the method is located is
-  recycled, but this is not timely; the recycling time is when any other aspect is processed.
-- And each object's pointcut method corresponds to an object of the aspect processing class, that
-  is, there are as many objects as the class where the pointcut method is located creates.
+    - The aspect processing class will be recycled as the object where the method is located is
+    recycled, but this is not timely; the recycling time is when any other aspect is processed.
+    - And each object's pointcut method corresponds to an object of the aspect processing class, that
+      is, there are as many objects as the class where the pointcut method is located creates.
 - b. If the pointcut method is **static**
-- Because the aspect method is static, the aspect processing class will always exist once it is
-  created.
-- And a class method only corresponds to one aspect processing class
+    - Because the aspect method is static, the aspect processing class will always exist once it is
+    created.
+    - And a class method only corresponds to one aspect processing class
 
 No matter which type a or b is, the aspect processing class object will only be created when the
 method is executed.
