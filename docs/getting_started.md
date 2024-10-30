@@ -27,16 +27,19 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
         ```groovy
         
         plugins {
-          //Required item 👇 apply is set to true to automatically apply debugMode to all modules, if false, follow step 5 below.
+          //👇Required item (1)👈 apply is set to true to automatically apply debugMode to all modules, if false, follow step 5 below.
           id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.2.6" apply true
         }
         ```
+
+        1.  :man_raising_hand: If you have the `com.google.dagger.hilt.android` plugin in your project, put this plugin before it.
+
     - Using **legacy plugin application**:
     
         ```groovy
         buildscript {
              dependencies {
-                 //Required items 👇
+                 //👇equired items (1)👈
                  classpath "io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.2.6"
              }
         }
@@ -44,28 +47,38 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
         apply plugin: "android.aop"
         ```
 
+        1.  :man_raising_hand: If you have the `com.google.dagger:hilt-android-gradle-plugin` plugin in your project, put this plugin before it.
+
 === "Kotlin"
 
     - Using the **plugins DSL**:
         ```kotlin
         
         plugins {
-          //Required item 👇 apply is set to true to automatically apply debugMode to all modules, if false, follow step 5 below.
+          //👇Required item (1)👈 apply is set to true to automatically apply debugMode to all modules, if false, follow step 5 below.
           id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.2.6" apply true
         }
         ```
+
+        1.  :man_raising_hand: If you have the `com.google.dagger.hilt.android` plugin in your project, put this plugin before it.
+
     - Using **legacy plugin application**:
     
         ```kotlin
         buildscript {
              dependencies {
-                 //Required items 👇
+                 //👇Required items (1)👈
                  classpath("io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.2.6")
              }
         }
         //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below.
         apply(plugin = "android.aop")
         ```
+
+        1.  :man_raising_hand: If you have the `com.google.dagger:hilt-android-gradle-plugin` plugin in your project, put this plugin before it.
+
+!!! note
+    **If you use the hilt plugin in your project, pay attention to the order of importing plugins mentioned in the article (click the "+" above to see more information)**
 
 <img src="/AndroidAOP/svg/two.svg#only-light" align = "center" />
 <img src="/AndroidAOP/svg/two_dark.svg#only-dark" align = "center" />

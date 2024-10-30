@@ -29,44 +29,57 @@
         ```groovy
         
         plugins {
-            //必须项 👇 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五的方式二
+            //👇必须项 (1)👈 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五的方式二
             id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.2.6" apply true
         }
         ```
+        
+        1.  :man_raising_hand: 如果你的项目内存在 `com.google.dagger.hilt.android` 插件，请把本插件放在其之前
 
     - 或者老版本
         ```groovy
         buildscript {
           dependencies {
-              //必须项 👇
+              //👇必须项 (1)👈
               classpath "io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.2.6"
           }
         }
         // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五的方式二
         apply plugin: "android.aop"
         ```
+        
+        1.  :man_raising_hand: 如果你的项目内存在 `com.google.dagger:hilt-android-gradle-plugin` 插件，请把本插件放在其之前
+
 === "Kotlin"
 
     - 新版本
 
         ```kotlin
         plugins {
-            //必须项 👇 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五的方式二
+            //👇必须项 (1)👈 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五的方式二
             id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.2.6" apply true
         }
         ```
+        
+        1.  :man_raising_hand: 如果你的项目内存在 `com.google.dagger.hilt.android` 插件，请把本插件放在其之前
 
     - 或者老版本
         ```kotlin
         buildscript {
           dependencies {
-              //必须项 👇
+              //👇必须项 (1)👈
               classpath("io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.2.6")
           }
         }
         // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五的方式二
         apply(plugin = "android.aop")
         ```
+        
+        1.  :man_raising_hand: 如果你的项目内存在 `com.google.dagger:hilt-android-gradle-plugin` 插件，请把本插件放在其之前
+
+!!! note
+    **如果你的项目中使用了 hilt 插件，注意文中提到的导入插件的顺序（点击上边的 “+” 可看到更多信息）**
+
 
 <img src="../../svg/two.svg#only-light" align = "center" />
 <img src="../../svg/two_dark.svg#only-dark" align = "center" />
