@@ -204,7 +204,7 @@ object WovenIntoCode {
                         override fun visitAnnotation(
                             name: String?,
                             descriptor: String?
-                        ): AnnotationVisitor {
+                        ): AnnotationVisitor? {
                             return super.visitAnnotation(name, descriptor)
                         }
                     }
