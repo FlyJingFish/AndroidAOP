@@ -196,9 +196,9 @@ Add in `build.gradle` of **app**
          //👇Required item  If you already have this item in your project, you don’t need to add it.
          implementation "androidx.appcompat:appcompat:1.3.0" // At least in 1.3.0 and above
          
-         //👇Optional (2)👈, if you want to customize aspects, you need to use them, ⚠️supports aspects written in Java and Kotlin code
+         //👇Optional (2)👈Click + to view detailed description, ⚠️supports aspects written in Java and Kotlin code
          ksp "io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.2.6"
-         //👇Optional (3)👈, if you want to customize aspects, you need to use them, ⚠️only applies to aspects written in Java code
+         //👇Optional (3)👈Click + to view detailed description, ⚠️only applies to aspects written in Java code
          annotationProcessor "io.github.FlyJingFish.AndroidAop:android-aop-processor:2.2.6"
          //⚠️Choose one of the above android-aop-ksp and android-aop-processor
     }
@@ -225,9 +225,9 @@ Add in `build.gradle` of **app**
          //👇Required item  If you already have this item in your project, you don’t need to add it.
          implementation("androidx.appcompat:appcompat:1.3.0") // At least in 1.3.0 and above
          
-         //👇Optional (2)👈, if you want to customize aspects, you need to use them, ⚠️supports aspects written in Java and Kotlin code
+         //👇Optional (2)👈Click + to view detailed description, ⚠️supports aspects written in Java and Kotlin code
          ksp("io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.2.6")
-         //👇Optional (3)👈, if you want to customize aspects, you need to use them, ⚠️only applies to aspects written in Java code
+         //👇Optional (3)👈Click + to view detailed description, ⚠️only applies to aspects written in Java code
          annotationProcessor("io.github.FlyJingFish.AndroidAop:android-aop-processor:2.2.6")
          //⚠️Choose one of the above android-aop-ksp and android-aop-processor
     }

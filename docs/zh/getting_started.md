@@ -192,10 +192,10 @@
         //👇必须项 如果您项目内已经有了这项不用加也可以
         implementation "androidx.appcompat:appcompat:1.3.0" // 至少在1.3.0及以上
         
-        //👇非必须项 (2)👈，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
+        //👇非必须项 (2)👈点击+查看详细说明，⚠️支持Java和Kotlin代码写的切面
         ksp "io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.2.6"
         
-        //👇非必须项 (3)👈，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
+        //👇非必须项 (3)👈点击+查看详细说明，⚠️只适用于Java代码写的切面
         annotationProcessor "io.github.FlyJingFish.AndroidAop:android-aop-processor:2.2.6"
         //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
     }
@@ -222,10 +222,10 @@
         //👇必须项 如果您项目内已经有了这项不用加也可以
         implementation("androidx.appcompat:appcompat:1.3.0") // 至少在1.3.0及以上
         
-        //👇非必须项 (2)👈，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
+        //👇非必须项 (2)👈点击+查看详细说明，⚠️支持Java和Kotlin代码写的切面
         ksp("io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.2.6")
         
-        //👇非必须项 (3)👈，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
+        //👇非必须项 (3)👈点击+查看详细说明，⚠️只适用于Java代码写的切面
         annotationProcessor("io.github.FlyJingFish.AndroidAop:android-aop-processor:2.2.6")
         //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
     }
