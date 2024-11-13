@@ -196,14 +196,14 @@ object WovenIntoCode {
                     className = name
                 }
                 override fun visitAnnotation(
-                    descriptor: String,
+                    descriptor: String?,
                     visible: Boolean
                 ): AnnotationVisitor {
                     return object :
                         AnnotationVisitor(Opcodes.ASM9) {
                         override fun visitAnnotation(
-                            name: String,
-                            descriptor: String
+                            name: String?,
+                            descriptor: String?
                         ): AnnotationVisitor {
                             return super.visitAnnotation(name, descriptor)
                         }
@@ -426,7 +426,12 @@ object WovenIntoCode {
                     }
                 }
 
-                val suspendMethod = returnType.name == "java.lang.Object" && ctClasses[ctClasses.size-1].name == "kotlin.coroutines.Continuation"
+
+                val suspendMethod = if (ctClasses.isNotEmpty()){
+                    returnType.name == "java.lang.Object" && ctClasses[ctClasses.size-1].name == "kotlin.coroutines.Continuation"
+                }else{
+                    false
+                }
                 val returnTypeClassName = if (suspendMethod){
                     returnTypeMap[oldMethodName+oldDescriptor] ?: (returnTypeMap[targetMethodName+oldDescriptor] ?: returnType.name)
                 }else{
