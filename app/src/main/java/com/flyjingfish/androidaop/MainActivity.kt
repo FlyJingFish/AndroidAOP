@@ -20,6 +20,8 @@ import com.flyjingfish.android_aop_core.enums.ThreadType
 import com.flyjingfish.androidaop.databinding.ActivityMainBinding
 import com.flyjingfish.androidaop.test.MyOnClickListener
 import com.flyjingfish.androidaop.test.MyOnClickListener2
+import com.flyjingfish.androidaop.test.OrderFillTransaction
+import com.flyjingfish.androidaop.test.OrderFillTransactionBean
 import com.flyjingfish.androidaop.test.Round
 import com.flyjingfish.androidaop.test2.StaticClass
 import com.flyjingfish.androidaop.test.TestBean
@@ -56,8 +58,11 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
 //        }
         binding.btnSingleClick.setOnClickListener(object :MyOnClickListener(){
             override fun onClick(v: View?) {
-                super.onClick(v)
-                onSingleClick()
+//                super.onClick(v)
+//                onSingleClick()
+                val bean = OrderFillTransactionBean(emptyList<OrderFillTransaction>(),"")
+                bean.toString()
+                bean.hashCode()
             }
 
         })

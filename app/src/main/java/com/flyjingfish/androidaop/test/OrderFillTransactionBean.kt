@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class OrderFillTransactionBean(
-    val dataList: MutableList<OrderFillTransaction>,
+    val dataList: List<OrderFillTransaction>,
     val nextPageOffsetData: String
 )
 

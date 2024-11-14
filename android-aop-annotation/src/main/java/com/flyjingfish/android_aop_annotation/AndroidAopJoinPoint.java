@@ -325,7 +325,7 @@ public final class AndroidAopJoinPoint {
         paramsKey = stringBuilder.toString();
         methodKey = originalMethodName + paramsKey;
 
-        String key = targetClassName +"-" + target + "-" + methodKey;
+        String key = targetClassName +"-" + System.identityHashCode(target) + "-" + methodKey;
         MethodMap methodMap = AndroidAopBeanUtils.INSTANCE.getMethodMapCache(key);
         if (methodMap != null){
             targetMethod = methodMap.getTargetMethod();
