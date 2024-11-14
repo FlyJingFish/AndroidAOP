@@ -296,3 +296,7 @@ androidAopConfig {
     //❗️❗️❗️It is worth mentioning that when you publish aar, do not configure the package name of the aar you want to publish here, otherwise the aar will not be processed by AOP
 }
 ```
+
+### 15. Compile-time error `Caused by: java.lang.RuntimeException: cannot find com.xxx.yyy.test: com.xxx.yyy.Test found in com/xxx/yyy/test.class`
+
+- This is usually caused by a package and class with the same name. You should change one of the names.

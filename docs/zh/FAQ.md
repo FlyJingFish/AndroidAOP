@@ -268,6 +268,10 @@ androidAopConfig {
 }
 ```
 
+### 15、遇到编译时错误 `Caused by: java.lang.RuntimeException: cannot find com.xxx.yyy.test: com.xxx.yyy.Test found in com/xxx/yyy/test.class`
+
+- 这种情况一般是因为有一个 同名的包和类 导致的，你应该改掉其中一个名字
+
 
 
 
