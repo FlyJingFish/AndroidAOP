@@ -408,7 +408,7 @@ object Utils {
     }
 
     fun getTargetMethodName(oldMethodName:String,className:String,descriptor:String):String{
-        return "$oldMethodName$$${(slashToDot(className)+descriptor).computeMD5()}${METHOD_SUFFIX}"
+        return "${oldMethodName.replace("-","$")}$$${(slashToDot(className)+descriptor).computeMD5()}${METHOD_SUFFIX}"
     }
 
     fun getRealMethodName(methodName:String):String{
