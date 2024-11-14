@@ -24,6 +24,7 @@ object Utils {
     const val _CLASS = ".class"
     const val AOP_CONFIG_END_NAME = "\$\$AndroidAopClass.class"
     const val KEEP_CLASS = "com.flyjingfish.android_aop_annotation.aop_anno.AopKeep"
+    const val OBJECT_UTILS = "com.flyjingfish.android_aop_annotation.utils.ObjectGetUtils"
     const val JOIN_POINT_CLASS = "com.flyjingfish.android_aop_annotation.AndroidAopJoinPoint"
     const val CONVERSIONS_CLASS = "com.flyjingfish.android_aop_annotation.Conversions"
     const val METHOD_SUFFIX = "\$\$AndroidAOP"

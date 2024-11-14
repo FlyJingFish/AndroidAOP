@@ -13,6 +13,7 @@ import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils.CONVERSIONS_CLASS
 import com.flyjingfish.android_aop_plugin.utils.Utils.JOIN_POINT_CLASS
 import com.flyjingfish.android_aop_plugin.utils.Utils.KEEP_CLASS
+import com.flyjingfish.android_aop_plugin.utils.Utils.OBJECT_UTILS
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.adapterOSPath
 import com.flyjingfish.android_aop_plugin.utils.checkExist
@@ -331,6 +332,7 @@ object WovenIntoCode {
         cp.importPackage(JOIN_POINT_CLASS)
         cp.importPackage(CONVERSIONS_CLASS)
         cp.importPackage(KEEP_CLASS)
+        cp.importPackage(OBJECT_UTILS)
         val methodParamNamesScanner = MethodParamNamesScanner(newClassByte)
 
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
@@ -448,6 +450,12 @@ object WovenIntoCode {
                     )
                 }
 
+                val returnStr2 = if (returnType.name == "void"){
+                    "$returnStr;\nreturn;"
+                }else{
+                    "$returnStr;\n"
+                }
+
                 val invokeReturnStr:String? = ClassNameToConversions.getReturnInvokeXObject(returnType.name)
                 val invokeStr =if (isStaticMethod){
                     "$targetClassName.$targetMethodName($invokeBuffer)"
@@ -469,10 +477,17 @@ object WovenIntoCode {
                     cp.appendClassPath(it.absolutePath)
                 }
                 cp.importPackage(invokeClassName)
-                val argReflect = if (ClassFileUtils.reflectInvokeMethod) "" else ",new $invokeClassName()"
-                val constructor = "$targetClassName.class,${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\",${value.lambda}"
+                val constructor = "\"$invokeClassName\",$targetClassName.class,\"$oldMethodName\",\"$targetMethodName\",${value.lambda}"
+                val setArgsStr =
+                    "pointCut.setTarget(${if(isStaticMethod)"null" else "\$0"});"+
+                    (if (isHasArgs) "        Object[] args = new Object[]{$argsBuffer};\n" else "") +
+                        (if (isHasArgs) "        pointCut.setArgs(args);\n" else "        pointCut.setArgs(null);\n")
                 newMethodBody =
-                    " {AndroidAopJoinPoint pointCut = new AndroidAopJoinPoint($constructor);\n"+
+                    " {AndroidAopJoinPoint pointCut = ObjectGetUtils.INSTANCE.getAndroidAopJoinPoint($constructor);\n"+
+                            "if(pointCut.isInit()){\n" +
+                                setArgsStr+
+                            "   $returnStr2\n" +
+                            "}\n"+
                             "String[] cutClassNames = new String[]{$cutClassNameArray};\n"+
                             "pointCut.setCutMatchClassNames(cutClassNames);\n"+
                             "Class[] classes = new Class[]{$paramsClassesBuffer};\n"+
@@ -480,8 +495,8 @@ object WovenIntoCode {
                             "String[] paramNames = new String[]{$paramsNamesBuffer};\n"+
                             "pointCut.setParamNames(paramNames);\n"+
                             "pointCut.setReturnClass($returnTypeClassName.class);\n"+
-                            (if (isHasArgs) "        Object[] args = new Object[]{$argsBuffer};\n" else "") +
-                            (if (isHasArgs) "        pointCut.setArgs(args$argReflect);\n" else "        pointCut.setArgs(null$argReflect);\n") +
+                            setArgsStr +
+                            "pointCut.setInvokeMethod(${if (ClassFileUtils.reflectInvokeMethod) "null" else "new $invokeClassName()"});\n"+
                             "        "+returnStr+";}"
                 ctMethod.setBody(newMethodBody)
                 InitConfig.putCutInfo(value)

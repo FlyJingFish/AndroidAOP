@@ -15,6 +15,7 @@ import com.flyjingfish.android_aop_annotation.utils.AndroidAOPDebugUtils;
 import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils;
 import com.flyjingfish.android_aop_annotation.utils.InvokeMethod;
 import com.flyjingfish.android_aop_annotation.utils.MethodMap;
+import com.flyjingfish.android_aop_annotation.utils.ObjectGetUtils;
 import com.flyjingfish.android_aop_annotation.utils.Utils;
 
 import java.lang.annotation.Annotation;
@@ -29,7 +30,7 @@ public final class AndroidAopJoinPoint {
     static {
         AndroidAOPDebugUtils.INSTANCE.init$android_aop_annotation();
     }
-    private final Object target;
+    private Object target;
     private final Class<?> targetClass;
     private Object[] mArgs;
     private Class<?>[] mArgClasses;
@@ -45,10 +46,13 @@ public final class AndroidAopJoinPoint {
     private final String targetClassName;
     private InvokeMethod invokeMethod;
     private final boolean lambda;
+    private boolean init = false;
+    private final String classKey;
 
-    public AndroidAopJoinPoint(Class<?> clazz, Object target, String originalMethodName, String targetMethodName,boolean lambda) {
+
+    public AndroidAopJoinPoint(String classKey,Class<?> clazz, String originalMethodName, String targetMethodName,boolean lambda) {
+        this.classKey = classKey;
         this.targetClassName = clazz.getName();
-        this.target = target;
         this.originalMethodName = originalMethodName;
         this.targetMethodName = targetMethodName;
         this.targetClass = clazz;
@@ -56,12 +60,29 @@ public final class AndroidAopJoinPoint {
 
     }
 
-    public AndroidAopJoinPoint(Class<?> clazz, Object target, String originalMethodName, String targetMethodName) {
-        this(clazz,target,originalMethodName,targetMethodName,false);
+    public void setTarget(Object target) {
+        this.target = target;
     }
 
+    //    public AndroidAopJoinPoint(Class<?> clazz, Object target, String originalMethodName, String targetMethodName,boolean lambda) {
+//        this.targetClassName = clazz.getName();
+//        this.target = target;
+//        this.originalMethodName = originalMethodName;
+//        this.targetMethodName = targetMethodName;
+//        this.targetClass = clazz;
+//        this.lambda = lambda;
+//
+//    }
+//
+//    public AndroidAopJoinPoint(Class<?> clazz, Object target, String originalMethodName, String targetMethodName) {
+//        this(clazz,target,originalMethodName,targetMethodName,false);
+//    }
 
-//    public void setCutMatchClassName(String cutMatchClassName) {
+    public boolean isInit() {
+        return init;
+    }
+
+    //    public void setCutMatchClassName(String cutMatchClassName) {
 //        this.cutMatchClassName = cutMatchClassName;
 //    }
     public void setCutMatchClassNames(String[] cutMatchClassNames) {
@@ -81,7 +102,7 @@ public final class AndroidAopJoinPoint {
     }
 
     public Object joinPointReturnExecute(Class returnTypeClassName) {
-
+        init = true;
         ProceedReturnImpl proceedReturn = new ProceedReturnImpl(targetClass, mArgs,target);
         proceedReturn.setReturnType$android_aop_annotation(returnTypeClassName);
         proceedReturn.setOriginalMethod$android_aop_annotation(originalMethod);
@@ -123,10 +144,12 @@ public final class AndroidAopJoinPoint {
         }else {
             returnValue[0] = proceedReturn.proceed();
         }
+        release();
         return returnValue[0];
     }
 
     public Object joinPointExecute(Continuation continuation) {
+        init = true;
         boolean isSuspend = continuation != null;
 
         ProceedJoinPoint proceedJoinPoint;
@@ -271,7 +294,15 @@ public final class AndroidAopJoinPoint {
                 returnValue[0] = cutAnnotation.matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
             }
         }
+        release();
         return returnValue[0];
+    }
+
+    private void release(){
+        Object oldTarget = target;
+        target = null;
+        mArgs = null;
+        ObjectGetUtils.INSTANCE.observeTarget(oldTarget,classKey+"@"+System.identityHashCode(oldTarget));
     }
 
     static class PointCutAnnotation {
@@ -299,13 +330,12 @@ public final class AndroidAopJoinPoint {
     }
 
     public void setArgs(Object[] args) {
-       setArgs(args,null);
+        this.mArgs = args;
+        getTargetMethod();
     }
 
-    public void setArgs(Object[] args, InvokeMethod invokeMethod) {
-        this.mArgs = args;
+    public void setInvokeMethod(InvokeMethod invokeMethod) {
         this.invokeMethod = invokeMethod;
-        getTargetMethod();
     }
 
     private void getTargetMethod(){
