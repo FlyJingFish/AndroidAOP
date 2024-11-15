@@ -64,27 +64,11 @@ public final class AndroidAopJoinPoint {
         this.mTarget = target;
     }
 
-    //    public AndroidAopJoinPoint(Class<?> clazz, Object target, String originalMethodName, String targetMethodName,boolean lambda) {
-//        this.targetClassName = clazz.getName();
-//        this.target = target;
-//        this.originalMethodName = originalMethodName;
-//        this.targetMethodName = targetMethodName;
-//        this.targetClass = clazz;
-//        this.lambda = lambda;
-//
-//    }
-//
-//    public AndroidAopJoinPoint(Class<?> clazz, Object target, String originalMethodName, String targetMethodName) {
-//        this(clazz,target,originalMethodName,targetMethodName,false);
-//    }
 
     public boolean isInit() {
         return init;
     }
 
-    //    public void setCutMatchClassName(String cutMatchClassName) {
-//        this.cutMatchClassName = cutMatchClassName;
-//    }
     public void setCutMatchClassNames(String[] cutMatchClassNames) {
         this.cutMatchClassNames = cutMatchClassNames;
     }
