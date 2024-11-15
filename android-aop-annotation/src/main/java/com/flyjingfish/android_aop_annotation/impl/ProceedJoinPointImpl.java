@@ -194,10 +194,6 @@ class ProceedJoinPointImpl implements ProceedJoinPoint {
         }
     }
 
-    interface OnInvokeListener {
-        Object onInvoke();
-    }
-
     void setOnInvokeListener(OnInvokeListener onInvokeListener) {
         this.onInvokeListener = onInvokeListener;
     }

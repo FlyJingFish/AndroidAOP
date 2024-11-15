@@ -168,9 +168,9 @@ public final class AndroidAopJoinPoint {
             proceedJoinPoint = JoinPoint.INSTANCE.getJoinPoint(targetClass, args,target,false,targetMethod,invokeMethod, aopMethod);
         }
 
-        Annotation[] annotations = originalMethod.getAnnotations();
 
         if (pointCutAnnotations == null){
+            Annotation[] annotations = originalMethod.getAnnotations();
             pointCutAnnotations = new ArrayList<>();
             for (Annotation annotation : annotations) {
                 String annotationName = annotation.annotationType().getName();

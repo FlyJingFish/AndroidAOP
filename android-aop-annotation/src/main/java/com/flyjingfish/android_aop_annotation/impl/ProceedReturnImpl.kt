@@ -72,10 +72,6 @@ internal class ProceedReturnImpl(targetClass: Class<*>, args: Array<Any?>?, targ
         this.originalMethod = originalMethod
     }
 
-    internal interface OnInvokeListener {
-        fun onInvoke(): Any?
-    }
-
     internal fun setOnInvokeListener(onInvokeListener: OnInvokeListener?) {
         this.onInvokeListener = onInvokeListener
     }

@@ -2,7 +2,6 @@ package com.flyjingfish.android_aop_annotation.impl
 
 import com.flyjingfish.android_aop_annotation.AopMethod
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
-import com.flyjingfish.android_aop_annotation.impl.ProceedJoinPointImpl.OnInvokeListener
 import com.flyjingfish.android_aop_annotation.utils.InvokeMethod
 import java.lang.reflect.Method
 
@@ -47,9 +46,9 @@ internal object JoinPoint {
         )
     }
 
-    fun setOnInvokeListener(proceedJoinPoint: ProceedJoinPoint, function: () -> Any?) {
+    fun setOnInvokeListener(proceedJoinPoint: ProceedJoinPoint, onInvokeListener: OnInvokeListener) {
         if (proceedJoinPoint is ProceedJoinPointImpl){
-            proceedJoinPoint.setOnInvokeListener(OnInvokeListener { function.invoke() })
+            proceedJoinPoint.setOnInvokeListener(onInvokeListener)
         }
     }
 
