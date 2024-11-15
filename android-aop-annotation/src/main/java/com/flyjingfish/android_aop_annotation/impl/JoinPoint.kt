@@ -47,14 +47,10 @@ internal object JoinPoint {
     }
 
     fun setOnInvokeListener(proceedJoinPoint: ProceedJoinPoint, onInvokeListener: OnInvokeListener) {
-        if (proceedJoinPoint is ProceedJoinPointImpl){
-            proceedJoinPoint.setOnInvokeListener(onInvokeListener)
-        }
+        (proceedJoinPoint as ProceedJoinPointImpl).setOnInvokeListener(onInvokeListener)
     }
 
     fun setHasNext(proceedJoinPoint: ProceedJoinPoint,hasNext: Boolean) {
-        if (proceedJoinPoint is ProceedJoinPointImpl){
-            proceedJoinPoint.setHasNext(hasNext)
-        }
+        (proceedJoinPoint as ProceedJoinPointImpl).setHasNext(hasNext)
     }
 }
