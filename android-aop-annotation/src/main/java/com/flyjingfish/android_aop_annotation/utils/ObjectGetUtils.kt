@@ -14,26 +14,29 @@ object ObjectGetUtils {
     private val mTargetKeyReferenceQueue = ReferenceQueue<Any>()
 
     fun getAndroidAopJoinPoint(
-        classKey:String,
+        classMethodKey:String,
         clazz: Class<*>,
+        target : Any?,
         originalMethodName: String,
         targetMethodName: String,
         lambda: Boolean
     ) :AndroidAopJoinPoint{
-        var obj = mJoinPointPool[classKey]
+        val key = classMethodKey+System.identityHashCode(target)+Thread.currentThread().id
+        var obj = mJoinPointPool[key]
         if (obj == null){
-            obj = AndroidAopJoinPoint(classKey,clazz, originalMethodName, targetMethodName, lambda)
-            val oldInstance = mJoinPointPool.putIfAbsent(classKey, obj)
+            obj = AndroidAopJoinPoint(key,clazz, originalMethodName, targetMethodName, lambda)
+            val oldInstance = mJoinPointPool.putIfAbsent(key, obj)
             if (oldInstance != null){
                 obj = oldInstance
             }
+            observeTarget(target, key)
         }else{
             removeWeaklyReachableObjectsOnIOThread()
         }
         return obj
     }
 
-    fun observeTarget(target : Any?,key :String){
+    private fun observeTarget(target : Any?,key :String){
         mSingleIO.execute{
             if (target != null){
                 val weakReference = KeyWeakReference(target, mTargetKeyReferenceQueue,key)
@@ -54,20 +57,8 @@ object ObjectGetUtils {
         do {
             ref = mTargetKeyReferenceQueue.poll() as KeyWeakReference<*>?
             if (ref != null) {
-                val key = ref.key
-                val classKey = key.split("@")[0]
                 mTargetReferenceMap.remove(ref.key)
-                var isHasClass = false
-                val searchKey = "$classKey@"
-                mTargetReferenceMap.forEach { (key, _) ->
-                    if (key.startsWith(searchKey)){
-                        isHasClass = true
-                        return@forEach
-                    }
-                }
-                if (!isHasClass){
-                    mJoinPointPool.remove(classKey)
-                }
+                mJoinPointPool.remove(ref.key)
             }
         } while (ref != null)
     }

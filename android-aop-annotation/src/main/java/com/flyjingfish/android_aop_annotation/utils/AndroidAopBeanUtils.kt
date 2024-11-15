@@ -30,8 +30,8 @@ internal object AndroidAopBeanUtils {
         return JoinAnnoCutUtils.getMatchClassCreator(annotationName)
     }
 
-    fun getBasePointCut(joinPoint: ProceedJoinPoint, annotationName : String,targetClassName:String, methodKey : String): BasePointCut<Annotation> {
-        val key = "$targetClassName-${System.identityHashCode(joinPoint.target)}-$methodKey-$annotationName"
+    fun getBasePointCut(joinPoint: ProceedJoinPoint, annotationName : String,classMethodKey : String): BasePointCut<Annotation> {
+        val key = "$classMethodKey-${System.identityHashCode(joinPoint.target)}-$annotationName"
         var basePointCut: BasePointCut<Annotation>? = mBasePointCutMap[key]
         if (basePointCut == null) {
             basePointCut = getNewPointCut(annotationName)
@@ -53,8 +53,8 @@ internal object AndroidAopBeanUtils {
     }
 
 
-    fun getMatchClassMethod(joinPoint: ProceedJoinPoint, cutClassName: String, targetClassName:String,methodKey : String): MatchClassMethod {
-        val key = "$targetClassName-${System.identityHashCode(joinPoint.target)}-$methodKey-$cutClassName"
+    fun getMatchClassMethod(joinPoint: ProceedJoinPoint, cutClassName: String, classMethodKey : String): MatchClassMethod {
+        val key = "$classMethodKey-${System.identityHashCode(joinPoint.target)}-$cutClassName"
         var matchClassMethod: MatchClassMethod? = mMatchClassMethodMap[key]
         if (matchClassMethod == null) {
             matchClassMethod = getNewMatchClassMethod(cutClassName)

@@ -15,7 +15,6 @@ import com.flyjingfish.android_aop_annotation.utils.AndroidAOPDebugUtils;
 import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils;
 import com.flyjingfish.android_aop_annotation.utils.InvokeMethod;
 import com.flyjingfish.android_aop_annotation.utils.MethodMap;
-import com.flyjingfish.android_aop_annotation.utils.ObjectGetUtils;
 import com.flyjingfish.android_aop_annotation.utils.Utils;
 
 import java.lang.annotation.Annotation;
@@ -23,6 +22,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import kotlin.coroutines.Continuation;
 
@@ -30,7 +30,7 @@ public final class AndroidAopJoinPoint {
     static {
         AndroidAOPDebugUtils.INSTANCE.init$android_aop_annotation();
     }
-    private Object target;
+    private Object mTarget;
     private final Class<?> targetClass;
     private Object[] mArgs;
     private Class<?>[] mArgClasses;
@@ -41,17 +41,17 @@ public final class AndroidAopJoinPoint {
     private Method targetMethod;
     private Method originalMethod;
     private String[] cutMatchClassNames;
-    private String paramsKey;
-    private String methodKey;
     private final String targetClassName;
     private InvokeMethod invokeMethod;
     private final boolean lambda;
     private boolean init = false;
-    private final String classKey;
+    private final String classMethodKey;
+    private AopMethod aopMethod;
+    private List<PointCutAnnotation> pointCutAnnotations;
 
 
-    public AndroidAopJoinPoint(String classKey,Class<?> clazz, String originalMethodName, String targetMethodName,boolean lambda) {
-        this.classKey = classKey;
+    public AndroidAopJoinPoint(String classMethodKey, Class<?> clazz, String originalMethodName, String targetMethodName, boolean lambda) {
+        this.classMethodKey = classMethodKey;
         this.targetClassName = clazz.getName();
         this.originalMethodName = originalMethodName;
         this.targetMethodName = targetMethodName;
@@ -61,7 +61,7 @@ public final class AndroidAopJoinPoint {
     }
 
     public void setTarget(Object target) {
-        this.target = target;
+        this.mTarget = target;
     }
 
     //    public AndroidAopJoinPoint(Class<?> clazz, Object target, String originalMethodName, String targetMethodName,boolean lambda) {
@@ -102,25 +102,27 @@ public final class AndroidAopJoinPoint {
     }
 
     public Object joinPointReturnExecute(Class returnTypeClassName) {
+        Object target = mTarget;
+        Object[] args = mArgs;
+        mTarget = null;
+        mArgs = null;
         init = true;
-        ProceedReturnImpl proceedReturn = new ProceedReturnImpl(targetClass, mArgs,target);
+        ProceedReturnImpl proceedReturn = new ProceedReturnImpl(targetClass, args,target);
         proceedReturn.setReturnType$android_aop_annotation(returnTypeClassName);
         proceedReturn.setOriginalMethod$android_aop_annotation(originalMethod);
         proceedReturn.setTargetMethod$android_aop_annotation(targetMethod);
         proceedReturn.setTargetMethod$android_aop_annotation(invokeMethod);
-        Object[] returnValue = new Object[1];
         Object startSuspend = Utils.INSTANCE.getStartSuspendObj(target);
 
-        final List<OnBaseSuspendReturnListener> basePointCuts = AndroidAopBeanUtils.INSTANCE.getSuspendReturnListeners(startSuspend);
+        final List<OnBaseSuspendReturnListener> suspendReturnListeners = AndroidAopBeanUtils.INSTANCE.getSuspendReturnListeners(startSuspend);
         AndroidAopBeanUtils.INSTANCE.removeReturnListener(startSuspend);
 
-        if (basePointCuts != null && basePointCuts.size() > 0){
-            Iterator<OnBaseSuspendReturnListener> iterator = basePointCuts.iterator();
-            if (basePointCuts.size() > 1) {
+        if (suspendReturnListeners != null && suspendReturnListeners.size() > 0){
+            Iterator<OnBaseSuspendReturnListener> iterator = suspendReturnListeners.iterator();
+            if (suspendReturnListeners.size() > 1) {
                 proceedReturn.setOnInvokeListener$android_aop_annotation(() -> {
                     if (iterator.hasNext()) {
                         OnBaseSuspendReturnListener listener = iterator.next();
-                        iterator.remove();
                         proceedReturn.setHasNext$android_aop_annotation(iterator.hasNext());
                         Object value = Utils.INSTANCE.invokeReturn(proceedReturn,listener);
                         value = Conversions.return2Type(proceedReturn.getReturnType(), value);
@@ -132,59 +134,67 @@ public final class AndroidAopJoinPoint {
                 });
             }
 
-            proceedReturn.setHasNext$android_aop_annotation(basePointCuts.size() > 1);
+            proceedReturn.setHasNext$android_aop_annotation(suspendReturnListeners.size() > 1);
             OnBaseSuspendReturnListener listener = iterator.next();
-            iterator.remove();
 
             returnValue[0] = Utils.INSTANCE.invokeReturn(proceedReturn,listener);
-            for (OnBaseSuspendReturnListener onSuspendReturnListener : basePointCuts) {
+            for (OnBaseSuspendReturnListener onSuspendReturnListener : suspendReturnListeners) {
                 AndroidAopBeanUtils.INSTANCE.removeIgnoreOther(onSuspendReturnListener);
             }
             returnValue[0] = Conversions.return2Type(proceedReturn.getReturnType(), returnValue[0]);
         }else {
             returnValue[0] = proceedReturn.proceed();
         }
-        release();
-        return returnValue[0];
+        Object returnV = returnValue[0];
+        returnValue[0] = null;
+        return returnV;
     }
-
+    private final Object[] returnValue = new Object[1];
     public Object joinPointExecute(Continuation continuation) {
         init = true;
+        Object target = mTarget;
+        Object[] args = mArgs;
+        mTarget = null;
+        mArgs = null;
         boolean isSuspend = continuation != null;
 
         ProceedJoinPoint proceedJoinPoint;
-        AopMethod aopMethod = new AopMethodImpl(originalMethod,isSuspend,continuation,mParamNames,mArgClasses,mReturnClass,lambda);
+        if (aopMethod == null){
+            aopMethod = new AopMethodImpl(originalMethod,isSuspend,mParamNames,mArgClasses,mReturnClass,lambda);
+        }
         if (isSuspend){
-            proceedJoinPoint = JoinPoint.INSTANCE.getJoinPointSuspend(targetClass, mArgs,target,true,targetMethod,invokeMethod,aopMethod);
+            proceedJoinPoint = JoinPoint.INSTANCE.getJoinPointSuspend(targetClass, args,target,true,targetMethod,invokeMethod, aopMethod);
         }else {
-            proceedJoinPoint = JoinPoint.INSTANCE.getJoinPoint(targetClass, mArgs,target,false,targetMethod,invokeMethod,aopMethod);
+            proceedJoinPoint = JoinPoint.INSTANCE.getJoinPoint(targetClass, args,target,false,targetMethod,invokeMethod, aopMethod);
         }
 
         Annotation[] annotations = originalMethod.getAnnotations();
-        Object[] returnValue = new Object[1];
 
-        final List<PointCutAnnotation> basePointCuts = new ArrayList<>();
-
-        for (Annotation annotation : annotations) {
-            String annotationName = annotation.annotationType().getName();
-            if (AndroidAopBeanUtils.INSTANCE.getCutClassCreator(annotationName) != null) {
-                BasePointCut<Annotation> basePointCut = AndroidAopBeanUtils.INSTANCE.getBasePointCut(proceedJoinPoint, annotationName,targetClassName,methodKey);
-                PointCutAnnotation pointCutAnnotation = new PointCutAnnotation(annotation, basePointCut);
-                basePointCuts.add(pointCutAnnotation);
+        if (pointCutAnnotations == null){
+            pointCutAnnotations = new ArrayList<>();
+            for (Annotation annotation : annotations) {
+                String annotationName = annotation.annotationType().getName();
+                if (AndroidAopBeanUtils.INSTANCE.getCutClassCreator(annotationName) != null) {
+                    BasePointCut<Annotation> basePointCut = AndroidAopBeanUtils.INSTANCE.getBasePointCut(proceedJoinPoint, annotationName, classMethodKey);
+                    PointCutAnnotation pointCutAnnotation = new PointCutAnnotation(annotation, basePointCut);
+                    pointCutAnnotations.add(pointCutAnnotation);
+                }
             }
-        }
 
-        if (cutMatchClassNames != null) {
-            for (String cutMatchClassName : cutMatchClassNames) {
-                if (AndroidAopBeanUtils.INSTANCE.getMatchClassCreator(cutMatchClassName) != null){
-                    MatchClassMethod matchClassMethod = AndroidAopBeanUtils.INSTANCE.getMatchClassMethod(proceedJoinPoint, cutMatchClassName,targetClassName,methodKey);
-                    PointCutAnnotation pointCutAnnotation = new PointCutAnnotation(matchClassMethod);
-                    basePointCuts.add(pointCutAnnotation);
+            if (cutMatchClassNames != null) {
+                for (String cutMatchClassName : cutMatchClassNames) {
+                    if (AndroidAopBeanUtils.INSTANCE.getMatchClassCreator(cutMatchClassName) != null){
+                        MatchClassMethod matchClassMethod = AndroidAopBeanUtils.INSTANCE.getMatchClassMethod(proceedJoinPoint, cutMatchClassName, classMethodKey);
+                        PointCutAnnotation pointCutAnnotation = new PointCutAnnotation(matchClassMethod);
+                        pointCutAnnotations.add(pointCutAnnotation);
+                    }
                 }
             }
         }
-        Iterator<PointCutAnnotation> iterator = basePointCuts.iterator();
-        JoinPoint.INSTANCE.setHasNext(proceedJoinPoint,basePointCuts.size() > 1);
+
+
+        ListIterator<PointCutAnnotation> iterator = pointCutAnnotations.listIterator();
+        JoinPoint.INSTANCE.setHasNext(proceedJoinPoint, pointCutAnnotations.size() > 1);
         if (!iterator.hasNext()){
             if (AndroidAOPDebugUtils.INSTANCE.isApkDebug()){
                 throw new AndroidAOPPointCutNotFoundException("在"+targetClassName + "." + originalMethodName+"上没有找到切面处理类，请 clean 项目并重新编译");
@@ -194,11 +204,10 @@ public final class AndroidAopJoinPoint {
         }
 
 
-        if (basePointCuts.size() > 1) {
-            JoinPoint.INSTANCE.setOnInvokeListener(proceedJoinPoint,() -> {
+        if (pointCutAnnotations.size() > 1) {
+            JoinPoint.INSTANCE.setOnInvokeListener(proceedJoinPoint, () -> {
                 if (iterator.hasNext()) {
                     PointCutAnnotation nextCutAnnotation = iterator.next();
-                    iterator.remove();
                     JoinPoint.INSTANCE.setHasNext(proceedJoinPoint,iterator.hasNext());
                     Object value;
                     if (nextCutAnnotation.basePointCut != null) {
@@ -252,7 +261,6 @@ public final class AndroidAopJoinPoint {
 
 
         PointCutAnnotation cutAnnotation = iterator.next();
-        iterator.remove();
         if (cutAnnotation.basePointCut != null) {
             if (isSuspend){
                 if (cutAnnotation.basePointCut instanceof BasePointCutSuspend){
@@ -294,16 +302,11 @@ public final class AndroidAopJoinPoint {
                 returnValue[0] = cutAnnotation.matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
             }
         }
-        release();
-        return returnValue[0];
+        Object returnV = returnValue[0];
+        returnValue[0] = null;
+        return returnV;
     }
 
-    private void release(){
-        Object oldTarget = target;
-        target = null;
-        mArgs = null;
-        ObjectGetUtils.INSTANCE.observeTarget(oldTarget,classKey+"@"+System.identityHashCode(oldTarget));
-    }
 
     static class PointCutAnnotation {
         Annotation annotation;
@@ -339,23 +342,11 @@ public final class AndroidAopJoinPoint {
     }
 
     private void getTargetMethod(){
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("(");
-        if (mArgClasses != null && mArgClasses.length > 0){
-            int index = 0;
-            for (Class<?> argClassName : mArgClasses) {
-                stringBuilder.append(argClassName.getName());
-                if (index != mArgClasses.length - 1){
-                    stringBuilder.append(",");
-                }
-                index++;
-            }
+        if (targetMethod != null && originalMethod != null){
+            return;
         }
-        stringBuilder.append(")");
-        paramsKey = stringBuilder.toString();
-        methodKey = originalMethodName + paramsKey;
 
-        String key = targetClassName +"-" + System.identityHashCode(target) + "-" + methodKey;
+        String key = classMethodKey +"-" + System.identityHashCode(mTarget);
         MethodMap methodMap = AndroidAopBeanUtils.INSTANCE.getMethodMapCache(key);
         if (methodMap != null){
             targetMethod = methodMap.getTargetMethod();
@@ -384,7 +375,7 @@ public final class AndroidAopJoinPoint {
             targetMethod.setAccessible(true);
             originalMethod.setAccessible(true);
             methodMap = new MethodMap(originalMethod,targetMethod);
-            AndroidAopBeanUtils.INSTANCE.putMethodMapCache(key,methodMap,target);
+            AndroidAopBeanUtils.INSTANCE.putMethodMapCache(key,methodMap, mTarget);
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }

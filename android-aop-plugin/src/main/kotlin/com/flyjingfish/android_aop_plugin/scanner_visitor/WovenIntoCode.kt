@@ -477,7 +477,7 @@ object WovenIntoCode {
                     cp.appendClassPath(it.absolutePath)
                 }
                 cp.importPackage(invokeClassName)
-                val constructor = "\"$invokeClassName\",$targetClassName.class,\"$oldMethodName\",\"$targetMethodName\",${value.lambda}"
+                val constructor = "\"$invokeClassName\",$targetClassName.class,${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\",${value.lambda}"
                 val setArgsStr =
                     "pointCut.setTarget(${if(isStaticMethod)"null" else "\$0"});"+
                     (if (isHasArgs) "        Object[] args = new Object[]{$argsBuffer};\n" else "") +

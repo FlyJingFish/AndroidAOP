@@ -10,7 +10,6 @@ import java.lang.reflect.Type
 internal class AopMethodImpl(
     private val targetMethod: Method,
     private val isSuspend: Boolean,
-    private val suspendContinuation: Any?,
     private val mParamNames: Array<String>,
     private val mParamClasses: Array<Class<*>>,
     private val mReturnType: Class<*>,
