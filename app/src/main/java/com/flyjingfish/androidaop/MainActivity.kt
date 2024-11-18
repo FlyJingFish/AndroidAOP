@@ -27,6 +27,7 @@ import com.flyjingfish.androidaop.test2.StaticClass
 import com.flyjingfish.androidaop.test.TestBean
 import com.flyjingfish.test_lib.mycut.TestParams
 import com.flyjingfish.androidaop.test.TestReplace
+import com.flyjingfish.androidaop.testReplace.BaseBean
 import com.flyjingfish.test_lib.BaseActivity
 import com.flyjingfish.test_lib.annotation.MyAnno3
 import com.flyjingfish.test_lib.PermissionRejectListener
@@ -76,6 +77,8 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
             }
 
         })
+        val bbean = BaseBean(0,0)
+        bbean.test()
 //        binding.btnIOThread.setOnClickListener {
 //            onIOThread()
 //        }
