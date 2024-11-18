@@ -49,8 +49,12 @@
     - 设置为false，如果子类没有匹配的方法则不作处理
 
 !!! note 
-    另外不是所有类都可以Hook进去<br> <li>```type``` 类型为 ```SELF``` 时，```targetClassName``` 所设置的类必须是安装包里的代码。
-    例如：如果这个类（如：Toast）在 **android.jar** 里边是不行的。如有这种需求应该使用[@AndroidAopReplaceClass](/AndroidAOP/zh/AndroidAopReplaceClass)</li><br> <li>```type``` 类型不是 ```SELF``` 时，这个切面要想有作用需要有匹配的那个方法，如果子类没有重写匹配的方法，子类就不会被匹配到，使用 overrideMethod 可忽略此限制 </li> <br> <li><strong>当你修改这个切面的配置后多数情况下你应该clean项目再继续开发</strong></li>
+    另外不是所有类都可以Hook进去
+
+    - ```type``` 类型为 ```SELF``` 时，```targetClassName``` 所设置的类必须是安装包里的代码。
+    例如：如果这个类（如：Toast）在 **android.jar** 里边是不行的。如有这种需求应该使用[@AndroidAopReplaceClass](/AndroidAOP/zh/AndroidAopReplaceClass)
+    - ```type``` 类型不是 ```SELF``` 时，这个切面要想有作用需要有匹配的那个方法，如果子类没有重写匹配的方法，子类就不会被匹配到，使用 overrideMethod 可忽略此限制 
+    - **当你修改这个切面的配置后多数情况下你应该clean项目再继续开发**
 
 
 ## 创建切面处理类
