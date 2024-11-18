@@ -6,7 +6,7 @@
     ```groovy
     dependencies {
          //Optional 👇This package provides some common annotation aspects
-         implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.2.7"
+         implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.2.8"
     }
     ```
 
@@ -15,7 +15,7 @@
     ```kotlin
     dependencies {
          //Optional 👇This package provides some common annotation aspects
-         implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.2.7")
+         implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.2.8")
     }
     ```
 
