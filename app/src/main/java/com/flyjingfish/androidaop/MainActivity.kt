@@ -58,8 +58,8 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
 //        }
         binding.btnSingleClick.setOnClickListener(object :MyOnClickListener(){
             override fun onClick(v: View?) {
-//                super.onClick(v)
-//                onSingleClick()
+                super.onClick(v)
+                onSingleClick()
                 val bean = OrderFillTransactionBean(emptyList<OrderFillTransaction>(),"")
                 bean.toString()
                 bean.hashCode()
