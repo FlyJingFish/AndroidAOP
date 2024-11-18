@@ -153,7 +153,7 @@ class ProceedJoinPointImpl implements ProceedJoinPoint {
             realArgs = args;
         }
 
-        if (realArgs != null && this.args != null) {
+        if (realArgs != null && this.args != null && realArgs != this.args) {
             System.arraycopy(realArgs, 0, this.args, 0, this.args.length);
         }
 
