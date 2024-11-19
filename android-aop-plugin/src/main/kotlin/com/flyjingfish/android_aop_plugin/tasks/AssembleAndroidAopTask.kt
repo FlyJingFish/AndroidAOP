@@ -55,6 +55,9 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     @get:Input
     abstract var reflectInvokeMethod :Boolean
 
+    @get:Input
+    abstract var reflectInvokeMethodStatic :Boolean
+
     @get:InputFiles
     abstract val allJars: ListProperty<RegularFile>
 
@@ -74,6 +77,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         ClassPoolUtils.release(project)
         ClassFileUtils.debugMode = false
         ClassFileUtils.reflectInvokeMethod = reflectInvokeMethod
+        ClassFileUtils.reflectInvokeMethodStatic = reflectInvokeMethodStatic
         WovenInfoUtils.isCompile = false
         WovenInfoUtils.checkHasInvokeJson(project, variant)
         WovenInfoUtils.checkHasOverrideJson(project, variant)
@@ -81,6 +85,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         ClassFileUtils.outputDir = File(Utils.aopTransformTempDir(project,variant))
         ClassFileUtils.clear()
         ClassFileUtils.outputDir.deleteRecursively()
+        ClassFileUtils.outputCacheDir = File(Utils.aopCompileTempInvokeDir(project, variant))
         SuspendReturnScanner.hasSuspendReturn = false
         jarOutput = JarOutputStream(BufferedOutputStream(FileOutputStream(output.get().asFile)))
         val scanTimeCost = measureTimeMillis {
@@ -202,6 +207,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     }
 
     private fun wovenIntoCode(){
+        val invokeStaticClassName = Utils.extraPackage+".Invoke"+project.name.computeMD5()
         WovenInfoUtils.initAllClassName()
         WovenInfoUtils.makeReplaceMethodInfoUse()
 //        logger.error("getClassMethodRecord="+WovenInfoUtils.classMethodRecords)
@@ -242,7 +248,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     if (realMethodsRecord != null){
                         FileInputStream(file).use { inputs ->
                             val byteArray = try {
-                                WovenIntoCode.modifyClass(inputs.readAllBytes(),realMethodsRecord,hasReplace,isSuspend)
+                                WovenIntoCode.modifyClass(inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,isSuspend)
                             } catch (e: Exception) {
                                 realCopy()
                                 if (isSuspend){
@@ -485,7 +491,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     if (realMethodsRecord != null){
                         jarFile.getInputStream(jarEntry).use { inputs ->
                             val byteArray = try {
-                                WovenIntoCode.modifyClass(inputs.readAllBytes(),realMethodsRecord,hasReplace,isSuspend)
+                                WovenIntoCode.modifyClass(inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,isSuspend)
                             } catch (e: Exception) {
                                 realCopy()
                                 if (isSuspend){
@@ -673,7 +679,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         }
 
         ClassFileUtils.wovenInfoInvokeClass(newClasses)
-        if (!ClassFileUtils.reflectInvokeMethod){
+        if (!ClassFileUtils.reflectInvokeMethod || ClassFileUtils.reflectInvokeMethodStatic){
             for (file in ClassFileUtils.outputDir.walk()) {
                 if (file.isFile) {
                     val className = file.getFileClassname(ClassFileUtils.outputDir)

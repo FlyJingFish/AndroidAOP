@@ -16,9 +16,11 @@ import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils._CLASS
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.checkExist
+import com.flyjingfish.android_aop_plugin.utils.computeMD5
 import com.flyjingfish.android_aop_plugin.utils.getFileClassname
 import com.flyjingfish.android_aop_plugin.utils.getRelativePath
 import com.flyjingfish.android_aop_plugin.utils.inRules
+import com.flyjingfish.android_aop_plugin.utils.printLog
 import com.flyjingfish.android_aop_plugin.utils.saveEntry
 import com.flyjingfish.android_aop_plugin.utils.saveFile
 import org.gradle.api.Project
@@ -108,6 +110,7 @@ class CompileAndroidAopTask(
         aopTaskUtils.searchJoinPointLocationEnd(addClassMethodRecords, deleteClassMethodRecords)
     }
     private fun wovenIntoCode(){
+        val invokeStaticClassName = Utils.extraPackage+".Invoke"+project.name.computeMD5()
         WovenInfoUtils.makeReplaceMethodInfoUse()
 //        logger.error("getClassMethodRecord="+WovenInfoUtils.classMethodRecords)
         val hasReplace = WovenInfoUtils.hasReplace()
@@ -151,7 +154,7 @@ class CompileAndroidAopTask(
                 if (realMethodsRecord != null){
                     mkOutFile()
                     FileInputStream(file).use { inputs ->
-                        val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),realMethodsRecord,hasReplace,isSuspend)
+                        val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,isSuspend)
                         byteArray.saveFile(outFile)
                         newClasses.add(byteArray)
                     }

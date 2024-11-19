@@ -24,7 +24,7 @@ object ObjectGetUtils {
         val key = classMethodKey+System.identityHashCode(target)+Thread.currentThread().id
         var obj = mJoinPointPool[key]
         if (obj == null){
-            obj = AndroidAopJoinPoint(key,clazz, originalMethodName, targetMethodName, lambda)
+            obj = AndroidAopJoinPoint(classMethodKey,clazz, originalMethodName, targetMethodName, lambda)
             val oldInstance = mJoinPointPool.putIfAbsent(key, obj)
             if (oldInstance != null){
                 obj = oldInstance

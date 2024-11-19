@@ -14,6 +14,7 @@ import com.flyjingfish.android_aop_annotation.impl.ProceedReturnImpl;
 import com.flyjingfish.android_aop_annotation.utils.AndroidAOPDebugUtils;
 import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils;
 import com.flyjingfish.android_aop_annotation.utils.InvokeMethod;
+import com.flyjingfish.android_aop_annotation.utils.InvokeMethods;
 import com.flyjingfish.android_aop_annotation.utils.MethodMap;
 import com.flyjingfish.android_aop_annotation.utils.Utils;
 
@@ -39,15 +40,18 @@ public final class AndroidAopJoinPoint {
     private final String targetMethodName;
     private final String originalMethodName;
     private Method targetMethod;
+    private Method targetStaticMethod;
     private Method originalMethod;
     private String[] cutMatchClassNames;
     private final String targetClassName;
     private InvokeMethod invokeMethod;
+    private Class<?> invokeStaticClass;
     private final boolean lambda;
     private boolean init = false;
     private final String classMethodKey;
     private AopMethod aopMethod;
     private List<PointCutAnnotation> pointCutAnnotations;
+    private boolean reflectStatic;
 
 
     public AndroidAopJoinPoint(String classMethodKey, Class<?> clazz, String originalMethodName, String targetMethodName, boolean lambda) {
@@ -97,6 +101,7 @@ public final class AndroidAopJoinPoint {
         proceedReturn.setOriginalMethod$android_aop_annotation(originalMethod);
         proceedReturn.setTargetMethod$android_aop_annotation(targetMethod);
         proceedReturn.setTargetMethod$android_aop_annotation(invokeMethod);
+        proceedReturn.setStaticMethod$android_aop_annotation(targetStaticMethod);
         Object startSuspend = Utils.INSTANCE.getStartSuspendObj(target);
 
         final List<OnBaseSuspendReturnListener> suspendReturnListeners = AndroidAopBeanUtils.INSTANCE.getSuspendReturnListeners(startSuspend);
@@ -150,7 +155,7 @@ public final class AndroidAopJoinPoint {
         }else {
             proceedJoinPoint = JoinPoint.INSTANCE.getJoinPoint(targetClass, args,target,false,targetMethod,invokeMethod, aopMethod);
         }
-
+        JoinPoint.INSTANCE.setStaticMethod(proceedJoinPoint,targetStaticMethod);
 
         if (pointCutAnnotations == null){
             Annotation[] annotations = originalMethod.getAnnotations();
@@ -319,7 +324,12 @@ public final class AndroidAopJoinPoint {
     }
 
     public void setInvokeMethod(InvokeMethod invokeMethod) {
-        this.invokeMethod = invokeMethod;
+        reflectStatic = invokeMethod instanceof InvokeMethods;
+        if (reflectStatic){
+            this.invokeStaticClass = invokeMethod.getClass();
+        }else {
+            this.invokeMethod = invokeMethod;
+        }
     }
 
     private void getTargetMethod(){
@@ -331,6 +341,7 @@ public final class AndroidAopJoinPoint {
         MethodMap methodMap = AndroidAopBeanUtils.INSTANCE.getMethodMapCache(key);
         if (methodMap != null){
             targetMethod = methodMap.getTargetMethod();
+            targetStaticMethod = methodMap.getTargetStaticMethod();
             originalMethod = methodMap.getOriginalMethod();
             return;
         }
@@ -355,7 +366,11 @@ public final class AndroidAopJoinPoint {
             }
             targetMethod.setAccessible(true);
             originalMethod.setAccessible(true);
-            methodMap = new MethodMap(originalMethod,targetMethod);
+            if (reflectStatic && invokeStaticClass != null){
+                targetStaticMethod = invokeStaticClass.getDeclaredMethod(classMethodKey, Object.class,Object[].class);
+                targetStaticMethod.setAccessible(true);
+            }
+            methodMap = new MethodMap(originalMethod,targetMethod,targetStaticMethod);
             AndroidAopBeanUtils.INSTANCE.putMethodMapCache(key,methodMap, mTarget);
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);

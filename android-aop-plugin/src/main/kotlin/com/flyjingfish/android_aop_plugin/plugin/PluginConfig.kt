@@ -11,6 +11,7 @@ class PluginConfig(private val project: Project) {
     private var onlyDebug = false
     private var isIncremental = true
     private var buildConfig = true
+    private var reflectInvokeMethodStatic = true
 
     init{
         val reflectInvokeMethodStr = project.properties[RootBooleanConfig.REFLECT_INVOKE_METHOD.propertyName]?:"${RootBooleanConfig.REFLECT_INVOKE_METHOD.defaultValue}"
@@ -19,12 +20,14 @@ class PluginConfig(private val project: Project) {
         val isIncrementalStr = project.properties[RootBooleanConfig.INCREMENTAL.propertyName]?:"${RootBooleanConfig.INCREMENTAL.defaultValue}"
         val reflectInvokeMethodDebugStr = project.properties[RootBooleanConfig.REFLECT_INVOKE_METHOD_ONLY_DEBUG.propertyName]?:"${RootBooleanConfig.REFLECT_INVOKE_METHOD_ONLY_DEBUG.defaultValue}"
         val buildConfigStr = project.properties[RootBooleanConfig.BUILD_CONFIG.propertyName]?:"${RootBooleanConfig.BUILD_CONFIG.defaultValue}"
+        val reflectInvokeMethodStaticStr = project.properties[RootBooleanConfig.REFLECT_INVOKE_METHOD_STATIC.propertyName]?:"${RootBooleanConfig.REFLECT_INVOKE_METHOD_STATIC.defaultValue}"
         debugMode = debugModeStr.toString() == "true"
         reflectInvokeMethod = reflectInvokeMethodStr.toString() == "true"
         onlyDebug = onlyModeStr.toString() == "true"
         isIncremental = isIncrementalStr.toString() == "true"
         reflectInvokeMethodOnlyDebug = reflectInvokeMethodDebugStr.toString() == "true"
         buildConfig = buildConfigStr.toString() == "true"
+        reflectInvokeMethodStatic = reflectInvokeMethodStaticStr.toString() == "true"
     }
 
     fun isIncremental():Boolean{
@@ -71,5 +74,9 @@ class PluginConfig(private val project: Project) {
     }
     fun hasBuildConfig():Boolean{
         return buildConfig
+    }
+
+    fun isReflectInvokeMethodStatic():Boolean{
+        return reflectInvokeMethodStatic
     }
 }

@@ -28,6 +28,9 @@
    kotlin.coroutines.Continuation getCompletion();
    <fields>;
 }
+-keep class * implements com.flyjingfish.android_aop_annotation.utils.InvokeMethods{
+   <methods>;
+}
 -keep class * {
     @com.flyjingfish.android_aop_annotation.aop_anno.AopKeep <fields>;
 }

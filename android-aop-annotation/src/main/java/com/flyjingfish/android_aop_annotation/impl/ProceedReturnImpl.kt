@@ -22,6 +22,7 @@ internal class ProceedReturnImpl(targetClass: Class<*>, args: Array<Any?>?, targ
     private var onInvokeListener: OnInvokeListener? = null
     private var hasNext = false
     private var returnType: Class<*>? = null
+    private var staticMethod: Method? = null
 
     init {
         this.targetClass = targetClass
@@ -46,6 +47,8 @@ internal class ProceedReturnImpl(targetClass: Class<*>, args: Array<Any?>?, targ
             if (!hasNext) {
                 returnValue = if (targetInvokeMethod != null) {
                     targetInvokeMethod!!.invoke(target, args)
+                } else if (staticMethod != null) {
+                    staticMethod!!.invoke(null, target, args)
                 } else {
                     targetMethod!!.invoke(target, *args)
                 }
@@ -132,5 +135,8 @@ internal class ProceedReturnImpl(targetClass: Class<*>, args: Array<Any?>?, targ
             }
             className
         }.getOrNull()
+    }
+    internal fun setStaticMethod(staticMethod: Method?) {
+        this.staticMethod = staticMethod
     }
 }

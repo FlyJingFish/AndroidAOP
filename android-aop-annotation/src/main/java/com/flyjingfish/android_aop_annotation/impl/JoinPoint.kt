@@ -53,4 +53,8 @@ internal object JoinPoint {
     fun setHasNext(proceedJoinPoint: ProceedJoinPoint,hasNext: Boolean) {
         (proceedJoinPoint as ProceedJoinPointImpl).setHasNext(hasNext)
     }
+
+    fun setStaticMethod(proceedJoinPoint: ProceedJoinPoint, staticMethod: Method?) {
+        (proceedJoinPoint as ProceedJoinPointImpl).setStaticMethod(staticMethod)
+    }
 }

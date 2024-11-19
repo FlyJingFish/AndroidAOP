@@ -30,6 +30,7 @@ object TransformPlugin : BasePlugin() {
             if (androidAopConfig.enabled && !isDebugMode(buildTypeName,variant.name)){
                 val task = project.tasks.register("${variant.name}AssembleAndroidAopTask", AssembleAndroidAopTask::class.java){
                     it.reflectInvokeMethod = isReflectInvokeMethod(buildTypeName,variant.name)
+                    it.reflectInvokeMethodStatic = isReflectInvokeMethodStatic()
                     it.variant = variant.name
                 }
                 variant.artifacts

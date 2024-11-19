@@ -37,6 +37,7 @@ class ProceedJoinPointImpl implements ProceedJoinPoint {
     private final Object suspendContinuation;
     private OnInvokeListener onInvokeListener;
     private boolean hasNext;
+    private Method staticMethod;
 
     ProceedJoinPointImpl(@NonNull Class<?> targetClass, Object[] args, @Nullable Object target, boolean isSuspend,
                          Method targetMethod, @Nullable InvokeMethod invokeMethod, AopMethod aopMethod) {
@@ -163,6 +164,8 @@ class ProceedJoinPointImpl implements ProceedJoinPoint {
             if (!hasNext) {
                 if (targetInvokeMethod != null) {
                     returnValue = targetInvokeMethod.invoke(target, realArgs);
+                } else if (staticMethod != null){
+                    returnValue = staticMethod.invoke(null,target, realArgs);
                 } else {
                     returnValue = targetMethod.invoke(target, realArgs);
                 }
@@ -218,5 +221,9 @@ class ProceedJoinPointImpl implements ProceedJoinPoint {
         }
         buf.append(")]");
         return buf.toString();
+    }
+
+    void setStaticMethod(Method staticMethod) {
+        this.staticMethod = staticMethod;
     }
 }

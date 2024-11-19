@@ -25,6 +25,10 @@ abstract class BasePlugin :Plugin<Project> {
         return pluginConfig.isReflectInvokeMethod(buildTypeName, variantName)
     }
 
+    fun isReflectInvokeMethodStatic():Boolean{
+        return pluginConfig.isReflectInvokeMethodStatic()
+    }
+
     fun isDebugMode():Boolean{
         return pluginConfig.isDebugMode()
     }

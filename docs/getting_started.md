@@ -377,12 +377,14 @@ Add the following settings to `gradle.properties` in the **root directory** (opt
 ```properties
 androidAop.reflectInvokeMethod = true //Set to true to reflect the execution of the facet method, if not set, the default is false
 androidAop.reflectInvokeMethod.variantOnlyDebug = true //Set to true to be effective only in debug, if not set, the default is false
+androidAop.reflectInvokeMethod.static = true // Set to true to simulate non-reflective situations. If not set, the default value is false.
 ```
 !!! note
     1.Reflection execution of the facet method will speed up packaging <br>
     2.Please note that when `androidAop.reflectInvokeMethod.variantOnlyDebug` is set to true, the release package will ignore the setting of `androidAop.reflectInvokeMethod = true` and automatically not reflect, and there will be no such effect when it is set to false (if not set, the default is false) <br>
-    3.In versions 1.8.7 and above, the speed of secondary compilation has been optimized to be basically the same as the speed of enabling reflection.<br>
-    **4. `androidAop.reflectInvokeMethod.variantOnlyDebug` is only valid for Android libraries, not for Java or Kotlin libraries**
+    3.`androidAop.reflectInvokeMethod.static` is set to true to simulate the non-reflective situation. If it is not set, the default value is false. If you want to use reflection, it is recommended to set this to true <br>
+    4.In versions 1.8.7 and above, the speed of secondary compilation has been optimized to be basically the same as the speed of enabling reflection.<br>
+    **5. `androidAop.reflectInvokeMethod.variantOnlyDebug` is only valid for Android libraries, not for Java or Kotlin libraries**
 
 <img src="/AndroidAOP/svg/five.svg#only-light" align = "center" />
 <img src="/AndroidAOP/svg/five_dark.svg#only-dark" align = "center" />

@@ -53,6 +53,7 @@ object WovenIntoCode {
         inputStreamBytes: ByteArray?,
         methodRecordHashMap: HashMap<String, MethodRecord>,
         hasReplace:Boolean,
+        invokeStaticClass:String,
         isSuspend:Boolean = false
     ): ByteArray {
         val wovenRecord = mutableListOf<MethodRecord>()
@@ -62,6 +63,7 @@ object WovenIntoCode {
         val cr = ClassReader(inputStreamBytes)
         val cw = ClassWriter(cr, 0)
         val returnTypeMap = mutableMapOf<String,String?>()
+        val isModifyPublic = ClassFileUtils.reflectInvokeMethod && ClassFileUtils.reflectInvokeMethodStatic
 
         fun visitMethod4Record(access: Int,
                                name: String,
@@ -105,7 +107,11 @@ object WovenIntoCode {
                     superName: String,
                     interfaces: Array<out String>?
                 ) {
-                    super.visit(version, access, name, signature, superName, interfaces)
+                    super.visit(version, if (isModifyPublic){
+                        ACC_PUBLIC
+                    }else{
+                        access
+                    }, name, signature, superName, interfaces)
                     thisHasCollect = hasCollect
                     thisCollectClassName = thisClassName
                     superClassName = superName
@@ -140,7 +146,11 @@ object WovenIntoCode {
                     superName: String,
                     interfaces: Array<out String>?
                 ) {
-                    super.visit(version, access, name, signature, superName, interfaces)
+                    super.visit(version, if (isModifyPublic){
+                        ACC_PUBLIC
+                    }else{
+                        access
+                    }, name, signature, superName, interfaces)
                     thisHasCollect = hasCollect
                     thisCollectClassName = thisClassName
                     superClassName = superName
@@ -188,7 +198,11 @@ object WovenIntoCode {
                     superName: String,
                     interfaces: Array<out String>?
                 ) {
-                    super.visit(version, access, name, signature, superName, interfaces)
+                    super.visit(version, if (isModifyPublic){
+                        ACC_PUBLIC
+                    }else{
+                        access
+                    }, name, signature, superName, interfaces)
                     if (isSuspend){
                         returnClassName = Utils.getSuspendClassType(signature)
 //                        printLog("wovenCode === $signature ==== $returnClassName")
@@ -348,6 +362,11 @@ object WovenIntoCode {
                 }
             }
             val invokeClassName = "${targetClassName}\$Invoke${(targetMethodName+oldDescriptor).computeMD5()}"
+            val realInvokeClassNameReal = if (ClassFileUtils.reflectInvokeMethodStatic){
+                invokeStaticClass
+            }else{
+                invokeClassName
+            }
 //            if (value in wovenRecord){
 ////                WovenInfoUtils.checkNoneInvokeClass(invokeClassName)
 //                return@forEach
@@ -472,16 +491,27 @@ object WovenIntoCode {
                 }
 
 
-                ClassFileUtils.createInvokeClass(invokeClassName,invokeBody, oldMethodName + oldDescriptor)
+                ClassFileUtils.createInvokeClass(invokeStaticClass,invokeClassName,invokeBody, oldMethodName + oldDescriptor)
                 ClassFileUtils.outputCacheDir?.let {
                     cp.appendClassPath(it.absolutePath)
                 }
-                cp.importPackage(invokeClassName)
-                val constructor = "\"$invokeClassName\",$targetClassName.class,${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\",${value.lambda}"
+                cp.importPackage(realInvokeClassNameReal)
+                val constructor = "\"${invokeClassName.replace(".", "_")}\",$targetClassName.class,${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\",${value.lambda}"
                 val setArgsStr =
                     "pointCut.setTarget(${if(isStaticMethod)"null" else "\$0"});"+
                     (if (isHasArgs) "        Object[] args = new Object[]{$argsBuffer};\n" else "") +
                         (if (isHasArgs) "        pointCut.setArgs(args);\n" else "        pointCut.setArgs(null);\n")
+
+                val invokeMethodStr = if (ClassFileUtils.reflectInvokeMethod){
+                    if (ClassFileUtils.reflectInvokeMethodStatic){
+                        "new $invokeStaticClass()"
+                    }else{
+                        "null"
+                    }
+                }else{
+                    "new $invokeClassName()"
+                }
+
                 newMethodBody =
                     " {AndroidAopJoinPoint pointCut = ObjectGetUtils.INSTANCE.getAndroidAopJoinPoint($constructor);\n"+
                             "if(pointCut.isInit()){\n" +
@@ -495,8 +525,8 @@ object WovenIntoCode {
                             "String[] paramNames = new String[]{$paramsNamesBuffer};\n"+
                             "pointCut.setParamNames(paramNames);\n"+
                             "pointCut.setReturnClass($returnTypeClassName.class);\n"+
+                            "pointCut.setInvokeMethod($invokeMethodStr);\n"+
                             setArgsStr +
-                            "pointCut.setInvokeMethod(${if (ClassFileUtils.reflectInvokeMethod) "null" else "new $invokeClassName()"});\n"+
                             "        "+returnStr+";}"
                 ctMethod.setBody(newMethodBody)
                 InitConfig.putCutInfo(value)
@@ -504,7 +534,7 @@ object WovenIntoCode {
                 throw RuntimeException(e)
             } catch (e: CannotCompileException) {
                 printLog("newMethodBody=$newMethodBody")
-                ClassFileUtils.deleteInvokeClass(invokeClassName)
+                ClassFileUtils.deleteInvokeClass(realInvokeClassNameReal)
                 throw RuntimeException(e)
             }
         }
