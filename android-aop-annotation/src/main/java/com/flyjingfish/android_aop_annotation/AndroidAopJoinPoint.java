@@ -91,6 +91,7 @@ public final class AndroidAopJoinPoint {
         mTarget = null;
         mArgs = null;
         init = true;
+        Object[] returnValue = new Object[1];
         ProceedReturnImpl proceedReturn = new ProceedReturnImpl(targetClass, args,target);
         proceedReturn.setReturnType$android_aop_annotation(returnTypeClassName);
         proceedReturn.setOriginalMethod$android_aop_annotation(originalMethod);
@@ -129,11 +130,8 @@ public final class AndroidAopJoinPoint {
         }else {
             returnValue[0] = proceedReturn.proceed();
         }
-        Object returnV = returnValue[0];
-        returnValue[0] = null;
-        return returnV;
+        return returnValue[0];
     }
-    private final Object[] returnValue = new Object[1];
     public Object joinPointExecute(Continuation continuation) {
         init = true;
         Object target = mTarget;
@@ -141,6 +139,7 @@ public final class AndroidAopJoinPoint {
         mTarget = null;
         mArgs = null;
         boolean isSuspend = continuation != null;
+        Object[] returnValue = new Object[1];
 
         ProceedJoinPoint proceedJoinPoint;
         if (aopMethod == null){
@@ -286,9 +285,7 @@ public final class AndroidAopJoinPoint {
                 returnValue[0] = cutAnnotation.matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
             }
         }
-        Object returnV = returnValue[0];
-        returnValue[0] = null;
-        return returnV;
+        return returnValue[0];
     }
 
 
