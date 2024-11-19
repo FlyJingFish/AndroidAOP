@@ -81,7 +81,7 @@ class ProceedJoinPointImpl implements ProceedJoinPoint {
      */
     @Nullable
     @Override
-    public Object proceed() {
+    public Object proceed() throws Throwable {
         return proceed(args);
     }
 
@@ -93,7 +93,7 @@ class ProceedJoinPointImpl implements ProceedJoinPoint {
      */
     @Nullable
     @Override
-    public Object proceed(Object... args) {
+    public Object proceed(Object... args) throws Throwable {
         return realProceed(null, args);
     }
 
@@ -137,7 +137,7 @@ class ProceedJoinPointImpl implements ProceedJoinPoint {
 
 
     @Nullable
-    Object realProceed(OnBaseSuspendReturnListener onSuspendReturnListener, Object... args) {
+    Object realProceed(OnBaseSuspendReturnListener onSuspendReturnListener, Object... args) throws Throwable {
         if (argCount > 0) {
             if (args == null || args.length != argCount) {
                 throw new AndroidAOPIllegalArgumentException("proceed 所参数个数不对");
@@ -166,12 +166,7 @@ class ProceedJoinPointImpl implements ProceedJoinPoint {
                 if (targetInvokeMethod != null) {
                     returnValue = targetInvokeMethod.invoke(target, realArgs);
                 } else if (staticMethod != null){
-                    try {
-                        returnValue = staticMethod.invoke(null,target, realArgs);
-                    } catch (IllegalAccessException | IllegalArgumentException |
-                             InvocationTargetException e) {
-                        returnValue = targetMethod.invoke(target, realArgs);
-                    }
+                    returnValue = staticMethod.invoke(null,target, realArgs);
                 } else {
                     returnValue = targetMethod.invoke(target, realArgs);
                 }

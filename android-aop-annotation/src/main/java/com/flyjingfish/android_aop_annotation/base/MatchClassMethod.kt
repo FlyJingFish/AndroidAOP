@@ -13,5 +13,6 @@ interface MatchClassMethod {
      * @param methodName 匹配的方法名，如果是 Lambda 表达式，请看 wiki 文档
      * @return [wiki 文档返回值说明](https://flyjingfish.github.io/AndroidAOP/zh/Pointcut_return/)
      */
+    @Throws(Throwable::class)
     fun invoke(joinPoint: ProceedJoinPoint, methodName:String): Any?
 }

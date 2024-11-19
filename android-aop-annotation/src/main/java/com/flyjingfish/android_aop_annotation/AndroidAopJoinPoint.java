@@ -89,7 +89,7 @@ public final class AndroidAopJoinPoint {
         this.mReturnClass = returnClass;
     }
 
-    public Object joinPointReturnExecute(Class returnTypeClassName) {
+    public Object joinPointReturnExecute(Class returnTypeClassName) throws Throwable {
         Object target = mTarget;
         Object[] args = mArgs;
         mTarget = null;
@@ -107,7 +107,7 @@ public final class AndroidAopJoinPoint {
         final List<OnBaseSuspendReturnListener> suspendReturnListeners = AndroidAopBeanUtils.INSTANCE.getSuspendReturnListeners(startSuspend);
         AndroidAopBeanUtils.INSTANCE.removeReturnListener(startSuspend);
 
-        if (suspendReturnListeners != null && suspendReturnListeners.size() > 0){
+        if (suspendReturnListeners != null && !suspendReturnListeners.isEmpty()){
             Iterator<OnBaseSuspendReturnListener> iterator = suspendReturnListeners.iterator();
             if (suspendReturnListeners.size() > 1) {
                 proceedReturn.setOnInvokeListener$android_aop_annotation(() -> {
@@ -137,7 +137,7 @@ public final class AndroidAopJoinPoint {
         }
         return returnValue[0];
     }
-    public Object joinPointExecute(Continuation continuation) {
+    public Object joinPointExecute(Continuation continuation) throws Throwable {
         init = true;
         Object target = mTarget;
         Object[] args = mArgs;

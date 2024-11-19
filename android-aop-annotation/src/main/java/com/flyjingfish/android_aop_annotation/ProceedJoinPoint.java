@@ -22,7 +22,7 @@ public interface ProceedJoinPoint {
      * @return 返回切点方法返回值 <a href = "https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint/#proceed">wiki 文档使用说明</a>
      */
     @Nullable
-    Object proceed();
+    Object proceed() throws Throwable;
 
     /**
      * 调用切点方法内代码
@@ -31,7 +31,7 @@ public interface ProceedJoinPoint {
      * @return 返回切点方法返回值 <a href = "https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint/#proceed">wiki 文档使用说明</a>
      */
     @Nullable
-    Object proceed(Object... args);
+    Object proceed(Object... args) throws Throwable;
 
     /**
      * @return 切点方法相关信息，例如方法参数类型、返回类型、参数的注解等等

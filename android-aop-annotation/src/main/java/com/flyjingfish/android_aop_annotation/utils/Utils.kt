@@ -43,7 +43,7 @@ internal object Utils {
         }
     }
 
-    fun getRealRuntimeException(e :Throwable):RuntimeException{
+    fun getRealRuntimeException(e :Throwable):Throwable{
         val throwable: Throwable = if (e is InvocationTargetException) {
             e.targetException
         } else {
@@ -63,6 +63,14 @@ internal object Utils {
                     ||
                     isInvokeClass(stackTraceElement.className)
                     ) {
+                    iterator.remove()
+                    continue
+                }
+
+                if (
+                    isInvokeStaticClass(stackTraceElement.className) &&
+                    isInvokeClass(stackTraceElement.methodName)
+                ) {
                     iterator.remove()
                     continue
                 }
@@ -115,11 +123,7 @@ internal object Utils {
 
         }
 
-        return if (throwable is RuntimeException) {
-            throwable
-        } else {
-            RuntimeException(throwable)
-        }
+        return throwable
     }
     private val AOPMethodPattern: Pattern = Pattern.compile("\\$\\$.{32}\\$\\\$AndroidAOP$")
     private fun getRealMethodName(methodName:String?):String?{
@@ -135,11 +139,19 @@ internal object Utils {
     }
 
     private val InvokeClassPattern: Pattern = Pattern.compile("\\\$Invoke[a-zA-Z0-9]{32}$")
+    private val InvokeStaticClassPattern: Pattern = Pattern.compile("Invoke[a-zA-Z0-9]{32}$")
     private fun isInvokeClass(className:String?):Boolean{
         if (className == null){
             return false
         }
         val matcher: Matcher = InvokeClassPattern.matcher(className)
+        return matcher.find()
+    }
+    private fun isInvokeStaticClass(className:String?):Boolean{
+        if (className == null){
+            return false
+        }
+        val matcher: Matcher = InvokeStaticClassPattern.matcher(className)
         return matcher.find()
     }
 }

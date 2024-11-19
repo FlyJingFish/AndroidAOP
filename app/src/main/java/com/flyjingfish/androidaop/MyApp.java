@@ -44,7 +44,7 @@ public class MyApp extends Application {
         AndroidAop.INSTANCE.setOnPermissionsInterceptListener(new OnPermissionsInterceptListener() {
             @SuppressLint("CheckResult")
             @Override
-            public void requestPermission(@NonNull ProceedJoinPoint joinPoint, @NonNull Permission permission, @NonNull OnRequestPermissionListener call) {
+            public void requestPermission(@NonNull ProceedJoinPoint joinPoint, @NonNull Permission permission, @NonNull OnRequestPermissionListener call) throws Throwable {
                 Object target = joinPoint.getTarget();
                 String[] permissions = permission.value();
                 permissions = check13ReadExternalStorage(permissions);
@@ -76,7 +76,7 @@ public class MyApp extends Application {
         AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener() {
             @Nullable
             @Override
-            public Object invoke(@NonNull ProceedJoinPoint joinPoint, @NonNull CustomIntercept customIntercept) {
+            public Object invoke(@NonNull ProceedJoinPoint joinPoint, @NonNull CustomIntercept customIntercept) throws Throwable {
                 // TODO: 2023/11/11 在此写你的逻辑 在合适的地方调用 joinPoint.proceed()，
                 //  joinPoint.proceed(args)可以修改方法传入的参数，如果需要改写返回值，则在 return 处返回即可
                 //  不调用 proceed 就不会执行拦截切面方法内的代码

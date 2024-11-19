@@ -13,5 +13,6 @@ interface BasePointCut<T : Annotation> {
      * @param anno 切点设置的注解
      * @return [wiki 文档返回值说明](https://flyjingfish.github.io/AndroidAOP/zh/Pointcut_return/)
      */
+    @Throws(Throwable::class)
     fun invoke(joinPoint: ProceedJoinPoint, anno: T): Any?
 }

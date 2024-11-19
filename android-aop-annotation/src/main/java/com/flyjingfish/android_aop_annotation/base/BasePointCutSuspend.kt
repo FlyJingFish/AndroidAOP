@@ -18,11 +18,13 @@ interface BasePointCutSuspend<T : Annotation>:BasePointCut<T> {
      * @param joinPoint 切点相关信息
      * @param anno 切点设置的注解
      */
+    @Throws(Throwable::class)
     suspend fun invokeSuspend(joinPoint: ProceedJoinPointSuspend, anno: T)
 
     /**
      * 如果注解的函数是非suspend函数，那么也应该重写此函数，否则会直接往后执行
      */
+    @Throws(Throwable::class)
     override fun invoke(joinPoint: ProceedJoinPoint, anno: T): Any? {
         return joinPoint.proceed()
     }

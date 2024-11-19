@@ -18,7 +18,7 @@ import com.flyjingfish.android_aop_annotation.enums.MatchType;
 public class MatchActivityMethod2 implements MatchClassMethod {
     @Nullable
     @Override
-    public Object invoke(@NonNull ProceedJoinPoint joinPoint, @NonNull String methodName) {
+    public Object invoke(@NonNull ProceedJoinPoint joinPoint, @NonNull String methodName) throws Throwable {
         Log.e("MatchActivityMethod2","======"+methodName+",getParameterTypes="+joinPoint.getTargetMethod().getParameterTypes().length);
 
 

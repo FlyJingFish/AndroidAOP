@@ -26,6 +26,7 @@ internal class ProceedJoinPointSuspendImpl(
      * @param onSuspendReturnListener 设置 suspend 的函数的 返回前的监听，在此可修改返回值
      * @return 返回切点方法返回值 [wiki 文档使用说明](https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint/#proceed)
      */
+    @Throws(Throwable::class)
     override fun proceed(onSuspendReturnListener: OnSuspendReturnListener): Any? {
         return super.realProceed(onSuspendReturnListener, *args)
     }
@@ -37,6 +38,7 @@ internal class ProceedJoinPointSuspendImpl(
      * @param args 切点方法参数数组
      * @return 返回切点方法返回值 [wiki 文档使用说明](https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint/#proceed)
      */
+    @Throws(Throwable::class)
     override fun proceed(onSuspendReturnListener: OnSuspendReturnListener, vararg args: Any?): Any? {
         return super.realProceed(onSuspendReturnListener, *args)
     }
@@ -47,6 +49,7 @@ internal class ProceedJoinPointSuspendImpl(
      * @param onSuspendReturnListener 设置 suspend 的函数的 返回前的监听，在此可修改返回值
      * @return 返回切点方法返回值 [wiki 文档使用说明](https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint/#proceed)
      */
+    @Throws(Throwable::class)
     override fun proceedIgnoreOther(onSuspendReturnListener: OnSuspendReturnListener2): Any? {
         setExt(onSuspendReturnListener)
         return super.realProceed(onSuspendReturnListener, *args)
@@ -59,6 +62,7 @@ internal class ProceedJoinPointSuspendImpl(
      * @param args 切点方法参数数组
      * @return 返回切点方法返回值 [wiki 文档使用说明](https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint/#proceed)
      */
+    @Throws(Throwable::class)
     override fun proceedIgnoreOther(
         onSuspendReturnListener: OnSuspendReturnListener2,
         vararg args: Any?

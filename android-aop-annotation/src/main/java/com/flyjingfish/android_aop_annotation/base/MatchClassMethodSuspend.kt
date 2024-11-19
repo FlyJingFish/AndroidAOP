@@ -19,12 +19,14 @@ interface MatchClassMethodSuspend : MatchClassMethod {
      * @param joinPoint 切点相关信息
      * @param methodName 匹配的方法名，如果是 Lambda 表达式，请看 wiki 文档
      */
+    @Throws(Throwable::class)
     suspend fun invokeSuspend(joinPoint: ProceedJoinPointSuspend, methodName: String)
 
 
     /**
      * 如果匹配到的函数包含非suspend函数，那么也应该重写此函数，否则会直接往后执行
      */
+    @Throws(Throwable::class)
     override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
         return joinPoint.proceed()
     }
