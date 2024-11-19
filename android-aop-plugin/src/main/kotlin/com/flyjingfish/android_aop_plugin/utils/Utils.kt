@@ -2,6 +2,7 @@ package com.flyjingfish.android_aop_plugin.utils
 
 import com.flyjingfish.android_aop_plugin.beans.MatchMethodInfo
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
+import javassist.Modifier
 import org.gradle.api.Project
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.commons.Method
@@ -481,6 +482,18 @@ fun Int.isHasMethodBody():Boolean{
 fun Int.isStaticMethod():Boolean{
     val access: Int = this
     return access and Opcodes.ACC_STATIC != 0
+}
+
+fun Int.addPublic(isAddPublic: Boolean):Int{
+    return if (isAddPublic){
+        if (Modifier.isPublic(this)){
+            this
+        }else{
+            this + Opcodes.ACC_PUBLIC
+        }
+    }else{
+        this
+    }
 }
 
 fun ByteArray.saveFile(outFile : File){

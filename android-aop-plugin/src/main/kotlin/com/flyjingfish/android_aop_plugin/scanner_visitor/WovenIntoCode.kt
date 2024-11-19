@@ -16,6 +16,7 @@ import com.flyjingfish.android_aop_plugin.utils.Utils.KEEP_CLASS
 import com.flyjingfish.android_aop_plugin.utils.Utils.OBJECT_UTILS
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.adapterOSPath
+import com.flyjingfish.android_aop_plugin.utils.addPublic
 import com.flyjingfish.android_aop_plugin.utils.checkExist
 import com.flyjingfish.android_aop_plugin.utils.computeMD5
 import com.flyjingfish.android_aop_plugin.utils.instanceof
@@ -107,15 +108,7 @@ object WovenIntoCode {
                     superName: String,
                     interfaces: Array<out String>?
                 ) {
-                    super.visit(version, if (isModifyPublic){
-                        if (Modifier.isPublic(access)){
-                            access
-                        }else{
-                            access + ACC_PUBLIC
-                        }
-                    }else{
-                        access
-                    }, name, signature, superName, interfaces)
+                    super.visit(version, access.addPublic(isModifyPublic), name, signature, superName, interfaces)
                     thisHasCollect = hasCollect
                     thisCollectClassName = thisClassName
                     superClassName = superName
@@ -150,15 +143,7 @@ object WovenIntoCode {
                     superName: String,
                     interfaces: Array<out String>?
                 ) {
-                    super.visit(version, if (isModifyPublic){
-                        if (Modifier.isPublic(access)){
-                            access
-                        }else{
-                            access + ACC_PUBLIC
-                        }
-                    }else{
-                        access
-                    }, name, signature, superName, interfaces)
+                    super.visit(version, access.addPublic(isModifyPublic), name, signature, superName, interfaces)
                     thisHasCollect = hasCollect
                     thisCollectClassName = thisClassName
                     superClassName = superName
@@ -206,15 +191,7 @@ object WovenIntoCode {
                     superName: String,
                     interfaces: Array<out String>?
                 ) {
-                    super.visit(version, if (isModifyPublic){
-                        if (Modifier.isPublic(access)){
-                            access
-                        }else{
-                            access + ACC_PUBLIC
-                        }
-                    }else{
-                        access
-                    }, name, signature, superName, interfaces)
+                    super.visit(version, access.addPublic(isModifyPublic), name, signature, superName, interfaces)
                     if (isSuspend){
                         returnClassName = Utils.getSuspendClassType(signature)
 //                        printLog("wovenCode === $signature ==== $returnClassName")
