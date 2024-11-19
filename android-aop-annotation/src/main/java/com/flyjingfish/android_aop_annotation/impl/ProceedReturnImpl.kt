@@ -48,7 +48,11 @@ internal class ProceedReturnImpl(targetClass: Class<*>, args: Array<Any?>?, targ
                 returnValue = if (targetInvokeMethod != null) {
                     targetInvokeMethod!!.invoke(target, args)
                 } else if (staticMethod != null) {
-                    staticMethod!!.invoke(null, target, args)
+                    runCatching {
+                        staticMethod!!.invoke(null, target, args)
+                    }.getOrElse {
+                        targetMethod!!.invoke(target, *args)
+                    }
                 } else {
                     targetMethod!!.invoke(target, *args)
                 }

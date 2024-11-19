@@ -11,6 +11,7 @@ import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils;
 import com.flyjingfish.android_aop_annotation.utils.InvokeMethod;
 import com.flyjingfish.android_aop_annotation.utils.Utils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -165,7 +166,12 @@ class ProceedJoinPointImpl implements ProceedJoinPoint {
                 if (targetInvokeMethod != null) {
                     returnValue = targetInvokeMethod.invoke(target, realArgs);
                 } else if (staticMethod != null){
-                    returnValue = staticMethod.invoke(null,target, realArgs);
+                    try {
+                        returnValue = staticMethod.invoke(null,target, realArgs);
+                    } catch (IllegalAccessException | IllegalArgumentException |
+                             InvocationTargetException e) {
+                        returnValue = targetMethod.invoke(target, realArgs);
+                    }
                 } else {
                     returnValue = targetMethod.invoke(target, realArgs);
                 }
