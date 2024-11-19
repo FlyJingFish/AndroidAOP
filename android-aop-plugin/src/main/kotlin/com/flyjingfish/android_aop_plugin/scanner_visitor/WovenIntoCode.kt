@@ -108,7 +108,11 @@ object WovenIntoCode {
                     interfaces: Array<out String>?
                 ) {
                     super.visit(version, if (isModifyPublic){
-                        ACC_PUBLIC
+                        if (Modifier.isPublic(access)){
+                            access
+                        }else{
+                            access + ACC_PUBLIC
+                        }
                     }else{
                         access
                     }, name, signature, superName, interfaces)
@@ -147,7 +151,11 @@ object WovenIntoCode {
                     interfaces: Array<out String>?
                 ) {
                     super.visit(version, if (isModifyPublic){
-                        ACC_PUBLIC
+                        if (Modifier.isPublic(access)){
+                            access
+                        }else{
+                            access + ACC_PUBLIC
+                        }
                     }else{
                         access
                     }, name, signature, superName, interfaces)
@@ -199,7 +207,11 @@ object WovenIntoCode {
                     interfaces: Array<out String>?
                 ) {
                     super.visit(version, if (isModifyPublic){
-                        ACC_PUBLIC
+                        if (Modifier.isPublic(access)){
+                            access
+                        }else{
+                            access + ACC_PUBLIC
+                        }
                     }else{
                         access
                     }, name, signature, superName, interfaces)
