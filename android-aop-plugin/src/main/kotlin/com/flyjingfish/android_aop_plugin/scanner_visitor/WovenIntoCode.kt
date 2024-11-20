@@ -33,6 +33,11 @@ import javassist.bytecode.AnnotationsAttribute
 import javassist.bytecode.AttributeInfo
 import javassist.bytecode.ConstPool
 import javassist.bytecode.annotation.Annotation
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import org.gradle.api.Project
 import org.objectweb.asm.*
 import org.objectweb.asm.ClassWriter.COMPUTE_FRAMES
@@ -687,173 +692,177 @@ object WovenIntoCode {
         return outFile
     }
 
-    fun createCollectClass(output:File) {
+    fun createCollectClass(output:File) = runBlocking{
+        val collectDirJobs = mutableListOf<Deferred<Unit>>()
         val classPool = ClassPoolUtils.getNewClassPool()
         WovenInfoUtils.getAopCollectClassMap().forEach {(key,value) ->
             if (value == null){
                 return@forEach
             }
-            val className = "$key\$Inner${key.computeMD5()}"
-            //新建一个类生成器，COMPUTE_FRAMES，COMPUTE_MAXS这2个参数能够让asm自动更新操作数栈
-            val cw = ClassWriter(COMPUTE_FRAMES or COMPUTE_MAXS)
-            //生成一个public的类，类路径是com.study.Human
-            cw.visit(V1_8, ACC_PUBLIC+ACC_STATIC, Utils.dotToSlash(className), null, "java/lang/Object", null)
+            val job = async(Dispatchers.IO) {
+                val className = "$key\$Inner${key.computeMD5()}"
+                //新建一个类生成器，COMPUTE_FRAMES，COMPUTE_MAXS这2个参数能够让asm自动更新操作数栈
+                val cw = ClassWriter(COMPUTE_FRAMES or COMPUTE_MAXS)
+                //生成一个public的类，类路径是com.study.Human
+                cw.visit(V1_8, ACC_PUBLIC+ACC_STATIC, Utils.dotToSlash(className), null, "java/lang/Object", null)
 
-            //生成默认的构造方法： public Human()
-            var mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null)
-            mv.visitVarInsn(ALOAD, 0)
-            mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false)
-            mv.visitInsn(RETURN)
-            mv.visitMaxs(0, 0) //更新操作数栈
-            mv.visitEnd() //一定要有visitEnd
+                //生成默认的构造方法： public Human()
+                var mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null)
+                mv.visitVarInsn(ALOAD, 0)
+                mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false)
+                mv.visitInsn(RETURN)
+                mv.visitMaxs(0, 0) //更新操作数栈
+                mv.visitEnd() //一定要有visitEnd
 
 
-            //生成静态方法
-            mv = cw.visitMethod(ACC_PUBLIC+ACC_STATIC, "<clinit>", "()V", null, null);
-            //生成静态方法中的字节码指令
-            val map: MutableMap<String,AopCollectClass> = value
-            if (map.isNotEmpty()) {
-                val iterator = map.iterator();
-                while (iterator.hasNext()){
-                    val aopCollectCut = iterator.next().value
-                    val methodVisitor = mv
-                    val collectExtendsClazz = Utils.dotToSlash(aopCollectCut.collectExtendsClassName)
-                    val find = if (aopCollectCut.regex.isNotEmpty()){
-                        val classnameArrayPattern: Pattern = Pattern.compile(aopCollectCut.regex)
-                        val matcher: Matcher = classnameArrayPattern.matcher(
-                            Utils.slashToDot(
-                                aopCollectCut.collectExtendsClassName
+                //生成静态方法
+                mv = cw.visitMethod(ACC_PUBLIC+ACC_STATIC, "<clinit>", "()V", null, null);
+                //生成静态方法中的字节码指令
+                val map: MutableMap<String,AopCollectClass> = value
+                if (map.isNotEmpty()) {
+                    val iterator = map.iterator();
+                    while (iterator.hasNext()){
+                        val aopCollectCut = iterator.next().value
+                        val methodVisitor = mv
+                        val collectExtendsClazz = Utils.dotToSlash(aopCollectCut.collectExtendsClassName)
+                        val find = if (aopCollectCut.regex.isNotEmpty()){
+                            val classnameArrayPattern: Pattern = Pattern.compile(aopCollectCut.regex)
+                            val matcher: Matcher = classnameArrayPattern.matcher(
+                                Utils.slashToDot(
+                                    aopCollectCut.collectExtendsClassName
+                                )
                             )
-                        )
-                        matcher.find()
-                    }else{
-                        true
-                    }
-                    if (find){
-                        try {
-                            val ctClass = classPool.get(WovenInfoUtils.getClassString(Utils.slashToDotClassName(aopCollectCut.collectExtendsClassName)))
-                            val access = ctClass.modifiers
-                            val isAbstractClass = access and ACC_ABSTRACT != 0
-                            val isObject = Utils.slashToDot(aopCollectCut.collectClassName) == "java.lang.Object"
-                            var isMatchExtends = false
-                            val collectExtendsClassName = aopCollectCut.collectExtendsClassName
-                            if (!isObject){
-                                var isDirectExtends = false
-                                var isImplementsInterface = false
-                                val interfaces = ctClass.interfaces
-                                if (interfaces != null) {
-                                    for (subCtClass in ctClass.interfaces) {
-                                        if (Utils.slashToDot(subCtClass.name) == aopCollectCut.collectClassName){
-                                            isImplementsInterface = true
-                                            break
-                                        }
-                                    }
-                                }
-
-                                if (isImplementsInterface || aopCollectCut.collectClassName == Utils.slashToDot(
-                                        ctClass.superclass.name
-                                    )
-                                ) {
-                                    isDirectExtends = true
-                                }
-                                if (AopCollectCut.CollectType.DIRECT_EXTENDS.name == aopCollectCut.collectType) {
-                                    if (isDirectExtends) {
-                                        isMatchExtends = true
-                                    }
-                                } else if (AopCollectCut.CollectType.LEAF_EXTENDS.name == aopCollectCut.collectType) {
-                                    var isExtends = false
-                                    if (isDirectExtends) {
-                                        isExtends = true
-                                    } else {
-                                        val clsName = Utils.slashToDotClassName(collectExtendsClassName)
-                                        val parentClsName = aopCollectCut.collectClassName
-                                        if (clsName != Utils.slashToDotClassName(parentClsName)) {
-                                            isExtends = clsName.instanceof(
-                                                Utils.slashToDotClassName(parentClsName)
-                                            )
-                                        }
-                                    }
-                                    if (isExtends && WovenInfoUtils.isLeaf(collectExtendsClassName)) {
-                                        isMatchExtends = true
-                                    }
-                                } else {
-                                    if (isDirectExtends) {
-                                        isMatchExtends = true
-                                    } else {
-                                        val clsName = Utils.slashToDotClassName(collectExtendsClassName)
-                                        val parentClsName = aopCollectCut.collectClassName
-                                        if (clsName != Utils.slashToDotClassName(parentClsName)) {
-                                            val isInstanceof = clsName.instanceof(
-                                                Utils.slashToDotClassName(parentClsName)
-                                            )
-                                            if (isInstanceof) {
-                                                isMatchExtends = true
+                            matcher.find()
+                        }else{
+                            true
+                        }
+                        if (find){
+                            try {
+                                val ctClass = classPool.get(WovenInfoUtils.getClassString(Utils.slashToDotClassName(aopCollectCut.collectExtendsClassName)))
+                                val access = ctClass.modifiers
+                                val isAbstractClass = access and ACC_ABSTRACT != 0
+                                val isObject = Utils.slashToDot(aopCollectCut.collectClassName) == "java.lang.Object"
+                                var isMatchExtends = false
+                                val collectExtendsClassName = aopCollectCut.collectExtendsClassName
+                                if (!isObject){
+                                    var isDirectExtends = false
+                                    var isImplementsInterface = false
+                                    val interfaces = ctClass.interfaces
+                                    if (interfaces != null) {
+                                        for (subCtClass in ctClass.interfaces) {
+                                            if (Utils.slashToDot(subCtClass.name) == aopCollectCut.collectClassName){
+                                                isImplementsInterface = true
+                                                break
                                             }
                                         }
                                     }
-                                }
-                            }else{
-                                isMatchExtends = true
-                            }
-                            val isAdd = if (aopCollectCut.isClazz){
-                                true
-                            }else !isAbstractClass
 
-                            if (isMatchExtends && isAdd){
-                                if (aopCollectCut.isClazz){
-                                    methodVisitor.visitLdcInsn(Type.getObjectType(collectExtendsClazz));
-                                    val collectClazz = Utils.dotToSlash("java.lang.Class")
-                                    methodVisitor.visitMethodInsn(
-                                        AdviceAdapter.INVOKESTATIC,
-                                        Utils.dotToSlash(aopCollectCut.invokeClassName),
-                                        aopCollectCut.invokeMethod,
-                                        "(L$collectClazz;)V",
-                                        false
-                                    )
+                                    if (isImplementsInterface || aopCollectCut.collectClassName == Utils.slashToDot(
+                                            ctClass.superclass.name
+                                        )
+                                    ) {
+                                        isDirectExtends = true
+                                    }
+                                    if (AopCollectCut.CollectType.DIRECT_EXTENDS.name == aopCollectCut.collectType) {
+                                        if (isDirectExtends) {
+                                            isMatchExtends = true
+                                        }
+                                    } else if (AopCollectCut.CollectType.LEAF_EXTENDS.name == aopCollectCut.collectType) {
+                                        var isExtends = false
+                                        if (isDirectExtends) {
+                                            isExtends = true
+                                        } else {
+                                            val clsName = Utils.slashToDotClassName(collectExtendsClassName)
+                                            val parentClsName = aopCollectCut.collectClassName
+                                            if (clsName != Utils.slashToDotClassName(parentClsName)) {
+                                                isExtends = clsName.instanceof(
+                                                    Utils.slashToDotClassName(parentClsName)
+                                                )
+                                            }
+                                        }
+                                        if (isExtends && WovenInfoUtils.isLeaf(collectExtendsClassName)) {
+                                            isMatchExtends = true
+                                        }
+                                    } else {
+                                        if (isDirectExtends) {
+                                            isMatchExtends = true
+                                        } else {
+                                            val clsName = Utils.slashToDotClassName(collectExtendsClassName)
+                                            val parentClsName = aopCollectCut.collectClassName
+                                            if (clsName != Utils.slashToDotClassName(parentClsName)) {
+                                                val isInstanceof = clsName.instanceof(
+                                                    Utils.slashToDotClassName(parentClsName)
+                                                )
+                                                if (isInstanceof) {
+                                                    isMatchExtends = true
+                                                }
+                                            }
+                                        }
+                                    }
                                 }else{
-                                    methodVisitor.visitTypeInsn(AdviceAdapter.NEW, collectExtendsClazz)
-                                    methodVisitor.visitInsn(AdviceAdapter.DUP)
-                                    methodVisitor.visitMethodInsn(
-                                        AdviceAdapter.INVOKESPECIAL,
-                                        collectExtendsClazz,
-                                        "<init>",
-                                        "()V",
-                                        false
-                                    )
-                                    val collectClazz = Utils.dotToSlash(aopCollectCut.collectClassName)
-                                    methodVisitor.visitMethodInsn(
-                                        AdviceAdapter.INVOKESTATIC,
-                                        Utils.dotToSlash(aopCollectCut.invokeClassName),
-                                        aopCollectCut.invokeMethod,
-                                        "(L$collectClazz;)V",
-                                        false
-                                    )
+                                    isMatchExtends = true
                                 }
-                                InitConfig.addCollect(aopCollectCut)
-                            }else{
-                                iterator.remove()
-                            }
+                                val isAdd = if (aopCollectCut.isClazz){
+                                    true
+                                }else !isAbstractClass
+
+                                if (isMatchExtends && isAdd){
+                                    if (aopCollectCut.isClazz){
+                                        methodVisitor.visitLdcInsn(Type.getObjectType(collectExtendsClazz));
+                                        val collectClazz = Utils.dotToSlash("java.lang.Class")
+                                        methodVisitor.visitMethodInsn(
+                                            AdviceAdapter.INVOKESTATIC,
+                                            Utils.dotToSlash(aopCollectCut.invokeClassName),
+                                            aopCollectCut.invokeMethod,
+                                            "(L$collectClazz;)V",
+                                            false
+                                        )
+                                    }else{
+                                        methodVisitor.visitTypeInsn(AdviceAdapter.NEW, collectExtendsClazz)
+                                        methodVisitor.visitInsn(AdviceAdapter.DUP)
+                                        methodVisitor.visitMethodInsn(
+                                            AdviceAdapter.INVOKESPECIAL,
+                                            collectExtendsClazz,
+                                            "<init>",
+                                            "()V",
+                                            false
+                                        )
+                                        val collectClazz = Utils.dotToSlash(aopCollectCut.collectClassName)
+                                        methodVisitor.visitMethodInsn(
+                                            AdviceAdapter.INVOKESTATIC,
+                                            Utils.dotToSlash(aopCollectCut.invokeClassName),
+                                            aopCollectCut.invokeMethod,
+                                            "(L$collectClazz;)V",
+                                            false
+                                        )
+                                    }
+                                    InitConfig.addCollect(aopCollectCut)
+                                }else{
+                                    iterator.remove()
+                                }
 //                            ctClass.detach()
-                        } catch (_: Exception) {
+                            } catch (_: Exception) {
+                            }
                         }
                     }
                 }
+
+
+                mv.visitInsn(RETURN)
+                mv.visitMaxs(0, 0)
+                mv.visitEnd()
+                //设置必要的类路径
+                val path = output.absolutePath + File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class"
+                //获取类的byte数组
+                val classByteData = cw.toByteArray()
+                //把类数据写入到class文件,这样你就可以把这个类文件打包供其他的人使用
+                val outFile = File(path)
+                outFile.checkExist(true)
+                classByteData.saveFile(outFile)
             }
-
-
-            mv.visitInsn(RETURN)
-            mv.visitMaxs(0, 0)
-            mv.visitEnd()
-            //设置必要的类路径
-            val path = output.absolutePath + File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class"
-            //获取类的byte数组
-            val classByteData = cw.toByteArray()
-            //把类数据写入到class文件,这样你就可以把这个类文件打包供其他的人使用
-            val outFile = File(path)
-            outFile.checkExist(true)
-            classByteData.saveFile(outFile)
+            collectDirJobs.add(job)
         }
-
+        collectDirJobs.awaitAll()
     }
 
     fun deleteOtherCompileClass(project:Project, variantName:String){

@@ -23,6 +23,11 @@ import com.flyjingfish.android_aop_plugin.utils.inRules
 import com.flyjingfish.android_aop_plugin.utils.printLog
 import com.flyjingfish.android_aop_plugin.utils.saveEntry
 import com.flyjingfish.android_aop_plugin.utils.saveFile
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.objectweb.asm.ClassReader
@@ -109,7 +114,7 @@ class CompileAndroidAopTask(
         }
         aopTaskUtils.searchJoinPointLocationEnd(addClassMethodRecords, deleteClassMethodRecords)
     }
-    private fun wovenIntoCode(){
+    private fun wovenIntoCode() = runBlocking{
         val invokeStaticClassName = Utils.extraPackage+".Invoke"+project.name.computeMD5()
         WovenInfoUtils.makeReplaceMethodInfoUse()
 //        logger.error("getClassMethodRecord="+WovenInfoUtils.classMethodRecords)
@@ -300,45 +305,59 @@ class CompileAndroidAopTask(
                 }
             }
         }
-
+        val wovenCodeJobs = mutableListOf<Deferred<Unit>>()
         allDirectories.forEach { directory ->
             val directoryPath = directory.absolutePath
             directory.walk().sortedBy {
                 it.name.length
             }.forEach { file ->
-                processFile(file,directory,directoryPath)
+                val job = async(Dispatchers.IO) {
+                    processFile(file,directory,directoryPath)
+                }
+                wovenCodeJobs.add(job)
             }
         }
+        wovenCodeJobs.awaitAll()
         if (isApp){
             val cacheDeleteFiles = mutableListOf<String>()
             val tmpOtherDir = File(Utils.aopCompileTempOtherDir(project,variantName))
             WovenIntoCode.createInitClass(tmpOtherDir)
             WovenIntoCode.createCollectClass(tmpOtherDir)
+            val tmpOtherJobs = mutableListOf<Deferred<Unit>>()
             for (file in tmpOtherDir.walk()) {
                 if (file.isFile) {
-                    val relativePath = file.getRelativePath(tmpOtherDir)
+                    val job = async(Dispatchers.IO) {
+                        val relativePath = file.getRelativePath(tmpOtherDir)
 
 //                    println("relativePath=$relativePath")
-                    val target = File(output.absolutePath + File.separatorChar + relativePath)
-                    target.checkExist()
-                    file.inputStream().use {
-                        target.saveEntry(it)
+                        val target = File(output.absolutePath + File.separatorChar + relativePath)
+                        target.checkExist()
+                        cacheDeleteFiles.add(target.absolutePath)
+                        file.inputStream().use {
+                            target.saveEntry(it)
+                        }
+
                     }
-                    cacheDeleteFiles.add(target.absolutePath)
+                    tmpOtherJobs.add(job)
                 }
             }
+            tmpOtherJobs.awaitAll()
             InitConfig.exportCacheCutFile(File(Utils.aopCompileTempOtherJson(project,variantName)),cacheDeleteFiles)
             if (!AndroidAopConfig.debug){
                 tmpOtherDir.deleteRecursively()
             }
         }
-
+        val tempFileJobs = mutableListOf<Deferred<Unit>>()
         for (tempFile in tempFiles) {
-            tempFile.tmp.inputStream().use {
-                tempFile.target.saveEntry(it)
+            val job = async(Dispatchers.IO) {
+                tempFile.tmp.inputStream().use {
+                    tempFile.target.saveEntry(it)
+                }
             }
+            tempFileJobs.add(job)
 //            tempFile.tmp.copyTo(tempFile.target,true)
         }
+        tempFileJobs.awaitAll()
         if (!AndroidAopConfig.debug){
             tmpCompileDir.deleteRecursively()
         }

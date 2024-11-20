@@ -6,6 +6,11 @@ import com.flyjingfish.android_aop_plugin.utils.Utils.CONVERSIONS_CLASS
 import javassist.CannotCompileException
 import javassist.CtNewMethod
 import javassist.NotFoundException
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes.ACC_PUBLIC
 import org.objectweb.asm.Opcodes.ALOAD
@@ -33,11 +38,12 @@ object ClassFileUtils {
     fun clear(){
         invokeClasses.clear()
     }
-    fun wovenInfoInvokeClass(newClasses: MutableList<ByteArray>) :MutableList<String> {
+    fun wovenInfoInvokeClass(newClasses: MutableList<ByteArray>) :MutableList<String> = runBlocking{
         val cacheFiles = mutableListOf<String>()
         if (reflectInvokeMethod && !reflectInvokeMethodStatic){
-            return cacheFiles
+            return@runBlocking cacheFiles
         }
+
         if (reflectInvokeMethod && reflectInvokeMethodStatic){
             for (invokeClasses in invokeClasses) {
                 val value = invokeClasses.value ?: continue
@@ -81,6 +87,7 @@ object ClassFileUtils {
 //            ctClass.detach()
             }
         }else{
+            val invokeJobs = mutableListOf<Deferred<Unit>>()
             for (invokeClasses in invokeClasses) {
                 val value = invokeClasses.value ?: continue
                 for (invokeClass in value) {
@@ -91,37 +98,41 @@ object ClassFileUtils {
                     if (outputCacheDir != null && outFile.exists()){
                         continue
                     }
+                    val job = async(Dispatchers.IO) {
+
 //            println("invokeClass.methodName="+invokeClass.methodName)
-                    val cp = ClassPoolUtils.getNewClassPool()
-                    outputCacheDir?.let {
-                        cp.appendClassPath(it.absolutePath)
-                    }
-                    newClasses.forEach {
-                        cp.makeClass(ByteArrayInputStream(it))
-                    }
-                    cp.importPackage(CONVERSIONS_CLASS)
-                    val ctClass = cp.get(className)
-                    try {
-                        val ctMethod =
-                            WovenIntoCode.getCtMethod(ctClass, INVOKE_METHOD, INVOKE_DESCRIPTOR)
-                        ctMethod?.setBody(invokeBody)
-                    } catch (e: NotFoundException) {
-                        throw RuntimeException(e)
-                    } catch (e: CannotCompileException) {
-                        printLog("invokeBody=$invokeBody")
-                        throw RuntimeException(e)
-                    }
-                    val classByteData = ctClass.toBytecode()
+                        val cp = ClassPoolUtils.getNewClassPool()
+                        outputCacheDir?.let {
+                            cp.appendClassPath(it.absolutePath)
+                        }
+                        newClasses.forEach {
+                            cp.makeClass(ByteArrayInputStream(it))
+                        }
+                        cp.importPackage(CONVERSIONS_CLASS)
+                        val ctClass = cp.get(className)
+                        try {
+                            val ctMethod =
+                                WovenIntoCode.getCtMethod(ctClass, INVOKE_METHOD, INVOKE_DESCRIPTOR)
+                            ctMethod?.setBody(invokeBody)
+                        } catch (e: NotFoundException) {
+                            throw RuntimeException(e)
+                        } catch (e: CannotCompileException) {
+                            printLog("invokeBody=$invokeBody")
+                            throw RuntimeException(e)
+                        }
+                        val classByteData = ctClass.toBytecode()
 //            //把类数据写入到class文件,这样你就可以把这个类文件打包供其他的人使用
-                    outFile.checkExist()
-                    classByteData.saveFile(outFile)
-                    cacheFiles.add(path)
+                        outFile.checkExist()
+                        cacheFiles.add(path)
+                        classByteData.saveFile(outFile)
+                    }
+                    invokeJobs.add(job)
                 }
 //            ctClass.detach()
             }
+            invokeJobs.awaitAll()
         }
-
-        return cacheFiles
+        cacheFiles
     }
 
     fun createInvokeClass(staticClassName:String, classMethodName:String, invokeBody:String, methodName:String) {

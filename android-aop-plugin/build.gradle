@@ -22,6 +22,7 @@ dependencies {
     implementation libs.gson
     implementation project(path: ':android-aop-annotation')
     implementation libs.kotlin.gradle.plugin
+    implementation libs.kotlinx.coroutines
 }
 // 发布到gradlePluginPortal
 gradlePlugin {
