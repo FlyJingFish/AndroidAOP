@@ -30,7 +30,7 @@ object ClassNameToConversions {
         value = if (value == null) {
             "%1\$s"
         } else {
-            "Conversions.$value"
+            "com.flyjingfish.android_aop_annotation.Conversions.$value"
         }
         return value
     }
@@ -40,7 +40,7 @@ object ClassNameToConversions {
         value = if (value == null) {
             "($key)%1\$s"
         } else {
-            "Conversions.$value"
+            "com.flyjingfish.android_aop_annotation.Conversions.$value"
         }
         return value
     }
@@ -52,7 +52,7 @@ object ClassNameToConversions {
         }else if (value == null) {
             "return ($key)%1\$s"
         } else {
-            "return Conversions.$value"
+            "return com.flyjingfish.android_aop_annotation.Conversions.$value"
         }
         return value
     }
@@ -64,7 +64,7 @@ object ClassNameToConversions {
         }else if (value == null) {
             "java.lang.Object returnValue = (java.lang.Object)%1\$s"
         } else {
-            "java.lang.Object returnValue = (java.lang.Object)Conversions.$value"
+            "java.lang.Object returnValue = (java.lang.Object)com.flyjingfish.android_aop_annotation.Conversions.$value"
         }
         return value
     }
