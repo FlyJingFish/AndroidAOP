@@ -38,6 +38,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.IOException
 import java.lang.Thread.sleep
 
 class MainActivity: BaseActivity2(), PermissionRejectListener{
@@ -60,7 +61,11 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
         binding.btnSingleClick.setOnClickListener(object :MyOnClickListener(){
             override fun onClick(v: View?) {
                 super.onClick(v)
-                onSingleClick()
+                try {
+                    onSingleClick()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
                 val bean = OrderFillTransactionBean(emptyList<OrderFillTransaction>(),"")
                 bean.toString()
                 bean.hashCode()
@@ -177,6 +182,7 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
     fun onSingleClick(){
 //        var number = 1;
 //        number = o!!.number
+        throw IOException("sss")
         Log.e("MainActivity","onSingleClick")
         setLogcat("@SingleClick 5000毫秒内只能点击一次")
     }
