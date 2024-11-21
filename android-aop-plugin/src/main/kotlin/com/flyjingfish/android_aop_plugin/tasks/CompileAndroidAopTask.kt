@@ -122,6 +122,7 @@ class CompileAndroidAopTask(
         val hasReplaceExtendsClass = WovenInfoUtils.hasModifyExtendsClass()
         val tempFiles = mutableListOf<TmpFile>()
         val newClasses = mutableListOf<ByteArray>()
+        val invokeCodeJobs = mutableListOf<Deferred<Unit>>()
         fun processFile(file : File,directory:File,directoryPath:String){
             if (file.isFile) {
                 val entryName = file.getFileClassname(directory)
@@ -159,7 +160,12 @@ class CompileAndroidAopTask(
                 if (realMethodsRecord != null){
                     mkOutFile()
                     FileInputStream(file).use { inputs ->
-                        val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,isSuspend)
+                        val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,isSuspend){
+                            val job = async(Dispatchers.IO) {
+                                it.byteCode.saveFile(it.byteFile)
+                            }
+                            invokeCodeJobs.add(job)
+                        }
                         byteArray.saveFile(outFile)
                         newClasses.add(byteArray)
                     }
@@ -358,6 +364,7 @@ class CompileAndroidAopTask(
 //            tempFile.tmp.copyTo(tempFile.target,true)
         }
         tempFileJobs.awaitAll()
+        invokeCodeJobs.awaitAll()
         if (!AndroidAopConfig.debug){
             tmpCompileDir.deleteRecursively()
         }

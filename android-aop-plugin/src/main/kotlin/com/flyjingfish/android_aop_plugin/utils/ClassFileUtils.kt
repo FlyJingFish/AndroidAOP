@@ -1,6 +1,7 @@
 package com.flyjingfish.android_aop_plugin.utils
 
 import com.flyjingfish.android_aop_plugin.beans.InvokeClass
+import com.flyjingfish.android_aop_plugin.beans.InvokeClassFile
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import com.flyjingfish.android_aop_plugin.utils.Utils.CONVERSIONS_CLASS
 import javassist.CannotCompileException
@@ -30,24 +31,28 @@ object ClassFileUtils {
     var debugMode = false
     lateinit var outputDir:File
     var outputCacheDir:File ?= null
-    private val invokeClasses = mutableMapOf<String,MutableList<InvokeClass>?>()
+    private val invokeClasses = mutableMapOf<String,InvokeClassFile?>()
+    private val invokeClassesBody = mutableMapOf<String,MutableList<InvokeClass>?>()
     private const val INVOKE_METHOD = "invoke"
     private const val INVOKE_DESCRIPTOR = "(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;"
     private const val INVOKE_CLASS = "com.flyjingfish.android_aop_annotation.utils.InvokeMethod"
     private const val INVOKE_CLASSES = "com.flyjingfish.android_aop_annotation.utils.InvokeMethods"
     fun clear(){
         invokeClasses.clear()
+        invokeClassesBody.clear()
     }
     fun wovenInfoInvokeClass(newClasses: MutableList<ByteArray>) :MutableList<String> = runBlocking{
         val cacheFiles = mutableListOf<String>()
+
         if (reflectInvokeMethod && !reflectInvokeMethodStatic){
             return@runBlocking cacheFiles
         }
 
         if (reflectInvokeMethod && reflectInvokeMethodStatic){
-            for (invokeClasses in invokeClasses) {
-                val value = invokeClasses.value ?: continue
-                val path = outputDir.absolutePath + File.separatorChar +Utils.dotToSlash(invokeClasses.key).adapterOSPath()+".class"
+            for (invokeCls in invokeClassesBody) {
+                val value = invokeCls.value ?: continue
+                val byteCode = invokeClasses[invokeCls.key]?:continue
+                val path = outputDir.absolutePath + File.separatorChar +Utils.dotToSlash(invokeCls.key).adapterOSPath()+".class"
                 val outFile = File(path)
                 if (outputCacheDir != null && outFile.exists()){
                     continue
@@ -60,8 +65,8 @@ object ClassFileUtils {
                     cp.makeClass(ByteArrayInputStream(it))
                 }
                 cp.importPackage(CONVERSIONS_CLASS)
-                val ctClass = cp.get(invokeClasses.key)
-
+//                val ctClass = cp.get(invokeCls.key)
+                val ctClass = cp.makeClass(ByteArrayInputStream(byteCode.byteCode))
                 for (invokeClass in value) {
                     val className = invokeClass.packageName
                     val invokeBody = invokeClass.invokeBody
@@ -87,62 +92,68 @@ object ClassFileUtils {
 //            ctClass.detach()
             }
         }else{
-            val invokeJobs = mutableListOf<Deferred<Unit>>()
-            for (invokeClasses in invokeClasses) {
-                val value = invokeClasses.value ?: continue
-                for (invokeClass in value) {
-                    val className = invokeClass.packageName
-                    val invokeBody = invokeClass.invokeBody
-                    val path = outputDir.absolutePath + File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class"
-                    val outFile = File(path)
-                    if (outputCacheDir != null && outFile.exists()){
-                        continue
-                    }
-                    val job = async(Dispatchers.IO) {
-
-//            println("invokeClass.methodName="+invokeClass.methodName)
-                        val cp = ClassPoolUtils.getNewClassPool()
-                        outputCacheDir?.let {
-                            cp.appendClassPath(it.absolutePath)
-                        }
-                        newClasses.forEach {
-                            cp.makeClass(ByteArrayInputStream(it))
-                        }
-                        cp.importPackage(CONVERSIONS_CLASS)
-                        val ctClass = cp.get(className)
-                        try {
-                            val ctMethod =
-                                WovenIntoCode.getCtMethod(ctClass, INVOKE_METHOD, INVOKE_DESCRIPTOR)
-                            ctMethod?.setBody(invokeBody)
-                        } catch (e: NotFoundException) {
-                            throw RuntimeException(e)
-                        } catch (e: CannotCompileException) {
-                            printLog("invokeBody=$invokeBody")
-                            throw RuntimeException(e)
-                        }
-                        val classByteData = ctClass.toBytecode()
-//            //把类数据写入到class文件,这样你就可以把这个类文件打包供其他的人使用
-                        outFile.checkExist()
-                        cacheFiles.add(path)
-                        classByteData.saveFile(outFile)
-                    }
-                    invokeJobs.add(job)
+            for (invokeClass in invokeClasses) {
+                invokeClass.value?.let {
+                    cacheFiles.add(it.byteFile.absolutePath)
                 }
-//            ctClass.detach()
+
             }
-            invokeJobs.awaitAll()
+//            val invokeJobs = mutableListOf<Deferred<Unit>>()
+//            for (invokeClasses in invokeClasses) {
+//                val value = invokeClasses.value ?: continue
+//                for (invokeClass in value) {
+//                    val className = invokeClass.packageName
+//                    val invokeBody = invokeClass.invokeBody
+//                    val path = outputDir.absolutePath + File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class"
+//                    val outFile = File(path)
+//                    if (outputCacheDir != null && outFile.exists()){
+//                        continue
+//                    }
+//                    val job = async(Dispatchers.IO) {
+//
+////            println("invokeClass.methodName="+invokeClass.methodName)
+//                        val cp = ClassPoolUtils.getNewClassPool()
+//                        outputCacheDir?.let {
+//                            cp.appendClassPath(it.absolutePath)
+//                        }
+//                        newClasses.forEach {
+//                            cp.makeClass(ByteArrayInputStream(it))
+//                        }
+//                        cp.importPackage(CONVERSIONS_CLASS)
+//                        val ctClass = cp.get(className)
+//                        try {
+//                            val ctMethod =
+//                                WovenIntoCode.getCtMethod(ctClass, INVOKE_METHOD, INVOKE_DESCRIPTOR)
+//                            ctMethod?.setBody(invokeBody)
+//                        } catch (e: NotFoundException) {
+//                            throw RuntimeException(e)
+//                        } catch (e: CannotCompileException) {
+//                            printLog("invokeBody=$invokeBody")
+//                            throw RuntimeException(e)
+//                        }
+//                        val classByteData = ctClass.toBytecode()
+////            //把类数据写入到class文件,这样你就可以把这个类文件打包供其他的人使用
+//                        outFile.checkExist()
+//                        cacheFiles.add(path)
+//                        classByteData.saveFile(outFile)
+//                    }
+//                    invokeJobs.add(job)
+//                }
+////            ctClass.detach()
+//            }
+//            invokeJobs.awaitAll()
         }
         cacheFiles
     }
 
-    fun createInvokeClass(staticClassName:String, classMethodName:String, invokeBody:String, methodName:String) {
+    fun createInvokeClass(staticClassName:String, classMethodName:String, invokeBody:String, methodName:String,fromClassByte:ByteArray):InvokeClassFile? {
         if (reflectInvokeMethod && !reflectInvokeMethodStatic){
-            return
+            return null
         }
-        var list = invokeClasses[staticClassName]
+        var list = invokeClassesBody[staticClassName]
         if (list == null){
             list = mutableListOf()
-            invokeClasses[staticClassName] = list
+            invokeClassesBody[staticClassName] = list
         }
         list.add(InvokeClass(classMethodName,invokeBody,methodName))
         val className = if (reflectInvokeMethod && reflectInvokeMethodStatic){
@@ -150,20 +161,22 @@ object ClassFileUtils {
         }else{
             classMethodName
         }
-        if (File(outputDir.absolutePath + File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class").exists()){
-            return
-        }
-        val cacheOutFir = outputCacheDir
-        val outFile = if (cacheOutFir != null){
-            File(cacheOutFir.absolutePath + File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class")
-        }else{
-            File(outputDir.absolutePath + File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class")
-        }
-        if (outFile.exists()){
-            return
+        val cacheFile = File(outputDir.absolutePath + File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class")
+        val cacheByteCode = invokeClasses[className]
+        if (cacheByteCode != null){
+            return cacheByteCode
         }
 
-        outFile.checkExist()
+
+        if (cacheFile.exists()){
+            val classByteData = cacheFile.readBytes()
+            val cache = InvokeClassFile(classByteData,cacheFile)
+            invokeClasses[className] = cache
+            return cache
+        }
+
+
+        cacheFile.checkExist()
 //        val className = "$packageName.Invoke${UUID.randomUUID()}"
         //新建一个类生成器，COMPUTE_FRAMES，COMPUTE_MAXS这2个参数能够让asm自动更新操作数栈
         val cw = ClassWriter(ClassWriter.COMPUTE_FRAMES or ClassWriter.COMPUTE_MAXS)
@@ -199,35 +212,57 @@ object ClassFileUtils {
         mv.visitInsn(IRETURN)
         mv.visitMaxs(0, 0)
         mv.visitEnd()
+        val byteCode = cw.toByteArray()
 
-        cw.toByteArray().saveFile(outFile)
+
+        val cp = ClassPoolUtils.getNewClassPool()
+        outputCacheDir?.let {
+            cp.appendClassPath(it.absolutePath)
+        }
+        cp.makeClass(ByteArrayInputStream(fromClassByte))
+        cp.importPackage(CONVERSIONS_CLASS)
+        val ctClass = cp.makeClass(ByteArrayInputStream(byteCode))
+        try {
+            val ctMethod =
+                WovenIntoCode.getCtMethod(ctClass, INVOKE_METHOD, INVOKE_DESCRIPTOR)
+            ctMethod?.setBody(invokeBody)
+        } catch (e: NotFoundException) {
+            throw RuntimeException(e)
+        } catch (e: CannotCompileException) {
+            printLog("invokeBody=$invokeBody")
+            throw RuntimeException(e)
+        }
+        val classByteData = ctClass.toBytecode()
+        val cache = InvokeClassFile(classByteData,cacheFile)
+        invokeClasses[className] = cache
+        return cache
     }
 
     fun deleteInvokeClass(className:String) {
-        if (reflectInvokeMethod && !reflectInvokeMethodStatic){
-            return
-        }
-        for (invokeClass in invokeClasses) {
-            val value = invokeClass.value ?: continue
-            val iterator = value.iterator()
-            while (iterator.hasNext()){
-                val item = iterator.next()
-                if (item.packageName == className){
-                    iterator.remove()
-                    break
-                }
-            }
-        }
-
-        outputCacheDir?.let {
-            val file = File(it.absolutePath +File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class")
-            if (file.exists()){
-                file.delete()
-            }
-        }
-        val file = File(outputDir.absolutePath + File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class")
-        if (file.exists()){
-            file.delete()
-        }
+//        if (reflectInvokeMethod && !reflectInvokeMethodStatic){
+//            return
+//        }
+//        for (invokeClass in invokeClasses) {
+//            val value = invokeClass.value ?: continue
+//            val iterator = value.iterator()
+//            while (iterator.hasNext()){
+//                val item = iterator.next()
+//                if (item.packageName == className){
+//                    iterator.remove()
+//                    break
+//                }
+//            }
+//        }
+//
+//        outputCacheDir?.let {
+//            val file = File(it.absolutePath +File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class")
+//            if (file.exists()){
+//                file.delete()
+//            }
+//        }
+//        val file = File(outputDir.absolutePath + File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class")
+//        if (file.exists()){
+//            file.delete()
+//        }
     }
 }

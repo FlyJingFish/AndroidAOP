@@ -21,6 +21,7 @@ import com.flyjingfish.android_aop_plugin.utils.getFileClassname
 import com.flyjingfish.android_aop_plugin.utils.getRelativePath
 import com.flyjingfish.android_aop_plugin.utils.inRules
 import com.flyjingfish.android_aop_plugin.utils.isJarSignatureRelatedFiles
+import com.flyjingfish.android_aop_plugin.utils.saveFile
 import com.flyjingfish.android_aop_plugin.utils.toClassPath
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -219,6 +220,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         val hasReplace = WovenInfoUtils.hasReplace()
         val hasReplaceExtendsClass = WovenInfoUtils.hasModifyExtendsClass()
         val newClasses = mutableListOf<ByteArray>()
+        val invokeCodeJobs = mutableListOf<Deferred<Unit>>()
         fun processFile(file : File,directory:File,directoryPath:String){
             if (file.isFile) {
                 val entryName = file.getFileClassname(directory)
@@ -253,7 +255,12 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     if (realMethodsRecord != null){
                         FileInputStream(file).use { inputs ->
                             val byteArray = try {
-                                WovenIntoCode.modifyClass(inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,isSuspend)
+                                WovenIntoCode.modifyClass(inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,isSuspend){
+                                    val job = async(Dispatchers.IO) {
+                                        it.byteCode.saveFile(it.byteFile)
+                                    }
+                                    invokeCodeJobs.add(job)
+                                }
                             } catch (e: Exception) {
                                 realCopy()
                                 if (isSuspend){
@@ -512,7 +519,12 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                         if (realMethodsRecord != null){
                             jarFile.getInputStream(jarEntry).use { inputs ->
                                 val byteArray = try {
-                                    WovenIntoCode.modifyClass(inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,isSuspend)
+                                    WovenIntoCode.modifyClass(inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,isSuspend){
+                                        val job = async(Dispatchers.IO) {
+                                            it.byteCode.saveFile(it.byteFile)
+                                        }
+                                        invokeCodeJobs.add(job)
+                                    }
                                 } catch (e: Exception) {
                                     realCopy()
                                     if (isSuspend){
@@ -704,7 +716,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             wovenCodeJarJobs.awaitAll()
             jarFile.close()
         }
-
+        invokeCodeJobs.awaitAll()
         ClassFileUtils.wovenInfoInvokeClass(newClasses)
         if (!ClassFileUtils.reflectInvokeMethod || ClassFileUtils.reflectInvokeMethodStatic){
             val outputDirJobs = mutableListOf<Deferred<Unit>>()

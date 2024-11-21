@@ -3,6 +3,7 @@ package com.flyjingfish.android_aop_plugin.scanner_visitor
 import com.flyjingfish.android_aop_plugin.beans.AopCollectClass
 import com.flyjingfish.android_aop_plugin.beans.AopCollectCut
 import com.flyjingfish.android_aop_plugin.beans.CutFileJson
+import com.flyjingfish.android_aop_plugin.beans.InvokeClassFile
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
 import com.flyjingfish.android_aop_plugin.utils.ClassNameToConversions
@@ -54,13 +55,17 @@ import java.util.regex.Pattern
 
 
 object WovenIntoCode {
+    fun interface OnCallInvokeClassListener{
+        fun onBack(invokeClassFile: InvokeClassFile)
+    }
     @Throws(Exception::class)
     fun modifyClass(
         inputStreamBytes: ByteArray?,
         methodRecordHashMap: HashMap<String, MethodRecord>,
         hasReplace:Boolean,
         invokeStaticClass:String,
-        isSuspend:Boolean = false
+        isSuspend:Boolean = false,
+        onCallInvokeClassListener: OnCallInvokeClassListener
     ): ByteArray {
         val wovenRecord = mutableListOf<MethodRecord>()
         val overrideRecord = mutableListOf<MethodRecord>()
@@ -485,10 +490,17 @@ object WovenIntoCode {
                 }
 
 
-                ClassFileUtils.createInvokeClass(invokeStaticClass,invokeClassName,invokeBody, oldMethodName + oldDescriptor)
-                ClassFileUtils.outputCacheDir?.let {
-                    cp.appendClassPath(it.absolutePath)
+                val newInvokeClass = ClassFileUtils.createInvokeClass(invokeStaticClass,invokeClassName,invokeBody, oldMethodName + oldDescriptor,newClassByte)
+//                ClassFileUtils.outputCacheDir?.let {
+//                    cp.appendClassPath(it.absolutePath)
+//                }
+                newInvokeClass?.let {
+                    if (!ClassFileUtils.reflectInvokeMethod && !ClassFileUtils.reflectInvokeMethodStatic){
+                        onCallInvokeClassListener.onBack(it)
+                    }
+                    cp.makeClass(ByteArrayInputStream(it.byteCode))
                 }
+
                 cp.importPackage(realInvokeClassNameReal)
                 val constructor = "\"${invokeClassName.replace(".", "_")}\",$targetClassName.class,${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\",${value.lambda}"
                 val setArgsStr =
