@@ -447,6 +447,65 @@ class MatchAll : MatchClassMethod {
 
 2、当然 methodName 部分依旧可以填写多个模糊匹配甚至精准匹配的方法名
 
+#### 例十
+
+想要匹配顶级函数或者顶级扩展函数
+
+- 顶级函数
+
+假如以下函数位于一个名为 **Context** 的 kotlin 文件中
+
+```kotlin
+package com.androidaop.ktx
+
+fun toast(text: String) {
+}
+
+```
+
+```kotlin
+@AndroidAopMatchClassMethod(
+    targetClassName = "com.androidaop.ktx.ContextKt",
+    type = MatchType.EXTENDS,
+    methodName = ["void toast(java.lang.String)"]
+)
+class MatchContextKt : MatchClassMethod {
+    override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
+        return joinPoint.proceed()
+    }
+}
+```
+
+这种顶级函数的签名正如你所见没什么特别的，特别之处在于类名加了 Kt
+
+- 顶级拓展函数
+
+依旧假如以下函数位于一个名为 **Context** 的 kotlin 文件中
+
+
+```kotlin
+package com.androidaop.ktx
+
+fun Context.hasPermission(permission: String): Boolean {
+    return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
+}
+
+```
+
+```kotlin
+@AndroidAopMatchClassMethod(
+    targetClassName = "com.androidaop.ktx.ContextKt",
+    type = MatchType.EXTENDS,
+    methodName = ["boolean hasPermission(android.content.Context,java.lang.String)"]
+)
+class MatchContextKt : MatchClassMethod {
+    override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
+        return joinPoint.proceed()
+    }
+}
+```
+
+这种顶级拓展函数的不但类名加了 Kt ，而且函数的签名第一个参数是你的拓展类型，其他的都一样
 
  
 

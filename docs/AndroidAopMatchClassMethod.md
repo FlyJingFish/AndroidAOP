@@ -435,3 +435,63 @@ class MatchAll : MatchClassMethod {
 ```
 1. `*` replaces `class name` Or replace `part of the package name + class name`, this example represents all classes under the `com.flyjingfish.androidaop` package and its subpackages <br>
 2. Of course, the methodName part can still be filled with multiple fuzzy matching or even exact matching method names
+
+
+#### Example 10
+
+Want to match top-level functions or top-level extension functions
+
+- Top-level functions
+
+Suppose the following function is located in a kotlin file named **Context**
+
+```kotlin
+package com.androidaop.ktx
+
+fun toast(text: String) {
+}
+
+```
+
+```kotlin
+@AndroidAopMatchClassMethod(
+targetClassName = "com.androidaop.ktx.ContextKt",
+type = MatchType.EXTENDS,
+methodName = ["void toast(java.lang.String)"]
+)
+class MatchContextKt : MatchClassMethod {
+override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
+return joinPoint.proceed()
+}
+}
+```
+
+As you can see, the signature of this top-level function is nothing special, except that Kt is added to the class name
+
+- Top-level extension functions
+
+Still suppose the following function is located in a kotlin file named **Context** in the kotlin file
+
+```kotlin
+package com.androidaop.ktx
+
+fun Context.hasPermission(permission: String): Boolean {
+return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
+}
+
+```
+
+```kotlin
+@AndroidAopMatchClassMethod(
+targetClassName = "com.androidaop.ktx.ContextKt",
+type = MatchType.EXTENDS,
+methodName = ["boolean hasPermission(android.content.Context,java.lang.String)"]
+)
+class MatchContextKt : MatchClassMethod {
+override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
+return joinPoint.proceed()
+}
+}
+```
+
+This top-level extension function not only adds Kt to the class name, but also adds Kt to the class name. , and the first parameter of the function signature is your extension type, and the rest are the same
