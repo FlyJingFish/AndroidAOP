@@ -455,14 +455,14 @@ fun toast(text: String) {
 
 ```kotlin
 @AndroidAopMatchClassMethod(
-targetClassName = "com.androidaop.ktx.ContextKt",
-type = MatchType.EXTENDS,
-methodName = ["void toast(java.lang.String)"]
+    targetClassName = "com.androidaop.ktx.ContextKt",
+    type = MatchType.SELF,
+    methodName = ["void toast(java.lang.String)"]
 )
 class MatchContextKt : MatchClassMethod {
-override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
-return joinPoint.proceed()
-}
+    override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
+        return joinPoint.proceed()
+    }
 }
 ```
 
@@ -476,21 +476,21 @@ Still suppose the following function is located in a kotlin file named **Context
 package com.androidaop.ktx
 
 fun Context.hasPermission(permission: String): Boolean {
-return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
+    return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
 }
 
 ```
 
 ```kotlin
 @AndroidAopMatchClassMethod(
-targetClassName = "com.androidaop.ktx.ContextKt",
-type = MatchType.EXTENDS,
-methodName = ["boolean hasPermission(android.content.Context,java.lang.String)"]
+    targetClassName = "com.androidaop.ktx.ContextKt",
+    type = MatchType.SELF,
+    methodName = ["boolean hasPermission(android.content.Context,java.lang.String)"]
 )
 class MatchContextKt : MatchClassMethod {
-override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
-return joinPoint.proceed()
-}
+    override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
+        return joinPoint.proceed()
+    }
 }
 ```
 

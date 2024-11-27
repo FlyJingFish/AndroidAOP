@@ -466,7 +466,7 @@ fun toast(text: String) {
 ```kotlin
 @AndroidAopMatchClassMethod(
     targetClassName = "com.androidaop.ktx.ContextKt",
-    type = MatchType.EXTENDS,
+    type = MatchType.SELF,
     methodName = ["void toast(java.lang.String)"]
 )
 class MatchContextKt : MatchClassMethod {
@@ -495,7 +495,7 @@ fun Context.hasPermission(permission: String): Boolean {
 ```kotlin
 @AndroidAopMatchClassMethod(
     targetClassName = "com.androidaop.ktx.ContextKt",
-    type = MatchType.EXTENDS,
+    type = MatchType.SELF,
     methodName = ["boolean hasPermission(android.content.Context,java.lang.String)"]
 )
 class MatchContextKt : MatchClassMethod {
