@@ -26,6 +26,8 @@ Although there is such a plug-in, you also need to understand how to use this li
 
 Right-click the mouse on the code you want to cut into -> Click AndroidAOP Code -> Click AOPCode on the right to view the generated code, as shown in the figure:
 
+- If the AOP code does not appear, you can try to find the corresponding class file and then execute this step to try again
+
 ![about](https://github.com/user-attachments/assets/e168ac99-2951-4f95-8474-e1ea895b6306)
 
 ### 4. Special instructions

@@ -26,6 +26,8 @@
 
 在你想要切入的代码上右击鼠标 -> 点击 AndroidAOP Code -> 右侧点击AOPCode查看生成的代码，如图：
 
+- 如果不能出现AOP代码，你可以尝试找到对应的 class 文件再去执行该步骤进行尝试
+
 ![about](https://github.com/user-attachments/assets/e168ac99-2951-4f95-8474-e1ea895b6306)
 
 ### 4、特别说明

@@ -100,6 +100,8 @@ Minimum SDK version: minSdkVersion >= 21
 
 **Can I give the project a Star before starting? Thank you very much, your support is my only motivation. Welcome Stars and Issues!**
 
+For the full version of the document, please click [AndroidAOP](https://flyjingfish.github.io/AndroidAOP/zh/)
+
 ### 1. Introduce the plug-in, choose one of the two methods below (required)
 
 #### Method 1: ```apply``` method

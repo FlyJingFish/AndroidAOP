@@ -101,6 +101,8 @@
 
 ![Stargazers over time](https://github.com/FlyJingFish/AndroidAOP/blob/master/docs/screenshot/warning_maven_central.svg)
 
+完整版文档请点击 [AndroidAOP](https://flyjingfish.github.io/AndroidAOP/zh/)
+
 ### 一、引入插件，下边两种方式二选一（必须）
 
 
