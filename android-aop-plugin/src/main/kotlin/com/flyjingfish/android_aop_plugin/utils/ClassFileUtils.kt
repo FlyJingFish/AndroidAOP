@@ -49,8 +49,8 @@ object ClassFileUtils {
                 val value = invokeClasses.value ?: continue
                 val path = outputDir.absolutePath + File.separatorChar +Utils.dotToSlash(invokeClasses.key).adapterOSPath()+".class"
                 val outFile = File(path)
-                if (outputCacheDir != null && outFile.exists()){
-                    continue
+                if (outFile.exists()){
+                    outFile.delete()
                 }
                 val cp = ClassPoolUtils.getNewClassPool()
                 outputCacheDir?.let {
@@ -67,11 +67,19 @@ object ClassFileUtils {
                     val invokeBody = invokeClass.invokeBody
 
                     try {
-                        val methodBody =
-                            "public static final Object ${className.replace(".","_")}(Object target,Object[] vars)  " +
-                                    invokeBody
-                        val newMethod = CtNewMethod.make(methodBody, ctClass)
-                        ctClass.addMethod(newMethod);
+                        val methodName = className.replace(".","_")
+                        val ctMethod =
+                            WovenIntoCode.getCtMethod(ctClass, methodName, INVOKE_DESCRIPTOR)
+                        if (ctMethod != null){
+                            ctMethod.setBody(invokeBody)
+                        }else{
+                            val methodBody =
+                                "public static final Object $methodName(Object target,Object[] vars)  " +
+                                        invokeBody
+                            val newMethod = CtNewMethod.make(methodBody, ctClass)
+                            ctClass.addMethod(newMethod);
+                        }
+
                     } catch (e: NotFoundException) {
                         throw RuntimeException(e)
                     } catch (e: CannotCompileException) {
