@@ -443,7 +443,7 @@ Want to match top-level functions or top-level extension functions
 
 - Top-level functions
 
-Suppose the following function is located in a kotlin file named **Context**
+Suppose the following function is located in a kotlin file named **ContextEx**
 
 ```kotlin
 package com.androidaop.ktx
@@ -455,7 +455,7 @@ fun toast(text: String) {
 
 ```kotlin
 @AndroidAopMatchClassMethod(
-    targetClassName = "com.androidaop.ktx.ContextKt",
+    targetClassName = "com.androidaop.ktx.ContextExKt",
     type = MatchType.SELF,
     methodName = ["void toast(java.lang.String)"]
 )
@@ -470,7 +470,7 @@ As you can see, the signature of this top-level function is nothing special, exc
 
 - Top-level extension functions
 
-Still suppose the following function is located in a kotlin file named **Context** in the kotlin file
+Still suppose the following function is located in a kotlin file named **ContextEx** in the kotlin file
 
 ```kotlin
 package com.androidaop.ktx
@@ -483,7 +483,7 @@ fun Context.hasPermission(permission: String): Boolean {
 
 ```kotlin
 @AndroidAopMatchClassMethod(
-    targetClassName = "com.androidaop.ktx.ContextKt",
+    targetClassName = "com.androidaop.ktx.ContextExKt",
     type = MatchType.SELF,
     methodName = ["boolean hasPermission(android.content.Context,java.lang.String)"]
 )

@@ -453,7 +453,7 @@ class MatchAll : MatchClassMethod {
 
 - 顶级函数
 
-假如以下函数位于一个名为 **Context** 的 kotlin 文件中
+假如以下函数位于一个名为 **ContextEx** 的 kotlin 文件中
 
 ```kotlin
 package com.androidaop.ktx
@@ -465,7 +465,7 @@ fun toast(text: String) {
 
 ```kotlin
 @AndroidAopMatchClassMethod(
-    targetClassName = "com.androidaop.ktx.ContextKt",
+    targetClassName = "com.androidaop.ktx.ContextExKt",
     type = MatchType.SELF,
     methodName = ["void toast(java.lang.String)"]
 )
@@ -480,7 +480,7 @@ class MatchContextKt : MatchClassMethod {
 
 - 顶级拓展函数
 
-依旧假如以下函数位于一个名为 **Context** 的 kotlin 文件中
+依旧假如以下函数位于一个名为 **ContextEx** 的 kotlin 文件中
 
 
 ```kotlin
@@ -494,7 +494,7 @@ fun Context.hasPermission(permission: String): Boolean {
 
 ```kotlin
 @AndroidAopMatchClassMethod(
-    targetClassName = "com.androidaop.ktx.ContextKt",
+    targetClassName = "com.androidaop.ktx.ContextExKt",
     type = MatchType.SELF,
     methodName = ["boolean hasPermission(android.content.Context,java.lang.String)"]
 )
