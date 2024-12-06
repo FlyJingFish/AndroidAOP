@@ -147,12 +147,15 @@ object ClassFileUtils {
         if (reflectInvokeMethod && !reflectInvokeMethodStatic){
             return
         }
-        var list = invokeClasses[staticClassName]
-        if (list == null){
-            list = mutableListOf()
-            invokeClasses[staticClassName] = list
+        synchronized(this){
+            var list = invokeClasses[staticClassName]
+            if (list == null){
+                list = mutableListOf()
+                invokeClasses[staticClassName] = list
+            }
+            list.add(InvokeClass(classMethodName,invokeBody,methodName))
         }
-        list.add(InvokeClass(classMethodName,invokeBody,methodName))
+
         val className = if (reflectInvokeMethod && reflectInvokeMethodStatic){
             staticClassName
         }else{
