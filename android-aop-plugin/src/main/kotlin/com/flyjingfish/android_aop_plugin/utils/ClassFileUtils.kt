@@ -149,7 +149,10 @@ object ClassFileUtils {
             return
         }
         val list = invokeClasses.computeIfAbsent(staticClassName) { mutableListOf() }
-        list.add(InvokeClass(classMethodName,invokeBody,methodName))
+        synchronized(list){
+            list.add(InvokeClass(classMethodName,invokeBody,methodName))
+        }
+
 
         val className = if (reflectInvokeMethod && reflectInvokeMethodStatic){
             staticClassName
