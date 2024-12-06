@@ -28,6 +28,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.util.concurrent.ConcurrentHashMap
 
 
 object InitConfig {
@@ -35,7 +36,7 @@ object InitConfig {
     private lateinit var buildConfigCacheFile: File
     private lateinit var cutInfoFile: File
     private val cutInfoMap = mutableMapOf<String, CutJsonMap?>()
-    private val replaceMethodInfoMap = mutableMapOf<String, ReplaceMethodInfo>()
+    private val replaceMethodInfoMap = ConcurrentHashMap<String, ReplaceMethodInfo>()
     private val modifyExtendsClassMap = mutableMapOf<String, ModifyExtendsClassJson>()
     private val collectClassMap = mutableMapOf<String, MutableMap<String, CutCollectMethodJsonCache>>()
     var isInit: Boolean = false

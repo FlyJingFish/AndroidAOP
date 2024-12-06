@@ -16,6 +16,7 @@ import com.flyjingfish.android_aop_plugin.ex.AndroidAOPOverrideMethodException
 import org.gradle.api.Project
 import org.objectweb.asm.Type
 import java.io.File
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.jar.JarFile
 
@@ -35,11 +36,11 @@ object WovenInfoUtils {
     private val classMethodRecords: HashMap<String, HashMap<String, MethodRecord>> =
         HashMap()//类名为key，value为方法map集合
     private val invokeMethodCuts = mutableListOf<AopReplaceCut>()
-    private val realInvokeMethodMap = HashMap<String, String>()
+    private val realInvokeMethodMap = ConcurrentHashMap<String, String>()
     private val invokeMethodMap = HashMap<String, String>()
     private val replaceMethodMap = HashMap<String, String>()
-    private val replaceMethodInfoMap = HashMap<String, HashMap<String, ReplaceMethodInfo>>()
-    private val replaceMethodInfoMapUse = HashMap<String, ReplaceMethodInfo>()
+    private val replaceMethodInfoMap = ConcurrentHashMap<String, HashMap<String, ReplaceMethodInfo>>()
+    private val replaceMethodInfoMapUse = ConcurrentHashMap<String, ReplaceMethodInfo>()
     private val modifyExtendsClassMap = HashMap<String, String>()
     private val allClassName = mutableSetOf<String>()
     private val aopCollectInfoMap = mutableMapOf<String,AopCollectCut>()
@@ -52,13 +53,13 @@ object WovenInfoUtils {
     private val aopMethodCutInnerClassInfoInvokeClassNameCount = mutableMapOf<String,Int>()
     private val overrideClassnameSet = mutableSetOf<String>()
     private val lastOverrideClassnameSet = mutableSetOf<String>()
-    private val overrideMethodMap = mutableMapOf<String,MutableSet<String>>()
+    private val overrideMethodMap = ConcurrentHashMap<String,MutableSet<String>>()
     private val lastOverrideMethodMap = mutableMapOf<String,MutableSet<String>>()
     fun getClassPaths():CopyOnWriteArraySet<String>{
         return classPaths
     }
 
-    fun getReplaceMethodInfoMapUse():HashMap<String, ReplaceMethodInfo>{
+    fun getReplaceMethodInfoMapUse():ConcurrentHashMap<String, ReplaceMethodInfo>{
         return replaceMethodInfoMapUse
     }
 
@@ -691,8 +692,11 @@ object WovenInfoUtils {
                                                   newMethodName: String,
                                                   descriptor: String){
         if (descriptor.endsWith("Lkotlin/coroutines/Continuation;)Ljava/lang/Object;")) {
-            val key = "$className&$newMethodName&$descriptor"
-            aopMethodCutInnerClassInfoInvokeMethod.add(key)
+            synchronized(aopMethodCutInnerClassInfoInvokeMethod){
+                val key = "$className&$newMethodName&$descriptor"
+                aopMethodCutInnerClassInfoInvokeMethod.add(key)
+            }
+
         }
     }
 
@@ -723,13 +727,13 @@ object WovenInfoUtils {
     }
 
     fun recordOverrideClassname(className: String, methodName: String, descriptor: String){
-        overrideClassnameSet.add(className)
-        var list = overrideMethodMap[className]
-        if (list == null){
-            list = mutableSetOf()
-            overrideMethodMap[className] = list
+        synchronized(overrideClassnameSet){
+            overrideClassnameSet.add(className)
         }
-        list.add("$className.$methodName($descriptor)")
+        val list = overrideMethodMap.computeIfAbsent(className) { mutableSetOf() }
+        synchronized(list){
+            list.add("$className.$methodName($descriptor)")
+        }
     }
 
     fun isLastOverrideClassname(className: String):Boolean{

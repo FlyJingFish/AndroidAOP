@@ -83,7 +83,7 @@ object WovenIntoCode {
                 val newMethodName = Utils.getTargetMethodName(oldMethodName, className, descriptor)
                 if (newMethodName == name && oldDescriptor == descriptor){
                     wovenRecord.add(value)
-                    WovenInfoUtils.addAopMethodCutInnerClassInfoInvokeMethod(className,newMethodName,descriptor)
+//                    WovenInfoUtils.addAopMethodCutInnerClassInfoInvokeMethod(className,newMethodName,descriptor)
                 }
                 if (value.overrideMethod && oldMethodName == name && oldDescriptor == descriptor){
                     overrideRecord.add(value)
@@ -280,7 +280,7 @@ object WovenIntoCode {
                         if (hasReplace && mv != null && access.isHasMethodBody()) {
                             mv = MethodReplaceInvokeAdapter(className,oldSuperName,name,descriptor,mv)
                         }
-                        WovenInfoUtils.addAopMethodCutInnerClassInfoInvokeMethod(className,newMethodName,descriptor)
+//                        WovenInfoUtils.addAopMethodCutInnerClassInfoInvokeMethod(className,newMethodName,descriptor)
                         RemoveAnnotation(mv)
                     } else {
                         null
@@ -535,6 +535,62 @@ object WovenIntoCode {
         val wovenBytes = ctClass.toBytecode()
 //        ctClass.detach()
         return wovenBytes
+    }
+
+
+    fun searchSuspendClass(
+        inputStreamBytes: ByteArray?,
+        methodRecordHashMap: HashMap<String, MethodRecord>,
+    ) {
+        val cr = ClassReader(inputStreamBytes)
+
+        fun visitMethod4Record(access: Int,
+                               name: String,
+                               descriptor: String,
+                               signature: String?,
+                               exceptions: Array<String?>?,
+                               className:String ){
+            methodRecordHashMap.forEach { (_: String, value: MethodRecord) ->
+                val oldMethodName = value.methodName
+                val oldDescriptor = value.descriptor
+                val newMethodName = Utils.getTargetMethodName(oldMethodName, className, descriptor)
+
+                WovenInfoUtils.addAopMethodCutInnerClassInfoInvokeMethod(className,newMethodName,descriptor)
+            }
+
+
+        }
+        cr.accept(object : ClassVisitor(ASM9) {
+            lateinit var clazzName:String
+            override fun visit(
+                version: Int,
+                access: Int,
+                name: String,
+                signature: String?,
+                superName: String,
+                interfaces: Array<out String>?
+            ) {
+                super.visit(version, access, name, signature, superName, interfaces)
+                clazzName = name
+            }
+            override fun visitMethod(
+                access: Int,
+                name: String,
+                descriptor: String,
+                signature: String?,
+                exceptions: Array<String?>?
+            ): MethodVisitor? {
+                visitMethod4Record(access, name, descriptor, signature, exceptions, clazzName)
+                val mv = super.visitMethod(
+                    access,
+                    name,
+                    descriptor,
+                    signature,
+                    exceptions
+                )
+                return mv
+            }
+        }, ClassReader.EXPAND_FRAMES)
     }
 
     private fun CtMethod.addKeepClassAnnotation(constPool: ConstPool){

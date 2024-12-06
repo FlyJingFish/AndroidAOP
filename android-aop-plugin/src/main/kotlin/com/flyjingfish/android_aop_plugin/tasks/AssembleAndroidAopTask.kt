@@ -209,6 +209,27 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             aopTaskUtils.processJarForSearch(file.asFile, addClassMethodRecords, deleteClassMethodRecords)
         }
         aopTaskUtils.searchJoinPointLocationEnd(addClassMethodRecords, deleteClassMethodRecords)
+
+        for (directory in ignoreJarClassPaths) {
+            val directoryPath = directory.absolutePath
+            directory.walk().forEach { file ->
+                aopTaskUtils.processFileForSearchSuspend(file,directory,directoryPath)
+            }
+
+        }
+        allDirectories.get().forEach { directory ->
+            val directoryPath = directory.asFile.absolutePath
+            directory.asFile.walk().forEach { file ->
+                aopTaskUtils.processFileForSearchSuspend(file,directory.asFile,directoryPath)
+            }
+        }
+        allJars.get().forEach { file ->
+            if (file.asFile.absolutePath in ignoreJar){
+                return@forEach
+            }
+            aopTaskUtils.processJarForSearchSuspend(file.asFile)
+        }
+
     }
 
     private fun wovenIntoCode() = runBlocking{

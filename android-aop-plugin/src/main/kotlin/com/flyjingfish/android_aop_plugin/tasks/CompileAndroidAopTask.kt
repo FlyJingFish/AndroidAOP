@@ -113,6 +113,13 @@ class CompileAndroidAopTask(
             aopTaskUtils.processJarForSearch(file, addClassMethodRecords, deleteClassMethodRecords)
         }
         aopTaskUtils.searchJoinPointLocationEnd(addClassMethodRecords, deleteClassMethodRecords)
+
+        allDirectories.forEach { directory ->
+            val directoryPath = directory.absolutePath
+            directory.walk().forEach { file ->
+                aopTaskUtils.processFileForSearchSuspend(file, directory, directoryPath)
+            }
+        }
     }
     private fun wovenIntoCode() = runBlocking{
         val invokeStaticClassName = Utils.extraPackage+".Invoke"+project.name.computeMD5()
