@@ -22,6 +22,7 @@ import org.objectweb.asm.Opcodes.RETURN
 import org.objectweb.asm.Opcodes.V1_8
 import java.io.ByteArrayInputStream
 import java.io.File
+import java.util.concurrent.ConcurrentHashMap
 
 
 object ClassFileUtils {
@@ -30,7 +31,7 @@ object ClassFileUtils {
     var debugMode = false
     lateinit var outputDir:File
     var outputCacheDir:File ?= null
-    private val invokeClasses = mutableMapOf<String,MutableList<InvokeClass>?>()
+    private val invokeClasses = ConcurrentHashMap<String,MutableList<InvokeClass>>()
     private const val INVOKE_METHOD = "invoke"
     private const val INVOKE_DESCRIPTOR = "(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;"
     private const val INVOKE_CLASS = "com.flyjingfish.android_aop_annotation.utils.InvokeMethod"
@@ -46,7 +47,7 @@ object ClassFileUtils {
 
         if (reflectInvokeMethod && reflectInvokeMethodStatic){
             for (invokeClasses in invokeClasses) {
-                val value = invokeClasses.value ?: continue
+                val value = invokeClasses.value
                 val path = outputDir.absolutePath + File.separatorChar +Utils.dotToSlash(invokeClasses.key).adapterOSPath()+".class"
                 val outFile = File(path)
                 if (outFile.exists()){
@@ -97,7 +98,7 @@ object ClassFileUtils {
         }else{
             val invokeJobs = mutableListOf<Deferred<Unit>>()
             for (invokeClasses in invokeClasses) {
-                val value = invokeClasses.value ?: continue
+                val value = invokeClasses.value
                 for (invokeClass in value) {
                     val className = invokeClass.packageName
                     val invokeBody = invokeClass.invokeBody
@@ -147,14 +148,8 @@ object ClassFileUtils {
         if (reflectInvokeMethod && !reflectInvokeMethodStatic){
             return
         }
-        synchronized(this){
-            var list = invokeClasses[staticClassName]
-            if (list == null){
-                list = mutableListOf()
-                invokeClasses[staticClassName] = list
-            }
-            list.add(InvokeClass(classMethodName,invokeBody,methodName))
-        }
+        val list = invokeClasses.computeIfAbsent(staticClassName) { mutableListOf() }
+        list.add(InvokeClass(classMethodName,invokeBody,methodName))
 
         val className = if (reflectInvokeMethod && reflectInvokeMethodStatic){
             staticClassName
