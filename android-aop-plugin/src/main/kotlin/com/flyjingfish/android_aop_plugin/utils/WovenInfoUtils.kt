@@ -33,8 +33,8 @@ object WovenInfoUtils {
     private var classSuperListMap = HashMap<String, ClassSuperInfo>()
     private var classSuperMap = HashMap<String, String>()
     private val classSuperCacheMap = HashMap<String, String>()
-    private val classMethodRecords: HashMap<String, HashMap<String, MethodRecord>> =
-        HashMap()//类名为key，value为方法map集合
+    private val classMethodRecords: ConcurrentHashMap<String, HashMap<String, MethodRecord>> =
+        ConcurrentHashMap()//类名为key，value为方法map集合
     private val invokeMethodCuts = mutableListOf<AopReplaceCut>()
     private val realInvokeMethodMap = ConcurrentHashMap<String, String>()
     private val invokeMethodMap = HashMap<String, String>()
@@ -45,7 +45,7 @@ object WovenInfoUtils {
     private val allClassName = mutableSetOf<String>()
     private val aopCollectInfoMap = mutableMapOf<String,AopCollectCut>()
     private val lastAopCollectInfoMap = mutableMapOf<String,AopCollectCut>()
-    private val aopCollectClassMap = mutableMapOf<String,MutableMap<String,AopCollectClass>?>()
+    private val aopCollectClassMap = ConcurrentHashMap<String,MutableMap<String,AopCollectClass>>()
     private val aopMethodCutInnerClassInfo = mutableMapOf<String,ReplaceInnerClassInfo>()
     private val aopMethodCutInnerClassInfoClassName = mutableSetOf<String>()
     private val aopMethodCutInnerClassInfoInvokeMethod = mutableSetOf<String>()
@@ -97,12 +97,10 @@ object WovenInfoUtils {
         return modifyExtendsClassMap.isNotEmpty()
     }
     fun addReplaceMethodInfo(filePath: String, replaceMethodInfo: ReplaceMethodInfo) {
-        var infoMap = replaceMethodInfoMap[filePath]
-        if (infoMap == null){
-            infoMap = HashMap()
-            replaceMethodInfoMap[filePath] = infoMap
+        val infoMap = replaceMethodInfoMap.computeIfAbsent(filePath) { HashMap() }
+        synchronized(infoMap) {
+            infoMap[replaceMethodInfo.getReplaceKey()] = replaceMethodInfo
         }
-        infoMap[replaceMethodInfo.getReplaceKey()] = replaceMethodInfo
     }
     fun deleteReplaceMethodInfo(filePath: String) {
         replaceMethodInfoMap.remove(filePath)
@@ -199,31 +197,29 @@ object WovenInfoUtils {
         return false
     }
     fun addClassMethodRecords(classMethodRecord: ClassMethodRecord) {
-        var methodsRecord: HashMap<String, MethodRecord>? =
-            classMethodRecords[classMethodRecord.classFile]
-        if (methodsRecord == null) {
-            methodsRecord = HashMap()
-            classMethodRecords[classMethodRecord.classFile] = methodsRecord
-        }
-        val key = classMethodRecord.methodName.methodName + classMethodRecord.methodName.descriptor
-        val oldRecord = methodsRecord[key]
-        if (methodsRecord.contains(key)) {
-            if (classMethodRecord.methodName.cutClassName.isNotEmpty()) {
-                methodsRecord[key]?.cutClassName?.addAll(classMethodRecord.methodName.cutClassName)
-                methodsRecord[key]?.cutClassName?.let {
-                    classMethodRecord.methodName.cutClassName.addAll(it)
+        val methodsRecord = classMethodRecords.computeIfAbsent(classMethodRecord.classFile) { HashMap() }
+        synchronized(methodsRecord){
+            val key = classMethodRecord.methodName.methodName + classMethodRecord.methodName.descriptor
+            val oldRecord = methodsRecord[key]
+            if (methodsRecord.contains(key)) {
+                if (classMethodRecord.methodName.cutClassName.isNotEmpty()) {
+                    methodsRecord[key]?.cutClassName?.addAll(classMethodRecord.methodName.cutClassName)
+                    methodsRecord[key]?.cutClassName?.let {
+                        classMethodRecord.methodName.cutClassName.addAll(it)
+                    }
+                    methodsRecord[key] = classMethodRecord.methodName
                 }
+            } else {
                 methodsRecord[key] = classMethodRecord.methodName
             }
-        } else {
-            methodsRecord[key] = classMethodRecord.methodName
+            oldRecord?.cutInfo?.let {
+                methodsRecord[key]?.cutInfo?.putAll(it)
+            }
+            methodsRecord[key]?.cutInfo?.let {
+                it.putAll(classMethodRecord.methodName.cutInfo)
+            }
         }
-        oldRecord?.cutInfo?.let {
-            methodsRecord[key]?.cutInfo?.putAll(it)
-        }
-        methodsRecord[key]?.cutInfo?.let {
-            it.putAll(classMethodRecord.methodName.cutInfo)
-        }
+
     }
 
     fun deleteClassMethodRecord(key: String) {
@@ -531,12 +527,10 @@ object WovenInfoUtils {
     }
 
     fun addCollectClass(aopCollectClass: AopCollectClass){
-        var set = aopCollectClassMap[aopCollectClass.invokeClassName]
-        if (set == null){
-            set = mutableMapOf()
-            aopCollectClassMap[aopCollectClass.invokeClassName] = set
+        val set = aopCollectClassMap.computeIfAbsent(aopCollectClass.invokeClassName) { mutableMapOf() }
+        synchronized(set){
+            set[aopCollectClass.getKey()] = aopCollectClass
         }
-        set[aopCollectClass.getKey()] = aopCollectClass
     }
     fun aopCollectChanged(isClear:Boolean) {
         if (isClear){
