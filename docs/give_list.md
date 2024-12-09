@@ -23,3 +23,5 @@ Your stars and support are my biggest motivation to move forward!
 | *张       | 2024-07-03 | Wechat |          /           |   /   |      ¥ 64.6      |
 | *君       | 2024-09-19 | Wechat |          /           |   /   |       ¥ 66       |
 | F*I      | 2024-10-20 | Wechat |       感谢解我燃眉之急       |   /   |      ¥ 100       |
+| *勇       | 2024-11-13 | Alipay |          /           |   /   |       ¥ 30       |
+| *博       | 2024-12-09 | Wechat |    AndroidAOP感谢🙏    |   /   |       ¥ 30       |
