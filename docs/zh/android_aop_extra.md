@@ -79,22 +79,10 @@ AndroidAop.INSTANCE.setOnThrowableListener(new OnThrowableListener() {
             String[] permissions = permission.value();
             if (target instanceof FragmentActivity){
                 RxPermissions rxPermissions = new RxPermissions((FragmentActivity) target);
-                rxPermissions.requestEach(permissions)
-                    .subscribe(permissionResult -> {
-                        call.onCall(permissionResult.granted);
-                        if (!permissionResult.granted && target instanceof PermissionRejectListener) {
-                            ((PermissionRejectListener) target).onReject(permission,permissionResult);
-                        }
-                    });
+                rxPermissions.request(permission.value()).subscribe(call::onCall);
             }else if (target instanceof Fragment){
                 RxPermissions rxPermissions = new RxPermissions((Fragment) target);
-                rxPermissions.requestEach(permissions)
-                    .subscribe(permissionResult -> {
-                        call.onCall(permissionResult.granted);
-                        if (!permissionResult.granted && target instanceof PermissionRejectListener) {
-                            ((PermissionRejectListener) target).onReject(permission,permissionResult);
-                        }
-                    });
+                rxPermissions.request(permission.value()).subscribe(call::onCall);
             }else {
                 // TODO: target 不是 FragmentActivity 或 Fragment ，说明注解所在方法不在其中，请自行处理这种情况
                 // 建议：切点方法第一个参数可以设置为 FragmentActivity 或 Fragment ，然后 joinPoint.args[0] 就可以拿到
