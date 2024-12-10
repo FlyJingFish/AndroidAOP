@@ -56,7 +56,7 @@ public final class SingleClick$$AspectJ {
 First create a class to handle sections
 
 ```kotlin
-class SingleClickCut : ClickCut<SingleClick>() {
+class SingleClickCut : BasePointCut<SingleClick>() {
     //Fill in your original annotations for this pattern
     override fun invoke(joinPoint: ProceedJoinPoint, anno: SingleClick): Any? {
 //Copy the logic code here and make some changes

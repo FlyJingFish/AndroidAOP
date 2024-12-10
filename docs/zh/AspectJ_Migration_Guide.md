@@ -56,7 +56,7 @@ public final class SingleClick$$AspectJ {
 首先创建一个处理切面的类
 
 ```kotlin
-class SingleClickCut : ClickCut<SingleClick>() {//这块范型填写你原有的注解即可
+class SingleClickCut : BasePointCut<SingleClick>() {//这块范型填写你原有的注解即可
     override fun invoke(joinPoint: ProceedJoinPoint, anno: SingleClick): Any? {
         //在此把逻辑代码复制过来，稍加改动即可
         return null
