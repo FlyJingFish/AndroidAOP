@@ -694,6 +694,18 @@ object WovenInfoUtils {
         }
     }
 
+    fun deleteAopMethodCutInnerClassInfoInvokeMethod(className:String,
+                                                  newMethodName: String,
+                                                  descriptor: String){
+        if (descriptor.endsWith("Lkotlin/coroutines/Continuation;)Ljava/lang/Object;")) {
+            synchronized(aopMethodCutInnerClassInfoInvokeMethod){
+                val key = "$className&$newMethodName&$descriptor"
+                aopMethodCutInnerClassInfoInvokeMethod.remove(key)
+            }
+
+        }
+    }
+
     fun isHasAopMethodCutInnerClassInfoInvokeMethod(className:String,
                                                   newMethodName: String,
                                                   descriptor: String):Boolean{

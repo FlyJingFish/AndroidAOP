@@ -524,12 +524,15 @@ object WovenIntoCode {
                             "        "+returnStr+";}"
                 ctMethod.setBody(newMethodBody)
                 InitConfig.putCutInfo(value)
-            } catch (e: NotFoundException) {
-                throw RuntimeException(e)
-            } catch (e: CannotCompileException) {
+            } catch (e: Exception) {
                 printLog("newMethodBody=$newMethodBody")
-                ClassFileUtils.deleteInvokeClass(realInvokeClassNameReal)
-                throw RuntimeException(e)
+                if (e is NotFoundException || e is CannotCompileException){
+                    WovenInfoUtils.deleteAopMethodCutInnerClassInfoInvokeMethod(Utils.dotToSlash(targetClassName),targetMethodName,oldDescriptor)
+                    ClassFileUtils.deleteInvokeClass(invokeClassName)
+                    e.printStackTrace()
+                }else{
+                    throw e
+                }
             }
         }
         val wovenBytes = ctClass.toBytecode()

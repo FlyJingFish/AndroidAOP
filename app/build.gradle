@@ -16,7 +16,6 @@ androidAopConfig {
     // debug 为true打开日志方便调试
     debug true
     // 测试
-    include 'com.flyjingfish','androidx.appcompat.widget.AppCompatImageView','com.google.android.material.textview'
     //默认关闭，开启后将会生成切点信息json文件在 /build/tmp/cutInfo.json
     cutInfoJson true
     increment false
@@ -90,6 +89,7 @@ android {
 }
 
 dependencies {
+//    implementation(fileTree("libs"))
     implementation libs.core.ktx
     implementation libs.appcompat
     implementation libs.material
@@ -114,4 +114,27 @@ dependencies {
     androidTestImplementation libs.androidx.rules
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0"
     implementation libs.gson
+//    implementation 'com.google.android.material:material:1.5.0'
+//    implementation 'androidx.appcompat:appcompat:1.6.1'
+//    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+//    implementation 'com.google.protobuf:protobuf-javalite:3.13.0'
+//    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0'
+//    implementation 'com.github.bumptech.glide:annotations:4.11.0'
+//    implementation 'com.github.bumptech.glide:glide:4.11.0'
+//    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.20'
+//    implementation 'org.jetbrains.kotlin:kotlin-reflect:1.7.20'
+//    implementation 'androidx.core:core-ktx:1.8.0'
+//    implementation 'com.google.android.exoplayer:exoplayer-core:2.17.1'
+//    implementation 'com.google.android.exoplayer:exoplayer-ui:2.17.1'
+//    implementation 'com.google.crypto.tink:tink-android:1.5.0'
+//    implementation 'com.google.code.gson:gson:2.8.1'
+//    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+//    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+//    implementation 'androidx.activity:activity-ktx:1.4.0'
+//    implementation 'androidx.fragment:fragment-ktx:1.4.1'
+//    implementation 'androidx.viewpager2:viewpager2:1.0.0'
+//    implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
+//    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.0'
+//    implementation 'androidx.navigation:navigation-ui-ktx:2.5.0'
+//    implementation 'org.greenrobot:eventbus:3.1.1'
 }
