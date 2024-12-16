@@ -144,4 +144,4 @@ If you note your name in the donation message, it will be recorded in the list~ 
 
 * If you have any questions, you can join the group to discuss [Click here to join QQ group: 641697838](https://qm.qq.com/cgi-bin/qm/qr?k=w2qDbv_5bpLl0lO0qjXxijl3JHCQgtXx&jump_from=webapi&authKey=Q6/YB+7q9BvOGbYv1qXZGAZLigsfwaBxDC8kz03/5Pwy7018XunUcHoC11kVLqCb)
 
-<img src="screenshot/qq.png" width="220"/>
+<img src="screenshot/qq.jpg" width="220"/>

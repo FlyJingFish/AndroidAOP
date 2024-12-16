@@ -529,7 +529,7 @@ public class InitCollect2 {
 
 * 有问题可以加群大家一起交流 [点此加QQ群：641697838](https://qm.qq.com/cgi-bin/qm/qr?k=w2qDbv_5bpLl0lO0qjXxijl3JHCQgtXx&jump_from=webapi&authKey=Q6/YB+7q9BvOGbYv1qXZGAZLigsfwaBxDC8kz03/5Pwy7018XunUcHoC11kVLqCb)
 
-<img src="/docs/screenshot/qq.png" width="220"/>
+<img src="/docs/screenshot/qq.jpg" width="220"/>
 
 ### 最后推荐我写的另外一些库
 
