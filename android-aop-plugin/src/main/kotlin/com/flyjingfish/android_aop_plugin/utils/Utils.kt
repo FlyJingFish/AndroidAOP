@@ -489,7 +489,7 @@ fun Int.addPublic(isAddPublic: Boolean):Int{
         if (Modifier.isPublic(this)){
             this
         }else{
-            this + Opcodes.ACC_PUBLIC
+            this and (Opcodes.ACC_PRIVATE or Opcodes.ACC_PROTECTED).inv() or Opcodes.ACC_PUBLIC
         }
     }else{
         this
