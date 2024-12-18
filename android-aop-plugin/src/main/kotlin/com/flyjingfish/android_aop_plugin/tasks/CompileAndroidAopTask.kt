@@ -339,7 +339,9 @@ class CompileAndroidAopTask(
 //                    println("relativePath=$relativePath")
                         val target = File(output.absolutePath + File.separatorChar + relativePath)
                         target.checkExist()
-                        cacheDeleteFiles.add(target.absolutePath)
+                        synchronized(cacheDeleteFiles){
+                            cacheDeleteFiles.add(target.absolutePath)
+                        }
                         file.inputStream().use {
                             target.saveEntry(it)
                         }
