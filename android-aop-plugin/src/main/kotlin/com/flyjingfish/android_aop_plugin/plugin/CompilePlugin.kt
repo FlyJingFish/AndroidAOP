@@ -85,7 +85,7 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                             project.tasks.findByName("compileJava")?.dependsOn(DEBUG_MODE_FILE_TASK_NAME)
                         }
                     }
-                } catch (_: Exception) {
+                } catch (_: Throwable) {
                 }
             }
 
@@ -111,7 +111,7 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
 
                     val cacheDir = try {
                         compileKotlin.destinationDirectory.get().asFile
-                    } catch (e: Exception) {
+                    } catch (e: Throwable) {
                         null
                     }
                     val kotlinPath = cacheDir ?: File(project.buildDir.path + "/classes/kotlin/main".adapterOSPath())
@@ -148,7 +148,7 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                 project.tasks.withType(KotlinCompile::class.java).configureEach { task ->
                     kotlinCompileFilePathMap[task.name] = task
                 }
-            } catch (_: Exception) {
+            } catch (_: Throwable) {
             }
             val javaCompile: AbstractCompile =
                 if (DefaultGroovyMethods.hasProperty(variant, "javaCompileProvider") != null) {
@@ -170,7 +170,7 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                     val enabled = try {
                         val firstConfig = project.extensions.getByType(AndroidAopConfig::class.java)
                         firstConfig.enabled
-                    } catch (e: Exception) {
+                    } catch (e: Throwable) {
                         true
                     }
                     if (enabled && isDebugMode(buildTypeName,variantName)){
@@ -180,10 +180,14 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
             }
             javaCompile.doLast{
 
-                val task = kotlinCompileFilePathMap["compile${variantName.capitalized()}Kotlin"]
+                val task = try {
+                    kotlinCompileFilePathMap["compile${variantName.capitalized()}Kotlin"]
+                } catch (_: Throwable) {
+                    null
+                }
                 val cacheDir = try {
                     task?.destinationDirectory?.get()?.asFile
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     null
                 }
                 val kotlinPath = cacheDir ?: File(project.buildDir.path + "/tmp/kotlin-classes/".adapterOSPath() + variantName)
