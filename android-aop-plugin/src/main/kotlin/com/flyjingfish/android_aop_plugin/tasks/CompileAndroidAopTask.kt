@@ -168,7 +168,9 @@ class CompileAndroidAopTask(
                     FileInputStream(file).use { inputs ->
                         val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,isSuspend)
                         byteArray.saveFile(outFile)
-                        newClasses.add(byteArray)
+                        synchronized(newClasses){
+                            newClasses.add(byteArray)
+                        }
                     }
                 }else{
                     fun copy(){
@@ -370,8 +372,10 @@ class CompileAndroidAopTask(
         if (!AndroidAopConfig.debug){
             tmpCompileDir.deleteRecursively()
         }
-        val cacheFiles = ClassFileUtils.wovenInfoInvokeClass(newClasses)
-        InitConfig.exportCacheCutFile(tmpJsonFile,cacheFiles)
+        synchronized(newClasses){
+            val cacheFiles = ClassFileUtils.wovenInfoInvokeClass(newClasses)
+            InitConfig.exportCacheCutFile(tmpJsonFile,cacheFiles)
+        }
         if (isApp){
             exportCutInfo()
         }

@@ -288,7 +288,9 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 bytes.inputStream().use {
                                     jarOutput.saveEntry(jarEntryName,it)
                                 }
-                                newClasses.add(bytes)
+                                synchronized(newClasses){
+                                    newClasses.add(bytes)
+                                }
                             }
                         }
                     }else if (Utils.dotToSlash(Utils.JoinAnnoCutUtils) + _CLASS == entryName) {
@@ -547,7 +549,9 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     it.inputStream().use {
                                         jarOutput.saveEntry(entryName,it)
                                     }
-                                    newClasses.add(it)
+                                    synchronized(newClasses){
+                                        newClasses.add(it)
+                                    }
                                 }
                             }
                         }else if (Utils.dotToSlash(Utils.JoinAnnoCutUtils) + _CLASS == entryName) {
@@ -725,8 +729,9 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             wovenCodeJarJobs.awaitAll()
             jarFile.close()
         }
-
-        ClassFileUtils.wovenInfoInvokeClass(newClasses)
+        synchronized(newClasses){
+            ClassFileUtils.wovenInfoInvokeClass(newClasses)
+        }
         if (!ClassFileUtils.reflectInvokeMethod || ClassFileUtils.reflectInvokeMethodStatic){
             val outputDirJobs = mutableListOf<Deferred<Unit>>()
             for (file in ClassFileUtils.outputDir.walk()) {
