@@ -39,7 +39,7 @@
     alt="Sponsors"
   /></a>
   <a href="https://flyjingfish.github.io/AndroidAOP/zh/getting_started/#_1"><img
-    src="https://img.shields.io/badge/gradle-v7.6-blue?logo=gradle"
+    src="https://img.shields.io/badge/MinGradle-v7.6+-blue?logo=gradle"
     alt="Sponsors"
   /></a>
 </p>
