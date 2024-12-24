@@ -31,22 +31,27 @@
     alt="Build"
   /></a>
   <a href="https://github.com/FlyJingFish/AndroidAop/stargazers"><img
-    src="https://img.shields.io/github/stars/FlyJingFish/AndroidAop.svg"
+    src="https://img.shields.io/github/stars/FlyJingFish/AndroidAop.svg?style=flat"
     alt="Downloads"
   /></a>
   <a href="https://github.com/FlyJingFish/AndroidAop/network/members"><img
-    src="https://img.shields.io/github/forks/FlyJingFish/AndroidAop.svg"
+    src="https://img.shields.io/github/forks/FlyJingFish/AndroidAop.svg?style=flat"
     alt="Python Package Index"
   /></a>
   <a href="https://github.com/FlyJingFish/AndroidAop/issues"><img
-    src="https://img.shields.io/github/issues/FlyJingFish/AndroidAop.svg"
+    src="https://img.shields.io/github/issues/FlyJingFish/AndroidAop.svg?style=flat"
     alt="Docker Pulls"
   /></a>
   <a href="https://github.com/FlyJingFish/AndroidAop/blob/master/LICENSE"><img
-    src="https://img.shields.io/github/license/FlyJingFish/AndroidAop.svg"
+    src="https://img.shields.io/github/license/FlyJingFish/AndroidAop.svg?style=flat"
+    alt="Sponsors"
+  /></a>
+  <a href="https://android-arsenal.com/api?level=21"><img
+    src="https://img.shields.io/badge/%20MinSdk%20-21%2B-f0ad4e.svg"
     alt="Sponsors"
   /></a>
 </p>
+
 
 
 ## 简述
