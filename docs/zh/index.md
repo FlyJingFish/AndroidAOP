@@ -50,6 +50,10 @@
     src="https://img.shields.io/badge/%20MinSdk%20-21%2B-f0ad4e.svg"
     alt="Sponsors"
   /></a>
+  <a href="https://flyjingfish.github.io/AndroidAOP/zh/getting_started/#_1"><img
+    src="https://img.shields.io/badge/gradle-v7.6-blue?logo=gradle"
+    alt="Sponsors"
+  /></a>
 </p>
 
 
