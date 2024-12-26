@@ -54,6 +54,7 @@ object InitCollect {
     fun init(application: Application){
         Log.e("InitCollect","----init----");
         for (collect in Collects) {
+            Log.e("InitCollect", "----init----Collects=$collect")
             collect.onCreate(application)
         }
         for (sub in collectClazz) {

@@ -9,7 +9,7 @@ import kotlin.reflect.KClass
  * [wiki 文档使用说明](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopPointCut)
  */
 @Target(AnnotationTarget.ANNOTATION_CLASS)
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.BINARY)
 annotation class AndroidAopPointCut(
     /**
      *

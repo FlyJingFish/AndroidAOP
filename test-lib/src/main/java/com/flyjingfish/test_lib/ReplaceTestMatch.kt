@@ -12,6 +12,7 @@ object ReplaceTestMatch {
     @AndroidAopReplaceNew
     @JvmStatic
     fun newTestMatch2(testBean: TestMatch3):TestMatch3{
+        Log.e("ReplaceTestMatch","AndroidAopReplaceNew=$testBean")
         return testBean
     }
 

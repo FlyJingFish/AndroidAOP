@@ -34,6 +34,7 @@ import com.flyjingfish.test_lib.PermissionRejectListener
 import com.flyjingfish.test_lib.TestMatch2
 import com.flyjingfish.test_lib.annotation.MyAnno2
 import com.flyjingfish.test_lib.mycut.TestParams2
+import com.flyjingfish.test_lib.replace.ReplaceLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -167,6 +168,12 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
 
         binding.btnDemo3.setOnClickListener { toThirdActivity() }
         binding.btnDemo4.setOnClickListener { startActivity(Intent(this,FourActivity::class.java)) }
+    }
+
+    override fun onResume() {
+        super.onResume()
+//        binding.tvLogcat.text = "日志:（点此清除）\n"
+//        setLogcat(ReplaceLog.LOG_MAP.toString())
     }
 
     @CheckNetwork(toastText = "没有网络呀～～～")

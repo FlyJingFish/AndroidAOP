@@ -13,6 +13,7 @@ import com.flyjingfish.android_aop_core.utils.AndroidAop;
 import com.flyjingfish.androidaop.databinding.ActivitySecondBinding;
 import com.flyjingfish.androidaop.test.MyOnClickListener2;
 import com.flyjingfish.test_lib.annotation.MyAnno;
+import com.flyjingfish.test_lib.replace.ReplaceLog;
 
 import java.lang.reflect.Method;
 
@@ -61,7 +62,6 @@ public class SecondActivity extends BaseActivity2 {
 //            }
 //        }
     }
-
     @MyAnno
     public void testIntArray(int[] intArray,int[][] intArray1,int[][][] intArray2,int i,Method[] methods,
                              boolean[] b1,
@@ -84,6 +84,8 @@ public class SecondActivity extends BaseActivity2 {
     @Override
     protected void onResume() {
         super.onResume();
+//        binding.tvLogcat.setText("日志:（点此清除）\n");
+//        setLogcat(ReplaceLog.INSTANCE.getLOG_MAP().toString());
     }
 
     @MainThread

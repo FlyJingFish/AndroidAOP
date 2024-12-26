@@ -15,6 +15,7 @@ import com.flyjingfish.test_lib.annotation.MyAnno4
 import com.flyjingfish.test_lib.annotation.MyAnno5
 import com.flyjingfish.test_lib.PermissionRejectListener
 import com.flyjingfish.test_lib.TestSuspend
+import com.flyjingfish.test_lib.replace.ReplaceLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -38,6 +39,7 @@ class ThirdActivity : BaseActivity() , PermissionRejectListener {
         super.onCreate(savedInstanceState)
         val binding = ActivityThirdBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        ReplaceLog.LOG_MAP.setLength(0)
         binding.btnInner0.setOnClickListener {
             test0()
         }
