@@ -12,9 +12,9 @@ data class CollateralTransactionPage (
 
 @Serializable
 data class NextKey(
-    val accountId: String,
-    val createdTime: String,
-    val id: String
+    val accountId: String?=null,
+    val createdTime: String?=null,
+    val id: String?=null
 )
 
 @Serializable

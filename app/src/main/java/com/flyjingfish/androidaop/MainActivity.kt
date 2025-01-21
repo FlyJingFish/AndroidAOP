@@ -20,6 +20,7 @@ import com.flyjingfish.android_aop_core.enums.ThreadType
 import com.flyjingfish.androidaop.databinding.ActivityMainBinding
 import com.flyjingfish.androidaop.test.MyOnClickListener
 import com.flyjingfish.androidaop.test.MyOnClickListener2
+import com.flyjingfish.androidaop.test.NextKey
 import com.flyjingfish.androidaop.test.OrderFillTransaction
 import com.flyjingfish.androidaop.test.OrderFillTransactionBean
 import com.flyjingfish.androidaop.test.Round
@@ -39,6 +40,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.io.IOException
 import java.lang.Thread.sleep
 
@@ -59,6 +62,11 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
 //        binding.btnSingleClick.setOnClickListener{
 //            onSingleClick()
 //        }
+
+        val key = NextKey("id",null,null)
+// 自定义 JSON 输出，去掉 null 字段
+        val json = Json { encodeDefaults = false }
+        Log.e("MainJson====",json.encodeToString(key))
         binding.btnSingleClick.setOnClickListener(object :MyOnClickListener(){
             override fun onClick(v: View?) {
                 super.onClick(v)
