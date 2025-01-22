@@ -26,3 +26,5 @@ Your stars and support are my biggest motivation to move forward!
 | *勇       | 2024-11-13 | Alipay |          /           |   /   |       ¥ 30       |
 | *博       | 2024-12-09 | Wechat |    AndroidAOP感谢🙏    |   /   |       ¥ 30       |
 | *喜       | 2025-01-16 | Wechat |    有效解决问题，给你一个赞！     |   /   |       ¥ 10       |
+| *青       | 2025-01-21 | Alipay |          /           |   /   |       ¥ 13       |
+| 深度用户     | 2025-01-22 |   QQ   |          /           |   /   |       ¥ 13       |
