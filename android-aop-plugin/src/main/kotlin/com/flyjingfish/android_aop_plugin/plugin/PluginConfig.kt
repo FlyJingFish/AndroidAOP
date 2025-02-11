@@ -4,7 +4,7 @@ import com.flyjingfish.android_aop_plugin.config.RootBooleanConfig
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-class PluginConfig(private val project: Project) {
+class PluginConfig(project: Project) {
     private var reflectInvokeMethod = false
     private var reflectInvokeMethodOnlyDebug = false
     private var debugMode = false

@@ -17,11 +17,10 @@ dependencies {
     implementation libs.gradle
     implementation libs.asm.lib
     implementation libs.asm.commons
-//    implementation libs.javassist
     implementation libs.flyjingfish.javassist
     implementation libs.gson
     implementation project(path: ':android-aop-annotation')
-    implementation libs.kotlin.gradle.plugin
+    compileOnly libs.kotlin.gradle.plugin
     implementation libs.kotlinx.coroutines
 }
 // 发布到gradlePluginPortal

@@ -73,7 +73,9 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                         }
                     }
                     if (packageName != null){
-
+                        if (packageName.isEmpty()){
+                            packageName = project.name.replace("-","_")
+                        }
                         project.tasks.register(DEBUG_MODE_FILE_TASK_NAME, DebugModeFileTask::class.java){
                             it.debugModeDir = debugModeDir.absolutePath
                             it.packageName = packageName
@@ -140,15 +142,15 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
         } else {
             (android as LibraryExtension).libraryVariants
         }
+        try {
+            project.tasks.withType(KotlinCompile::class.java).configureEach { task ->
+                kotlinCompileFilePathMap[task.name] = task
+            }
+        } catch (_: Throwable) {
+        }
         variants.all { variant ->
             if (syncConfig){
                 AndroidAopConfig.syncConfig(project)
-            }
-            try {
-                project.tasks.withType(KotlinCompile::class.java).configureEach { task ->
-                    kotlinCompileFilePathMap[task.name] = task
-                }
-            } catch (_: Throwable) {
             }
             val javaCompile: AbstractCompile =
                 if (DefaultGroovyMethods.hasProperty(variant, "javaCompileProvider") != null) {
@@ -164,7 +166,6 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
             if (!isIncremental() && javaCompile is JavaCompile && isDebugMode(buildTypeName,variantName)){
                 javaCompile.options.isIncremental = false
             }
-//            println("CompilePlugin=variant=$variantName,output.name=${variant.buildType.name},isDebug=${isDebugMode(buildTypeName,variantName)}")
             if (isApp && isIncremental()){
                 javaCompile.doFirst{
                     val enabled = try {
@@ -217,9 +218,6 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
 
                 if (packageName == "null"){
                     for (sourceSet in android.sourceSets) {
-//                        println("Source set name: ${sourceSet.name}")
-//                        println("Java srcDirs: ${sourceSet.java.srcDirs}")
-//                        println("Res srcDirs: ${sourceSet.res.srcDirs}")
                         if (sourceSet.name == "main"){
                             val pkName = getPackageName(sourceSet.java.srcDirs,debugModeDir)
                             if (pkName != null){
@@ -252,6 +250,9 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                             }
                         }
                     }
+                }
+                if (packageName.isEmpty()){
+                    packageName = project.name.replace("-","_")
                 }
                 val buildTypeName: String? = variant.buildType
                 project

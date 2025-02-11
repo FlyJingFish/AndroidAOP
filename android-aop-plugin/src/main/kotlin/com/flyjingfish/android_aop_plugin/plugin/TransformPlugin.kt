@@ -6,7 +6,6 @@ import com.android.build.api.variant.ScopedArtifacts
 import com.android.build.gradle.AppPlugin
 import com.flyjingfish.android_aop_plugin.tasks.AssembleAndroidAopTask
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
-import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import org.gradle.api.Project
 
@@ -26,7 +25,6 @@ object TransformPlugin : BasePlugin() {
                 InitConfig.initCutInfo(project)
             }
             val buildTypeName = variant.buildType
-//            println("TransformPlugin=variant=${variant.name}, variant.buildType=${variant.buildType},isDebug=${isDebugMode(buildTypeName,variant.name)}")
             if (androidAopConfig.enabled && !isDebugMode(buildTypeName,variant.name)){
                 val task = project.tasks.register("${variant.name}AssembleAndroidAopTask", AssembleAndroidAopTask::class.java){
                     it.reflectInvokeMethod = isReflectInvokeMethod(buildTypeName,variant.name)
@@ -42,6 +40,9 @@ object TransformPlugin : BasePlugin() {
                         AssembleAndroidAopTask::allDirectories,
                         AssembleAndroidAopTask::output
                     )
+                task.configure {
+                    it.output.set(it.project.layout.buildDirectory.file("intermediates/classes/${variant.name}AssembleAndroidAopTask/All/classes.jar"))
+                }
             }
         }
     }

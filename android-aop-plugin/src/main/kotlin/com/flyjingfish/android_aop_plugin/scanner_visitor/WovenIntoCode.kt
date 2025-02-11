@@ -621,8 +621,7 @@ object WovenIntoCode {
         val mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, "<clinit>", "()V", null, null)
         val className1 = "$thisClassName\$Inner${thisClassName.computeMD5()}"
         mv.visitTypeInsn(AdviceAdapter.NEW,Utils.dotToSlash(className1))
-        mv.visitInsn(AdviceAdapter.DUP)//压入栈
-        //弹出一个对象所在的地址，进行初始化操作，构造函数默认为空，此时栈大小为1（到目前只有一个局部变量）
+        mv.visitInsn(AdviceAdapter.DUP)
         mv.visitMethodInsn(AdviceAdapter.INVOKESPECIAL,Utils.dotToSlash(className1),"<init>","()V",false)
         mv.visitInsn(RETURN)
         mv.visitMaxs(0, 0)
@@ -645,7 +644,6 @@ object WovenIntoCode {
             }
         }
 
-        // 调用 super.someMethod() 的字节码指令
         mv.visitVarInsn(ALOAD, 0) // 加载 `this` 引用到操作数栈
         var localVarIndex = 1
         var maxStack = 1
@@ -666,11 +664,11 @@ object WovenIntoCode {
                 Type.BOOLEAN, Type.BYTE, Type.CHAR, Type.SHORT -> mv.visitVarInsn(
                     ILOAD,
                     localVarIndex
-                ) // 加载 boolean, byte, char, short，这些类型都使用 ILOAD
+                )
                 Type.OBJECT, Type.ARRAY -> mv.visitVarInsn(
                     ALOAD,
                     localVarIndex
-                ) // 加载引用类型（如 Object 和数组）
+                )
                 else -> throw IllegalArgumentException("Unsupported parameter type: $argType")
             }
             localVarIndex += argType.size // 更新下一个局部变量的索引
@@ -683,13 +681,13 @@ object WovenIntoCode {
             superMethodName,
             methodDescriptor,
             false
-        ) // 调用父类的 someMethod()
+        )
         if (isVoid) {
-            mv.visitInsn(RETURN) // 返回
+            mv.visitInsn(RETURN)
         } else {
-            mv.visitInsn(IRETURN) // 返回
+            mv.visitInsn(IRETURN)
         }
-        mv.visitMaxs(maxStack, localVarIndex) // 设置操作数栈和局部变量表的大小
+        mv.visitMaxs(maxStack, localVarIndex)
         mv.visitEnd()
 
     }
@@ -711,23 +709,18 @@ object WovenIntoCode {
 
     fun createInitClass(output:File) :File{
         val className = "com.flyjingfish.android_aop_annotation.utils.DebugAndroidAopInit"
-        //新建一个类生成器，COMPUTE_FRAMES，COMPUTE_MAXS这2个参数能够让asm自动更新操作数栈
         val cw = ClassWriter(COMPUTE_FRAMES or COMPUTE_MAXS)
-        //生成一个public的类，类路径是com.study.Human
         cw.visit(V1_8, ACC_PUBLIC, Utils.dotToSlash(className), null, "java/lang/Object", null)
 
-        //生成默认的构造方法： public Human()
         var mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null)
         mv.visitVarInsn(ALOAD, 0)
         mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false)
         mv.visitInsn(RETURN)
-        mv.visitMaxs(0, 0) //更新操作数栈
-        mv.visitEnd() //一定要有visitEnd
+        mv.visitMaxs(0, 0)
+        mv.visitEnd()
 
 
-        //生成静态方法
         mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, "<clinit>", "()V", null, null)
-        //生成静态方法中的字节码指令
         val map: HashMap<String, String> = WovenInfoUtils.getAopInstances()
         if (map.isNotEmpty()) {
             map.forEach { (key, value) ->
@@ -740,11 +733,8 @@ object WovenIntoCode {
         mv.visitInsn(RETURN)
         mv.visitMaxs(0, 0)
         mv.visitEnd()
-        //设置必要的类路径
         val path = output.absolutePath + File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class"
-        //获取类的byte数组
         val classByteData = cw.toByteArray()
-        //把类数据写入到class文件,这样你就可以把这个类文件打包供其他的人使用
         val outFile = File(path)
         outFile.checkExist()
         classByteData.saveFile(outFile)
@@ -760,23 +750,18 @@ object WovenIntoCode {
             }
             val job = async(Dispatchers.IO) {
                 val className = "$key\$Inner${key.computeMD5()}"
-                //新建一个类生成器，COMPUTE_FRAMES，COMPUTE_MAXS这2个参数能够让asm自动更新操作数栈
                 val cw = ClassWriter(COMPUTE_FRAMES or COMPUTE_MAXS)
-                //生成一个public的类，类路径是com.study.Human
                 cw.visit(V1_8, ACC_PUBLIC+ACC_STATIC, Utils.dotToSlash(className), null, "java/lang/Object", null)
 
-                //生成默认的构造方法： public Human()
                 var mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null)
                 mv.visitVarInsn(ALOAD, 0)
                 mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false)
                 mv.visitInsn(RETURN)
                 mv.visitMaxs(0, 0) //更新操作数栈
-                mv.visitEnd() //一定要有visitEnd
+                mv.visitEnd()
 
 
-                //生成静态方法
                 mv = cw.visitMethod(ACC_PUBLIC+ACC_STATIC, "<clinit>", "()V", null, null);
-                //生成静态方法中的字节码指令
                 val map: MutableMap<String,AopCollectClass> = value
                 if (map.isNotEmpty()) {
                     val iterator = map.iterator();
@@ -910,11 +895,8 @@ object WovenIntoCode {
                 mv.visitInsn(RETURN)
                 mv.visitMaxs(0, 0)
                 mv.visitEnd()
-                //设置必要的类路径
                 val path = output.absolutePath + File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class"
-                //获取类的byte数组
                 val classByteData = cw.toByteArray()
-                //把类数据写入到class文件,这样你就可以把这个类文件打包供其他的人使用
                 val outFile = File(path)
                 outFile.checkExist(true)
                 classByteData.saveFile(outFile)
