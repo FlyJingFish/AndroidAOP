@@ -395,7 +395,8 @@ androidAop.debugMode.buildConfig = true //If set to true, it means exporting a D
 ```
 
 !!! note
-    Because some modules have only Kotlin code, debugMode cannot take effect. You can insert a Java code to make it effective by setting it to true. If you don't need it, you can set it to false, but you need to manually create a Java code.
+    1、Because some modules have only Kotlin code, debugMode cannot take effect. You can insert a Java code to make it effective by setting it to true. If you don't need it, you can set it to false, but you need to manually create a Java code.
+    2、If debugMode does not work, consider turning this off by adding the setting `android.defaults.buildfeatures.buildconfig=true`
 
 ### This library has some built-in functional annotations for you to use directly.
 

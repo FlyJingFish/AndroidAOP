@@ -392,7 +392,7 @@ androidAop.debugMode.buildConfig = true //设置为 true 表示导出一个 Debu
 
 !!! note
     1、因为有些 module 的代码只有 kotlin 代码，导致 debugMode 无法生效，设置为true可插入一个 java 代码即可生效，如果不需要，可以设置为 false，但需要你手动创建一个 java 代码 <br>
-    2、通常不需要配置此项，除非你遇到上述情况
+    2、如果 debugMode 无法生效，可考虑关闭此项配置，添加设置 `android.defaults.buildfeatures.buildconfig=true`
 
 ### 本库内置了一些功能注解可供你直接使用
 
