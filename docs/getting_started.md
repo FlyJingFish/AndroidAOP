@@ -259,7 +259,9 @@ Add in `build.gradle` of **app**
          // exclude is the package excluded during scanning
          // Can exclude kotlin related and improve speed
          exclude 'kotlin.jvm', 'kotlin.internal','kotlinx.coroutines.internal', 'kotlinx.coroutines.android'
-        
+         // Exclude packaged entity names
+         excludePackaging 'license/NOTICE' , 'license/LICENSE.dom-software.txt' , 'license/LICENSE'
+
          // verifyLeafExtends Whether to turn on verification leaf inheritance, it is turned on by default. If type = MatchType.LEAF_EXTENDS of @AndroidAopMatchClassMethod is not set, it can be turned off.
          verifyLeafExtends true
          //Off by default, if enabled in Build or after packaging, the point cut information json file will be generated in app/build/tmp/cutInfo.json
@@ -286,7 +288,9 @@ Add in `build.gradle` of **app**
          // exclude is the package excluded during scanning
          // Can exclude kotlin related and improve speed
          exclude("kotlin.jvm", "kotlin.internal","kotlinx.coroutines.internal", "kotlinx.coroutines.android")
-        
+         // Exclude the entity name of the package
+         excludePackaging("license/NOTICE" , "license/LICENSE.dom-software.txt" , "license/LICENSE")
+
          // verifyLeafExtends Whether to turn on verification leaf inheritance, it is turned on by default. If type = MatchType.LEAF_EXTENDS of @AndroidAopMatchClassMethod is not set, it can be turned off.
          verifyLeafExtends = true
          //Off by default, if enabled in Build or after packaging, the point cut information json file will be generated in app/build/tmp/cutInfo.json

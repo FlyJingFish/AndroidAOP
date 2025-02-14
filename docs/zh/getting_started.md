@@ -257,7 +257,9 @@
         // exclude 是扫描时排除的包
         // 可排除 kotlin 相关，提高速度
         exclude 'kotlin.jvm', 'kotlin.internal','kotlinx.coroutines.internal', 'kotlinx.coroutines.android'
-        
+        // 排除打包的实体名
+        excludePackaging 'license/NOTICE' , 'license/LICENSE.dom-software.txt' , 'license/LICENSE'
+
         // verifyLeafExtends 是否开启验证叶子继承，默认打开，@AndroidAopMatchClassMethod 和 @AndroidAopCollectMethod 如果没有设置 LEAF_EXTENDS，可以关闭
         verifyLeafExtends true
         //默认关闭，开启在 Build 或 打包后 将会生成切点信息json文件在 app/build/tmp/cutInfo.json
@@ -283,7 +285,9 @@
         // exclude 是扫描时排除的包
         // 可排除 kotlin 相关，提高速度
         exclude("kotlin.jvm", "kotlin.internal","kotlinx.coroutines.internal", "kotlinx.coroutines.android")
-        
+        // 排除打包的实体名
+        excludePackaging("license/NOTICE" , "license/LICENSE.dom-software.txt" , "license/LICENSE")
+
         // verifyLeafExtends 是否开启验证叶子继承，默认打开，@AndroidAopMatchClassMethod 和 @AndroidAopCollectMethod 如果没有设置 LEAF_EXTENDS，可以关闭
         verifyLeafExtends = true
         //默认关闭，开启在 Build 或 打包后 将会生成切点信息json文件在 app/build/tmp/cutInfo.json

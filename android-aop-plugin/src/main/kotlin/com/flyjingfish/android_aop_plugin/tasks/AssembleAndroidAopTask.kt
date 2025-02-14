@@ -19,6 +19,7 @@ import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.computeMD5
 import com.flyjingfish.android_aop_plugin.utils.getFileClassname
 import com.flyjingfish.android_aop_plugin.utils.getRelativePath
+import com.flyjingfish.android_aop_plugin.utils.inExcludePackingRules
 import com.flyjingfish.android_aop_plugin.utils.inRules
 import com.flyjingfish.android_aop_plugin.utils.isJarSignatureRelatedFiles
 import com.flyjingfish.android_aop_plugin.utils.toClassPath
@@ -243,7 +244,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         fun processFile(file : File,directory:File,directoryPath:String){
             if (file.isFile) {
                 val entryName = file.getFileClassname(directory)
-                if (entryName.isEmpty() || entryName.startsWith("META-INF/") || "module-info.class" == entryName) {
+                if (AndroidAopConfig.inExcludePackingRules(entryName)) {
                     return
                 }
                 try {
@@ -497,7 +498,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 //                    if (jarEntry.isDirectory || entryName.isEmpty() || !entryName.endsWith(_CLASS) || entryName.startsWith("META-INF/")) {
 //                        continue
 //                    }
-                if (jarEntry.isDirectory || entryName.isEmpty() || entryName.startsWith("META-INF/") || "module-info.class" == entryName) {
+                if (jarEntry.isDirectory || AndroidAopConfig.inExcludePackingRules(entryName)) {
                     continue
                 }
                 jarEntryList.add(jarEntry)

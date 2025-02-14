@@ -515,6 +515,13 @@ fun AndroidAopConfig.Companion.inRules(className: String):Boolean{
     )
 }
 
+fun AndroidAopConfig.Companion.inExcludePackingRules(entryName: String):Boolean{
+    return entryName.isEmpty() ||
+            entryName.startsWith("META-INF/") ||
+            entryName == "module-info.class" ||
+            excludePackagings.contains(entryName)
+}
+
 fun File.getFileClassname(directory :File):String {
     return getRelativePath(directory).toClassPath()
 }
