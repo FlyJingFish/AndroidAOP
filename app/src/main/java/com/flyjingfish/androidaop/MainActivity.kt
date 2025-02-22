@@ -43,7 +43,7 @@ import kotlinx.serialization.json.Json
 import java.io.IOException
 import java.lang.Thread.sleep
 
-class MainActivity: BaseActivity2(){
+class MainActivity: BaseVActivity<ActivityMainBinding>(){
     //    val haha = 1
     lateinit var binding:ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {

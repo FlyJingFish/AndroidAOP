@@ -11,6 +11,9 @@ import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.commons.AdviceAdapter
+import org.objectweb.asm.signature.SignatureReader
+import org.objectweb.asm.signature.SignatureVisitor
+import org.objectweb.asm.signature.SignatureWriter
 
 open class ReplaceBaseClassVisitor(
     classVisitor: ClassVisitor
@@ -59,11 +62,82 @@ open class ReplaceBaseClassVisitor(
         if (!replaceExtendsClassName.isNullOrEmpty() && !newReplaceExtendsClassName.isNullOrEmpty()){
             InitConfig.useModifyClassInfo(slashToDotClassName(name))
             modifyExtendsClassName = dotToSlash(newReplaceExtendsClassName)
-            val newSignature = signature?.replace("L$superName", "L$modifyExtendsClassName")
-                ?: signature
+            val newSignature = if (signature != null) {
+                updateSignature(signature, superName, modifyExtendsClassName!!);
+            }else{
+                signature
+            }
             super.visit(version, access, name, newSignature, modifyExtendsClassName, interfaces)
         }else{
             super.visit(version, access, name, signature, superName, interfaces)
+        }
+    }
+    private fun updateSignature(signature: String, oldClass: String, newClass: String): String {
+        val reader = SignatureReader(signature)
+        val writer = SignatureWriter()
+
+        reader.accept(
+            SignatureRemapper(
+                writer,
+                oldClass,
+                newClass
+            )
+        )
+        return writer.toString()
+    }
+
+    internal class SignatureRemapper(
+        private val delegate: SignatureVisitor,
+        private val oldClass: String,
+        private val newClass: String
+    ) : SignatureVisitor(Opcodes.ASM9) {
+
+        private var isTargetClass = false
+
+        override fun visitClassType(name: String) {
+            if (name == oldClass) {
+                isTargetClass = true // 标记正在修改的类
+                delegate.visitClassType(newClass)
+            } else {
+                isTargetClass = false
+                delegate.visitClassType(name)
+            }
+        }
+
+        override fun visitTypeArgument(wildcard: Char): SignatureVisitor {
+            return if (isTargetClass) {
+                delegate.visitTypeArgument(wildcard) // 直接传递泛型参数
+            } else {
+                delegate.visitTypeArgument(wildcard)
+            }
+        }
+
+        override fun visitFormalTypeParameter(name: String?) {
+            delegate.visitFormalTypeParameter(name)
+        }
+
+        override fun visitClassBound(): SignatureVisitor {
+            return SignatureRemapper(delegate.visitClassBound(), oldClass, newClass)
+        }
+
+        override fun visitInterfaceBound(): SignatureVisitor {
+            return SignatureRemapper(delegate.visitInterfaceBound(), oldClass, newClass)
+        }
+
+        override fun visitSuperclass(): SignatureVisitor {
+            return SignatureRemapper(delegate.visitSuperclass(), oldClass, newClass)
+        }
+
+        override fun visitInterface(): SignatureVisitor {
+            return SignatureRemapper(delegate.visitInterface(), oldClass, newClass)
+        }
+
+        override fun visitTypeVariable(name: String?) {
+            delegate.visitTypeVariable(name) // 直接传递泛型参数
+        }
+
+        override fun visitEnd() {
+            delegate.visitEnd() // 确保不会额外添加 `T=;`
         }
     }
 
