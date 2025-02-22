@@ -1,6 +1,14 @@
 ## Brief description
 
-```@AndroidAopModifyExtendsClass(value)```
+```java
+@AndroidAopModifyExtendsClass(
+    value = "Modify target class",
+    isParent = false // value refers to the class name or the inherited class of the class
+)
+```
+
+- `isParent = true` means modifying all classes whose inherited classes are value
+- `isParent = false` means modifying the class whose class name is value
 
 This function is relatively simple. It modifies the inherited class of a class. Fill in the full name of the class to be modified in the ```value``` position. The annotated class is the modified inherited class.
 
