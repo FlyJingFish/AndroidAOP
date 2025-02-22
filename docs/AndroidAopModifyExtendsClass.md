@@ -17,6 +17,7 @@ In addition, if the class name is an internal class, do not use the `$` characte
 
 !!! note
     - **:warning::warning::warning:But it should be noted that the modified inherited class cannot inherit the modified class. The inherited class of the modified class is generally set to the inherited class of the class before modification**
+    - **:warning::warning::warning:If the original inherited class has generic information, please note that the modified inherited class also needs to have the same generic information**
     - **When you modify the configuration of this aspect, in most cases you should clean the project and continue development**
 
 
