@@ -11,4 +11,5 @@ annotation class AndroidAopModifyExtendsClass(
      * @return 被修改类的目标类名（包含包名）
      */
     val value: String,
+    val isParent: Boolean = false
 )
