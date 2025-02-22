@@ -141,7 +141,7 @@ object WovenIntoCode {
                     thisHasStaticClock = isHasStaticClock
                     return mv
                 }
-            }, ClassReader.EXPAND_FRAMES)
+            }, 0)
         }else{
             cr.accept(object : ReplaceBaseClassVisitor(cw) {
                 override fun visit(
@@ -180,7 +180,7 @@ object WovenIntoCode {
                     thisHasStaticClock = isHasStaticClock
                     return mv
                 }
-            }, ClassReader.EXPAND_FRAMES)
+            }, 0)
         }
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
             if (value in wovenRecord){
