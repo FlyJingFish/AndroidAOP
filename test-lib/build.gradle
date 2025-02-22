@@ -41,8 +41,8 @@ dependencies {
         api 'io.github.FlyJingFish.AndroidAop:android-aop-core:'+TestVersion
         api 'io.github.FlyJingFish.AndroidAop:android-aop-extra:'+TestVersion
     }
-    api libs.rxpermissions
-    api libs.rxjava
+//    api libs.rxpermissions
+//    api libs.rxjava
 
 
 

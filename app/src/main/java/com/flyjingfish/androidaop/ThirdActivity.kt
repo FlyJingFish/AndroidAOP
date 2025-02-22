@@ -10,11 +10,10 @@ import com.flyjingfish.android_aop_core.annotations.Permission
 import com.flyjingfish.android_aop_core.annotations.SingleClick
 import com.flyjingfish.androidaop.databinding.ActivityThirdBinding
 import com.flyjingfish.test_lib.BaseActivity
+import com.flyjingfish.test_lib.TestSuspend
 import com.flyjingfish.test_lib.annotation.MyAnno3
 import com.flyjingfish.test_lib.annotation.MyAnno4
 import com.flyjingfish.test_lib.annotation.MyAnno5
-import com.flyjingfish.test_lib.PermissionRejectListener
-import com.flyjingfish.test_lib.TestSuspend
 import com.flyjingfish.test_lib.replace.ReplaceLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -22,7 +21,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.lang.Thread.sleep
 
-class ThirdActivity : BaseActivity() , PermissionRejectListener {
+class ThirdActivity : BaseActivity()  {
     companion object{
         fun start(activity: MainActivity,listener:OnPhotoSelectListener?){
             start(activity,1,listener)
@@ -256,6 +255,4 @@ class ThirdActivity : BaseActivity() , PermissionRejectListener {
         }
     }
 
-    override fun onReject(permission: Permission, permissionResult: com.tbruyelle.rxpermissions3.Permission) {
-    }
 }

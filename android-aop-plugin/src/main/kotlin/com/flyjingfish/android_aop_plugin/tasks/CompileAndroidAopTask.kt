@@ -245,26 +245,21 @@ class CompileAndroidAopTask(
                             }
                         }
                     }else if (isWovenInfoCode && hasReplaceExtendsClass){
-                        val replaceExtendsClassName = WovenInfoUtils.getModifyExtendsClass(Utils.slashToDotClassName(entryClazzName))
-                        if (replaceExtendsClassName !=null){
-                            FileInputStream(file).use { inputs ->
-                                val byteArray = inputs.readAllBytes()
-                                if (byteArray.isNotEmpty()){
-                                    try {
-                                        val newByteArray = aopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
-                                        if (newByteArray.modified){
-                                            mkOutFile()
-                                            newByteArray.byteArray.saveFile(outFile)
-                                        }
-                                    } catch (e: Exception) {
-                                        copy()
+                        FileInputStream(file).use { inputs ->
+                            val byteArray = inputs.readAllBytes()
+                            if (byteArray.isNotEmpty()){
+                                try {
+                                    val newByteArray = aopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
+                                    if (newByteArray.modified){
+                                        mkOutFile()
+                                        newByteArray.byteArray.saveFile(outFile)
                                     }
-                                }else{
+                                } catch (e: Exception) {
                                     copy()
                                 }
+                            }else{
+                                copy()
                             }
-                        }else{
-                            copy()
                         }
                     }else if (hasCollect) {
                         FileInputStream(file).use { inputs ->

@@ -42,6 +42,7 @@ object WovenInfoUtils {
     private val replaceMethodInfoMap = ConcurrentHashMap<String, HashMap<String, ReplaceMethodInfo>>()
     private val replaceMethodInfoMapUse = ConcurrentHashMap<String, ReplaceMethodInfo>()
     private val modifyExtendsClassMap = HashMap<String, String>()
+    private val modifyExtendsClassParentMap = HashMap<String, Boolean>()
     private val allClassName = mutableSetOf<String>()
     private val aopCollectInfoMap = mutableMapOf<String,AopCollectCut>()
     private val lastAopCollectInfoMap = mutableMapOf<String,AopCollectCut>()
@@ -78,17 +79,23 @@ object WovenInfoUtils {
     fun getAopMatchCuts(): HashMap<String, AopMatchCut>{
         return aopMatchCuts
     }
-    fun addModifyExtendsClassInfo(targetClassName: String, extendsClassName: String) {
+    fun addModifyExtendsClassInfo(targetClassName: String, extendsClassName: String,isParent:Boolean) {
         modifyExtendsClassMap[targetClassName] = extendsClassName
+        modifyExtendsClassParentMap[targetClassName] = isParent
         InitConfig.addModifyClassInfo(targetClassName, extendsClassName)
     }
     fun getModifyExtendsClass(targetClassName: String) :String?{
         return modifyExtendsClassMap[targetClassName]
     }
+    fun getModifyExtendsClassParent(targetClassName: String) :Boolean{
+        return modifyExtendsClassParentMap[targetClassName] == true
+    }
     fun verifyModifyExtendsClassInfo() {
         for (mutableEntry in modifyExtendsClassMap) {
-            if (mutableEntry.value.instanceof(mutableEntry.key)){
-                throw IllegalArgumentException("${mutableEntry.value} 不能继承 ${mutableEntry.key}，或者其继承类不可以继承 ${mutableEntry.key}")
+            if (!getModifyExtendsClassParent(mutableEntry.key)) {
+                if (mutableEntry.value.instanceof(mutableEntry.key)) {
+                    throw IllegalArgumentException("${mutableEntry.value} 不能继承 ${mutableEntry.key}，或者其继承类不可以继承 ${mutableEntry.key}")
+                }
             }
         }
 //        printLog("classMethodRecords=$classMethodRecords")
@@ -239,6 +246,7 @@ object WovenInfoUtils {
         replaceMethodMap.clear()
         replaceMethodInfoMapUse.clear()
         modifyExtendsClassMap.clear()
+        modifyExtendsClassParentMap.clear()
         invokeMethodCuts.clear()
         realInvokeMethodMap.clear()
         invokeMethodCutCache = null

@@ -135,6 +135,7 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
     internal inner class ReplaceExtendsClassVisitor : AnnotationVisitor(Opcodes.ASM9) {
         private var targetClassName: String? = null
         private var extendsClassName: String? = null
+        private var isParent: Boolean = false
         override fun visit(name: String, value: Any) {
             if (isAndroidAopClass) {
                 if (name == "targetClassName") {
@@ -143,6 +144,9 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
                 if (name == "extendsClassName") {
                     extendsClassName = value.toString()
                 }
+                if (name == "isParent" && value is Boolean) {
+                    isParent = value
+                }
             }
             super.visit(name, value)
         }
@@ -150,7 +154,7 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
         override fun visitEnd() {
             super.visitEnd()
             if (targetClassName != null && extendsClassName != null) {
-                addModifyExtendsClassInfo(targetClassName!!, extendsClassName!!)
+                addModifyExtendsClassInfo(targetClassName!!, extendsClassName!!,isParent)
             }
         }
     }

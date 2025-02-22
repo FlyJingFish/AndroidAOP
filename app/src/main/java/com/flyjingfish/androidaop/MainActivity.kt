@@ -24,18 +24,16 @@ import com.flyjingfish.androidaop.test.NextKey
 import com.flyjingfish.androidaop.test.OrderFillTransaction
 import com.flyjingfish.androidaop.test.OrderFillTransactionBean
 import com.flyjingfish.androidaop.test.Round
-import com.flyjingfish.androidaop.test2.StaticClass
 import com.flyjingfish.androidaop.test.TestBean
-import com.flyjingfish.test_lib.mycut.TestParams
 import com.flyjingfish.androidaop.test.TestReplace
+import com.flyjingfish.androidaop.test2.StaticClass
 import com.flyjingfish.androidaop.testReplace.BaseBean
 import com.flyjingfish.test_lib.BaseActivity
-import com.flyjingfish.test_lib.annotation.MyAnno3
-import com.flyjingfish.test_lib.PermissionRejectListener
 import com.flyjingfish.test_lib.TestMatch2
 import com.flyjingfish.test_lib.annotation.MyAnno2
+import com.flyjingfish.test_lib.annotation.MyAnno3
+import com.flyjingfish.test_lib.mycut.TestParams
 import com.flyjingfish.test_lib.mycut.TestParams2
-import com.flyjingfish.test_lib.replace.ReplaceLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -45,7 +43,7 @@ import kotlinx.serialization.json.Json
 import java.io.IOException
 import java.lang.Thread.sleep
 
-class MainActivity: BaseActivity2(), PermissionRejectListener{
+class MainActivity: BaseActivity2(){
     //    val haha = 1
     lateinit var binding:ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -242,9 +240,9 @@ class MainActivity: BaseActivity2(), PermissionRejectListener{
         setLogcat("@Permission 获得权限了进入了方法 activity$activity,maxSelect=$maxSelect")
     }
 
-    override fun onReject(permission:Permission,permissionResult: com.tbruyelle.rxpermissions3.Permission) {
-        setLogcat("@Permission 没有获得权限，tag=${permission.tag},permissionResult=${permissionResult}")
-    }
+//    override fun onReject(permission:Permission,permissionResult: com.tbruyelle.rxpermissions3.Permission) {
+//        setLogcat("@Permission 没有获得权限，tag=${permission.tag},permissionResult=${permissionResult}")
+//    }
 
     @CustomIntercept("我是自定义数据")
     fun onCustomIntercept(val1 : Int,short: Short,

@@ -380,26 +380,26 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 }
                             }
                         }else if (isWovenInfoCode && hasReplaceExtendsClass){
-                            val replaceExtendsClassName = WovenInfoUtils.getModifyExtendsClass(Utils.slashToDotClassName(entryClazzName))
-                            if (replaceExtendsClassName !=null){
-                                FileInputStream(file).use { inputs ->
-                                    val byteArray = inputs.readAllBytes()
-                                    if (byteArray.isNotEmpty()){
-                                        try {
-                                            val newByteArray = aopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
+                            FileInputStream(file).use { inputs ->
+                                val byteArray = inputs.readAllBytes()
+                                if (byteArray.isNotEmpty()){
+                                    try {
+                                        val newByteArray = aopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
+                                        if (newByteArray.modified){
                                             newByteArray.byteArray.inputStream().use {
                                                 jarOutput.saveEntry(jarEntryName,it)
                                             }
-                                            //                                        newClasses.add(newByteArray)
-                                        } catch (e: Exception) {
+                                        }else{
                                             copy()
                                         }
-                                    }else{
+
+                                        //                                        newClasses.add(newByteArray)
+                                    } catch (e: Exception) {
                                         copy()
                                     }
+                                }else{
+                                    copy()
                                 }
-                            }else{
-                                copy()
                             }
                         }else if (hasCollect) {
                             FileInputStream(file).use { inputs ->
@@ -642,26 +642,25 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     }
                                 }
                             }else if(isWovenInfoCode && hasReplaceExtendsClass){
-                                val replaceExtendsClassName = WovenInfoUtils.getModifyExtendsClass(Utils.slashToDotClassName(entryClazzName))
-                                if (replaceExtendsClassName !=null){
-                                    jarFile.getInputStream(jarEntry).use { inputs ->
-                                        val byteArray = inputs.readAllBytes()
-                                        if (byteArray.isNotEmpty()){
-                                            try {
-                                                val newByteArray = aopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
+                                jarFile.getInputStream(jarEntry).use { inputs ->
+                                    val byteArray = inputs.readAllBytes()
+                                    if (byteArray.isNotEmpty()){
+                                        try {
+                                            val newByteArray = aopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
+                                            if (newByteArray.modified){
                                                 newByteArray.byteArray.inputStream().use {
                                                     jarOutput.saveEntry(entryName,it)
                                                 }
-//                                            newClasses.add(newByteArray)
-                                            } catch (e: Exception) {
+                                            }else{
                                                 copy()
                                             }
-                                        }else{
+//                                            newClasses.add(newByteArray)
+                                        } catch (e: Exception) {
                                             copy()
                                         }
+                                    }else{
+                                        copy()
                                     }
-                                }else{
-                                    copy()
                                 }
                             }else if (hasCollect) {
                                 jarFile.getInputStream(jarEntry).use { inputs ->

@@ -1,32 +1,22 @@
 package com.flyjingfish.androidaop;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Application;
 import android.os.Build;
 import android.util.Log;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.Lifecycle;
 
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint;
 import com.flyjingfish.android_aop_core.annotations.CustomIntercept;
-import com.flyjingfish.android_aop_core.annotations.Permission;
 import com.flyjingfish.android_aop_core.annotations.TryCatch;
 import com.flyjingfish.android_aop_core.listeners.OnCustomInterceptListener;
-import com.flyjingfish.android_aop_core.listeners.OnPermissionsInterceptListener;
-import com.flyjingfish.android_aop_core.listeners.OnRequestPermissionListener;
 import com.flyjingfish.android_aop_core.listeners.OnThrowableListener;
 import com.flyjingfish.android_aop_core.utils.AndroidAop;
-import com.flyjingfish.test_lib.PermissionRejectListener;
 import com.flyjingfish.test_lib.ToastUtils;
 import com.flyjingfish.test_lib.collect.InitCollect;
 import com.flyjingfish.test_lib.collect.InitCollect2;
-import com.tbruyelle.rxpermissions3.RxPermissions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,37 +31,37 @@ public class MyApp extends Application {
         INSTANCE = this;
         InitCollect.INSTANCE.init(this);
         InitCollect2.init(this);
-        AndroidAop.INSTANCE.setOnPermissionsInterceptListener(new OnPermissionsInterceptListener() {
-            @SuppressLint("CheckResult")
-            @Override
-            public void requestPermission(@NonNull ProceedJoinPoint joinPoint, @NonNull Permission permission, @NonNull OnRequestPermissionListener call) throws Throwable {
-                Object target = joinPoint.getTarget();
-                String[] permissions = permission.value();
-                permissions = check13ReadExternalStorage(permissions);
-                Log.e("requestPermission",""+permissions);
-                if (target instanceof FragmentActivity){
-                    RxPermissions rxPermissions = new RxPermissions((FragmentActivity) target);
-                    rxPermissions.requestEach(permissions)
-                            .subscribe(permissionResult -> {
-                                call.onCall(permissionResult.granted);
-                                if (!permissionResult.granted && target instanceof PermissionRejectListener) {
-                                    ((PermissionRejectListener) target).onReject(permission,permissionResult);
-                                }
-                            });
-                }else if (target instanceof Fragment){
-                    RxPermissions rxPermissions = new RxPermissions((Fragment) target);
-                    rxPermissions.requestEach(permissions)
-                            .subscribe(permissionResult -> {
-                                call.onCall(permissionResult.granted);
-                                if (!permissionResult.granted && target instanceof PermissionRejectListener) {
-                                    ((PermissionRejectListener) target).onReject(permission,permissionResult);
-                                }
-                            });
-                }else {
-                    joinPoint.proceed();
-                }
-            }
-        });
+//        AndroidAop.INSTANCE.setOnPermissionsInterceptListener(new OnPermissionsInterceptListener() {
+//            @SuppressLint("CheckResult")
+//            @Override
+//            public void requestPermission(@NonNull ProceedJoinPoint joinPoint, @NonNull Permission permission, @NonNull OnRequestPermissionListener call) throws Throwable {
+//                Object target = joinPoint.getTarget();
+//                String[] permissions = permission.value();
+//                permissions = check13ReadExternalStorage(permissions);
+//                Log.e("requestPermission",""+permissions);
+//                if (target instanceof FragmentActivity){
+//                    RxPermissions rxPermissions = new RxPermissions((FragmentActivity) target);
+//                    rxPermissions.requestEach(permissions)
+//                            .subscribe(permissionResult -> {
+//                                call.onCall(permissionResult.granted);
+//                                if (!permissionResult.granted && target instanceof PermissionRejectListener) {
+//                                    ((PermissionRejectListener) target).onReject(permission,permissionResult);
+//                                }
+//                            });
+//                }else if (target instanceof Fragment){
+//                    RxPermissions rxPermissions = new RxPermissions((Fragment) target);
+//                    rxPermissions.requestEach(permissions)
+//                            .subscribe(permissionResult -> {
+//                                call.onCall(permissionResult.granted);
+//                                if (!permissionResult.granted && target instanceof PermissionRejectListener) {
+//                                    ((PermissionRejectListener) target).onReject(permission,permissionResult);
+//                                }
+//                            });
+//                }else {
+//                    joinPoint.proceed();
+//                }
+//            }
+//        });
 
         AndroidAop.INSTANCE.setOnCustomInterceptListener(new OnCustomInterceptListener() {
             @Nullable
