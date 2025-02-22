@@ -116,7 +116,11 @@ object WovenIntoCode {
                     super.visit(version, access.addPublic(isModifyPublic), name, signature, superName, interfaces)
                     thisHasCollect = hasCollect
                     thisCollectClassName = thisClassName
-                    superClassName = superName
+                    superClassName = if (modifyExtendsClassName != null){
+                        modifyExtendsClassName
+                    }else{
+                        superName
+                    }
                     ctClazzName = name
                 }
                 override fun visitMethod(
@@ -137,7 +141,7 @@ object WovenIntoCode {
                     thisHasStaticClock = isHasStaticClock
                     return mv
                 }
-            }, 0)
+            }, ClassReader.EXPAND_FRAMES)
         }else{
             cr.accept(object : ReplaceBaseClassVisitor(cw) {
                 override fun visit(
@@ -151,7 +155,11 @@ object WovenIntoCode {
                     super.visit(version, access.addPublic(isModifyPublic), name, signature, superName, interfaces)
                     thisHasCollect = hasCollect
                     thisCollectClassName = thisClassName
-                    superClassName = superName
+                    superClassName = if (modifyExtendsClassName != null){
+                        modifyExtendsClassName
+                    }else{
+                        superName
+                    }
                     ctClazzName = name
                 }
                 override fun visitMethod(
@@ -172,7 +180,7 @@ object WovenIntoCode {
                     thisHasStaticClock = isHasStaticClock
                     return mv
                 }
-            }, 0)
+            }, ClassReader.EXPAND_FRAMES)
         }
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
             if (value in wovenRecord){
