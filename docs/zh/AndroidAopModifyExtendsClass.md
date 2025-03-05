@@ -3,7 +3,7 @@
 ```java
 @AndroidAopModifyExtendsClass(
     value = "修改目标类",
-    isParent = false // value 是指向类的类名还是类的继承类
+    isParent = false // value 是指向类的类名还是类的继承类，默认false
 )
 ```
 
@@ -23,13 +23,18 @@
 
 ## 使用示例
 
-如下例所示，就是要把 ```AppCompatImageView``` 的继承类替换成 ```ReplaceImageView```
+### 例一
 
-应用场景：非侵入式地实现监控大图加载的功能
+- 如下例所示，就是要把 ```AppCompatImageView``` 的继承类替换成 ```ReplaceImageView1```
+
+- 因为设置的 `isParent = false` （不写默认false）,所以只会替换 ```AppCompatImageView``` 的继承类
 
 ```java
-@AndroidAopModifyExtendsClass("androidx.appcompat.widget.AppCompatImageView")
-public class ReplaceImageView extends ImageView {
+@AndroidAopModifyExtendsClass(
+        value = "androidx.appcompat.widget.AppCompatImageView",
+        isParent = false
+)
+public class ReplaceImageView1 extends ImageView {
     public ReplaceImageView(@NonNull Context context) {
         super(context);
     }
@@ -48,6 +53,44 @@ public class ReplaceImageView extends ImageView {
     }
 }
 ```
+
+!!! note
+    The inherited class of the above `ReplaceImageView1` cannot be `AppCompatImageView`, so after the change it becomes `AppCompatImageView` --> `ReplaceImageView1` --> `AppCompatImageView`
+
+### 例二
+
+- 如下例所示，就是要把 所有父类是 ```AppCompatImageView``` 的类的继承替换成 ```ReplaceImageView2```
+
+- 因为设置的 `isParent = true`,所以继承自 ```AppCompatImageView``` 的类，可能不止一个，他们的继承类都会被替换
+
+```java
+@AndroidAopModifyExtendsClass( 
+        value = "androidx.appcompat.widget.AppCompatImageView",
+        isParent = true
+)
+public class ReplaceImageView2 extends AppCompatImageView {
+    public ReplaceImageView(@NonNull Context context) {
+        super(context);
+    }
+    public ReplaceImageView(@NonNull Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public ReplaceImageView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+
+    @Override
+    public void setImageDrawable(@Nullable Drawable drawable) {
+        super.setImageDrawable(drawable);
+        //做一些监测或者再次修改
+    }
+}
+```
+
+!!! note
+    上述 `ReplaceImageView2` 的继承类可以是 `AppCompatImageView`,这样改完之后 原本的 `A` -->  `AppCompatImageView` 就变成了 `A` --> `ReplaceImageView1` --> `AppCompatImageView`
+
 
 ## 使用启示
 
