@@ -56,6 +56,9 @@ public class ReplaceImageView extends ImageView {
 }
 ```
 
+!!! note
+    The inherited class of the above `ReplaceImageView1` cannot be `AppCompatImageView`, so after the change it becomes `AppCompatImageView` --> `ReplaceImageView1` --> `AppCompatImageView`
+
 ### Example 2
 
 - As shown in the following example, all classes whose parent class is ```AppCompatImageView``` need to be replaced with ```ReplaceImageView```

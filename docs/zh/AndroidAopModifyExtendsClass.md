@@ -55,7 +55,7 @@ public class ReplaceImageView1 extends ImageView {
 ```
 
 !!! note
-    The inherited class of the above `ReplaceImageView1` cannot be `AppCompatImageView`, so after the change it becomes `AppCompatImageView` --> `ReplaceImageView1` --> `AppCompatImageView`
+    上述 `ReplaceImageView1` 的继承类不可以是 `AppCompatImageView`,这样改完之后就变成了 `AppCompatImageView` --> `ReplaceImageView1` --> `AppCompatImageView`
 
 ### 例二
 
