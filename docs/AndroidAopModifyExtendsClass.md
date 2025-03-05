@@ -35,16 +35,16 @@ In addition, if the class name is an internal class, do not use the `$` characte
         value = "androidx.appcompat.widget.AppCompatImageView",
         isParent = false
 )
-public class ReplaceImageView extends ImageView {
-    public ReplaceImageView(@NonNull Context context) {
+public class ReplaceImageView1 extends ImageView {
+    public ReplaceImageView1(@NonNull Context context) {
         super(context);
     }
 
-    public ReplaceImageView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public ReplaceImageView1(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public ReplaceImageView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public ReplaceImageView1(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
@@ -70,16 +70,16 @@ public class ReplaceImageView extends ImageView {
 value = "androidx.appcompat.widget.AppCompatImageView",
 isParent = true
 )
-public class ReplaceImageView extends ImageView {
-    public ReplaceImageView(@NonNull Context context) {
+public class ReplaceImageView2 extends ImageView {
+    public ReplaceImageView2(@NonNull Context context) {
         super(context);
     }
 
-    public ReplaceImageView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public ReplaceImageView2(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public ReplaceImageView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public ReplaceImageView2(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 

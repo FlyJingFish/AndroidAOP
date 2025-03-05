@@ -35,14 +35,14 @@
         isParent = false
 )
 public class ReplaceImageView1 extends ImageView {
-    public ReplaceImageView(@NonNull Context context) {
+    public ReplaceImageView1(@NonNull Context context) {
         super(context);
     }
-    public ReplaceImageView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public ReplaceImageView1(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public ReplaceImageView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public ReplaceImageView1(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
@@ -69,14 +69,14 @@ public class ReplaceImageView1 extends ImageView {
         isParent = true
 )
 public class ReplaceImageView2 extends AppCompatImageView {
-    public ReplaceImageView(@NonNull Context context) {
+    public ReplaceImageView2(@NonNull Context context) {
         super(context);
     }
-    public ReplaceImageView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public ReplaceImageView2(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public ReplaceImageView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public ReplaceImageView2(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
