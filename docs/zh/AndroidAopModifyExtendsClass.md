@@ -89,7 +89,7 @@ public class ReplaceImageView2 extends AppCompatImageView {
 ```
 
 !!! note
-    上述 `ReplaceImageView2` 的继承类可以是 `AppCompatImageView`,这样改完之后 原本的 `A` -->  `AppCompatImageView` 就变成了 `A` --> `ReplaceImageView1` --> `AppCompatImageView`
+    上述 `ReplaceImageView2` 的继承类可以是 `AppCompatImageView`,这样改完之后 原本的 `A` -->  `AppCompatImageView` 就变成了 `A` --> `ReplaceImageView2` --> `AppCompatImageView`
 
 
 ## 使用启示

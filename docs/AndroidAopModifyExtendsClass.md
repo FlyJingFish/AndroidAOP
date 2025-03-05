@@ -92,7 +92,7 @@ public class ReplaceImageView extends ImageView {
 ```
 
 !!! note
-    The inherited class of the above `ReplaceImageView2` can be `AppCompatImageView`. After this change, the original `A` --> `AppCompatImageView` becomes `A` --> `ReplaceImageView1` --> `AppCompatImageView`
+    The inherited class of the above `ReplaceImageView2` can be `AppCompatImageView`. After this change, the original `A` --> `AppCompatImageView` becomes `A` --> `ReplaceImageView2` --> `AppCompatImageView`
 
 ## Usage Inspiration
 
