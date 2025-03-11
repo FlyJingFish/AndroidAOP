@@ -18,11 +18,13 @@ internal open class ProceedJoinPointProxy(private val joinPoint: ProceedJoinPoin
     private val proxyArgs : Array<Any?>
     private val proxyOriginalArgs : Array<Any?>
     private val proxyOldArgs : Array<Any?>
+    private val isProxy:Boolean
     init {
         val annotation : ProxyMethod? = joinPoint.targetMethod.getAnnotation(ProxyMethod::class.java)
+        isProxy = annotation != null
         proxyTargetClass = annotation?.proxyClass?.java ?: joinPoint.targetClass
         proxyAopMethod = ProxyAopMethod(joinPoint.targetMethod,annotation?.type)
-        proxyTarget = if (proxyAopMethod.type != ProxyType.STATIC_METHOD){
+        proxyTarget = if (isProxy && proxyAopMethod.type != ProxyType.STATIC_METHOD){
             joinPoint.args?.get(0)
         }else{
             joinPoint.target
@@ -32,7 +34,7 @@ internal open class ProceedJoinPointProxy(private val joinPoint: ProceedJoinPoin
 
         proxyArgs = if (!args.isNullOrEmpty()){
             proxyOldArgs = args
-            if (proxyAopMethod.type != ProxyType.STATIC_METHOD){
+            if (isProxy && proxyAopMethod.type != ProxyType.STATIC_METHOD){
                 args.copyOfRange(1, args.size)
             }else{
                 args.copyOfRange(0, args.size)
@@ -55,7 +57,7 @@ internal open class ProceedJoinPointProxy(private val joinPoint: ProceedJoinPoin
     }
 
     override fun proceed(vararg args: Any?): Any? {
-        return if (proxyAopMethod.type == ProxyType.METHOD){
+        return if (isProxy && proxyAopMethod.type == ProxyType.METHOD){
             val oldArgs = proxyOldArgs
             val realArgs = arrayOfNulls<Any?>(oldArgs.size)
             realArgs[0] = oldArgs[0]

@@ -82,6 +82,8 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
     ret.addAll(ret3)
     ret.addAll(ret4)
     ret.addAll(ret5)
+
+    writeAllToFile()
     return ret
   }
 
@@ -712,23 +714,55 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
     writeToFile(typeBuilder, packageName, fileName, symbol.containingFile)
   }
 
+  private val ktFileMap = mutableMapOf<String,KtFileConfig?>()
+
   private fun writeToFile(
     typeBuilder: TypeSpec.Builder,
     packageName:String,
     fileName: String,
     sourceFile: KSFile?
   ) {
-    val typeSpec = typeBuilder.build()
-    val kotlinFile = FileSpec.builder(packageName, fileName).addType(typeSpec)
-      .build()
-    codeGenerator
-      .createNewFile(
-        Dependencies(false, sourceFile!!),
-        packageName,
-        fileName
-      )
-      .writer()
-      .use { kotlinFile.writeTo(it) }
+    val fileKey = "$packageName@$fileName"
+    val oldConfig = ktFileMap[fileKey]
+    if (oldConfig == null){
+      ktFileMap[fileKey] = KtFileConfig(typeBuilder, packageName, fileName, sourceFile)
+    }else{
+      oldConfig.typeBuilder.addFunctions(typeBuilder.funSpecs)
+    }
+
+//    val typeSpec = typeBuilder.build()
+//    val kotlinFile = FileSpec.builder(packageName, fileName).addType(typeSpec)
+//      .build()
+//    codeGenerator
+//      .createNewFile(
+//        Dependencies(false, sourceFile!!),
+//        packageName,
+//        fileName
+//      )
+//      .writer()
+//      .use { kotlinFile.writeTo(it) }
+  }
+
+  private fun writeAllToFile() {
+    for (value in ktFileMap.values) {
+        val typeBuilder: TypeSpec.Builder = value?.typeBuilder?:continue
+        val packageName:String = value.packageName
+        val fileName: String = value.fileName
+        val sourceFile: KSFile? = value.sourceFile
+
+        val typeSpec = typeBuilder.build()
+        val kotlinFile = FileSpec.builder(packageName, fileName).addType(typeSpec)
+          .build()
+        codeGenerator
+          .createNewFile(
+            Dependencies(false, sourceFile!!),
+            packageName,
+            fileName
+          )
+          .writer()
+          .use { kotlinFile.writeTo(it) }
+    }
+    ktFileMap.clear()
   }
 
   private fun getAnnotation(symbol : KSAnnotated):MutableMap<String,MutableMap<String,Any?>?>{

@@ -1,13 +1,18 @@
 package com.flyjingfish.test_lib.replace;
 
+import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopCollectMethod;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceClass;
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethod;
 import com.flyjingfish.android_aop_annotation.proxy.ProxyMethod;
 import com.flyjingfish.android_aop_annotation.proxy.ProxyType;
+import com.flyjingfish.test_lib.SubApplication;
+import com.flyjingfish.test_lib.SubApplication2;
 
 @AndroidAopReplaceClass(
         "android.widget.Toast"
@@ -36,5 +41,10 @@ public class ReplaceToast {
     //  虽然被替换方法没有参数，但以为它不是静态方法，所以第一个参数仍然是被替换类
     public static void show(Toast toast) {
         toast.show();
+    }
+
+    @AndroidAopCollectMethod
+    public static void collect(Class<?extends SubApplication> sub){
+        Log.e("ReplaceToast","collect="+sub);
     }
 }

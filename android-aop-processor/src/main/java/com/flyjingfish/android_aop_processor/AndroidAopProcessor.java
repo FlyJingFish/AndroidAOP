@@ -116,6 +116,8 @@ public class AndroidAopProcessor extends AbstractProcessor {
         processReplace(set, roundEnvironment);
         processModifyExtendsClass(set, roundEnvironment);
         processCollectMethod(set, roundEnvironment);
+
+        writeAllToFile();
         return false;
     }
 
@@ -185,15 +187,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
 
             typeBuilder.addMethod(whatsMyName2.build());
 
-            TypeSpec typeSpec = typeBuilder.build();
-
-            JavaFile javaFile = JavaFile.builder(cutClassPackageName, typeSpec)
-                    .build();
-            try {
-                javaFile.writeTo(mFiler);
-            } catch (IOException e) {
-//                throw new RuntimeException(e);
-            }
+            writeToFile(typeBuilder,cutClassPackageName);
         }
     }
 
@@ -262,9 +256,32 @@ public class AndroidAopProcessor extends AbstractProcessor {
 
             typeBuilder.addMethod(whatsMyName2.build());
 
-            TypeSpec typeSpec = typeBuilder.build();
             String elementClassName = element.toString();
             String packageName = elementClassName.substring(0, elementClassName.lastIndexOf("."));
+            writeToFile(typeBuilder,packageName);
+        }
+    }
+
+    private Map<String,JavaFileConfig> javaFileMap = new HashMap<>();
+    private void writeToFile(
+            TypeSpec.Builder typeBuilder,
+            String packageName
+    ) {
+        TypeSpec typeSpec = typeBuilder.build();
+        String fileKey = packageName +"@" + typeSpec.name;
+        JavaFileConfig config = javaFileMap.get(fileKey);
+        if (config == null){
+            javaFileMap.put(fileKey,new JavaFileConfig(typeBuilder,packageName));
+        }else {
+            config.typeBuilder.addMethods(typeBuilder.methodSpecs);
+        }
+    }
+
+    private void writeAllToFile() {
+        for (JavaFileConfig value : javaFileMap.values()) {
+            TypeSpec.Builder typeBuilder = value.typeBuilder;
+            String packageName = value.packageName;
+            TypeSpec typeSpec = typeBuilder.build();
             JavaFile javaFile = JavaFile.builder(packageName, typeSpec)
                     .build();
             try {
@@ -273,9 +290,9 @@ public class AndroidAopProcessor extends AbstractProcessor {
 //                throw new RuntimeException(e);
             }
         }
+        javaFileMap.clear();
+
     }
-
-
 
     private void processReplace(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
 
@@ -307,16 +324,9 @@ public class AndroidAopProcessor extends AbstractProcessor {
 
             typeBuilder.addMethod(whatsMyName1.build());
 
-            TypeSpec typeSpec = typeBuilder.build();
             String elementClassName = element.toString();
             String packageName = elementClassName.substring(0, elementClassName.lastIndexOf("."));
-            JavaFile javaFile = JavaFile.builder(packageName, typeSpec)
-                    .build();
-            try {
-                javaFile.writeTo(mFiler);
-            } catch (IOException e) {
-//                throw new RuntimeException(e);
-            }
+            writeToFile(typeBuilder,packageName);
         }
     }
 
@@ -341,16 +351,9 @@ public class AndroidAopProcessor extends AbstractProcessor {
 
             typeBuilder.addMethod(whatsMyName1.build());
 
-            TypeSpec typeSpec = typeBuilder.build();
             String elementClassName = element.toString();
             String packageName = elementClassName.substring(0, elementClassName.lastIndexOf("."));
-            JavaFile javaFile = JavaFile.builder(packageName, typeSpec)
-                    .build();
-            try {
-                javaFile.writeTo(mFiler);
-            } catch (IOException e) {
-//                throw new RuntimeException(e);
-            }
+            writeToFile(typeBuilder,packageName);
         }
     }
 
@@ -495,16 +498,9 @@ public class AndroidAopProcessor extends AbstractProcessor {
             }
 
             if (elementClassName != null){
-                TypeSpec typeSpec = typeBuilder.build();
                 String packageName = elementClassName.substring(0, elementClassName.lastIndexOf("."));
 
-                JavaFile javaFile = JavaFile.builder(packageName, typeSpec)
-                        .build();
-                try {
-                    javaFile.writeTo(mFiler);
-                } catch (IOException e) {
-//                throw new RuntimeException(e);
-                }
+                writeToFile(typeBuilder,packageName);
             }
 
         }
