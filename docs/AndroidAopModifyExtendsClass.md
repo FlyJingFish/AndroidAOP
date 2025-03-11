@@ -23,23 +23,28 @@ In addition, if the class name is an internal class, do not use the `$` characte
 
 ## Usage example
 
-As shown in the following example, the inherited class of ```AppCompatImageView``` is replaced with ```ReplaceImageView```
+### Example 1
 
-Application scenario: non-invasively implement the function of monitoring large image loading
+- As shown in the following example, the inherited class of ```AppCompatImageView``` is replaced with ```ReplaceImageView```
+
+- Because `isParent = false` is set, only the inherited class of ```AppCompatImageView``` is replaced
 
 ```java
 
-@AndroidAopModifyExtendsClass("androidx.appcompat.widget.AppCompatImageView")
-public class ReplaceImageView extends ImageView {
-    public ReplaceImageView(@NonNull Context context) {
+@AndroidAopModifyExtendsClass(
+        value = "androidx.appcompat.widget.AppCompatImageView",
+        isParent = false
+)
+public class ReplaceImageView1 extends ImageView {
+    public ReplaceImageView1(@NonNull Context context) {
         super(context);
     }
 
-    public ReplaceImageView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public ReplaceImageView1(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public ReplaceImageView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public ReplaceImageView1(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
@@ -50,6 +55,44 @@ public class ReplaceImageView extends ImageView {
     }
 }
 ```
+
+!!! note
+    The inherited class of the above `ReplaceImageView1` cannot be `AppCompatImageView`, so after the change it becomes `AppCompatImageView` --> `ReplaceImageView1` --> `AppCompatImageView`
+
+### Example 2
+
+- As shown in the following example, all classes whose parent class is ```AppCompatImageView``` need to be replaced with ```ReplaceImageView```
+
+- Because `isParent = true` is set, there may be more than one class that inherits from ```AppCompatImageView```, and all of their inherited classes will be replaced
+
+```java
+@AndroidAopModifyExtendsClass(
+value = "androidx.appcompat.widget.AppCompatImageView",
+isParent = true
+)
+public class ReplaceImageView2 extends ImageView {
+    public ReplaceImageView2(@NonNull Context context) {
+        super(context);
+    }
+
+    public ReplaceImageView2(@NonNull Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public ReplaceImageView2(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+
+    @Override
+    public void setImageDrawable(@Nullable Drawable drawable) {
+        super.setImageDrawable(drawable);
+//Do some monitoring or modify again
+    }
+}
+```
+
+!!! note
+    The inherited class of the above `ReplaceImageView2` can be `AppCompatImageView`. After this change, the original `A` --> `AppCompatImageView` becomes `A` --> `ReplaceImageView2` --> `AppCompatImageView`
 
 ## Usage Inspiration
 
