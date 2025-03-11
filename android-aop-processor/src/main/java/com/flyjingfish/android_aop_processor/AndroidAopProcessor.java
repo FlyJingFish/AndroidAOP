@@ -327,6 +327,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
 //                System.out.println("======"+element);
             AndroidAopModifyExtendsClass cut = element.getAnnotation(AndroidAopModifyExtendsClass.class);
             String className = cut.value();
+            boolean isParent = cut.isParent();
 
             TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(name1+"$$AndroidAopClass")
                     .addAnnotation(AopClass.class)
@@ -335,6 +336,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
                     .addAnnotation(AnnotationSpec.builder(AopModifyExtendsClass.class)
                             .addMember("targetClassName", "$S", className)
                             .addMember("extendsClassName", "$S", element)
+                            .addMember("isParent", "$L", isParent)
                             .build());
 
             typeBuilder.addMethod(whatsMyName1.build());

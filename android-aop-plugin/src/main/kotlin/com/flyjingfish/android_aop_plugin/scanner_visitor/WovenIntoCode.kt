@@ -116,7 +116,11 @@ object WovenIntoCode {
                     super.visit(version, access.addPublic(isModifyPublic), name, signature, superName, interfaces)
                     thisHasCollect = hasCollect
                     thisCollectClassName = thisClassName
-                    superClassName = superName
+                    superClassName = if (modifyExtendsClassName != null){
+                        modifyExtendsClassName
+                    }else{
+                        superName
+                    }
                     ctClazzName = name
                 }
                 override fun visitMethod(
@@ -151,7 +155,11 @@ object WovenIntoCode {
                     super.visit(version, access.addPublic(isModifyPublic), name, signature, superName, interfaces)
                     thisHasCollect = hasCollect
                     thisCollectClassName = thisClassName
-                    superClassName = superName
+                    superClassName = if (modifyExtendsClassName != null){
+                        modifyExtendsClassName
+                    }else{
+                        superName
+                    }
                     ctClazzName = name
                 }
                 override fun visitMethod(

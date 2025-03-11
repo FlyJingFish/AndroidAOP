@@ -40,6 +40,11 @@ open class AndroidAopConfig {
     val excludes = mutableListOf<String>()
 
     /**
+     * 排除打包的实体名
+     */
+    val excludePackagings = mutableListOf<String>()
+
+    /**
      * 包含规则,可以精确到直接使用类名
      */
     fun include(vararg filters: String): AndroidAopConfig {
@@ -55,13 +60,23 @@ open class AndroidAopConfig {
         return this
     }
 
+    /**
+     * 排除规则,可以精确到直接使用类名
+     */
+    fun excludePackaging(vararg filters: String): AndroidAopConfig {
+        this.excludePackagings.addAll(filters)
+        return this
+    }
+
 
     internal fun initConfig(){
         AndroidAopConfig.debug = debug
         AndroidAopConfig.includes.clear()
         AndroidAopConfig.excludes.clear()
+        AndroidAopConfig.excludePackagings.clear()
         AndroidAopConfig.includes.addAll(includes)
         AndroidAopConfig.excludes.addAll(excludes)
+        AndroidAopConfig.excludePackagings.addAll(excludePackagings)
         AndroidAopConfig.excludes.add(Utils.annotationPackage)
         AndroidAopConfig.excludes.add(Utils.corePackage)
         AndroidAopConfig.excludes.add(Utils.extraPackage)
@@ -78,6 +93,7 @@ open class AndroidAopConfig {
         var debug = false
         val includes = mutableListOf<String>()
         val excludes = mutableListOf<String>()
+        val excludePackagings = mutableListOf<String>()
         var verifyLeafExtends = true
         var cutInfoJson = false
         var increment = false

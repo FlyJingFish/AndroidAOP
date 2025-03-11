@@ -11,16 +11,17 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.util.Log
 import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatImageView
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopModifyExtendsClass
 
-@AndroidAopModifyExtendsClass("androidx.appcompat.widget.AppCompatImageView")
+@AndroidAopModifyExtendsClass(value = "androidx.appcompat.widget.AppCompatImageView",isParent = true)
 open class ReplaceImageView(
     context: Context,
     attrs: AttributeSet?,
     defStyleAttr: Int,
     defStyleRes: Int
 ) :
-    ImageView(context, attrs, defStyleAttr, defStyleRes) {
+    AppCompatImageView(context, attrs, defStyleAttr) {
     private var shapeType: ShapeType
     private var mDrawPath = Path()
     private var mDrawRectF: RectF? = null

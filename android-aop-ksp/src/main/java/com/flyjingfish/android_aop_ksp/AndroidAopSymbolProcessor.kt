@@ -426,7 +426,8 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         annotationMap["@"+AndroidAopModifyExtendsClass::class.simpleName] ?: continue
 
       val targetClassName: String? = classMethodMap["value"]?.toString()
-
+      val isParentStr: String = classMethodMap["isParent"]?.toString() ?: "false"
+      val isParent = isParentStr == "true"
 
       val className = (symbol as KSClassDeclaration).getClassName()
       if (targetClassName == null) {
@@ -447,6 +448,10 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
             .addMember(
               "extendsClassName = %S",
               className
+            )
+            .addMember(
+              "isParent = %L",
+              isParent
             )
             .build()
         )

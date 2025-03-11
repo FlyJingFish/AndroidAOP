@@ -28,3 +28,4 @@ Your stars and support are my biggest motivation to move forward!
 | *喜       | 2025-01-16 | Wechat |    有效解决问题，给你一个赞！     |   /   |       ¥ 10       |
 | *青       | 2025-01-21 | Alipay |          /           |   /   |       ¥ 13       |
 | 深度用户     | 2025-01-22 |   QQ   |     感谢群主，请你喝一杯咖啡     |   /   |       ¥ 13       |
+| **尧      | 2025-02-13 | Alipay | 今唯一能用的安卓AOP库，万不可亏待作者 |   /   |     ¥ 100.01     |

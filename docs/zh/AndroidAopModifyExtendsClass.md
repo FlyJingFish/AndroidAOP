@@ -1,6 +1,14 @@
 ## 简述
 
-```@AndroidAopModifyExtendsClass(value)```
+```java
+@AndroidAopModifyExtendsClass(
+    value = "修改目标类",
+    isParent = false // value 是指向类的类名还是类的继承类
+)
+```
+
+- `isParent = true` 就是修改所有继承类是 value 的类
+- `isParent = false` 就是修改类名是 value 的类
 
 这个功能比较简单，修改类的继承类，```value``` 位置填写要修改的类的全名，被注解的类就是修改后的继承类。
 
@@ -10,6 +18,7 @@
 
 !!! note
     - **:warning::warning::warning:但需要特别注意的是修改后的继承类不可以继承被修改的类，修改后的类的继承类一般都设置为修改前的类的继承类**
+    - **:warning::warning::warning:原来的继承类如果是带有泛型信息的，请注意修改后的继承类也需要是具有一样泛型信息**
     - **当你修改这个切面的配置后多数情况下你应该clean项目再继续开发**
 
 ## 使用示例

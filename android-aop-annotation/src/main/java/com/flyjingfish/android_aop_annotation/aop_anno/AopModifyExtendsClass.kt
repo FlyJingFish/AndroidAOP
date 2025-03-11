@@ -14,4 +14,6 @@ annotation class AopModifyExtendsClass(
      * @return 替换类名（包含包名）
      */
     val extendsClassName: String,
+
+    val isParent: Boolean = false
 )
