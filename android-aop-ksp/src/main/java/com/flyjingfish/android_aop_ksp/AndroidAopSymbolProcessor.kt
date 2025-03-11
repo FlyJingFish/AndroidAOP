@@ -355,7 +355,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         fileName
       ).addModifiers(KModifier.FINAL)
         .addAnnotation(AopClass::class)
-      val whatsMyName1 = whatsMyName(AOP_METHOD_NAME)
+      val whatsMyName1 = whatsMyName(AOP_METHOD_NAME+"ForReplace")
         .addAnnotation(
           AnnotationSpec.builder(AopReplaceMethod::class)
             .addMember(
@@ -437,7 +437,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         fileName
       ).addModifiers(KModifier.FINAL)
         .addAnnotation(AopClass::class)
-      val whatsMyName1 = whatsMyName(AOP_METHOD_NAME)
+      val whatsMyName1 = whatsMyName(AOP_METHOD_NAME+"ForExtends")
         .addAnnotation(
           AnnotationSpec.builder(AopModifyExtendsClass::class)
             .addMember(
@@ -630,7 +630,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       var symbol : KSFunctionDeclaration?=null
       for ((index,collectMethod) in funList.withIndex()) {
         symbol = collectMethod.symbol
-        val whatsMyName1 = whatsMyName(AOP_METHOD_NAME+index)
+        val whatsMyName1 = whatsMyName(AOP_METHOD_NAME+"ForCollect"+index)
           .addAnnotation(
             AnnotationSpec.builder(AopCollectMethod::class)
               .addMember(

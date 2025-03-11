@@ -297,7 +297,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
             TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(name1+"$$AndroidAopClass")
                     .addAnnotation(AopClass.class)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
-            MethodSpec.Builder whatsMyName1 = whatsMyName(AOP_METHOD_NAME)
+            MethodSpec.Builder whatsMyName1 = whatsMyName(AOP_METHOD_NAME+"ForReplace")
                     .addAnnotation(AnnotationSpec.builder(AopReplaceMethod.class)
                             .addMember("targetClassName", "$S", className)
                             .addMember("invokeClassName", "$S", element)
@@ -331,7 +331,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
             TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(name1+"$$AndroidAopClass")
                     .addAnnotation(AopClass.class)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
-            MethodSpec.Builder whatsMyName1 = whatsMyName(AOP_METHOD_NAME)
+            MethodSpec.Builder whatsMyName1 = whatsMyName(AOP_METHOD_NAME+"ForExtends")
                     .addAnnotation(AnnotationSpec.builder(AopModifyExtendsClass.class)
                             .addMember("targetClassName", "$S", className)
                             .addMember("extendsClassName", "$S", element)
@@ -478,7 +478,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
             String elementClassName = null;
             for (int i = 0; i < collectMethods.size(); i++) {
                 CollectMethod collectMethod = collectMethods.get(i);
-                MethodSpec.Builder whatsMyName1 = whatsMyName(AOP_METHOD_NAME+i)
+                MethodSpec.Builder whatsMyName1 = whatsMyName(AOP_METHOD_NAME+"ForCollect"+i)
                         .addAnnotation(AnnotationSpec.builder(AopCollectMethod.class)
                                 .addMember("collectClass", "$T.class", ClassName.bestGuess(collectMethod.collectClassName))
                                 .addMember("invokeClass", "$T.class", ClassName.bestGuess(collectMethod.invokeClassName))
