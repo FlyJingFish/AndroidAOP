@@ -500,15 +500,22 @@ fun ByteArray.saveFile(outFile : File){
     val oldByte = outFile.readBytes()
     if (!oldByte.contentEquals(this)) {
         inputStream().use { inputStream->
-            outFile.saveEntry(inputStream)
+            outFile.outputStream().use {
+                inputStream.copyTo(it)
+            }
         }
     }
 }
 
 fun File.saveEntry(inputStream: InputStream) {
-    this.outputStream().use {
-        inputStream.copyTo(it)
+    val oldBytes = readBytes()
+    val newBytes = inputStream.readAllBytes()
+    if (!oldBytes.contentEquals(newBytes)) {
+        this.outputStream().use {
+            it.write(newBytes)
+        }
     }
+
 }
 
 fun AndroidAopConfig.Companion.inRules(className: String):Boolean{
