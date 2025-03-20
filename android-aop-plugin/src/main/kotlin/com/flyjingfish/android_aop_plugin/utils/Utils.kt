@@ -497,8 +497,11 @@ fun Int.addPublic(isAddPublic: Boolean):Int{
 }
 
 fun ByteArray.saveFile(outFile : File){
-    inputStream().use { inputStream->
-        outFile.saveEntry(inputStream)
+    val oldByte = outFile.readBytes()
+    if (!oldByte.contentEquals(this)) {
+        inputStream().use { inputStream->
+            outFile.saveEntry(inputStream)
+        }
     }
 }
 

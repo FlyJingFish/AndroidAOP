@@ -50,9 +50,9 @@ object ClassFileUtils {
                 val value = invokeClasses.value
                 val path = outputDir.absolutePath + File.separatorChar +Utils.dotToSlash(invokeClasses.key).adapterOSPath()+".class"
                 val outFile = File(path)
-                if (outFile.exists()){
-                    outFile.delete()
-                }
+//                if (outFile.exists()){
+//                    outFile.delete()
+//                }
                 val cp = ClassPoolUtils.getNewClassPool()
                 outputCacheDir?.let {
                     cp.appendClassPath(it.absolutePath)

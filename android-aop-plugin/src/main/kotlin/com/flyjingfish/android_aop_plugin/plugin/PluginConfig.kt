@@ -12,6 +12,8 @@ class PluginConfig(project: Project) {
     private var isIncremental = true
     private var buildConfig = true
     private var reflectInvokeMethodStatic = true
+    private var fastDex = false
+    private var fastDexDebug = false
 
     init{
         val reflectInvokeMethodStr = project.properties[RootBooleanConfig.REFLECT_INVOKE_METHOD.propertyName]?:"${RootBooleanConfig.REFLECT_INVOKE_METHOD.defaultValue}"
@@ -21,6 +23,8 @@ class PluginConfig(project: Project) {
         val reflectInvokeMethodDebugStr = project.properties[RootBooleanConfig.REFLECT_INVOKE_METHOD_ONLY_DEBUG.propertyName]?:"${RootBooleanConfig.REFLECT_INVOKE_METHOD_ONLY_DEBUG.defaultValue}"
         val buildConfigStr = project.properties[RootBooleanConfig.BUILD_CONFIG.propertyName]?:"${RootBooleanConfig.BUILD_CONFIG.defaultValue}"
         val reflectInvokeMethodStaticStr = project.properties[RootBooleanConfig.REFLECT_INVOKE_METHOD_STATIC.propertyName]?:"${RootBooleanConfig.REFLECT_INVOKE_METHOD_STATIC.defaultValue}"
+        val fastDexStr = project.properties[RootBooleanConfig.FAST_DEX.propertyName]?:"${RootBooleanConfig.FAST_DEX.defaultValue}"
+        val fastDexDebugStr = project.properties[RootBooleanConfig.FAST_DEX_DEBUG.propertyName]?:"${RootBooleanConfig.FAST_DEX_DEBUG.defaultValue}"
         debugMode = debugModeStr.toString() == "true"
         reflectInvokeMethod = reflectInvokeMethodStr.toString() == "true"
         onlyDebug = onlyModeStr.toString() == "true"
@@ -28,6 +32,8 @@ class PluginConfig(project: Project) {
         reflectInvokeMethodOnlyDebug = reflectInvokeMethodDebugStr.toString() == "true"
         buildConfig = buildConfigStr.toString() == "true"
         reflectInvokeMethodStatic = reflectInvokeMethodStaticStr.toString() == "true"
+        fastDex = fastDexStr.toString() == "true"
+        fastDexDebug = fastDexDebugStr.toString() == "true"
     }
 
     fun isIncremental():Boolean{
@@ -37,6 +43,22 @@ class PluginConfig(project: Project) {
     fun isDebugMode(buildTypeName :String?,variantName :String):Boolean{
         return if (debugMode){
             if (onlyDebug){
+                if (buildTypeName != null){
+                    buildTypeName.lowercase() == "debug"
+                }else{
+                    variantName.lowercase().contains("debug")
+                }
+            }else{
+                true
+            }
+        }else{
+            false
+        }
+    }
+
+    fun isFastDex(buildTypeName :String?,variantName :String):Boolean{
+        return if (fastDex){
+            if (fastDexDebug){
                 if (buildTypeName != null){
                     buildTypeName.lowercase() == "debug"
                 }else{

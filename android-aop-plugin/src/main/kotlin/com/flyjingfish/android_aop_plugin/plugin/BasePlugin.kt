@@ -21,6 +21,10 @@ abstract class BasePlugin :Plugin<Project> {
         return pluginConfig.isDebugMode(buildTypeName, variantName)
     }
 
+    fun isFastDex(buildTypeName :String?,variantName :String):Boolean{
+        return pluginConfig.isFastDex(buildTypeName, variantName)
+    }
+
     fun isReflectInvokeMethod(buildTypeName :String?,variantName :String):Boolean{
         return pluginConfig.isReflectInvokeMethod(buildTypeName, variantName)
     }
