@@ -93,7 +93,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
     @TaskAction
     fun taskAction() {
-        isSingleClassesJar = (allDirectoryFiles.isEmpty() && allJarFiles.size == 1) || (allDirectoryFiles.size == 1 && allJarFiles.isEmpty())
         aopTaskUtils = AopTaskUtils(project,variant)
         ClassPoolUtils.release(project)
         ClassFileUtils.debugMode = false
@@ -145,6 +144,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         allJars.get().forEach { file ->
             allJarFiles.add(file.asFile)
         }
+        isSingleClassesJar = allDirectoryFiles.isEmpty() && allJarFiles.size == 1
+
         val scanTimeCost1 = measureTimeMillis {
             loadJoinPointConfig()
         }
