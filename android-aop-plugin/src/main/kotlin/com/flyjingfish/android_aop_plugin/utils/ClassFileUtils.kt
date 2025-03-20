@@ -91,7 +91,9 @@ object ClassFileUtils {
                 val classByteData = ctClass.toBytecode()
                 outFile.checkExist()
                 classByteData.saveFile(outFile)
-                cacheFiles.add(path)
+                synchronized(cacheFiles){
+                    cacheFiles.add(path)
+                }
 //            ctClass.detach()
             }
         }else{
@@ -130,7 +132,9 @@ object ClassFileUtils {
                         }
                         val classByteData = ctClass.toBytecode()
                         outFile.checkExist()
-                        cacheFiles.add(path)
+                        synchronized(cacheFiles){
+                            cacheFiles.add(path)
+                        }
                         classByteData.saveFile(outFile)
                     }
                     invokeJobs.add(job)

@@ -48,8 +48,10 @@ object TransformPlugin : BasePlugin() {
                 task.configure {
                     val outDir = it.project.layout.buildDirectory.file("intermediates/classes/${variant.name}AssembleAndroidAopTask/All/")
                     if (fastDex){
-                        if (!outDir.get().asFile.exists()){
-                            outDir.get().asFile.mkdirs()
+                        it.doFirst{
+                            if (!outDir.get().asFile.exists()){
+                                outDir.get().asFile.mkdirs()
+                            }
                         }
                         it.doLast {
                             val dexTaskName = "dexBuilder${variant.name.capitalized()}"

@@ -85,8 +85,11 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     private val ignoreJar = mutableSetOf<String>()
     private val ignoreJarClassPaths = mutableListOf<File>()
     private lateinit var aopTaskUtils : AopTaskUtils
+    private var isSingleClassesJar = false
     @TaskAction
     fun taskAction() {
+        isSingleClassesJar = allDirectories.get().isEmpty() && allJars.get().size == 1
+        println("isClassesJar=$isSingleClassesJar")
         aopTaskUtils = AopTaskUtils(project,variant)
         ClassPoolUtils.release(project)
         ClassFileUtils.debugMode = false
@@ -129,12 +132,11 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     }
 
     private fun loadJoinPointConfig(){
-        val isClassesJar = allDirectories.get().isEmpty() && allJars.get().size == 1
         WovenInfoUtils.addBaseClassInfo(project)
         ignoreJar.clear()
         ignoreJarClassPaths.clear()
         allJars.get().forEach { file ->
-            if (isClassesJar){
+            if (isSingleClassesJar){
                 ignoreJar.add(file.asFile.absolutePath)
                 return@forEach
             }
@@ -254,7 +256,18 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     private val jarEntryCache = ConcurrentHashMap<String,MutableList<EntryCache>>()
     private fun saveEntryCache(jarFileName:String,jarEntryName: String,inputStream: InputStream){
         if (isFastDex){
-            val entryCaches = jarEntryCache.computeIfAbsent(jarFileName) { mutableListOf() }
+            val parts = jarEntryName.split("/")
+            val jarName = if (isSingleClassesJar){
+                when {
+                    parts.size >= 4 -> parts.subList(0, 3).joinToString("/").computeMD5()
+                    parts.size > 1 -> parts.dropLast(1).joinToString("/").computeMD5()
+                    else -> jarFileName
+                }
+            }else{
+                jarFileName
+            }
+
+            val entryCaches = jarEntryCache.computeIfAbsent(jarName) { mutableListOf() }
             val byteArray = inputStream.readAllBytes()
             synchronized(entryCaches){
                 entryCaches.add(EntryCache(jarEntryName,byteArray))
