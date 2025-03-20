@@ -252,10 +252,13 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
     }
     private val jarEntryCache = ConcurrentHashMap<String,MutableList<EntryCache>>()
-    private fun saveEntryCache(jarFileName:String,jarEntryName: String,byteArray: ByteArray){
-        val entryCaches = jarEntryCache.computeIfAbsent(jarFileName) { mutableListOf() }
-        synchronized(entryCaches){
-            entryCaches.add(EntryCache(jarEntryName,byteArray))
+    private fun saveEntryCache(jarFileName:String,jarEntryName: String,inputStream: InputStream){
+        if (isFastDex){
+            val entryCaches = jarEntryCache.computeIfAbsent(jarFileName) { mutableListOf() }
+            val byteArray = inputStream.readAllBytes()
+            synchronized(entryCaches){
+                entryCaches.add(EntryCache(jarEntryName,byteArray))
+            }
         }
     }
     private fun wovenIntoCode() = runBlocking{
@@ -295,9 +298,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     val jarEntryName: String = relativePath.toClassPath()
                     fun realCopy(){
                         file.inputStream().use {
-                            val dataBytes = it.readAllBytes()
-                            saveEntryCache(directoryPath.computeMD5(),jarEntryName,dataBytes)
-                            jarOutput?.saveEntry(jarEntryName,dataBytes)
+                            saveEntryCache(directoryPath.computeMD5(),jarEntryName,it)
+                            jarOutput?.saveEntry(jarEntryName,it)
                         }
                     }
                     if (realMethodsRecord != null){
@@ -315,9 +317,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             }
                             byteArray?.let { bytes ->
                                 bytes.inputStream().use {
-                                    val dataBytes = it.readAllBytes()
-                                    saveEntryCache(directoryPath.computeMD5(),jarEntryName,dataBytes)
-                                    jarOutput?.saveEntry(jarEntryName,dataBytes)
+                                    saveEntryCache(directoryPath.computeMD5(),jarEntryName,it)
+                                    jarOutput?.saveEntry(jarEntryName,it)
                                 }
                                 synchronized(newClasses){
                                     newClasses.add(bytes)
@@ -329,9 +330,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                             val originInject = inputs.readAllBytes()
                             val resultByteArray = RegisterMapWovenInfoCode().execute(originInject.inputStream())
                             resultByteArray.inputStream().use {
-                                val dataBytes = it.readAllBytes()
-                                saveEntryCache(directoryPath.computeMD5(),jarEntryName,dataBytes)
-                                jarOutput?.saveEntry(jarEntryName,dataBytes)
+                                saveEntryCache(directoryPath.computeMD5(),jarEntryName,it)
+                                jarOutput?.saveEntry(jarEntryName,it)
                             }
                         }
                     }else{
@@ -379,9 +379,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
                                             val newByteArray = cw.toByteArray()
                                             newByteArray.inputStream().use {
-                                                val dataBytes = it.readAllBytes()
-                                                saveEntryCache(directoryPath.computeMD5(),jarEntryName,dataBytes)
-                                                jarOutput?.saveEntry(jarEntryName,dataBytes)
+                                                saveEntryCache(directoryPath.computeMD5(),jarEntryName,it)
+                                                jarOutput?.saveEntry(jarEntryName,it)
                                             }
                                         } catch (e: Exception) {
                                             realCopy()
@@ -403,9 +402,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                     try {
                                         val newByteArray = aopTaskUtils.wovenIntoCodeForReplace(byteArray)
                                         newByteArray.byteArray.inputStream().use {
-                                            val dataBytes = it.readAllBytes()
-                                            saveEntryCache(directoryPath.computeMD5(),jarEntryName,dataBytes)
-                                            jarOutput?.saveEntry(jarEntryName,dataBytes)
+                                            saveEntryCache(directoryPath.computeMD5(),jarEntryName,it)
+                                            jarOutput?.saveEntry(jarEntryName,it)
                                         }
                                         //                                    newClasses.add(newByteArray)
                                     } catch (e: Exception) {
@@ -423,9 +421,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                         val newByteArray = aopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
                                         if (newByteArray.modified){
                                             newByteArray.byteArray.inputStream().use {
-                                                val dataBytes = it.readAllBytes()
-                                                saveEntryCache(directoryPath.computeMD5(),jarEntryName,dataBytes)
-                                                jarOutput?.saveEntry(jarEntryName,dataBytes)
+                                                saveEntryCache(directoryPath.computeMD5(),jarEntryName,it)
+                                                jarOutput?.saveEntry(jarEntryName,it)
                                             }
                                         }else{
                                             copy()
@@ -474,9 +471,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
                                         val newByteArray = cw.toByteArray()
                                         newByteArray.inputStream().use {
-                                            val dataBytes = it.readAllBytes()
-                                            saveEntryCache(directoryPath.computeMD5(),jarEntryName,dataBytes)
-                                            jarOutput?.saveEntry(jarEntryName,dataBytes)
+                                            saveEntryCache(directoryPath.computeMD5(),jarEntryName,it)
+                                            jarOutput?.saveEntry(jarEntryName,it)
                                         }
                                         //                                    newClasses.add(newByteArray)
                                     } catch (e: Exception) {
@@ -568,9 +564,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
                         fun realCopy(){
                             jarFile.getInputStream(jarEntry).use {
-                                val dataBytes = it.readAllBytes()
-                                saveEntryCache(oldJarFileName,entryName,dataBytes)
-                                jarOutput?.saveEntry(entryName,dataBytes)
+                                saveEntryCache(oldJarFileName,entryName,it)
+                                jarOutput?.saveEntry(entryName,it)
                             }
                         }
                         if (realMethodsRecord != null){
@@ -588,9 +583,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 }
                                 byteArray?.let {
                                     it.inputStream().use {
-                                        val dataBytes = it.readAllBytes()
-                                        saveEntryCache(oldJarFileName,entryName,dataBytes)
-                                        jarOutput?.saveEntry(entryName,dataBytes)
+                                        saveEntryCache(oldJarFileName,entryName,it)
+                                        jarOutput?.saveEntry(entryName,it)
                                     }
                                     synchronized(newClasses){
                                         newClasses.add(it)
@@ -602,9 +596,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                 val originInject = inputs.readAllBytes()
                                 val resultByteArray = RegisterMapWovenInfoCode().execute(originInject.inputStream())
                                 resultByteArray.inputStream().use {
-                                    val dataBytes = it.readAllBytes()
-                                    saveEntryCache(oldJarFileName,entryName,dataBytes)
-                                    jarOutput?.saveEntry(entryName,dataBytes)
+                                    saveEntryCache(oldJarFileName,entryName,it)
+                                    jarOutput?.saveEntry(entryName,it)
                                 }
                             }
                         } else{
@@ -652,9 +645,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
                                                 val newByteArray = cw.toByteArray()
                                                 newByteArray.inputStream().use {
-                                                    val dataBytes = it.readAllBytes()
-                                                    saveEntryCache(oldJarFileName,entryName,dataBytes)
-                                                    jarOutput?.saveEntry(entryName,dataBytes)
+                                                    saveEntryCache(oldJarFileName,entryName,it)
+                                                    jarOutput?.saveEntry(entryName,it)
                                                 }
 //                                        newClasses.add(newByteArray)
                                             } catch (e: Exception) {
@@ -677,9 +669,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                         try {
                                             val newByteArray = aopTaskUtils.wovenIntoCodeForReplace(byteArray)
                                             newByteArray.byteArray.inputStream().use {
-                                                val dataBytes = it.readAllBytes()
-                                                saveEntryCache(oldJarFileName,entryName,dataBytes)
-                                                jarOutput?.saveEntry(entryName,dataBytes)
+                                                saveEntryCache(oldJarFileName,entryName,it)
+                                                jarOutput?.saveEntry(entryName,it)
                                             }
 //                                        newClasses.add(newByteArray)
                                         } catch (e: Exception) {
@@ -697,9 +688,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                                             val newByteArray = aopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
                                             if (newByteArray.modified){
                                                 newByteArray.byteArray.inputStream().use {
-                                                    val dataBytes = it.readAllBytes()
-                                                    saveEntryCache(oldJarFileName,entryName,dataBytes)
-                                                    jarOutput?.saveEntry(entryName,dataBytes)
+                                                    saveEntryCache(oldJarFileName,entryName,it)
+                                                    jarOutput?.saveEntry(entryName,it)
                                                 }
                                             }else{
                                                 copy()
@@ -747,9 +737,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
                                             val newByteArray = cw.toByteArray()
                                             newByteArray.inputStream().use {
-                                                val dataBytes = it.readAllBytes()
-                                                saveEntryCache(oldJarFileName,entryName,dataBytes)
-                                                jarOutput?.saveEntry(entryName,dataBytes)
+                                                saveEntryCache(oldJarFileName,entryName,it)
+                                                jarOutput?.saveEntry(entryName,it)
                                             }
 //                                        newClasses.add(newByteArray)
                                         } catch (e: Exception) {
@@ -795,9 +784,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                         val invokeClassName = Utils.slashToDot(className).replace(_CLASS,"")
                         if (!WovenInfoUtils.containsInvokeClass(invokeClassName)){
                             file.inputStream().use {
-                                val dataBytes = it.readAllBytes()
-                                saveEntryCache(oldJarFileName,className,dataBytes)
-                                jarOutput?.saveEntry(className,dataBytes)
+                                saveEntryCache(oldJarFileName,className,it)
+                                jarOutput?.saveEntry(className,it)
                             }
                         }
                     }
@@ -816,9 +804,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     val invokeClassName = Utils.slashToDot(className).replace(_CLASS,"")
                     if (!WovenInfoUtils.containsInvokeClass(invokeClassName)){
                         file.inputStream().use {
-                            val dataBytes = it.readAllBytes()
-                            saveEntryCache(oldJarFileName,className,dataBytes)
-                            jarOutput?.saveEntry(className,dataBytes)
+                            saveEntryCache(oldJarFileName,className,it)
+                            jarOutput?.saveEntry(className,it)
                         }
                     }
                 }
