@@ -28,7 +28,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
         
         plugins {
           //👇Required item (1)👈 apply is set to true to automatically apply debugMode to all modules, if false, follow step 5 below.
-          id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.3.9" apply true
+          id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.4.0" apply true
         }
         ```
 
@@ -40,7 +40,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
         buildscript {
              dependencies {
                  //👇equired items (1)👈
-                 classpath "io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.3.9"
+                 classpath "io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.4.0"
              }
         }
         //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below.
@@ -56,7 +56,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
         
         plugins {
           //👇Required item (1)👈 apply is set to true to automatically apply debugMode to all modules, if false, follow step 5 below.
-          id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.3.9" apply true
+          id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.4.0" apply true
         }
         ```
 
@@ -68,7 +68,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
         buildscript {
              dependencies {
                  //👇Required items (1)👈
-                 classpath("io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.3.9")
+                 classpath("io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.4.0")
              }
         }
         //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below.
@@ -136,7 +136,7 @@ Add in `build.gradle` of **app**
     //Required items 👇
     plugins {
        ...
-       id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.3.9"
+       id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.4.0"
     }
     ```
 
@@ -146,7 +146,7 @@ Add in `build.gradle` of **app**
     //Required items 👇
     plugins {
        ...
-       id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.3.9"
+       id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.4.0"
     }
     ```
 
@@ -189,17 +189,17 @@ Add in `build.gradle` of **app**
     
     dependencies {
          //👇Required items 
-         implementation "io.github.FlyJingFish.AndroidAop:android-aop-core:2.3.9"
+         implementation "io.github.FlyJingFish.AndroidAop:android-aop-core:2.4.0"
          //👇Optional (1)👈 This package provides some common annotation aspects
-         implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.3.9"
+         implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.4.0"
         
          //👇Required item  If you already have this item in your project, you don’t need to add it.
          implementation "androidx.appcompat:appcompat:1.3.0" // At least in 1.3.0 and above
          
          //👇Optional (2)👈Click + to view detailed description, ⚠️supports aspects written in Java and Kotlin code
-         ksp "io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.3.9"
+         ksp "io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.4.0"
          //👇Optional (3)👈Click + to view detailed description, ⚠️only applies to aspects written in Java code
-         annotationProcessor "io.github.FlyJingFish.AndroidAop:android-aop-processor:2.3.9"
+         annotationProcessor "io.github.FlyJingFish.AndroidAop:android-aop-processor:2.4.0"
          //⚠️Choose one of the above android-aop-ksp and android-aop-processor
     }
     ```
@@ -218,17 +218,17 @@ Add in `build.gradle` of **app**
     
     dependencies {
          //👇Required items 
-         implementation("io.github.FlyJingFish.AndroidAop:android-aop-core:2.3.9")
+         implementation("io.github.FlyJingFish.AndroidAop:android-aop-core:2.4.0")
          //👇Optional (1)👈 This package provides some common annotation aspects
-         implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.3.9")
+         implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.4.0")
         
          //👇Required item  If you already have this item in your project, you don’t need to add it.
          implementation("androidx.appcompat:appcompat:1.3.0") // At least in 1.3.0 and above
          
          //👇Optional (2)👈Click + to view detailed description, ⚠️supports aspects written in Java and Kotlin code
-         ksp("io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.3.9")
+         ksp("io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.4.0")
          //👇Optional (3)👈Click + to view detailed description, ⚠️only applies to aspects written in Java code
-         annotationProcessor("io.github.FlyJingFish.AndroidAop:android-aop-processor:2.3.9")
+         annotationProcessor("io.github.FlyJingFish.AndroidAop:android-aop-processor:2.4.0")
          //⚠️Choose one of the above android-aop-ksp and android-aop-processor
     }
     ```
@@ -401,6 +401,19 @@ androidAop.debugMode.buildConfig = true //If set to true, it means exporting a D
 !!! note
     1、Because some modules have only Kotlin code, debugMode cannot take effect. You can insert a Java code to make it effective by setting it to true. If you don't need it, you can set it to false, but you need to manually create a Java code.
     2、If debugMode does not work, consider turning this off by adding the setting `android.defaults.buildfeatures.buildconfig=true`
+
+<img src="/AndroidAOP/svg/six.svg#only-light" align = "center"/>
+<img src="/AndroidAOP/svg/six_dark.svg#only-dark" align = "center"/>
+Add the following settings to `gradle.properties` in the **root directory** (optional)
+
+```properties
+androidAop.fastDex = true //Accelerate the dexBuilder phase (default false)
+androidAop.fastDex.variantOnlyDebug = false //Only works in debug (default false)
+```
+
+!!! note
+    1、 When `androidAop.fastDex` is set to true, the dexBuilder task will be optimized and accelerated. Please note that this setting will only work when not in debugMode mode
+    2、 When `androidAop.fastDex.variantOnlyDebug` is set to true, the release package will ignore `androidAop.fastDex = true` Settings
 
 ### This library has some built-in functional annotations for you to use directly.
 

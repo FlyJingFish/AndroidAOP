@@ -30,7 +30,7 @@
         
         plugins {
             //👇必须项 (1)👈 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五的方式二
-            id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.3.9" apply true
+            id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.4.0" apply true
         }
         ```
         
@@ -41,7 +41,7 @@
         buildscript {
           dependencies {
               //👇必须项 (1)👈
-              classpath "io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.3.9"
+              classpath "io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.4.0"
           }
         }
         // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五的方式二
@@ -57,7 +57,7 @@
         ```kotlin
         plugins {
             //👇必须项 (1)👈 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五的方式二
-            id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.3.9" apply true
+            id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.4.0" apply true
         }
         ```
         
@@ -68,7 +68,7 @@
         buildscript {
           dependencies {
               //👇必须项 (1)👈
-              classpath("io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.3.9")
+              classpath("io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.4.0")
           }
         }
         // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五的方式二
@@ -137,7 +137,7 @@
     //必须项 👇
     plugins {
         ...
-        id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.3.9"//最好放在最后一行
+        id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.4.0"//最好放在最后一行
     }
     ```
 
@@ -147,7 +147,7 @@
     //必须项 👇
     plugins {
         ...
-        id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.3.9"//最好放在最后一行
+        id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.4.0"//最好放在最后一行
     }
     ```
 
@@ -185,18 +185,18 @@
     
     dependencies {
         //👇必须项 
-        implementation "io.github.FlyJingFish.AndroidAop:android-aop-core:2.3.9"
+        implementation "io.github.FlyJingFish.AndroidAop:android-aop-core:2.4.0"
         //👇非必须项 (1)👈 这个包提供了一些常见的注解切面
-        implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.3.9" 
+        implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.4.0" 
         
         //👇必须项 如果您项目内已经有了这项不用加也可以
         implementation "androidx.appcompat:appcompat:1.3.0" // 至少在1.3.0及以上
         
         //👇非必须项 (2)👈点击+查看详细说明，⚠️支持Java和Kotlin代码写的切面
-        ksp "io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.3.9"
+        ksp "io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.4.0"
         
         //👇非必须项 (3)👈点击+查看详细说明，⚠️只适用于Java代码写的切面
-        annotationProcessor "io.github.FlyJingFish.AndroidAop:android-aop-processor:2.3.9"
+        annotationProcessor "io.github.FlyJingFish.AndroidAop:android-aop-processor:2.4.0"
         //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
     }
     
@@ -215,18 +215,18 @@
     
     dependencies {
         //👇必须项 
-        implementation("io.github.FlyJingFish.AndroidAop:android-aop-core:2.3.9")
+        implementation("io.github.FlyJingFish.AndroidAop:android-aop-core:2.4.0")
         //👇非必须项 (1)👈 这个包提供了一些常见的注解切面
-        implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.3.9")
+        implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.4.0")
         
         //👇必须项 如果您项目内已经有了这项不用加也可以
         implementation("androidx.appcompat:appcompat:1.3.0") // 至少在1.3.0及以上
         
         //👇非必须项 (2)👈点击+查看详细说明，⚠️支持Java和Kotlin代码写的切面
-        ksp("io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.3.9")
+        ksp("io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.4.0")
         
         //👇非必须项 (3)👈点击+查看详细说明，⚠️只适用于Java代码写的切面
-        annotationProcessor("io.github.FlyJingFish.AndroidAop:android-aop-processor:2.3.9")
+        annotationProcessor("io.github.FlyJingFish.AndroidAop:android-aop-processor:2.4.0")
         //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
     }
     ```
@@ -397,6 +397,20 @@ androidAop.debugMode.buildConfig = true //设置为 true 表示导出一个 Debu
 !!! note
     1、因为有些 module 的代码只有 kotlin 代码，导致 debugMode 无法生效，设置为true可插入一个 java 代码即可生效，如果不需要，可以设置为 false，但需要你手动创建一个 java 代码 <br>
     2、如果 debugMode 无法生效，可考虑关闭此项配置，添加设置 `android.defaults.buildfeatures.buildconfig=true`
+
+<img src="../../svg/six.svg#only-light" align = "center"/>
+<img src="../../svg/six_dark.svg#only-dark" align = "center"/>
+在 **根目录** 的 `gradle.properties` 添加如下设置（非必须项）
+
+```properties
+androidAop.fastDex = true //加速 dexBuilder阶段（默认false）
+androidAop.fastDex.variantOnlyDebug = false //只在 debug 起作用（默认false）
+```
+
+!!! note
+    1、`androidAop.fastDex` 设置为 true 时则会对 dexBuilder 任务进行优化加速，请注意此项设置在不处于 debugMode 模式下才有作用
+    2、`androidAop.fastDex.variantOnlyDebug` 设置为 true 时 release 包会忽略 `androidAop.fastDex = true` 的设置
+
 
 ### 本库内置了一些功能注解可供你直接使用
 
