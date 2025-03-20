@@ -86,9 +86,14 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     private val ignoreJarClassPaths = mutableListOf<File>()
     private lateinit var aopTaskUtils : AopTaskUtils
     private var isSingleClassesJar = false
+
+    private val allJarFiles = mutableListOf<File>()
+
+    private val allDirectoryFiles = mutableListOf<File>()
+
     @TaskAction
     fun taskAction() {
-        isSingleClassesJar = allDirectories.get().isEmpty() && allJars.get().size == 1
+        isSingleClassesJar = (allDirectoryFiles.isEmpty() && allJarFiles.size == 1) || (allDirectoryFiles.size == 1 && allJarFiles.isEmpty())
         aopTaskUtils = AopTaskUtils(project,variant)
         ClassPoolUtils.release(project)
         ClassFileUtils.debugMode = false
@@ -116,6 +121,30 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
 
     private fun scanFile() {
+        allDirectories.get().forEach { directory ->
+            var isJarDirectory = false
+            if (directory.asFile.isDirectory){
+                var count = 0
+                directory.asFile.listFiles()?.let {
+                    for (file in it) {
+                        if (file.isFile && file.absolutePath.endsWith(".jar")){
+                            count++
+                            allJarFiles.add(file)
+                        }
+                    }
+                    if (count == it.size){
+                        isJarDirectory = true
+                    }
+                }
+            }
+            if (!isJarDirectory){
+                allDirectoryFiles.add(directory.asFile)
+            }
+        }
+
+        allJars.get().forEach { file ->
+            allJarFiles.add(file.asFile)
+        }
         val scanTimeCost1 = measureTimeMillis {
             loadJoinPointConfig()
         }
@@ -134,19 +163,19 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         WovenInfoUtils.addBaseClassInfo(project)
         ignoreJar.clear()
         ignoreJarClassPaths.clear()
-        allJars.get().forEach { file ->
+        allJarFiles.forEach { file ->
             if (isSingleClassesJar){
-                ignoreJar.add(file.asFile.absolutePath)
+                ignoreJar.add(file.absolutePath)
                 return@forEach
             }
-            val jarFile = JarFile(file.asFile)
+            val jarFile = JarFile(file)
             val enumeration = jarFile.entries()
             while (enumeration.hasMoreElements()) {
                 val jarEntry = enumeration.nextElement()
                 try {
                     val entryName = jarEntry.name
                     if (entryName.isJarSignatureRelatedFiles()){
-                        ignoreJar.add(file.asFile.absolutePath)
+                        ignoreJar.add(file.absolutePath)
                         break
                     }
                 } catch (e: Exception) {
@@ -182,20 +211,20 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         }
 
         //第一遍找配置文件
-        allDirectories.get().forEach { directory ->
+        allDirectoryFiles.forEach { directory ->
 //            printLog("directory.asFile.absolutePath = ${directory.asFile.absolutePath}")
-            val directoryPath = directory.asFile.absolutePath
-            WovenInfoUtils.addClassPath(directory.asFile.absolutePath)
-            directory.asFile.walk().forEach { file ->
-                processFile(file,directory.asFile,directoryPath)
+            val directoryPath = directory.absolutePath
+            WovenInfoUtils.addClassPath(directory.absolutePath)
+            directory.walk().forEach { file ->
+                processFile(file,directory,directoryPath)
             }
         }
 
-        allJars.get().forEach { file ->
-            if (file.asFile.absolutePath in ignoreJar){
+        allJarFiles.forEach { file ->
+            if (file.absolutePath in ignoreJar){
                 return@forEach
             }
-            aopTaskUtils.processJarForConfig(file.asFile)
+            aopTaskUtils.processJarForConfig(file)
         }
         aopTaskUtils.loadJoinPointConfigEnd(true)
     }
@@ -217,17 +246,17 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             }
 
         }
-        allDirectories.get().forEach { directory ->
-            val directoryPath = directory.asFile.absolutePath
-            directory.asFile.walk().forEach { file ->
-                processFile(file,directory.asFile,directoryPath)
+        allDirectoryFiles.forEach { directory ->
+            val directoryPath = directory.absolutePath
+            directory.walk().forEach { file ->
+                processFile(file,directory,directoryPath)
             }
         }
-        allJars.get().forEach { file ->
-            if (file.asFile.absolutePath in ignoreJar){
+        allJarFiles.forEach { file ->
+            if (file.absolutePath in ignoreJar){
                 return@forEach
             }
-            aopTaskUtils.processJarForSearch(file.asFile, addClassMethodRecords, deleteClassMethodRecords)
+            aopTaskUtils.processJarForSearch(file, addClassMethodRecords, deleteClassMethodRecords)
         }
         aopTaskUtils.searchJoinPointLocationEnd(addClassMethodRecords, deleteClassMethodRecords)
 
@@ -238,17 +267,17 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             }
 
         }
-        allDirectories.get().forEach { directory ->
-            val directoryPath = directory.asFile.absolutePath
-            directory.asFile.walk().forEach { file ->
-                aopTaskUtils.processFileForSearchSuspend(file,directory.asFile,directoryPath)
+        allDirectoryFiles.forEach { directory ->
+            val directoryPath = directory.absolutePath
+            directory.walk().forEach { file ->
+                aopTaskUtils.processFileForSearchSuspend(file,directory,directoryPath)
             }
         }
-        allJars.get().forEach { file ->
-            if (file.asFile.absolutePath in ignoreJar){
+        allJarFiles.forEach { file ->
+            if (file.absolutePath in ignoreJar){
                 return@forEach
             }
-            aopTaskUtils.processJarForSearchSuspend(file.asFile)
+            aopTaskUtils.processJarForSearchSuspend(file)
         }
 
     }
@@ -518,13 +547,13 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         }
         wovenCodeFileJobs1.awaitAll()
         val wovenCodeFileJobs2 = mutableListOf<Deferred<Unit>>()
-        allDirectories.get().forEach { directory ->
-            val directoryPath = directory.asFile.absolutePath
-            directory.asFile.walk().sortedBy {
+        allDirectoryFiles.forEach { directory ->
+            val directoryPath = directory.absolutePath
+            directory.walk().sortedBy {
                 it.name.length
             }.forEach { file ->
                 val job = async(Dispatchers.IO) {
-                    processFile(file,directory.asFile,directoryPath)
+                    processFile(file,directory,directoryPath)
                 }
                 wovenCodeFileJobs2.add(job)
             }
@@ -532,13 +561,13 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         wovenCodeFileJobs2.awaitAll()
 
 
-        allJars.get().forEach { file ->
-            if (file.asFile.absolutePath in ignoreJar){
+        allJarFiles.forEach { file ->
+            if (file.absolutePath in ignoreJar){
                 return@forEach
             }
-            val jarFile = JarFile(file.asFile)
+            val jarFile = JarFile(file)
             val enumeration = jarFile.entries()
-            val oldJarFileName = file.asFile.absolutePath.computeMD5()
+            val oldJarFileName = file.absolutePath.computeMD5()
             val wovenCodeJarJobs = mutableListOf<Deferred<Unit>>()
             while (enumeration.hasMoreElements()) {
                 val jarEntry = enumeration.nextElement()
