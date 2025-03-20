@@ -89,7 +89,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     @TaskAction
     fun taskAction() {
         isSingleClassesJar = allDirectories.get().isEmpty() && allJars.get().size == 1
-        println("isClassesJar=$isSingleClassesJar")
         aopTaskUtils = AopTaskUtils(project,variant)
         ClassPoolUtils.release(project)
         ClassFileUtils.debugMode = false
