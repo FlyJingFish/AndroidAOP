@@ -412,9 +412,9 @@ androidAop.fastDex.variantOnlyDebug = false //Only works in debug (default false
 ```
 
 !!! note
-    1、 When `androidAop.fastDex` is set to true, the dexBuilder task will be optimized and accelerated. Please note that this setting will only work when not in debugMode mode
-    2、 When `androidAop.fastDex.variantOnlyDebug` is set to true, the release package will ignore `androidAop.fastDex = true` Settings
-    3、 If there are other plugins using `toTransform` in your project, this optimization will basically lose its meaning
+    1、When `androidAop.fastDex` is set to true, the dexBuilder task will be optimized and accelerated. Please note that this setting will only work when not in debugMode mode
+    2、When `androidAop.fastDex.variantOnlyDebug` is set to true, the release package will ignore `androidAop.fastDex = true` Settings
+    3、If there are other plugins using `toTransform` in your project, please adjust the task execution order and put the AOP task at the end, otherwise it will lose its meaning.
 
 ### This library has some built-in functional annotations for you to use directly.
 
