@@ -526,7 +526,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             }
             val jarFile = JarFile(file.asFile)
             val enumeration = jarFile.entries()
-            val jarEntryList = mutableListOf<JarEntry>()
+            val oldJarFileName = file.asFile.absolutePath.computeMD5()
+            val wovenCodeJarJobs = mutableListOf<Deferred<Unit>>()
             while (enumeration.hasMoreElements()) {
                 val jarEntry = enumeration.nextElement()
                 val entryName = jarEntry.name
@@ -536,13 +537,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 if (jarEntry.isDirectory || AndroidAopConfig.inExcludePackingRules(entryName)) {
                     continue
                 }
-                jarEntryList.add(jarEntry)
-            }
-            val oldJarFileName = file.asFile.absolutePath.computeMD5()
-            val wovenCodeJarJobs = mutableListOf<Deferred<Unit>>()
-            jarEntryList.sortedBy {
-                it.name.length
-            }.forEach { jarEntry ->
                 fun processJar(){
                     try {
                         val entryName = jarEntry.name
@@ -767,6 +761,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 }
                 wovenCodeJarJobs.add(job)
             }
+
             wovenCodeJarJobs.awaitAll()
             jarFile.close()
         }
