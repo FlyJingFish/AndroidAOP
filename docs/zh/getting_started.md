@@ -408,7 +408,7 @@ androidAop.fastDex.variantOnlyDebug = false //只在 debug 起作用（默认fal
 ```
 
 !!! note
-    1、`androidAop.fastDex` 设置为 true 时则会对 dexBuilder 任务进行优化加速，请注意此项设置在不处于 debugMode 模式下才有作用
+    1、`androidAop.fastDex` 设置为 true 时则会对 dexBuilder 任务进行增量编译优化加速，请注意此项设置在不处于 debugMode 模式下才有作用
     2、`androidAop.fastDex.variantOnlyDebug` 设置为 true 时 release 包会忽略 `androidAop.fastDex = true` 的设置
     3、如果你项目中存在其他使用 `toTransform` 的插件，请调整任务执行顺序将AOP任务放在最后，否则将失去意义
 
