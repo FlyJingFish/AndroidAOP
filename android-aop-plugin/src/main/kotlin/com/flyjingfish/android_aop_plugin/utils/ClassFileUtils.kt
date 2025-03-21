@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes.ACC_PUBLIC
 import org.objectweb.asm.Opcodes.ALOAD
@@ -32,6 +33,7 @@ object ClassFileUtils {
     lateinit var outputDir:File
     var outputCacheDir:File ?= null
     private val invokeClasses = ConcurrentHashMap<String,MutableList<InvokeClass>>()
+    private val invokeCache = ConcurrentHashMap<String,String?>()
     private const val INVOKE_METHOD = "invoke"
     private const val INVOKE_DESCRIPTOR = "(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;"
     private const val INVOKE_CLASS = "com.flyjingfish.android_aop_annotation.utils.InvokeMethod"
@@ -39,6 +41,15 @@ object ClassFileUtils {
     fun clear(){
         invokeClasses.clear()
     }
+
+    private fun saveInvokeCache(path:String,classData:String){
+        invokeCache[path] = classData
+    }
+
+    private fun hasInvokeCache(path:String,classData:String):Boolean{
+        return File(path).exists() && invokeCache[path] == classData
+    }
+
     fun wovenInfoInvokeClass(newClasses: MutableList<ByteArray>) :MutableList<String> = runBlocking{
         val cacheFiles = mutableListOf<String>()
         if (reflectInvokeMethod && !reflectInvokeMethodStatic){
@@ -98,6 +109,10 @@ object ClassFileUtils {
             }
         }else{
             val invokeJobs = mutableListOf<Deferred<Unit>>()
+            val needDeleteFiles = mutableListOf<String>()
+            outputDir.walk().filter { it.isFile }.forEach { file ->
+                needDeleteFiles.add(file.absolutePath)
+            }
             for (invokeClasses in invokeClasses) {
                 val value = invokeClasses.value
                 for (invokeClass in value) {
@@ -105,6 +120,7 @@ object ClassFileUtils {
                     val invokeBody = invokeClass.invokeBody
                     val path = outputDir.absolutePath + File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class"
                     val outFile = File(path)
+                    needDeleteFiles.remove(path)
                     if (outputCacheDir != null && outFile.exists()){
                         continue
                     }
@@ -131,17 +147,30 @@ object ClassFileUtils {
                             throw RuntimeException(e)
                         }
                         val classByteData = ctClass.toBytecode()
-                        outFile.checkExist()
                         synchronized(cacheFiles){
                             cacheFiles.add(path)
                         }
-                        classByteData.saveFile(outFile)
+                        if (!hasInvokeCache(path,invokeBody)){
+                            outFile.checkExist()
+                            classByteData.saveFile(outFile)
+                            saveInvokeCache(path,invokeBody)
+                        }
                     }
                     invokeJobs.add(job)
                 }
 //            ctClass.detach()
             }
             invokeJobs.awaitAll()
+            val cacheFiles2 = mutableListOf<String>()
+            cacheFiles2.addAll(cacheFiles)
+            withContext(Dispatchers.IO){
+                for (needDeleteFile in needDeleteFiles) {
+                    if (cacheFiles2.contains(needDeleteFile)){
+                        continue
+                    }
+                    File(needDeleteFile).delete()
+                }
+            }
         }
         cacheFiles
     }

@@ -326,9 +326,7 @@ class CompileAndroidAopTask(
         val wovenCodeJobs = mutableListOf<Deferred<Unit>>()
         allDirectories.forEach { directory ->
             val directoryPath = directory.absolutePath
-            directory.walk().sortedBy {
-                it.name.length
-            }.forEach { file ->
+            directory.walk().forEach { file ->
                 val job = async(Dispatchers.IO) {
                     processFile(file,directory,directoryPath)
                 }

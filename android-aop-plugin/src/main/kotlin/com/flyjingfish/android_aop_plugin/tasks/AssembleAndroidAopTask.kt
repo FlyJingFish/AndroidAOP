@@ -105,7 +105,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         println("AndroidAOP woven info code start")
         ClassFileUtils.outputDir = File(Utils.aopTransformTempDir(project,variant))
         ClassFileUtils.clear()
-        ClassFileUtils.outputDir.deleteRecursively()
+//        ClassFileUtils.outputDir.deleteRecursively()
         ClassFileUtils.outputCacheDir = File(Utils.aopCompileTempInvokeDir(project, variant))
         SuspendReturnScanner.hasSuspendReturn = false
         if (!isFastDex){
@@ -559,9 +559,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         val wovenCodeFileJarJobs = mutableListOf<Deferred<Unit>>()
         for (directory in ignoreJarClassPaths) {
             val directoryPath = directory.absolutePath
-            directory.walk().sortedBy {
-                it.name.length
-            }.forEach { file ->
+            directory.walk().forEach { file ->
                 val job = async(Dispatchers.IO) {
                     processFile(file, directory, directoryPath)
                 }
@@ -571,9 +569,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         }
         allDirectoryFiles.forEach { directory ->
             val directoryPath = directory.absolutePath
-            directory.walk().sortedBy {
-                it.name.length
-            }.forEach { file ->
+            directory.walk().forEach { file ->
                 val job = async(Dispatchers.IO) {
                     processFile(file,directory,directoryPath)
                 }
@@ -835,7 +831,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 jarFile.close()
             }
         }
-        val oldJarFileName = project.name.computeMD5()
+        val oldJarFileName = project.layout.buildDirectory.asFile.get().absolutePath.computeMD5()
         // 这块耗时比较多
         synchronized(newClasses){
             ClassFileUtils.wovenInfoInvokeClass(newClasses)
@@ -914,10 +910,10 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 }
             }
         }
-        if (!AndroidAopConfig.debug){
-            ClassFileUtils.outputDir.deleteRecursively()
-            collectDir.deleteRecursively()
-        }
+//        if (!AndroidAopConfig.debug){
+//            ClassFileUtils.outputDir.deleteRecursively()
+//            collectDir.deleteRecursively()
+//        }
         exportCutInfo()
     }
 

@@ -906,7 +906,7 @@ object WovenIntoCode {
                 val path = output.absolutePath + File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class"
                 val classByteData = cw.toByteArray()
                 val outFile = File(path)
-                outFile.checkExist(true)
+                outFile.checkExist()
                 classByteData.saveFile(outFile)
             }
             collectDirJobs.add(job)
