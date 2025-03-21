@@ -412,7 +412,7 @@ androidAop.fastDex.variantOnlyDebug = false //Only works in debug (default false
 ```
 
 !!! note
-    1、When `androidAop.fastDex` is set to true, incremental compilation optimization and acceleration will be performed on the dexBuilder task. Please note that this setting only works when not in debugMode mode.<br>
+    1、When `androidAop.fastDex` is set to true, the dexBuilder task will be optimized and accelerated by **incremental compilation**. Please note that this setting will only work when not in debugMode mode<br>
     2、When `androidAop.fastDex.variantOnlyDebug` is set to true, the release package will ignore `androidAop.fastDex = true` Settings<br>
     3、If there are other plugins using `toTransform` in your project, please adjust the task execution order and put the `xxAssembleAndroidAopTask` task at the end, otherwise it will lose its meaning.
 
