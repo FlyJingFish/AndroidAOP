@@ -236,7 +236,7 @@ class MainActivity: BaseVActivity<ActivityMainBinding>(){
     }
 
     @Permission(Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    fun onPermission(activity: BaseActivity, maxSelect :Int){
+    fun onPermission(activity: BaseVActivity<*>, maxSelect :Int){
         setLogcat("@Permission 获得权限了进入了方法 activity$activity,maxSelect=$maxSelect")
     }
 

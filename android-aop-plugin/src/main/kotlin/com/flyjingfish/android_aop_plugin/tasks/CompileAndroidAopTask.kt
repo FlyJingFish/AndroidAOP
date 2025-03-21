@@ -37,6 +37,7 @@ import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import java.io.File
 import java.io.FileInputStream
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.system.measureTimeMillis
 
 class CompileAndroidAopTask(
@@ -97,29 +98,42 @@ class CompileAndroidAopTask(
         aopTaskUtils.loadJoinPointConfigEnd(isApp)
     }
 
-    private fun searchJoinPointLocation(){
+    private fun searchJoinPointLocation() = runBlocking{
         aopTaskUtils.searchJoinPointLocationStart(project)
 
-        val addClassMethodRecords = mutableMapOf<String,ClassMethodRecord>()
-        val deleteClassMethodRecords = mutableSetOf<String>()
-
+        val addClassMethodRecords = ConcurrentHashMap<String,ClassMethodRecord>()
+        val deleteClassMethodRecords = ConcurrentHashMap.newKeySet<String>()
+        val searchJobs1 = mutableListOf<Deferred<Unit>>()
         allDirectories.forEach { directory ->
             val directoryPath = directory.absolutePath
             directory.walk().forEach { file ->
-                aopTaskUtils.processFileForSearch(file, directory, directoryPath,addClassMethodRecords, deleteClassMethodRecords)
+                val job = async(Dispatchers.IO) {
+                    aopTaskUtils.processFileForSearch(file, directory, directoryPath,addClassMethodRecords, deleteClassMethodRecords)
+                }
+                searchJobs1.add(job)
+
             }
         }
         allJars.forEach { file ->
-            aopTaskUtils.processJarForSearch(file, addClassMethodRecords, deleteClassMethodRecords)
-        }
-        aopTaskUtils.searchJoinPointLocationEnd(addClassMethodRecords, deleteClassMethodRecords)
+            val job = async(Dispatchers.IO) {
+                aopTaskUtils.processJarForSearch(file, addClassMethodRecords, deleteClassMethodRecords)
+            }
+            searchJobs1.add(job)
 
+        }
+        searchJobs1.awaitAll()
+        aopTaskUtils.searchJoinPointLocationEnd(addClassMethodRecords, deleteClassMethodRecords)
+        val searchJobs2 = mutableListOf<Deferred<Unit>>()
         allDirectories.forEach { directory ->
             val directoryPath = directory.absolutePath
             directory.walk().forEach { file ->
-                aopTaskUtils.processFileForSearchSuspend(file, directory, directoryPath)
+                val job = async(Dispatchers.IO) {
+                    aopTaskUtils.processFileForSearchSuspend(file, directory, directoryPath)
+                }
+                searchJobs2.add(job)
             }
         }
+        searchJobs2.awaitAll()
     }
     private fun wovenIntoCode() = runBlocking{
         val invokeStaticClassName = Utils.extraPackage+".Invoke"+project.name.computeMD5()

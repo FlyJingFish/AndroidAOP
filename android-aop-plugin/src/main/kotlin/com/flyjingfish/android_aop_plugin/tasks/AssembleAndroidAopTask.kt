@@ -230,57 +230,79 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         aopTaskUtils.loadJoinPointConfigEnd(true)
     }
 
-    private fun searchJoinPointLocation(){
+    private fun searchJoinPointLocation() = runBlocking{
         aopTaskUtils.searchJoinPointLocationStart(project)
 
-        val addClassMethodRecords = mutableMapOf<String,ClassMethodRecord>()
-        val deleteClassMethodRecords = mutableSetOf<String>()
+        val addClassMethodRecords = ConcurrentHashMap<String,ClassMethodRecord>()
+        val deleteClassMethodRecords = ConcurrentHashMap.newKeySet<String>()
 
         fun processFile(file : File,directory:File,directoryPath:String){
             aopTaskUtils.processFileForSearch(file, directory, directoryPath,addClassMethodRecords, deleteClassMethodRecords)
         }
-
+        val searchJobs1 = mutableListOf<Deferred<Unit>>()
         for (directory in ignoreJarClassPaths) {
             val directoryPath = directory.absolutePath
             directory.walk().forEach { file ->
-                processFile(file, directory, directoryPath)
+                val job = async(Dispatchers.IO) {
+                    processFile(file, directory, directoryPath)
+                }
+                searchJobs1.add(job)
+
             }
 
         }
         allDirectoryFiles.forEach { directory ->
             val directoryPath = directory.absolutePath
             directory.walk().forEach { file ->
-                processFile(file,directory,directoryPath)
+                val job = async(Dispatchers.IO) {
+                    processFile(file, directory, directoryPath)
+                }
+                searchJobs1.add(job)
             }
         }
         allJarFiles.forEach { file ->
             if (file.absolutePath in ignoreJar){
                 return@forEach
             }
-            aopTaskUtils.processJarForSearch(file, addClassMethodRecords, deleteClassMethodRecords)
+            val job = async(Dispatchers.IO) {
+                aopTaskUtils.processJarForSearch(file, addClassMethodRecords, deleteClassMethodRecords)
+            }
+            searchJobs1.add(job)
+
         }
+        searchJobs1.awaitAll()
         aopTaskUtils.searchJoinPointLocationEnd(addClassMethodRecords, deleteClassMethodRecords)
-
+        val searchJobs2 = mutableListOf<Deferred<Unit>>()
         for (directory in ignoreJarClassPaths) {
             val directoryPath = directory.absolutePath
             directory.walk().forEach { file ->
-                aopTaskUtils.processFileForSearchSuspend(file,directory,directoryPath)
+                val job = async(Dispatchers.IO) {
+                    aopTaskUtils.processFileForSearchSuspend(file,directory,directoryPath)
+                }
+                searchJobs2.add(job)
             }
 
         }
         allDirectoryFiles.forEach { directory ->
             val directoryPath = directory.absolutePath
             directory.walk().forEach { file ->
-                aopTaskUtils.processFileForSearchSuspend(file,directory,directoryPath)
+                val job = async(Dispatchers.IO) {
+                    aopTaskUtils.processFileForSearchSuspend(file,directory,directoryPath)
+                }
+                searchJobs2.add(job)
             }
         }
         allJarFiles.forEach { file ->
             if (file.absolutePath in ignoreJar){
                 return@forEach
             }
-            aopTaskUtils.processJarForSearchSuspend(file)
-        }
 
+            val job = async(Dispatchers.IO) {
+                aopTaskUtils.processJarForSearchSuspend(file)
+            }
+            searchJobs2.add(job)
+        }
+        searchJobs2.awaitAll()
     }
     private val jarEntryCache = ConcurrentHashMap<String,MutableList<EntryCache>>()
     private fun saveEntryCache(jarFileName:String,jarEntryName: String,inputStream: InputStream){
@@ -533,7 +555,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 }
             }
         }
-        val wovenCodeFileJobs1 = mutableListOf<Deferred<Unit>>()
+        val wovenCodeFileJarJobs = mutableListOf<Deferred<Unit>>()
         for (directory in ignoreJarClassPaths) {
             val directoryPath = directory.absolutePath
             directory.walk().sortedBy {
@@ -542,12 +564,10 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 val job = async(Dispatchers.IO) {
                     processFile(file, directory, directoryPath)
                 }
-                wovenCodeFileJobs1.add(job)
+                wovenCodeFileJarJobs.add(job)
             }
 
         }
-        wovenCodeFileJobs1.awaitAll()
-        val wovenCodeFileJobs2 = mutableListOf<Deferred<Unit>>()
         allDirectoryFiles.forEach { directory ->
             val directoryPath = directory.absolutePath
             directory.walk().sortedBy {
@@ -556,20 +576,20 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 val job = async(Dispatchers.IO) {
                     processFile(file,directory,directoryPath)
                 }
-                wovenCodeFileJobs2.add(job)
+                wovenCodeFileJarJobs.add(job)
             }
         }
-        wovenCodeFileJobs2.awaitAll()
+//        wovenCodeFileJobs1.awaitAll()
 
-
+        val closeJarFiles = mutableListOf<JarFile>()
         allJarFiles.forEach { file ->
             if (file.absolutePath in ignoreJar){
                 return@forEach
             }
             val jarFile = JarFile(file)
+            closeJarFiles.add(jarFile)
             val enumeration = jarFile.entries()
             val oldJarFileName = file.absolutePath.computeMD5()
-            val wovenCodeJarJobs = mutableListOf<Deferred<Unit>>()
             while (enumeration.hasMoreElements()) {
                 val jarEntry = enumeration.nextElement()
                 val entryName = jarEntry.name
@@ -801,10 +821,15 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 val job = async(Dispatchers.IO) {
                     processJar()
                 }
-                wovenCodeJarJobs.add(job)
+                wovenCodeFileJarJobs.add(job)
+//                wovenCodeJarJobs.add(job)
             }
 
-            wovenCodeJarJobs.awaitAll()
+//            wovenCodeJarJobs.awaitAll()
+//            jarFile.close()
+        }
+        wovenCodeFileJarJobs.awaitAll()
+        for (jarFile in closeJarFiles) {
             jarFile.close()
         }
         val oldJarFileName = project.name.computeMD5()
@@ -868,7 +893,11 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                     jarOutputs.add(jarOutput)
                     for (cache in caches) {
                         val job = async(Dispatchers.IO) {
-                            jarOutput.saveEntry(cache.jarEntryName,cache.byteArray)
+                            try {
+                                jarOutput.saveEntry(cache.jarEntryName,cache.byteArray)
+                            } catch (e: Exception) {
+                                logger.error("Merge jar error3 entry:[${cache.jarEntryName}], error message:$e,通常情况下你需要先重启Android Studio,然后clean一下项目即可，如果还有问题请到Github联系作者")
+                            }
                         }
                         fastDexJobs.add(job)
                     }
