@@ -28,6 +28,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
@@ -830,7 +831,9 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         }
         wovenCodeFileJarJobs.awaitAll()
         for (jarFile in closeJarFiles) {
-            jarFile.close()
+            withContext(Dispatchers.IO) {
+                jarFile.close()
+            }
         }
         val oldJarFileName = project.name.computeMD5()
         // 这块耗时比较多
@@ -906,7 +909,9 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             }
             fastDexJobs.awaitAll()
             for (jarOutput1 in jarOutputs) {
-                jarOutput1.close()
+                withContext(Dispatchers.IO) {
+                    jarOutput1.close()
+                }
             }
         }
         if (!AndroidAopConfig.debug){
