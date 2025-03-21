@@ -399,7 +399,7 @@ androidAop.debugMode.buildConfig = true //If set to true, it means exporting a D
 ```
 
 !!! note
-    1、Because some modules have only Kotlin code, debugMode cannot take effect. You can insert a Java code to make it effective by setting it to true. If you don't need it, you can set it to false, but you need to manually create a Java code.
+    1、Because some modules have only Kotlin code, debugMode cannot take effect. You can insert a Java code to make it effective by setting it to true. If you don't need it, you can set it to false, but you need to manually create a Java code.<br>
     2、If debugMode does not work, consider turning this off by adding the setting `android.defaults.buildfeatures.buildconfig=true`
 
 <img src="/AndroidAOP/svg/six.svg#only-light" align = "center"/>
@@ -412,8 +412,8 @@ androidAop.fastDex.variantOnlyDebug = false //Only works in debug (default false
 ```
 
 !!! note
-    1、When `androidAop.fastDex` is set to true, incremental compilation optimization and acceleration will be performed on the dexBuilder task. Please note that this setting only works when not in debugMode mode.
-    2、When `androidAop.fastDex.variantOnlyDebug` is set to true, the release package will ignore `androidAop.fastDex = true` Settings
+    1、When `androidAop.fastDex` is set to true, incremental compilation optimization and acceleration will be performed on the dexBuilder task. Please note that this setting only works when not in debugMode mode.<br>
+    2、When `androidAop.fastDex.variantOnlyDebug` is set to true, the release package will ignore `androidAop.fastDex = true` Settings<br>
     3、If there are other plugins using `toTransform` in your project, please adjust the task execution order and put the AOP task at the end, otherwise it will lose its meaning.
 
 ### This library has some built-in functional annotations for you to use directly.
