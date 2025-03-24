@@ -541,6 +541,7 @@ object WovenInfoUtils {
     }
     fun aopCollectChanged(isClear:Boolean) {
         if (isClear){
+            aopCollectClassMap.clear()
             return
         }
         val iterator = aopCollectClassMap.iterator()

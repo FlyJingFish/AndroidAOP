@@ -162,8 +162,8 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
     }
 
     private fun loadJoinPointConfig(){
-        WovenInfoUtils.addBaseClassInfo(project)
         WovenInfoUtils.clear()
+        WovenInfoUtils.addBaseClassInfo(project)
         ignoreJar.clear()
         ignoreJarClassPaths.clear()
         allJarFiles.forEach { file ->
