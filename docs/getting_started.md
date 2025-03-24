@@ -329,7 +329,7 @@ androidAop.fastDex.variantOnlyDebug = false //Only works in debug (default false
 
 <p style="color:red;">If you configure DebugMode in this step, please read the instructions in each line below carefully and do not copy them blindly, especially if you want to cut third-party jar packages.</p>
 
-**The following configuration steps also apply to componentized scenarios [Click here to view](https://flyjingfish.github.io/AndroidAOP/FAQ/#14-different-modules-of-componentized-projects-use-products-such-as-aar-for-compilation-how-to-speed-up-the-packaging-speed)**
+<p style="color:#FF8C00;">The following configuration steps also apply to componentized scenarios <a href="https://flyjingfish.github.io/AndroidAOP/FAQ/#14-different-modules-of-componentized-projects-use-products-such-as-aar-for-compilation-how-to-speed-up-the-packaging-speed">Click here to view</a> </p>
 
 <img src="/AndroidAOP/svg/one.svg#only-light" align = "center" />
 <img src="/AndroidAOP/svg/one_dark.svg#only-dark" align = "center" />

@@ -328,7 +328,7 @@ androidAop.fastDex.variantOnlyDebug = false //只在 debug 起作用（默认fal
 
 <p style="color:red;">如果你配置这一步的 DebugMode ，请务必仔细看好下边每一行的说明，不要无脑复制，尤其是想切三方 jar 包的</p>
 
-**以下的配置步骤同样也适用于 组件化的场景 [点此查看](/AndroidAOP/zh/FAQ/#14-module-aar)**
+<p style="color:#FF8C00;">以下的配置步骤同样也适用于 组件化的场景 <a href="/AndroidAOP/zh/FAQ/#14-module-aar">点此查看</a></p>
 
 
 <img src="../../svg/one.svg#only-light" align = "center" />
