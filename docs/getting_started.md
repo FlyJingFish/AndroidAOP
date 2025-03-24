@@ -375,7 +375,8 @@ androidAop.debugMode=true //Set to true to use the current packaging method of y
 ```
 
 !!! warning
-    :warning::warning::warning: Please note that when set to true, the compilation speed will be faster but some functions will be invalid. Only the aop code will be woven into the set module. The third-party jar package will not weave in the code, so please be careful to turn it off when building the official package. Configure this and clean the project
+    1、:warning::warning::warning: Please note that when set to true, the compilation speed will be faster but some functions will be invalid. Only the aop code will be woven into the set module. The third-party jar package will not weave in the code, so please be careful to turn it off when building the official package. Configure this and clean the project <br>
+    2、If `org.gradle.parallel = true` is set, please pay attention to adjusting the order of each module **compileXXJavaWithJavac** task. If you don't know how to do it, you can choose to turn off this configuration directly.
 
 <img src="/AndroidAOP/svg/three.svg#only-light" align = "center" />
 <img src="/AndroidAOP/svg/three_dark.svg#only-dark" align = "center" />

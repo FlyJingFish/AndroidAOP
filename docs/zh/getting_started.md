@@ -374,7 +374,8 @@ androidAop.fastDex.variantOnlyDebug = false //只在 debug 起作用（默认fal
 androidAop.debugMode=true //设置为 true 走您项目当前的打包方式 ，false 则为全量打包方式，不写默认false
 ```
 !!! warning
-    **:warning::warning::warning:请注意设置为 true 时编译速度会变快但部分功能将失效，只会为设置的 module 织入 aop 代码，三方jar包 不会织入代码，因此打正式包时请注意关闭此项配置并clean项目**
+    **1、:warning::warning::warning:请注意设置为 true 时编译速度会变快但部分功能将失效，只会为设置的 module 织入 aop 代码，三方jar包 不会织入代码，因此打正式包时请注意关闭此项配置并clean项目**<br>
+    2、如果设置了 `org.gradle.parallel = true`，请注意调整各个 module **compileXXJavaWithJavac** 任务的顺序，不会的可以选择直接关闭这项配置
 
 <img src="../../svg/three.svg#only-light" align = "center" />
 <img src="../../svg/three_dark.svg#only-dark" align = "center" />
