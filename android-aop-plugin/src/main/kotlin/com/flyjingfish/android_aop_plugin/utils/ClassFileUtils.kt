@@ -110,8 +110,10 @@ object ClassFileUtils {
         }else{
             val invokeJobs = mutableListOf<Deferred<Unit>>()
             val needDeleteFiles = mutableListOf<String>()
-            outputDir.walk().filter { it.isFile }.forEach { file ->
-                needDeleteFiles.add(file.absolutePath)
+            if (!debugMode){
+                outputDir.walk().filter { it.isFile }.forEach { file ->
+                    needDeleteFiles.add(file.absolutePath)
+                }
             }
             for (invokeClasses in invokeClasses) {
                 val value = invokeClasses.value
@@ -161,14 +163,16 @@ object ClassFileUtils {
 //            ctClass.detach()
             }
             invokeJobs.awaitAll()
-            val cacheFiles2 = mutableListOf<String>()
-            cacheFiles2.addAll(cacheFiles)
-            withContext(Dispatchers.IO){
-                for (needDeleteFile in needDeleteFiles) {
-                    if (cacheFiles2.contains(needDeleteFile)){
-                        continue
+            if (!debugMode){
+                val cacheFiles2 = mutableListOf<String>()
+                cacheFiles2.addAll(cacheFiles)
+                withContext(Dispatchers.IO){
+                    for (needDeleteFile in needDeleteFiles) {
+                        if (cacheFiles2.contains(needDeleteFile)){
+                            continue
+                        }
+                        File(needDeleteFile).delete()
                     }
-                    File(needDeleteFile).delete()
                 }
             }
         }
