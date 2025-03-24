@@ -203,8 +203,8 @@
     ```
 
     1.  :man_raising_hand: 此库内置了使用 [@AndroidAopPointCut](/AndroidAOP/zh/AndroidAopPointCut/) 定义的一些功能注解
-    2.  :man_raising_hand: 当你使用[此处介绍](#_7)的五个自定义切面注解时，就意味着你必须从 `android-aop-ksp` 和 `android-aop-processor` 选择一项作为必选项
-    3.  :man_raising_hand: 当你使用[此处介绍](#_7)的五个自定义切面注解时，就意味着你必须从 `android-aop-ksp` 和 `android-aop-processor` 选择一项作为必选项
+    2.  :man_raising_hand: 当你使用[此处介绍](#_8)的五个自定义切面注解时，就意味着你必须从 `android-aop-ksp` 和 `android-aop-processor` 选择一项作为必选项
+    3.  :man_raising_hand: 当你使用[此处介绍](#_8)的五个自定义切面注解时，就意味着你必须从 `android-aop-ksp` 和 `android-aop-processor` 选择一项作为必选项
 === "Kotlin"
 
     ```kotlin
@@ -232,8 +232,8 @@
     ```
 
     1.  :man_raising_hand: 此库内置了使用 [@AndroidAopPointCut](/AndroidAOP/zh/AndroidAopPointCut/) 定义的一些功能注解
-    2.  :man_raising_hand: 当你使用[此处介绍](#_7)的五个自定义切面注解时，就意味着你必须从 `android-aop-ksp` 和 `android-aop-processor` 选择一项作为必选项
-    3.  :man_raising_hand: 当你使用[此处介绍](#_7)的五个自定义切面注解时，就意味着你必须从 `android-aop-ksp` 和 `android-aop-processor` 选择一项作为必选项
+    2.  :man_raising_hand: 当你使用[此处介绍](#_8)的五个自定义切面注解时，就意味着你必须从 `android-aop-ksp` 和 `android-aop-processor` 选择一项作为必选项
+    3.  :man_raising_hand: 当你使用[此处介绍](#_8)的五个自定义切面注解时，就意味着你必须从 `android-aop-ksp` 和 `android-aop-processor` 选择一项作为必选项
 
 !!! note
     提示：ksp 或 annotationProcessor只能扫描当前 module ，在哪个 module 中有自定义切面代码就加在哪个 module，**但是自定义的切面代码是全局生效的**；必须依赖项可以通过 api 方式只加到公共 module 上
