@@ -76,15 +76,15 @@ class CompileAndroidAopTask(
         val scanTimeCost1 = measureTimeMillis {
             loadJoinPointConfig()
         }
-        println("scanFile cost time scanTimeCost1 ${scanTimeCost1}ms")
+        println("Step 1 cost ${scanTimeCost1}ms")
         val scanTimeCost2 = measureTimeMillis {
             searchJoinPointLocation()
         }
-        println("scanFile cost time scanTimeCost2 ${scanTimeCost2}ms")
+        println("Step 2 cost ${scanTimeCost2}ms")
         val scanTimeCost3 = measureTimeMillis {
             wovenIntoCode()
         }
-        println("scanFile cost time scanTimeCost3 ${scanTimeCost3}ms")
+        println("Step 3 cost ${scanTimeCost3}ms")
     }
 
     private fun loadJoinPointConfig(){
