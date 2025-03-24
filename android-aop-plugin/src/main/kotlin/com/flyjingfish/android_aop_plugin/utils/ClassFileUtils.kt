@@ -49,7 +49,6 @@ object ClassFileUtils {
     }
 
     private fun hasInvokeCache(path:String,classData:String):Boolean{
-        println("hasInvokeCache=path=$path==${File(path).exists()},exit=${invokeCache[path] == classData}")
         return File(path).exists() && invokeCache[path] == classData
     }
 
@@ -128,7 +127,9 @@ object ClassFileUtils {
                     }else{
                         outputDir.absolutePath + File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class"
                     }
-
+                    synchronized(cacheFiles){
+                        cacheFiles.add(path)
+                    }
                     val outFile = File(path)
                     needDeleteFiles.remove(path)
                     if (outputCacheDir != null && outFile.exists()){
@@ -167,9 +168,7 @@ object ClassFileUtils {
                             throw RuntimeException(e)
                         }
 
-                        synchronized(cacheFiles){
-                            cacheFiles.add(path)
-                        }
+
                         if (!hasInvokeCache(path,invokeBody)){
                             val classByteData = ctClass.toBytecode()
 
