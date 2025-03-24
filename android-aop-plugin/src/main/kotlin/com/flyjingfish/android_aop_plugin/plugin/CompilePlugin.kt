@@ -342,16 +342,16 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
             }else{
                 logger.warn(hint)
             }
-            val localInput = mutableListOf<File>()
+            val localInput = mutableSetOf<String>()
             val javaPath = File(javaCompile.destinationDirectory.asFile.orNull.toString())
             if (javaPath.exists()){
-                localInput.add(javaPath)
+                localInput.add(javaPath.absolutePath)
             }
 
             if (kotlinPath.exists()){
-                localInput.add(kotlinPath)
+                localInput.add(kotlinPath.absolutePath)
             }
-            val jarInput = mutableListOf<File>()
+            val jarInput = mutableSetOf<String>()
             val bootJarPath = mutableSetOf<String>()
             if (isAndroidModule){
                 val androidConfig = AndroidConfig(project)
@@ -361,14 +361,14 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                 }
             }
             for (file in localInput) {
-                bootJarPath.add(file.absolutePath)
+                bootJarPath.add(file)
             }
             for (file in javaCompile.classpath) {
                 if (file.absolutePath !in bootJarPath && file.exists()){
                     if (file.isDirectory){
-                        localInput.add(file)
+                        localInput.add(file.absolutePath)
                     }else{
-                        jarInput.add(file)
+                        jarInput.add(file.absolutePath)
                     }
                 }
             }
@@ -381,7 +381,9 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                 ClassFileUtils.reflectInvokeMethod = reflectInvokeMethod
                 ClassFileUtils.reflectInvokeMethodStatic = isReflectInvokeMethodStatic()
                 val output = File(javaCompile.destinationDirectory.asFile.orNull.toString())
-                val task = CompileAndroidAopTask(jarInput,localInput,output,project,isApp,
+                val jarInputFiles: List<File> = jarInput.map(::File)
+                val localInputFiles: List<File> = localInput.map(::File)
+                val task = CompileAndroidAopTask(jarInputFiles,localInputFiles,output,project,isApp,
                     File(Utils.aopCompileTempDir(project,variantName)),
                     File(Utils.invokeJsonFile(project,variantName)),
                     variantName,isAndroidModule
