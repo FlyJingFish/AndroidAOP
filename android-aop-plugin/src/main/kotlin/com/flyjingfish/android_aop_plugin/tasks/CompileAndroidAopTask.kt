@@ -11,6 +11,7 @@ import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import com.flyjingfish.android_aop_plugin.utils.AopTaskUtils
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
+import com.flyjingfish.android_aop_plugin.utils.FileHashUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils._CLASS
@@ -20,7 +21,6 @@ import com.flyjingfish.android_aop_plugin.utils.computeMD5
 import com.flyjingfish.android_aop_plugin.utils.getFileClassname
 import com.flyjingfish.android_aop_plugin.utils.getRelativePath
 import com.flyjingfish.android_aop_plugin.utils.inRules
-import com.flyjingfish.android_aop_plugin.utils.printLog
 import com.flyjingfish.android_aop_plugin.utils.saveEntry
 import com.flyjingfish.android_aop_plugin.utils.saveFile
 import kotlinx.coroutines.Deferred
@@ -76,20 +76,21 @@ class CompileAndroidAopTask(
         val scanTimeCost1 = measureTimeMillis {
             loadJoinPointConfig()
         }
-//        println("scanFile cost time scanTimeCost1 ${scanTimeCost1}ms")
+        println("scanFile cost time scanTimeCost1 ${scanTimeCost1}ms")
         val scanTimeCost2 = measureTimeMillis {
             searchJoinPointLocation()
         }
-//        println("scanFile cost time scanTimeCost2 ${scanTimeCost2}ms")
+        println("scanFile cost time scanTimeCost2 ${scanTimeCost2}ms")
         val scanTimeCost3 = measureTimeMillis {
             wovenIntoCode()
         }
-//        println("scanFile cost time scanTimeCost3 ${scanTimeCost3}ms")
+        println("scanFile cost time scanTimeCost3 ${scanTimeCost3}ms")
     }
 
     private fun loadJoinPointConfig(){
-        if (isAndroidModule)
-        WovenInfoUtils.addBaseClassInfo(project)
+        if (isAndroidModule){
+            WovenInfoUtils.addBaseClassInfo(project)
+        }
 
         //第一遍找配置文件
         allDirectories.forEach { directory ->
@@ -395,6 +396,8 @@ class CompileAndroidAopTask(
         }
         if (isApp){
             exportCutInfo()
+            FileHashUtils.clearScanRecord()
+            WovenInfoUtils.clear()
         }
     }
     private fun exportCutInfo(){

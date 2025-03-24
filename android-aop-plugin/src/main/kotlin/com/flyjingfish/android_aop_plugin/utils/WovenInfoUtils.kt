@@ -241,7 +241,7 @@ object WovenInfoUtils {
     fun addClassPath(classPath: String) {
         classPaths.add(classPath)
     }
-    private fun clear() {
+    fun clear() {
         invokeMethodMap.clear()
         replaceMethodMap.clear()
         replaceMethodInfoMapUse.clear()
@@ -369,7 +369,6 @@ object WovenInfoUtils {
         val list: List<File> = androidConfig.getBootClasspath()
 //        printLog("Scan to classPath [${list}]")
 //        printLog("Scan to classPath [${classPaths}]")
-        clear()
 
         val classPaths: HashSet<String> = HashSet()
         for (file in list) {
@@ -542,7 +541,6 @@ object WovenInfoUtils {
     }
     fun aopCollectChanged(isClear:Boolean) {
         if (isClear){
-            aopCollectClassMap.clear()
             return
         }
         val iterator = aopCollectClassMap.iterator()

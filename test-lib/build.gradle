@@ -21,10 +21,10 @@ android {
 }
 
 dependencies {
-    implementation libs.core.ktx
-    implementation libs.appcompat
-    implementation libs.material
-    implementation project(path: ':test-java-lib')
+    api libs.core.ktx
+    api libs.appcompat
+    api libs.material
+    api project(path: ':test-java-lib')
     if (TestType == "0"){
         //本地
 //        api project(path: ':android-aop-annotation')
@@ -43,6 +43,11 @@ dependencies {
     }
 //    api libs.rxpermissions
 //    api libs.rxjava
+
+    api "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0"
+    api libs.gson
+    api 'xml-apis:xml-apis:1.4.01'
+    api 'xml-apis:xml-apis-ext:1.3.04'
 
 
 

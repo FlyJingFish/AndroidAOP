@@ -41,6 +41,9 @@ class AopTaskUtils(
     fun processFileForConfig(file: File, directory: File, directoryPath: String) {
         if (file.isFile) {
             val className = file.getFileClassname(directory)
+            if (!FileHashUtils.isScanFile(1,className)){
+                return
+            }
             WovenInfoUtils.addClassName(className)
             if (file.name.endsWith(Utils.AOP_CONFIG_END_NAME)) {
                 FileInputStream(file).use { inputs ->
@@ -49,7 +52,7 @@ class AopTaskUtils(
                         SearchAOPConfigVisitor(), ClassReader.EXPAND_FRAMES
                     )
                 }
-            } else if (file.absolutePath.endsWith(Utils._CLASS)) {
+            } else if (file.absolutePath.endsWith(_CLASS)) {
                 if (AndroidAopConfig.verifyLeafExtends && !className.startsWith("kotlinx/") && !className.startsWith(
                         "kotlin/"
                     )
@@ -84,8 +87,11 @@ class AopTaskUtils(
                 if (jarEntry.isDirectory || jarEntry.name.isEmpty()) {
                     continue
                 }
-                if (entryName.endsWith(Utils._CLASS)) {
+                if (entryName.endsWith(_CLASS)) {
                     WovenInfoUtils.addClassName(entryName)
+                }
+                if (!FileHashUtils.isScanFile(1,entryName)){
+                    continue
                 }
 //                    logger.error("entryName="+entryName)
                 if (entryName.endsWith(Utils.AOP_CONFIG_END_NAME)) {
@@ -95,7 +101,7 @@ class AopTaskUtils(
                             SearchAOPConfigVisitor(), ClassReader.EXPAND_FRAMES
                         )
                     }
-                } else if (entryName.endsWith(Utils._CLASS)) {
+                } else if (entryName.endsWith(_CLASS)) {
                     if (AndroidAopConfig.verifyLeafExtends && !entryName.startsWith("kotlinx/") && !entryName.startsWith(
                             "kotlin/"
                         )
@@ -149,7 +155,7 @@ class AopTaskUtils(
                         val jarEntry = enumeration.nextElement()
                         try {
                             val entryName = jarEntry.name
-                            if (entryName.endsWith(Utils._CLASS)) {
+                            if (entryName.endsWith(_CLASS)) {
                                 val className = entryName.replace(".class", "")
                                 WovenInfoUtils.addExtendsReplace(slashToDot(className))
                             }
@@ -173,10 +179,13 @@ class AopTaskUtils(
         deleteClassMethodRecords: MutableSet<String>
     ) {
         if (file.isFile) {
-            val isClassFile = file.name.endsWith(Utils._CLASS)
+            val isClassFile = file.name.endsWith(_CLASS)
             val entryName = file.getFileClassname(directory)
-            val thisClassName = Utils.slashToDotClassName(entryName).replace(Utils._CLASS, "")
+            val thisClassName = Utils.slashToDotClassName(entryName).replace(_CLASS, "")
             val className = file.getFileClassname(directory).replace(".class", "")
+            if (!FileHashUtils.isScanFile(2,entryName)){
+                return
+            }
             if (isClassFile && AndroidAopConfig.inRules(thisClassName)) {
                 FileInputStream(file).use { inputs ->
                     val bytes = inputs.readAllBytes()
@@ -241,7 +250,7 @@ class AopTaskUtils(
                 }
             }
 
-            if (file.absolutePath.endsWith(Utils._CLASS)) {
+            if (file.absolutePath.endsWith(_CLASS)) {
                 WovenInfoUtils.addExtendsReplace(slashToDot(className))
 
                 val isAopCutClass =
@@ -328,7 +337,7 @@ class AopTaskUtils(
                                         val cutInfo = CutInfo(
                                             "匹配切面",
                                             slashToDot(
-                                                entryName.replace(Utils._CLASS, "")
+                                                entryName.replace(_CLASS, "")
                                             ),
                                             aopMatchCut.cutClassName,
                                             CutMethodJson(name, descriptor, false)
@@ -376,9 +385,12 @@ class AopTaskUtils(
                 if (jarEntry.isDirectory || entryName.isEmpty() || entryName.startsWith("META-INF/") || "module-info.class" == entryName) {
                     continue
                 }
-                val isClassFile = entryName.endsWith(Utils._CLASS)
+                if (!FileHashUtils.isScanFile(2,entryName)){
+                    continue
+                }
+                val isClassFile = entryName.endsWith(_CLASS)
 //                    printLog("tranEntryName="+tranEntryName)
-                val thisClassName = Utils.slashToDotClassName(entryName).replace(Utils._CLASS, "")
+                val thisClassName = Utils.slashToDotClassName(entryName).replace(_CLASS, "")
                 val className = entryName.replace(".class", "")
                 if (isClassFile && AndroidAopConfig.inRules(thisClassName)) {
 
@@ -442,7 +454,7 @@ class AopTaskUtils(
                         }
                     }
                 }
-                if (entryName.endsWith(Utils._CLASS)) {
+                if (entryName.endsWith(_CLASS)) {
 
                     WovenInfoUtils.addExtendsReplace(slashToDot(className))
 

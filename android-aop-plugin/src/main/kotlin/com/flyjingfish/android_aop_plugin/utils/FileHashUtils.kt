@@ -2,6 +2,7 @@ package com.flyjingfish.android_aop_plugin.utils
 
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import java.security.MessageDigest
+import java.util.concurrent.ConcurrentHashMap
 
 
 object FileHashUtils {
@@ -63,5 +64,21 @@ object FileHashUtils {
             hexString.append(hex)
         }
         return hexString.toString()
+    }
+
+    private var classScanRecord1: MutableSet<String> = ConcurrentHashMap.newKeySet()
+    private var classScanRecord2: MutableSet<String> = ConcurrentHashMap.newKeySet()
+
+    fun isScanFile(step: Int,className: String): Boolean {
+        return if (step == 2){
+            ClassFileUtils.debugMode && classScanRecord2.add(className)
+        }else{
+            ClassFileUtils.debugMode && classScanRecord1.add(className)
+        }
+    }
+
+    fun clearScanRecord() {
+        classScanRecord1.clear()
+        classScanRecord2.clear()
     }
 }
