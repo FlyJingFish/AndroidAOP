@@ -30,6 +30,7 @@ object ClassFileUtils {
     var reflectInvokeMethod = false
     var reflectInvokeMethodStatic = false
     var debugMode = false
+    // 这个文件夹下的文件在 debugMode = true 时不可随意删除
     lateinit var outputDir:File
     var outputCacheDir:File ?= null
     private val invokeClasses = ConcurrentHashMap<String,MutableList<InvokeClass>>()
