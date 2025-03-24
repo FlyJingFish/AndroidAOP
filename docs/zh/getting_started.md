@@ -394,7 +394,7 @@ androidAop.debugMode.variantOnlyDebug = true //默认不写这项就是true
 在 **根目录** 的 `gradle.properties` 添加如下设置（非必须项）
 
 ```properties
-androidAop.debugMode.buildConfig = true //设置为 true 表示导出一个 DebugModeBuildConfig.java 文件，不写默认为 true
+androidAop.debugMode.buildConfig = true //设置为 true 表示导出一个 DebugModeBuildConfig.java 文件，不写默认为 false
 ```
 
 !!! note
