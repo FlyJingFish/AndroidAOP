@@ -61,6 +61,7 @@ class CompileAndroidAopTask(
         WovenInfoUtils.isCompile = true
         ClassFileUtils.outputDir = output
         ClassFileUtils.outputCacheDir = File(Utils.aopCompileTempInvokeDir(project, variantName))
+        ClassFileUtils.outputDebugModeCacheDir = File(Utils.aopCompileTempInvokeCacheDir(project, variantName))
         ClassFileUtils.clear()
         SuspendReturnScanner.hasSuspendReturn = false
         println("AndroidAOP woven info code start")
@@ -72,9 +73,18 @@ class CompileAndroidAopTask(
     }
 
     private fun scanFile() {
-        loadJoinPointConfig()
-        searchJoinPointLocation()
-        wovenIntoCode()
+        val scanTimeCost1 = measureTimeMillis {
+            loadJoinPointConfig()
+        }
+        println("scanFile cost time scanTimeCost1 ${scanTimeCost1}ms")
+        val scanTimeCost2 = measureTimeMillis {
+            searchJoinPointLocation()
+        }
+        println("scanFile cost time scanTimeCost2 ${scanTimeCost2}ms")
+        val scanTimeCost3 = measureTimeMillis {
+            wovenIntoCode()
+        }
+        println("scanFile cost time scanTimeCost3 ${scanTimeCost3}ms")
     }
 
     private fun loadJoinPointConfig(){
@@ -323,6 +333,7 @@ class CompileAndroidAopTask(
                 }
             }
         }
+        var startTime = System.currentTimeMillis()
         val wovenCodeJobs = mutableListOf<Deferred<Unit>>()
         allDirectories.forEach { directory ->
             val directoryPath = directory.absolutePath
@@ -334,6 +345,8 @@ class CompileAndroidAopTask(
             }
         }
         wovenCodeJobs.awaitAll()
+        println("costtime 1 = ${System.currentTimeMillis()-startTime}")
+        startTime = System.currentTimeMillis()
         if (isApp){
             val cacheDeleteFiles = mutableListOf<String>()
             val tmpOtherDir = File(Utils.aopCompileTempOtherDir(project,variantName))
@@ -365,6 +378,8 @@ class CompileAndroidAopTask(
                 tmpOtherDir.deleteRecursively()
             }
         }
+        println("costtime 2 = ${System.currentTimeMillis()-startTime}")
+        startTime = System.currentTimeMillis()
         val tempFileJobs = mutableListOf<Deferred<Unit>>()
         for (tempFile in tempFiles) {
             val job = async(Dispatchers.IO) {
@@ -376,6 +391,8 @@ class CompileAndroidAopTask(
 //            tempFile.tmp.copyTo(tempFile.target,true)
         }
         tempFileJobs.awaitAll()
+        println("costtime 3 = ${System.currentTimeMillis()-startTime}")
+        startTime = System.currentTimeMillis()
         if (!AndroidAopConfig.debug){
             tmpCompileDir.deleteRecursively()
         }
@@ -383,6 +400,8 @@ class CompileAndroidAopTask(
             val cacheFiles = ClassFileUtils.wovenInfoInvokeClass(newClasses)
             InitConfig.exportCacheCutFile(tmpJsonFile,cacheFiles)
         }
+        println("costtime 4 = ${System.currentTimeMillis()-startTime}")
+        startTime = System.currentTimeMillis()
         if (isApp){
             exportCutInfo()
         }

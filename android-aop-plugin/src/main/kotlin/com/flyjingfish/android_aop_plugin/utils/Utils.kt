@@ -274,6 +274,9 @@ object Utils {
     fun aopCompileTempInvokeDir(project:Project, variantName:String):String{
         return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileInvokeClass/".adapterOSPath()
     }
+    fun aopCompileTempInvokeCacheDir(project:Project, variantName:String):String{
+        return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileInvokeCacheClass/".adapterOSPath()
+    }
     fun aopCompileTempOtherJson(project:Project, variantName:String):String{
         return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileOtherClassJson/needDelClassInfo.json".adapterOSPath()
     }

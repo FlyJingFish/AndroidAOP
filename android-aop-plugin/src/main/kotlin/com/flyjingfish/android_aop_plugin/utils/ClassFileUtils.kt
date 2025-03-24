@@ -33,6 +33,7 @@ object ClassFileUtils {
     // 这个文件夹下的文件在 debugMode = true 时不可随意删除
     lateinit var outputDir:File
     var outputCacheDir:File ?= null
+    lateinit var outputDebugModeCacheDir:File
     private val invokeClasses = ConcurrentHashMap<String,MutableList<InvokeClass>>()
     private val invokeCache = ConcurrentHashMap<String,String?>()
     private const val INVOKE_METHOD = "invoke"
@@ -48,6 +49,7 @@ object ClassFileUtils {
     }
 
     private fun hasInvokeCache(path:String,classData:String):Boolean{
+        println("hasInvokeCache=path=$path==${File(path).exists()},exit=${invokeCache[path] == classData}")
         return File(path).exists() && invokeCache[path] == classData
     }
 
@@ -121,10 +123,25 @@ object ClassFileUtils {
                 for (invokeClass in value) {
                     val className = invokeClass.packageName
                     val invokeBody = invokeClass.invokeBody
-                    val path = outputDir.absolutePath + File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class"
+                    val path = if (debugMode && ::outputDebugModeCacheDir.isInitialized){
+                        outputDebugModeCacheDir.absolutePath + File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class"
+                    }else{
+                        outputDir.absolutePath + File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class"
+                    }
+
                     val outFile = File(path)
                     needDeleteFiles.remove(path)
                     if (outputCacheDir != null && outFile.exists()){
+                        if (debugMode){
+                            val job = async(Dispatchers.IO) {
+                                val realFile = File(outputDir.absolutePath + File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class")
+                                if (!realFile.exists()){
+                                    realFile.checkExist()
+                                    outFile.copyTo(realFile,true)
+                                }
+                            }
+                            invokeJobs.add(job)
+                        }
                         continue
                     }
                     val job = async(Dispatchers.IO) {
@@ -149,14 +166,35 @@ object ClassFileUtils {
                             printLog("invokeBody=$invokeBody")
                             throw RuntimeException(e)
                         }
-                        val classByteData = ctClass.toBytecode()
+
                         synchronized(cacheFiles){
                             cacheFiles.add(path)
                         }
                         if (!hasInvokeCache(path,invokeBody)){
-                            outFile.checkExist()
-                            classByteData.saveFile(outFile)
-                            saveInvokeCache(path,invokeBody)
+                            val classByteData = ctClass.toBytecode()
+
+                            if (debugMode){
+                                val realFile = File(outputDir.absolutePath + File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class")
+                                if (!realFile.exists()){
+                                    realFile.checkExist()
+                                    classByteData.saveFile(realFile)
+                                }
+                                withContext(Dispatchers.IO){
+                                    outFile.checkExist()
+                                    classByteData.saveFile(outFile)
+                                    saveInvokeCache(path,invokeBody)
+                                }
+                            }else{
+                                outFile.checkExist()
+                                classByteData.saveFile(outFile)
+                                saveInvokeCache(path,invokeBody)
+                            }
+                        }else if (debugMode){
+                            val realFile = File(outputDir.absolutePath + File.separatorChar +Utils.dotToSlash(className).adapterOSPath()+".class")
+                            if (!realFile.exists()){
+                                realFile.checkExist()
+                                outFile.copyTo(realFile,true)
+                            }
                         }
                     }
                     invokeJobs.add(job)
