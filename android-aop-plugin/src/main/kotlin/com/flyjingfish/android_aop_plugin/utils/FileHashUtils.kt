@@ -70,10 +70,13 @@ object FileHashUtils {
     private var classScanRecord2: MutableSet<String> = ConcurrentHashMap.newKeySet()
 
     fun isScanFile(step: Int,className: String): Boolean {
+        if (!ClassFileUtils.debugMode){
+            return true
+        }
         return if (step == 2){
-            ClassFileUtils.debugMode && classScanRecord2.add(className)
+            classScanRecord2.add(className)
         }else{
-            ClassFileUtils.debugMode && classScanRecord1.add(className)
+            classScanRecord1.add(className)
         }
     }
 
