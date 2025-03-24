@@ -308,7 +308,7 @@
 
 ### 五、开发中可设置代码织入方式（此步为可选配置项，只为在开发过程中提高打包速度）
 
-#### 📌 方式一（fastDex 模式）
+#### :pushpin: 方式一（fastDex 模式）
 
 在 **根目录** 的 `gradle.properties` 添加如下设置
 
@@ -323,7 +323,7 @@ androidAop.fastDex.variantOnlyDebug = false //只在 debug 起作用（默认fal
     3、如果你项目中存在其他使用 `toTransform` 的插件，请调整任务执行顺序将 `xxAssembleAndroidAopTask` 任务放在最后，否则将失去意义
 
 
-#### 📌 方式二（debugMode 模式）
+#### :pushpin: 方式二（debugMode 模式）
 
 
 <p style="color:red;">如果你配置这一步的 DebugMode ，请务必仔细看好下边每一行的说明，不要无脑复制，尤其是想切三方 jar 包的</p>
@@ -401,7 +401,7 @@ androidAop.debugMode.buildConfig = true //设置为 true 表示导出一个 Debu
     1、因为有些 module 的代码只有 kotlin 代码，导致 debugMode 无法生效，设置为true可插入一个 java 代码即可生效，如果不需要，可以设置为 false，但需要你手动创建一个 java 代码 <br>
     2、如果 debugMode 无法生效，可考虑关闭此项配置，添加设置 `android.defaults.buildfeatures.buildconfig=true`
 
-#### 📌 其他配置（选填，追求极致可以配置这项）
+#### :pushpin: 其他配置（选填，追求极致可以配置这项）
 
 在 **根目录** 的 `gradle.properties` 添加如下设置
 

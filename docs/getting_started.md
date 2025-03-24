@@ -311,7 +311,7 @@ Add in `build.gradle` of **app**
 
 ### 5. The code weaving method can be set during development (this step is an optional configuration item)
 
-#### 📌 Method 1 (fastDex mode)
+#### :pushpin: Method 1 (fastDex mode)
 
 Add the following settings to `gradle.properties` in the **root directory** (optional)
 
@@ -325,7 +325,7 @@ androidAop.fastDex.variantOnlyDebug = false //Only works in debug (default false
     2、When `androidAop.fastDex.variantOnlyDebug` is set to true, the release package will ignore `androidAop.fastDex = true` Settings<br>
     3、If there are other plugins using `toTransform` in your project, please adjust the task execution order and put the `xxAssembleAndroidAopTask` task at the end, otherwise it will lose its meaning.
 
-#### 📌 Method 2 (debugMode)
+#### :pushpin: Method 2 (debugMode)
 
 <p style="color:red;">If you configure DebugMode in this step, please read the instructions in each line below carefully and do not copy them blindly, especially if you want to cut third-party jar packages.</p>
 
@@ -404,7 +404,7 @@ androidAop.debugMode.buildConfig = true //If set to true, it means exporting a D
     1、Because some modules have only Kotlin code, debugMode cannot take effect. You can insert a Java code to make it effective by setting it to true. If you don't need it, you can set it to false, but you need to manually create a Java code.<br>
     2、If debugMode does not work, consider turning this off by adding the setting `android.defaults.buildfeatures.buildconfig=true`
 
-#### 📌 Other configurations (optional, you can configure this if you want to be the best)
+#### :pushpin: Other configurations (optional, you can configure this if you want to be the best)
 
 Add the following settings to `gradle.properties` in the **root directory** 
 
