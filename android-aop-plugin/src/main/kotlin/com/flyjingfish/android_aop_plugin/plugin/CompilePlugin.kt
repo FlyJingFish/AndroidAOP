@@ -21,6 +21,7 @@ import com.flyjingfish.android_aop_plugin.utils.getRelativePath
 import org.codehaus.groovy.runtime.DefaultGroovyMethods
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.configurationcache.extensions.capitalized
@@ -94,6 +95,9 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
 
             // java项目
             project.tasks.withType(JavaCompile::class.java).configureEach { compileTask ->
+                if (isDebugMode() && compileTask is AbstractCompile){
+                    forceJavaRecompileOnKotlinChange(project, compileTask, "")
+                }
                 compileTask.doLast{
                     val androidObject1: Any? = project.extensions.findByName(ANDROID_EXTENSION_NAME)
                     if (androidObject1 != null) {
@@ -103,15 +107,13 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                         return@doLast
                     }
                     val javaCompile: AbstractCompile = compileTask
-                    val compileKotlinTask = project.tasks.named("compileKotlin", KotlinCompile::class.java)
-                    if (compileKotlinTask.get() !is KotlinCompile){
-                        return@doLast
-                    }
-                    val compileKotlin = compileKotlinTask.get()
-
-
 
                     val cacheDir = try {
+                        val compileKotlinTask = project.tasks.named("compileKotlin", KotlinCompile::class.java)
+                        if (compileKotlinTask.get() !is KotlinCompile){
+                            return@doLast
+                        }
+                        val compileKotlin = compileKotlinTask.get()
                         compileKotlin.destinationDirectory.get().asFile
                     } catch (e: Throwable) {
                         null
@@ -178,6 +180,9 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                         WovenIntoCode.deleteOtherCompileClass(project, variantName)
                     }
                 }
+            }
+            if (isDebugMode(buildTypeName,variantName)){
+                forceJavaRecompileOnKotlinChange(project, javaCompile, variantName)
             }
             javaCompile.doLast{
 
@@ -272,6 +277,16 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                     project.tasks.findByName("pre${variantNameCapitalized}Build")?.finalizedBy("$DEBUG_MODE_FILE_TASK_NAME$variantNameCapitalized")
                 }
             }
+        }
+    }
+
+    private fun forceJavaRecompileOnKotlinChange(project: Project, javaCompile: AbstractCompile, variantName :String){
+        try {
+            javaCompile.dependsOn("compile${variantName.capitalized()}Kotlin")
+            javaCompile.inputs.files(project.tasks.named("compile${variantName.capitalized()}Kotlin").map { it.outputs.files })
+                .withPropertyName("kotlinClasses")
+                .withPathSensitivity(PathSensitivity.RELATIVE)
+        } catch (_: Exception) {
         }
     }
 
