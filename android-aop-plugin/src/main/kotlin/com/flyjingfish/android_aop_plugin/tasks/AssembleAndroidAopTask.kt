@@ -22,6 +22,7 @@ import com.flyjingfish.android_aop_plugin.utils.getRelativePath
 import com.flyjingfish.android_aop_plugin.utils.inExcludePackingRules
 import com.flyjingfish.android_aop_plugin.utils.inRules
 import com.flyjingfish.android_aop_plugin.utils.isJarSignatureRelatedFiles
+import com.flyjingfish.android_aop_plugin.utils.printLog
 import com.flyjingfish.android_aop_plugin.utils.toClassPath
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -150,15 +151,15 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         val scanTimeCost1 = measureTimeMillis {
             loadJoinPointConfig()
         }
-//        println("scanFile cost time scanTimeCost1 ${scanTimeCost1}ms")
+        printLog("Step 1 cost ${scanTimeCost1}ms")
         val scanTimeCost2 = measureTimeMillis {
             searchJoinPointLocation()
         }
-//        println("scanFile cost time scanTimeCost2 ${scanTimeCost2}ms")
+        printLog("Step 2 cost ${scanTimeCost2}ms")
         val scanTimeCost3 = measureTimeMillis {
             wovenIntoCode()
         }
-//        println("scanFile cost time scanTimeCost3 ${scanTimeCost3}ms")
+        printLog("Step 3 cost ${scanTimeCost3}ms")
     }
 
     private fun loadJoinPointConfig(){

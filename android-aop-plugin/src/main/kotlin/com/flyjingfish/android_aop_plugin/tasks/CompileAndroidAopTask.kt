@@ -21,6 +21,7 @@ import com.flyjingfish.android_aop_plugin.utils.computeMD5
 import com.flyjingfish.android_aop_plugin.utils.getFileClassname
 import com.flyjingfish.android_aop_plugin.utils.getRelativePath
 import com.flyjingfish.android_aop_plugin.utils.inRules
+import com.flyjingfish.android_aop_plugin.utils.printLog
 import com.flyjingfish.android_aop_plugin.utils.saveEntry
 import com.flyjingfish.android_aop_plugin.utils.saveFile
 import kotlinx.coroutines.Deferred
@@ -76,15 +77,15 @@ class CompileAndroidAopTask(
         val scanTimeCost1 = measureTimeMillis {
             loadJoinPointConfig()
         }
-        println("Step 1 cost ${scanTimeCost1}ms")
+        printLog("Step 1 cost ${scanTimeCost1}ms")
         val scanTimeCost2 = measureTimeMillis {
             searchJoinPointLocation()
         }
-        println("Step 2 cost ${scanTimeCost2}ms")
+        printLog("Step 2 cost ${scanTimeCost2}ms")
         val scanTimeCost3 = measureTimeMillis {
             wovenIntoCode()
         }
-        println("Step 3 cost ${scanTimeCost3}ms")
+        printLog("Step 3 cost ${scanTimeCost3}ms")
     }
 
     private fun loadJoinPointConfig(){
