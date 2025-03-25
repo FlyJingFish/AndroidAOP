@@ -62,10 +62,10 @@ class CompileAndroidAopTask(
         WovenInfoUtils.checkHasOverrideJson(project, variantName)
         logger = project.logger
         WovenInfoUtils.isCompile = true
-        ClassFileUtils.outputDir = output
-        ClassFileUtils.outputCacheDir = File(Utils.aopCompileTempInvokeDir(project, variantName))
-        ClassFileUtils.outputDebugModeCacheDir = File(Utils.aopCompileTempInvokeCacheDir(project, variantName))
-        ClassFileUtils.clear()
+        ClassFileUtils.get(project).outputDir = output
+        ClassFileUtils.get(project).outputCacheDir = File(Utils.aopCompileTempInvokeDir(project, variantName))
+        ClassFileUtils.get(project).outputDebugModeCacheDir = File(Utils.aopCompileTempInvokeCacheDir(project, variantName))
+        ClassFileUtils.get(project).clear()
         println("AndroidAOP woven info code start")
         val scanTimeCost = measureTimeMillis {
             scanFile()
@@ -201,7 +201,7 @@ class CompileAndroidAopTask(
                 if (realMethodsRecord != null){
                     mkOutFile()
                     FileInputStream(file).use { inputs ->
-                        val byteArray = WovenIntoCode.modifyClass(inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,isSuspend)
+                        val byteArray = WovenIntoCode.modifyClass(project,inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,isSuspend)
                         byteArray.saveFile(outFile)
                         synchronized(newClasses){
                             newClasses.add(byteArray)
@@ -401,7 +401,7 @@ class CompileAndroidAopTask(
 //            tmpCompileDir.deleteRecursively()
 //        }
         synchronized(newClasses){
-            val cacheFiles = ClassFileUtils.wovenInfoInvokeClass(newClasses)
+            val cacheFiles = ClassFileUtils.get(project).wovenInfoInvokeClass(newClasses)
             InitConfig.exportCacheCutFile(tmpJsonFile,cacheFiles)
         }
         if (isApp){

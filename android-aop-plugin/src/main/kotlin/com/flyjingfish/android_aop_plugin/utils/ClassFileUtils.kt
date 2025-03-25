@@ -12,6 +12,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import org.gradle.api.Project
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes.ACC_PUBLIC
 import org.objectweb.asm.Opcodes.ALOAD
@@ -26,20 +27,32 @@ import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
 
-object ClassFileUtils {
-    var reflectInvokeMethod = false
-    var reflectInvokeMethodStatic = false
-    var debugMode = false
+class ClassFileUtils {
+    companion object{
+        var reflectInvokeMethod = false
+        var reflectInvokeMethodStatic = false
+        var debugMode = false
+        private const val INVOKE_METHOD = "invoke"
+        private const val INVOKE_DESCRIPTOR = "(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;"
+        private const val INVOKE_CLASS = "com.flyjingfish.android_aop_annotation.utils.InvokeMethod"
+        private const val INVOKE_CLASSES = "com.flyjingfish.android_aop_annotation.utils.InvokeMethods"
+        private val instanceMap = ConcurrentHashMap<String,ClassFileUtils>()
+
+        fun get(project: Project):ClassFileUtils{
+            val key = project.layout.buildDirectory.asFile.get().absolutePath
+            return instanceMap.computeIfAbsent(key) { ClassFileUtils() }
+        }
+
+    }
+
+
     // 这个文件夹下的文件在 debugMode = true 时不可随意删除
     lateinit var outputDir:File
     var outputCacheDir:File ?= null
     lateinit var outputDebugModeCacheDir:File
     private val invokeClasses = ConcurrentHashMap<String,MutableList<InvokeClass>>()
     private val invokeCache = ConcurrentHashMap<String,String?>()
-    private const val INVOKE_METHOD = "invoke"
-    private const val INVOKE_DESCRIPTOR = "(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;"
-    private const val INVOKE_CLASS = "com.flyjingfish.android_aop_annotation.utils.InvokeMethod"
-    private const val INVOKE_CLASSES = "com.flyjingfish.android_aop_annotation.utils.InvokeMethods"
+
     fun clear(){
         invokeClasses.clear()
     }

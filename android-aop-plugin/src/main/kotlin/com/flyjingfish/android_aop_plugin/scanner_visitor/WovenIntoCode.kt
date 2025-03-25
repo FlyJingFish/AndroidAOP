@@ -56,6 +56,7 @@ import java.util.regex.Pattern
 object WovenIntoCode {
     @Throws(Exception::class)
     fun modifyClass(
+        project: Project,
         inputStreamBytes: ByteArray?,
         methodRecordHashMap: HashMap<String, MethodRecord>,
         hasReplace:Boolean,
@@ -493,8 +494,8 @@ object WovenIntoCode {
                 }
 
 
-                ClassFileUtils.createInvokeClass(invokeStaticClass,invokeClassName,invokeBody, oldMethodName + oldDescriptor)
-                ClassFileUtils.outputCacheDir?.let {
+                ClassFileUtils.get(project).createInvokeClass(invokeStaticClass,invokeClassName,invokeBody, oldMethodName + oldDescriptor)
+                ClassFileUtils.get(project).outputCacheDir?.let {
                     cp.appendClassPath(it.absolutePath)
                 }
                 cp.importPackage(realInvokeClassNameReal)
@@ -536,7 +537,7 @@ object WovenIntoCode {
                 printLog("newMethodBody=$newMethodBody")
                 if (e is NotFoundException || e is CannotCompileException){
                     WovenInfoUtils.deleteAopMethodCutInnerClassInfoInvokeMethod(Utils.dotToSlash(targetClassName),targetMethodName,oldDescriptor)
-                    ClassFileUtils.deleteInvokeClass(invokeClassName)
+                    ClassFileUtils.get(project).deleteInvokeClass(invokeClassName)
                     e.printStackTrace()
                 }else{
                     throw e
