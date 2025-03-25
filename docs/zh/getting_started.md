@@ -30,7 +30,7 @@
         
         plugins {
             //👇必须项 (1)👈 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五的方式二
-            id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.4.6" apply true
+            id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.4.7" apply true
         }
         ```
         
@@ -41,7 +41,7 @@
         buildscript {
           dependencies {
               //👇必须项 (1)👈
-              classpath "io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.4.6"
+              classpath "io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.4.7"
           }
         }
         // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五的方式二
@@ -57,7 +57,7 @@
         ```kotlin
         plugins {
             //👇必须项 (1)👈 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五的方式二
-            id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.4.6" apply true
+            id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.4.7" apply true
         }
         ```
         
@@ -68,7 +68,7 @@
         buildscript {
           dependencies {
               //👇必须项 (1)👈
-              classpath("io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.4.6")
+              classpath("io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.4.7")
           }
         }
         // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五的方式二
@@ -137,7 +137,7 @@
     //必须项 👇
     plugins {
         ...
-        id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.4.6"//最好放在最后一行
+        id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.4.7"//最好放在最后一行
     }
     ```
 
@@ -147,7 +147,7 @@
     //必须项 👇
     plugins {
         ...
-        id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.4.6"//最好放在最后一行
+        id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.4.7"//最好放在最后一行
     }
     ```
 
@@ -185,18 +185,18 @@
     
     dependencies {
         //👇必须项 
-        implementation "io.github.FlyJingFish.AndroidAop:android-aop-core:2.4.6"
+        implementation "io.github.FlyJingFish.AndroidAop:android-aop-core:2.4.7"
         //👇非必须项 (1)👈 这个包提供了一些常见的注解切面
-        implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.4.6" 
+        implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.4.7" 
         
         //👇必须项 如果您项目内已经有了这项不用加也可以
         implementation "androidx.appcompat:appcompat:1.3.0" // 至少在1.3.0及以上
         
         //👇非必须项 (2)👈点击+查看详细说明，⚠️支持Java和Kotlin代码写的切面
-        ksp "io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.4.6"
+        ksp "io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.4.7"
         
         //👇非必须项 (3)👈点击+查看详细说明，⚠️只适用于Java代码写的切面
-        annotationProcessor "io.github.FlyJingFish.AndroidAop:android-aop-processor:2.4.6"
+        annotationProcessor "io.github.FlyJingFish.AndroidAop:android-aop-processor:2.4.7"
         //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
     }
     
@@ -215,18 +215,18 @@
     
     dependencies {
         //👇必须项 
-        implementation("io.github.FlyJingFish.AndroidAop:android-aop-core:2.4.6")
+        implementation("io.github.FlyJingFish.AndroidAop:android-aop-core:2.4.7")
         //👇非必须项 (1)👈 这个包提供了一些常见的注解切面
-        implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.4.6")
+        implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.4.7")
         
         //👇必须项 如果您项目内已经有了这项不用加也可以
         implementation("androidx.appcompat:appcompat:1.3.0") // 至少在1.3.0及以上
         
         //👇非必须项 (2)👈点击+查看详细说明，⚠️支持Java和Kotlin代码写的切面
-        ksp("io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.4.6")
+        ksp("io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.4.7")
         
         //👇非必须项 (3)👈点击+查看详细说明，⚠️只适用于Java代码写的切面
-        annotationProcessor("io.github.FlyJingFish.AndroidAop:android-aop-processor:2.4.6")
+        annotationProcessor("io.github.FlyJingFish.AndroidAop:android-aop-processor:2.4.7")
         //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
     }
     ```
@@ -375,7 +375,7 @@ androidAop.debugMode=true //设置为 true 走您项目当前的打包方式 ，
 ```
 !!! warning
     **1、:warning::warning::warning:请注意设置为 true 时编译速度会变快但部分功能将失效，只会为设置的 module 织入 aop 代码，三方jar包 不会织入代码，因此打正式包时请注意关闭此项配置并clean项目**<br>
-    2、如果设置了 `org.gradle.parallel = true`，请注意调整各个 module **compileXXJavaWithJavac** 任务的顺序，不会的可以选择直接关闭这项配置
+    2、如果设置了 `org.gradle.parallel = true`，如有bug请注意调整各个 module **compileXXJavaWithJavac** 任务的顺序，不会的可以选择直接关闭这项配置
 
 <img src="../../svg/three.svg#only-light" align = "center" />
 <img src="../../svg/three_dark.svg#only-dark" align = "center" />

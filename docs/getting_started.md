@@ -28,7 +28,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
         
         plugins {
           //👇Required item (1)👈 apply is set to true to automatically apply debugMode to all modules, if false, follow step 5 below.
-          id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.4.6" apply true
+          id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.4.7" apply true
         }
         ```
 
@@ -40,7 +40,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
         buildscript {
              dependencies {
                  //👇equired items (1)👈
-                 classpath "io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.4.6"
+                 classpath "io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.4.7"
              }
         }
         //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below.
@@ -56,7 +56,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
         
         plugins {
           //👇Required item (1)👈 apply is set to true to automatically apply debugMode to all modules, if false, follow step 5 below.
-          id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.4.6" apply true
+          id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.4.7" apply true
         }
         ```
 
@@ -68,7 +68,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
         buildscript {
              dependencies {
                  //👇Required items (1)👈
-                 classpath("io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.4.6")
+                 classpath("io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.4.7")
              }
         }
         //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below.
@@ -136,7 +136,7 @@ Add in `build.gradle` of **app**
     //Required items 👇
     plugins {
        ...
-       id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.4.6"
+       id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.4.7"
     }
     ```
 
@@ -146,7 +146,7 @@ Add in `build.gradle` of **app**
     //Required items 👇
     plugins {
        ...
-       id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.4.6"
+       id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.4.7"
     }
     ```
 
@@ -189,17 +189,17 @@ Add in `build.gradle` of **app**
     
     dependencies {
          //👇Required items 
-         implementation "io.github.FlyJingFish.AndroidAop:android-aop-core:2.4.6"
+         implementation "io.github.FlyJingFish.AndroidAop:android-aop-core:2.4.7"
          //👇Optional (1)👈 This package provides some common annotation aspects
-         implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.4.6"
+         implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.4.7"
         
          //👇Required item  If you already have this item in your project, you don’t need to add it.
          implementation "androidx.appcompat:appcompat:1.3.0" // At least in 1.3.0 and above
          
          //👇Optional (2)👈Click + to view detailed description, ⚠️supports aspects written in Java and Kotlin code
-         ksp "io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.4.6"
+         ksp "io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.4.7"
          //👇Optional (3)👈Click + to view detailed description, ⚠️only applies to aspects written in Java code
-         annotationProcessor "io.github.FlyJingFish.AndroidAop:android-aop-processor:2.4.6"
+         annotationProcessor "io.github.FlyJingFish.AndroidAop:android-aop-processor:2.4.7"
          //⚠️Choose one of the above android-aop-ksp and android-aop-processor
     }
     ```
@@ -218,17 +218,17 @@ Add in `build.gradle` of **app**
     
     dependencies {
          //👇Required items 
-         implementation("io.github.FlyJingFish.AndroidAop:android-aop-core:2.4.6")
+         implementation("io.github.FlyJingFish.AndroidAop:android-aop-core:2.4.7")
          //👇Optional (1)👈 This package provides some common annotation aspects
-         implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.4.6")
+         implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.4.7")
         
          //👇Required item  If you already have this item in your project, you don’t need to add it.
          implementation("androidx.appcompat:appcompat:1.3.0") // At least in 1.3.0 and above
          
          //👇Optional (2)👈Click + to view detailed description, ⚠️supports aspects written in Java and Kotlin code
-         ksp("io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.4.6")
+         ksp("io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.4.7")
          //👇Optional (3)👈Click + to view detailed description, ⚠️only applies to aspects written in Java code
-         annotationProcessor("io.github.FlyJingFish.AndroidAop:android-aop-processor:2.4.6")
+         annotationProcessor("io.github.FlyJingFish.AndroidAop:android-aop-processor:2.4.7")
          //⚠️Choose one of the above android-aop-ksp and android-aop-processor
     }
     ```
@@ -376,7 +376,7 @@ androidAop.debugMode=true //Set to true to use the current packaging method of y
 
 !!! warning
     1、:warning::warning::warning: Please note that when set to true, the compilation speed will be faster but some functions will be invalid. Only the aop code will be woven into the set module. The third-party jar package will not weave in the code, so please be careful to turn it off when building the official package. Configure this and clean the project <br>
-    2、If `org.gradle.parallel = true` is set, please pay attention to adjusting the order of each module **compileXXJavaWithJavac** task. If you don't know how to do it, you can choose to turn off this configuration directly.
+    2、If `org.gradle.parallel = true` is set, please pay attention to adjust the order of each module **compileXXJavaWithJavac** task if there is a bug. If not, you can choose to turn off this configuration directly.
 
 <img src="/AndroidAOP/svg/three.svg#only-light" align = "center" />
 <img src="/AndroidAOP/svg/three_dark.svg#only-dark" align = "center" />
