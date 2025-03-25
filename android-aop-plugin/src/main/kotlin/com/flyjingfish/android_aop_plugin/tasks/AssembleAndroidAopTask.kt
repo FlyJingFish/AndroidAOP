@@ -202,18 +202,16 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         if (!ClassFileUtils.reflectInvokeMethod){
             WovenInfoUtils.addClassPath(ClassFileUtils.outputDir.absolutePath)
         }
-        fun processFile(file : File,directory:File,directoryPath:String){
-            aopTaskUtils.processFileForConfig(file, directory, directoryPath)
-        }
         val searchJobs = mutableListOf<Deferred<Unit>>()
+        fun processFile(file : File,directory:File,directoryPath:String){
+            aopTaskUtils.processFileForConfig(file, directory, directoryPath,this@runBlocking,searchJobs)
+        }
+
         for (directory in ignoreJarClassPaths) {
             val directoryPath = directory.absolutePath
             WovenInfoUtils.addClassPath(directoryPath)
             directory.walk().forEach { file ->
-                val job = async(Dispatchers.IO) {
-                    processFile(file, directory, directoryPath)
-                }
-                searchJobs.add(job)
+                processFile(file, directory, directoryPath)
             }
 
         }
@@ -224,10 +222,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             val directoryPath = directory.absolutePath
             WovenInfoUtils.addClassPath(directory.absolutePath)
             directory.walk().forEach { file ->
-                val job = async(Dispatchers.IO) {
-                    processFile(file, directory, directoryPath)
-                }
-                searchJobs.add(job)
+                processFile(file, directory, directoryPath)
             }
         }
         val jarFiles = mutableListOf<JarFile>()
@@ -238,7 +233,9 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             val jarFile = aopTaskUtils.processJarForConfig(file,this@runBlocking,searchJobs)
             jarFiles.add(jarFile)
         }
-        searchJobs.awaitAll()
+        if (searchJobs.isNotEmpty()){
+            searchJobs.awaitAll()
+        }
         for (jarFile in jarFiles) {
             withContext(Dispatchers.IO) {
                 jarFile.close()
@@ -252,29 +249,22 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
 
         val addClassMethodRecords = ConcurrentHashMap<String,ClassMethodRecord>()
         val deleteClassMethodRecords = ConcurrentHashMap.newKeySet<String>()
-
-        fun processFile(file : File,directory:File,directoryPath:String){
-            aopTaskUtils.processFileForSearch(file, directory, directoryPath,addClassMethodRecords, deleteClassMethodRecords)
-        }
         val searchJobs1 = mutableListOf<Deferred<Unit>>()
+        fun processFile(file : File,directory:File,directoryPath:String){
+            aopTaskUtils.processFileForSearch(file, directory, directoryPath,addClassMethodRecords, deleteClassMethodRecords,this@runBlocking,searchJobs1)
+        }
+
         for (directory in ignoreJarClassPaths) {
             val directoryPath = directory.absolutePath
             directory.walk().forEach { file ->
-                val job = async(Dispatchers.IO) {
-                    processFile(file, directory, directoryPath)
-                }
-                searchJobs1.add(job)
-
+                processFile(file, directory, directoryPath)
             }
 
         }
         allDirectoryFiles.forEach { directory ->
             val directoryPath = directory.absolutePath
             directory.walk().forEach { file ->
-                val job = async(Dispatchers.IO) {
-                    processFile(file, directory, directoryPath)
-                }
-                searchJobs1.add(job)
+                processFile(file, directory, directoryPath)
             }
         }
         val jarFiles = mutableListOf<JarFile>()

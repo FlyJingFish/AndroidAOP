@@ -101,10 +101,7 @@ class CompileAndroidAopTask(
             val directoryPath = directory.absolutePath
             WovenInfoUtils.addClassPath(directoryPath)
             directory.walk().forEach { file ->
-                val job = async(Dispatchers.IO) {
-                    aopTaskUtils.processFileForConfig(file, directory, directoryPath)
-                }
-                searchJobs.add(job)
+                aopTaskUtils.processFileForConfig(file, directory, directoryPath,this@runBlocking,searchJobs)
             }
 
         }
@@ -113,7 +110,9 @@ class CompileAndroidAopTask(
             val jarFile = aopTaskUtils.processJarForConfig(file,this@runBlocking,searchJobs)
             jarFiles.add(jarFile)
         }
-        searchJobs.awaitAll()
+        if (searchJobs.isNotEmpty()){
+            searchJobs.awaitAll()
+        }
         for (jarFile in jarFiles) {
             withContext(Dispatchers.IO) {
                 jarFile.close()
@@ -131,10 +130,7 @@ class CompileAndroidAopTask(
         allDirectories.forEach { directory ->
             val directoryPath = directory.absolutePath
             directory.walk().forEach { file ->
-                val job = async(Dispatchers.IO) {
-                    aopTaskUtils.processFileForSearch(file, directory, directoryPath,addClassMethodRecords, deleteClassMethodRecords)
-                }
-                searchJobs1.add(job)
+                aopTaskUtils.processFileForSearch(file, directory, directoryPath,addClassMethodRecords, deleteClassMethodRecords,this@runBlocking,searchJobs1)
 
             }
         }
