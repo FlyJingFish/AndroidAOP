@@ -22,6 +22,10 @@ import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import com.flyjingfish.android_aop_plugin.utils.Utils._CLASS
 import com.flyjingfish.android_aop_plugin.utils.Utils.slashToDot
 import javassist.Modifier
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import org.gradle.api.Project
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
@@ -76,59 +80,61 @@ class AopTaskUtils(
         }
     }
 
-    fun processJarForConfig(file: File) {
+    fun processJarForConfig(file: File, scope: CoroutineScope, searchJobs: MutableList<Deferred<Unit>>):JarFile {
         WovenInfoUtils.addClassPath(file.absolutePath)
         val jarFile = JarFile(file)
         val enumeration = jarFile.entries()
         while (enumeration.hasMoreElements()) {
             val jarEntry = enumeration.nextElement()
-            try {
-                val entryName = jarEntry.name
-                if (jarEntry.isDirectory || jarEntry.name.isEmpty()) {
-                    continue
-                }
-                if (entryName.endsWith(_CLASS)) {
-                    WovenInfoUtils.addClassName(entryName)
-                }
-                if (!FileHashUtils.isScanFile(1,entryName)){
-                    continue
-                }
-//                    logger.error("entryName="+entryName)
-                if (entryName.endsWith(Utils.AOP_CONFIG_END_NAME)) {
-                    jarFile.getInputStream(jarEntry).use { inputs ->
-                        val classReader = ClassReader(inputs.readAllBytes())
-                        classReader.accept(
-                            SearchAOPConfigVisitor(), ClassReader.EXPAND_FRAMES
-                        )
-                    }
-                } else if (entryName.endsWith(_CLASS)) {
-                    if (AndroidAopConfig.verifyLeafExtends && !entryName.startsWith("kotlinx/") && !entryName.startsWith(
-                            "kotlin/"
-                        )
-                    ) {
+            val entryName = jarEntry.name
+            if (jarEntry.isDirectory || jarEntry.name.isEmpty()) {
+                continue
+            }
+            if (entryName.endsWith(_CLASS)) {
+                WovenInfoUtils.addClassName(entryName)
+            }
+            if (!FileHashUtils.isScanFile(1,entryName)){
+                continue
+            }
+            fun processJar(){
+                try {
+                    if (entryName.endsWith(Utils.AOP_CONFIG_END_NAME)) {
                         jarFile.getInputStream(jarEntry).use { inputs ->
-                            val bytes = inputs.readAllBytes()
-                            if (bytes.isNotEmpty()) {
-                                val inAsm = FileHashUtils.isAsmScan(entryName, bytes, 1)
-                                if (inAsm) {
-                                    val classReader = ClassReader(bytes)
-                                    classReader.accept(
-                                        ClassSuperScanner(entryName),
-                                        ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES
-                                    )
+                            val classReader = ClassReader(inputs.readAllBytes())
+                            classReader.accept(
+                                SearchAOPConfigVisitor(), ClassReader.EXPAND_FRAMES
+                            )
+                        }
+                    } else if (entryName.endsWith(_CLASS)) {
+                        if (AndroidAopConfig.verifyLeafExtends && !entryName.startsWith("kotlinx/") && !entryName.startsWith(
+                                "kotlin/"
+                            )
+                        ) {
+                            jarFile.getInputStream(jarEntry).use { inputs ->
+                                val bytes = inputs.readAllBytes()
+                                if (bytes.isNotEmpty()) {
+                                    val inAsm = FileHashUtils.isAsmScan(entryName, bytes, 1)
+                                    if (inAsm) {
+                                        val classReader = ClassReader(bytes)
+                                        classReader.accept(
+                                            ClassSuperScanner(entryName),
+                                            ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-//                    if (!(e is ZipException && e.message?.startsWith("duplicate entry:") == true)) {
-//                        logger.warn("Merge jar error entry:[${jarEntry.name}], error message:$e")
-//                    }
             }
+            val job = scope.async(Dispatchers.IO) {
+                processJar()
+            }
+            searchJobs.add(job)
         }
-        jarFile.close()
+        return jarFile
     }
 
     fun loadJoinPointConfigEnd(isApp: Boolean) {
@@ -374,114 +380,122 @@ class AopTaskUtils(
     fun processJarForSearch(
         file: File,
         addClassMethodRecords: MutableMap<String, ClassMethodRecord>,
-        deleteClassMethodRecords: MutableSet<String>
-    ) {
+        deleteClassMethodRecords: MutableSet<String>,
+        scope: CoroutineScope, searchJobs: MutableList<Deferred<Unit>>):JarFile
+    {
         val jarFile = JarFile(file)
         val enumeration = jarFile.entries()
         while (enumeration.hasMoreElements()) {
             val jarEntry = enumeration.nextElement()
-            try {
-                val entryName = jarEntry.name
-                if (jarEntry.isDirectory || entryName.isEmpty() || entryName.startsWith("META-INF/") || "module-info.class" == entryName) {
-                    continue
-                }
-                if (!FileHashUtils.isScanFile(2,entryName)){
-                    continue
-                }
-                val isClassFile = entryName.endsWith(_CLASS)
+            val entryName = jarEntry.name
+            if (jarEntry.isDirectory || entryName.isEmpty() || entryName.startsWith("META-INF/") || "module-info.class" == entryName) {
+                continue
+            }
+            if (!FileHashUtils.isScanFile(2,entryName)){
+                continue
+            }
+            fun processJar(){
+                try {
+
+                    val isClassFile = entryName.endsWith(_CLASS)
 //                    printLog("tranEntryName="+tranEntryName)
-                val thisClassName = Utils.slashToDotClassName(entryName).replace(_CLASS, "")
-                val className = entryName.replace(".class", "")
-                if (isClassFile && AndroidAopConfig.inRules(thisClassName)) {
+                    val thisClassName = Utils.slashToDotClassName(entryName).replace(_CLASS, "")
+                    val className = entryName.replace(".class", "")
+                    if (isClassFile && AndroidAopConfig.inRules(thisClassName)) {
 
-                    jarFile.getInputStream(jarEntry).use { inputs ->
-                        val bytes = inputs.readAllBytes();
-                        if (bytes.isNotEmpty()) {
-                            val inAsm = FileHashUtils.isAsmScan(entryName, bytes, 2)
-                            if (inAsm) {
-                                WovenInfoUtils.deleteClassMethodRecord(entryName)
-                                WovenInfoUtils.deleteReplaceMethodInfo(entryName)
-                                try {
-                                    val classReader = ClassReader(bytes)
-                                    var matchAopMatchCuts: List<AopMatchCut>? = null
-                                    classReader.accept(SearchAopMethodVisitor(
-                                        object : SearchAopMethodVisitor.OnCallBackMethod {
-                                            override fun onBackMatch(aopMatchCuts: List<AopMatchCut>) {
-                                                matchAopMatchCuts = aopMatchCuts
-                                            }
+                        jarFile.getInputStream(jarEntry).use { inputs ->
+                            val bytes = inputs.readAllBytes();
+                            if (bytes.isNotEmpty()) {
+                                val inAsm = FileHashUtils.isAsmScan(entryName, bytes, 2)
+                                if (inAsm) {
+                                    WovenInfoUtils.deleteClassMethodRecord(entryName)
+                                    WovenInfoUtils.deleteReplaceMethodInfo(entryName)
+                                    try {
+                                        val classReader = ClassReader(bytes)
+                                        var matchAopMatchCuts: List<AopMatchCut>? = null
+                                        classReader.accept(SearchAopMethodVisitor(
+                                            object : SearchAopMethodVisitor.OnCallBackMethod {
+                                                override fun onBackMatch(aopMatchCuts: List<AopMatchCut>) {
+                                                    matchAopMatchCuts = aopMatchCuts
+                                                }
 
-                                            override fun onBackMethodRecord(methodRecord: MethodRecord) {
-                                                val record =
-                                                    ClassMethodRecord(entryName, methodRecord)
+                                                override fun onBackMethodRecord(methodRecord: MethodRecord) {
+                                                    val record =
+                                                        ClassMethodRecord(entryName, methodRecord)
 //                                                    WovenInfoUtils.addClassMethodRecords(record)
-                                                addClassMethodRecords[entryName + methodRecord.getKey()] =
-                                                    record
-                                            }
+                                                    addClassMethodRecords[entryName + methodRecord.getKey()] =
+                                                        record
+                                                }
 
-                                            override fun onDeleteMethodRecord(methodRecord: MethodRecord) {
-                                                deleteClassMethodRecords.add(entryName + methodRecord.getKey())
-                                            }
+                                                override fun onDeleteMethodRecord(methodRecord: MethodRecord) {
+                                                    deleteClassMethodRecords.add(entryName + methodRecord.getKey())
+                                                }
 
-                                            override fun onBackReplaceMethodInfo(
-                                                replaceMethodInfo: ReplaceMethodInfo
-                                            ) {
-                                                WovenInfoUtils.addReplaceMethodInfo(
-                                                    entryName,
-                                                    replaceMethodInfo
-                                                )
-                                            }
+                                                override fun onBackReplaceMethodInfo(
+                                                    replaceMethodInfo: ReplaceMethodInfo
+                                                ) {
+                                                    WovenInfoUtils.addReplaceMethodInfo(
+                                                        entryName,
+                                                        replaceMethodInfo
+                                                    )
+                                                }
 
-                                            override fun onThrowOverrideMethod(className: String) {
-                                                throwOverride(className)
+                                                override fun onThrowOverrideMethod(className: String) {
+                                                    throwOverride(className)
+                                                }
                                             }
+                                        ), ClassReader.EXPAND_FRAMES)
+                                        processOverride(
+                                            slashToDot(className),
+                                            matchAopMatchCuts,
+                                            entryName
+                                        ) {
+                                            val record = ClassMethodRecord(entryName, it)
+                                            addClassMethodRecords[entryName + it.getKey()] = record
                                         }
-                                    ), ClassReader.EXPAND_FRAMES)
-                                    processOverride(
-                                        slashToDot(className),
-                                        matchAopMatchCuts,
-                                        entryName
-                                    ) {
-                                        val record = ClassMethodRecord(entryName, it)
-                                        addClassMethodRecords[entryName + it.getKey()] = record
+                                    } catch (e: Exception) {
+                                        if (e is AndroidAOPOverrideMethodException) {
+                                            throw e
+                                        }
+                                        e.printStackTrace()
                                     }
-                                } catch (e: Exception) {
-                                    if (e is AndroidAOPOverrideMethodException) {
-                                        throw e
-                                    }
-                                    e.printStackTrace()
                                 }
                             }
                         }
                     }
-                }
-                if (entryName.endsWith(_CLASS)) {
+                    if (entryName.endsWith(_CLASS)) {
 
-                    WovenInfoUtils.addExtendsReplace(slashToDot(className))
+                        WovenInfoUtils.addExtendsReplace(slashToDot(className))
 
-                    val isAopCutClass =
-                        WovenInfoUtils.isAopMethodCutClass(className) || WovenInfoUtils.isAopMatchCutClass(
-                            className
-                        )
-                    if (isAopCutClass) {
-                        jarFile.getInputStream(jarEntry).use { inputs ->
-                            val bytes = inputs.readAllBytes()
-                            if (bytes.isNotEmpty()) {
-                                val classReader = ClassReader(bytes)
-                                classReader.accept(
-                                    SuspendReturnScanner(), 0
-                                )
+                        val isAopCutClass =
+                            WovenInfoUtils.isAopMethodCutClass(className) || WovenInfoUtils.isAopMatchCutClass(
+                                className
+                            )
+                        if (isAopCutClass) {
+                            jarFile.getInputStream(jarEntry).use { inputs ->
+                                val bytes = inputs.readAllBytes()
+                                if (bytes.isNotEmpty()) {
+                                    val classReader = ClassReader(bytes)
+                                    classReader.accept(
+                                        SuspendReturnScanner(), 0
+                                    )
+                                }
                             }
                         }
                     }
+                } catch (e: Exception) {
+                    if (e is AndroidAOPOverrideMethodException) {
+                        throw e
+                    }
+                    printLog("Merge jar error entry:[${jarEntry.name}], error message:$e")
                 }
-            } catch (e: Exception) {
-                if (e is AndroidAOPOverrideMethodException) {
-                    throw e
-                }
-                printLog("Merge jar error entry:[${jarEntry.name}], error message:$e")
             }
+            val job = scope.async(Dispatchers.IO) {
+                processJar()
+            }
+            searchJobs.add(job)
         }
-        jarFile.close()
+        return jarFile
     }
 
     private fun throwOverride(className: String) {
@@ -510,32 +524,39 @@ class AopTaskUtils(
     }
 
     fun processJarForSearchSuspend(
-        file: File
-    ) {
+        file: File, scope: CoroutineScope, searchJobs: MutableList<Deferred<Unit>>):JarFile
+    {
         val jarFile = JarFile(file)
         val enumeration = jarFile.entries()
         while (enumeration.hasMoreElements()) {
             val jarEntry = enumeration.nextElement()
-            try {
-                val entryName = jarEntry.name
-                if (jarEntry.isDirectory || entryName.isEmpty() || entryName.startsWith("META-INF/") || "module-info.class" == entryName) {
-                    continue
-                }
-                val realMethodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(entryName)
-
-                if (realMethodsRecord != null){
-                    jarFile.getInputStream(jarEntry).use { inputs ->
-                        WovenIntoCode.searchSuspendClass(inputs.readAllBytes(),realMethodsRecord)
-                    }
-                }
-            } catch (e: Exception) {
-                if (e is AndroidAOPOverrideMethodException) {
-                    throw e
-                }
-                printLog("Merge jar error entry:[${jarEntry.name}], error message:$e")
+            val entryName = jarEntry.name
+            if (jarEntry.isDirectory || entryName.isEmpty() || entryName.startsWith("META-INF/") || "module-info.class" == entryName) {
+                continue
             }
+            fun processJar(){
+                try {
+                    val realMethodsRecord: HashMap<String, MethodRecord>? = WovenInfoUtils.getClassMethodRecord(entryName)
+
+                    if (realMethodsRecord != null){
+                        jarFile.getInputStream(jarEntry).use { inputs ->
+                            WovenIntoCode.searchSuspendClass(inputs.readAllBytes(),realMethodsRecord)
+                        }
+                    }
+
+                } catch (e: Exception) {
+                    if (e is AndroidAOPOverrideMethodException) {
+                        throw e
+                    }
+                    printLog("Merge jar error entry:[${jarEntry.name}], error message:$e")
+                }
+            }
+            val job = scope.async(Dispatchers.IO) {
+                processJar()
+            }
+            searchJobs.add(job)
         }
-        jarFile.close()
+        return jarFile
     }
 
     fun searchJoinPointLocationEnd(

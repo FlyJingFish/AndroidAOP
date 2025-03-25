@@ -162,7 +162,7 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
         printLog("Step 3 cost ${scanTimeCost3}ms")
     }
 
-    private fun loadJoinPointConfig(){
+    private fun loadJoinPointConfig() = runBlocking{
         WovenInfoUtils.clear()
         WovenInfoUtils.addBaseClassInfo(project)
         ignoreJar.clear()
@@ -199,17 +199,21 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             }
         }
 
-        fun processFile(file : File,directory:File,directoryPath:String){
-            aopTaskUtils.processFileForConfig(file, directory, directoryPath)
-        }
         if (!ClassFileUtils.reflectInvokeMethod){
             WovenInfoUtils.addClassPath(ClassFileUtils.outputDir.absolutePath)
         }
+        fun processFile(file : File,directory:File,directoryPath:String){
+            aopTaskUtils.processFileForConfig(file, directory, directoryPath)
+        }
+        val searchJobs = mutableListOf<Deferred<Unit>>()
         for (directory in ignoreJarClassPaths) {
             val directoryPath = directory.absolutePath
             WovenInfoUtils.addClassPath(directoryPath)
             directory.walk().forEach { file ->
-                processFile(file, directory, directoryPath)
+                val job = async(Dispatchers.IO) {
+                    processFile(file, directory, directoryPath)
+                }
+                searchJobs.add(job)
             }
 
         }
@@ -220,15 +224,25 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
             val directoryPath = directory.absolutePath
             WovenInfoUtils.addClassPath(directory.absolutePath)
             directory.walk().forEach { file ->
-                processFile(file,directory,directoryPath)
+                val job = async(Dispatchers.IO) {
+                    processFile(file, directory, directoryPath)
+                }
+                searchJobs.add(job)
             }
         }
-
+        val jarFiles = mutableListOf<JarFile>()
         allJarFiles.forEach { file ->
             if (file.absolutePath in ignoreJar){
                 return@forEach
             }
-            aopTaskUtils.processJarForConfig(file)
+            val jarFile = aopTaskUtils.processJarForConfig(file,this@runBlocking,searchJobs)
+            jarFiles.add(jarFile)
+        }
+        searchJobs.awaitAll()
+        for (jarFile in jarFiles) {
+            withContext(Dispatchers.IO) {
+                jarFile.close()
+            }
         }
         aopTaskUtils.loadJoinPointConfigEnd(true)
     }
@@ -263,15 +277,13 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 searchJobs1.add(job)
             }
         }
+        val jarFiles = mutableListOf<JarFile>()
         allJarFiles.forEach { file ->
             if (file.absolutePath in ignoreJar){
                 return@forEach
             }
-            val job = async(Dispatchers.IO) {
-                aopTaskUtils.processJarForSearch(file, addClassMethodRecords, deleteClassMethodRecords)
-            }
-            searchJobs1.add(job)
 
+            jarFiles.add(aopTaskUtils.processJarForSearch(file, addClassMethodRecords, deleteClassMethodRecords,this@runBlocking,searchJobs1))
         }
         searchJobs1.awaitAll()
         aopTaskUtils.searchJoinPointLocationEnd(addClassMethodRecords, deleteClassMethodRecords)
@@ -300,12 +312,14 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 return@forEach
             }
 
-            val job = async(Dispatchers.IO) {
-                aopTaskUtils.processJarForSearchSuspend(file)
-            }
-            searchJobs2.add(job)
+            jarFiles.add(aopTaskUtils.processJarForSearchSuspend(file,this@runBlocking,searchJobs2))
         }
         searchJobs2.awaitAll()
+        for (jarFile in jarFiles) {
+            withContext(Dispatchers.IO) {
+                jarFile.close()
+            }
+        }
     }
     private val jarEntryCache = ConcurrentHashMap<String,MutableList<EntryCache>>()
     private fun saveEntryCache(jarFileName:String,jarEntryName: String,inputStream: InputStream){
@@ -600,7 +614,6 @@ abstract class AssembleAndroidAopTask : DefaultTask() {
                 }
                 fun processJar(){
                     try {
-                        val entryName = jarEntry.name
                         val entryClazzName = entryName.replace(_CLASS,"")
                         val thisClassName = Utils.slashToDotClassName(entryName).replace(_CLASS,"")
                         val isClassFile = entryName.endsWith(_CLASS)

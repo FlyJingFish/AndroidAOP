@@ -17,45 +17,46 @@ import org.gradle.api.Project
 import org.objectweb.asm.Type
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.jar.JarFile
 
 object WovenInfoUtils {
     var isCompile = false
-    private var aopMethodCuts: HashMap<String, AopMethodCut> = HashMap()
-    private var aopInstances: HashMap<String, String> = HashMap()
-    private var aopMatchCuts: HashMap<String, AopMatchCut> = HashMap()
-    private var lastAopMatchCuts: HashMap<String, AopMatchCut> = HashMap()
-    private var classPaths: CopyOnWriteArraySet<String> = CopyOnWriteArraySet()
-    private var baseClassPaths: CopyOnWriteArraySet<String> = CopyOnWriteArraySet()
-    private var classNameMap: HashMap<String, String> = HashMap()
-    private var baseClassNameMap: HashMap<String, String> = HashMap()
-    private var classSuperListMap = HashMap<String, ClassSuperInfo>()
-    private var classSuperMap = HashMap<String, String>()
-    private val classSuperCacheMap = HashMap<String, String>()
+    private var aopMethodCuts = ConcurrentHashMap<String, AopMethodCut>()
+    private var aopInstances = ConcurrentHashMap<String, String>()
+    private var aopMatchCuts = ConcurrentHashMap<String, AopMatchCut>()
+    private var lastAopMatchCuts = ConcurrentHashMap<String, AopMatchCut>()
+    private var classPaths = CopyOnWriteArraySet<String>()
+    private var baseClassPaths = CopyOnWriteArraySet<String>()
+    private var classNameMap = ConcurrentHashMap<String, String>()
+    private var baseClassNameMap = ConcurrentHashMap<String, String>()
+    private var classSuperListMap = ConcurrentHashMap<String, ClassSuperInfo>()
+    private var classSuperMap = ConcurrentHashMap<String, String>()
+    private val classSuperCacheMap = ConcurrentHashMap<String, String>()
     private val classMethodRecords: ConcurrentHashMap<String, HashMap<String, MethodRecord>> =
         ConcurrentHashMap()//类名为key，value为方法map集合
-    private val invokeMethodCuts = mutableListOf<AopReplaceCut>()
+    private val invokeMethodCuts = CopyOnWriteArrayList<AopReplaceCut>()
     private val realInvokeMethodMap = ConcurrentHashMap<String, String>()
-    private val invokeMethodMap = HashMap<String, String>()
-    private val replaceMethodMap = HashMap<String, String>()
-    private val replaceMethodInfoMap = ConcurrentHashMap<String, HashMap<String, ReplaceMethodInfo>>()
+    private val invokeMethodMap = ConcurrentHashMap<String, String>()
+    private val replaceMethodMap = ConcurrentHashMap<String, String>()
+    private val replaceMethodInfoMap = ConcurrentHashMap<String, ConcurrentHashMap<String, ReplaceMethodInfo>>()
     private val replaceMethodInfoMapUse = ConcurrentHashMap<String, ReplaceMethodInfo>()
-    private val modifyExtendsClassMap = HashMap<String, String>()
-    private val modifyExtendsClassParentMap = HashMap<String, Boolean>()
-    private val allClassName = mutableSetOf<String>()
-    private val aopCollectInfoMap = mutableMapOf<String,AopCollectCut>()
-    private val lastAopCollectInfoMap = mutableMapOf<String,AopCollectCut>()
-    private val aopCollectClassMap = ConcurrentHashMap<String,MutableMap<String,AopCollectClass>>()
-    private val aopMethodCutInnerClassInfo = mutableMapOf<String,ReplaceInnerClassInfo>()
-    private val aopMethodCutInnerClassInfoClassName = mutableSetOf<String>()
-    private val aopMethodCutInnerClassInfoInvokeMethod = mutableSetOf<String>()
-    private val aopMethodCutInnerClassInfoInvokeClassName = mutableSetOf<String>()
-    private val aopMethodCutInnerClassInfoInvokeClassNameCount = mutableMapOf<String,Int>()
-    private val overrideClassnameSet = mutableSetOf<String>()
-    private val lastOverrideClassnameSet = mutableSetOf<String>()
+    private val modifyExtendsClassMap = ConcurrentHashMap<String, String>()
+    private val modifyExtendsClassParentMap = ConcurrentHashMap<String, Boolean>()
+    private val allClassName = ConcurrentHashMap.newKeySet<String>()
+    private val aopCollectInfoMap = ConcurrentHashMap<String,AopCollectCut>()
+    private val lastAopCollectInfoMap = ConcurrentHashMap<String,AopCollectCut>()
+    private val aopCollectClassMap = ConcurrentHashMap<String,ConcurrentHashMap<String,AopCollectClass>>()
+    private val aopMethodCutInnerClassInfo = ConcurrentHashMap<String,ReplaceInnerClassInfo>()
+    private val aopMethodCutInnerClassInfoClassName = ConcurrentHashMap.newKeySet<String>()
+    private val aopMethodCutInnerClassInfoInvokeMethod = ConcurrentHashMap.newKeySet<String>()
+    private val aopMethodCutInnerClassInfoInvokeClassName = ConcurrentHashMap.newKeySet<String>()
+    private val aopMethodCutInnerClassInfoInvokeClassNameCount = ConcurrentHashMap<String,Int>()
+    private val overrideClassnameSet = ConcurrentHashMap.newKeySet<String>()
+    private val lastOverrideClassnameSet = ConcurrentHashMap.newKeySet<String>()
     private val overrideMethodMap = ConcurrentHashMap<String,MutableSet<String>>()
-    private val lastOverrideMethodMap = mutableMapOf<String,MutableSet<String>>()
+    private val lastOverrideMethodMap = ConcurrentHashMap<String,MutableSet<String>>()
     fun getClassPaths():CopyOnWriteArraySet<String>{
         return classPaths
     }
@@ -72,11 +73,11 @@ object WovenInfoUtils {
         return aopCollectClassMap
     }
 
-    fun getAopInstances():HashMap<String, String>{
+    fun getAopInstances():Map<String, String>{
         return aopInstances
     }
 
-    fun getAopMatchCuts(): HashMap<String, AopMatchCut>{
+    fun getAopMatchCuts(): Map<String, AopMatchCut>{
         return aopMatchCuts
     }
     fun addModifyExtendsClassInfo(targetClassName: String, extendsClassName: String,isParent:Boolean) {
@@ -104,10 +105,8 @@ object WovenInfoUtils {
         return modifyExtendsClassMap.isNotEmpty()
     }
     fun addReplaceMethodInfo(filePath: String, replaceMethodInfo: ReplaceMethodInfo) {
-        val infoMap = replaceMethodInfoMap.computeIfAbsent(filePath) { HashMap() }
-        synchronized(infoMap) {
-            infoMap[replaceMethodInfo.getReplaceKey()] = replaceMethodInfo
-        }
+        val infoMap = replaceMethodInfoMap.computeIfAbsent(filePath) { ConcurrentHashMap() }
+        infoMap[replaceMethodInfo.getReplaceKey()] = replaceMethodInfo
     }
     fun deleteReplaceMethodInfo(filePath: String) {
         replaceMethodInfoMap.remove(filePath)
@@ -418,9 +417,13 @@ object WovenInfoUtils {
 
     fun isHasExtendsReplace():Boolean{
         if (invokeMethodCutCache == null){
-            invokeMethodCutCache = invokeMethodCuts.filter {
-                it.matchType != AopMatchCut.MatchType.SELF.name
-            }.toMutableList()
+            synchronized(this){
+                if (invokeMethodCutCache == null){
+                    invokeMethodCutCache = invokeMethodCuts.filter {
+                        it.matchType != AopMatchCut.MatchType.SELF.name
+                    }.toMutableList()
+                }
+            }
         }
         return !invokeMethodCutCache.isNullOrEmpty()
     }
@@ -534,21 +537,16 @@ object WovenInfoUtils {
     }
 
     fun addCollectClass(aopCollectClass: AopCollectClass){
-        val set = aopCollectClassMap.computeIfAbsent(aopCollectClass.invokeClassName) { mutableMapOf() }
-        synchronized(set){
-            set[aopCollectClass.getKey()] = aopCollectClass
-        }
+        val map = aopCollectClassMap.computeIfAbsent(aopCollectClass.invokeClassName) { ConcurrentHashMap() }
+        map[aopCollectClass.getKey()] = aopCollectClass
     }
     fun aopCollectChanged(isClear:Boolean) {
         if (isClear){
             aopCollectClassMap.clear()
             return
         }
-        val iterator = aopCollectClassMap.iterator()
-        while (iterator.hasNext()){
-            val item = iterator.next()
-            val key = item.key
-            val value = item.value
+        val deleteKey = mutableSetOf<String>()
+        aopCollectClassMap.forEach{ (key,value) ->
             var containInvokeClassName = false;
             for (mutableEntry in aopCollectInfoMap) {
                 if (mutableEntry.value.invokeClassName == key){
@@ -557,32 +555,33 @@ object WovenInfoUtils {
                 }
             }
             if (!containInvokeClassName){
-                iterator.remove()
+                deleteKey.add(key)
             }else{
-                value?.let {
-                    val itIterator = it.iterator()
-                    while (itIterator.hasNext()){
-                        val itItem = itIterator.next()
-                        var itContain = false
-                        for (mutableEntry in aopCollectInfoMap) {
-                            if (mutableEntry.value.invokeMethod == itItem.value.invokeMethod
-                                && mutableEntry.value.collectClassName == itItem.value.collectClassName
-                                && mutableEntry.value.isClazz == itItem.value.isClazz
-                                && mutableEntry.value.regex == itItem.value.regex
-                                && mutableEntry.value.collectType == itItem.value.collectType){
-                                itContain = true
-                                break
-                            }
-                        }
-
-                        if (!itContain){
-                            itIterator.remove()
+                val deleteItemKey = mutableSetOf<String>()
+                value.forEach{(itemKey,itItem) ->
+                    var itContain = false
+                    for (mutableEntry in aopCollectInfoMap) {
+                        if (mutableEntry.value.invokeMethod == itItem.invokeMethod
+                            && mutableEntry.value.collectClassName == itItem.collectClassName
+                            && mutableEntry.value.isClazz == itItem.isClazz
+                            && mutableEntry.value.regex == itItem.regex
+                            && mutableEntry.value.collectType == itItem.collectType){
+                            itContain = true
+                            break
                         }
                     }
+
+                    if (!itContain){
+                        deleteItemKey.add(itemKey)
+                    }
                 }
-
+                for (s in deleteItemKey) {
+                    value.remove(s)
+                }
             }
-
+        }
+        for (s in deleteKey) {
+            aopCollectClassMap.remove(s)
         }
     }
     fun initAllClassName(){
@@ -740,13 +739,9 @@ object WovenInfoUtils {
     }
 
     fun recordOverrideClassname(className: String, methodName: String, descriptor: String){
-        synchronized(overrideClassnameSet){
-            overrideClassnameSet.add(className)
-        }
-        val list = overrideMethodMap.computeIfAbsent(className) { mutableSetOf() }
-        synchronized(list){
-            list.add("$className.$methodName($descriptor)")
-        }
+        overrideClassnameSet.add(className)
+        val list = overrideMethodMap.computeIfAbsent(className) { ConcurrentHashMap.newKeySet() }
+        list.add("$className.$methodName($descriptor)")
     }
 
     fun isLastOverrideClassname(className: String):Boolean{

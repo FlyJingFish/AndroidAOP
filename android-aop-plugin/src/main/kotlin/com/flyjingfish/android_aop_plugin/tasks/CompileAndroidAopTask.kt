@@ -29,6 +29,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.objectweb.asm.ClassReader
@@ -39,6 +40,7 @@ import org.objectweb.asm.Opcodes
 import java.io.File
 import java.io.FileInputStream
 import java.util.concurrent.ConcurrentHashMap
+import java.util.jar.JarFile
 import kotlin.system.measureTimeMillis
 
 class CompileAndroidAopTask(
@@ -88,24 +90,34 @@ class CompileAndroidAopTask(
         printLog("Step 3 cost ${scanTimeCost3}ms")
     }
 
-    private fun loadJoinPointConfig(){
+    private fun loadJoinPointConfig() = runBlocking{
         if (isAndroidModule){
             WovenInfoUtils.addBaseClassInfo(project)
         }
-
+        val searchJobs = mutableListOf<Deferred<Unit>>()
         //第一遍找配置文件
         allDirectories.forEach { directory ->
 //            printLog("directory.asFile.absolutePath = ${directory.asFile.absolutePath}")
             val directoryPath = directory.absolutePath
             WovenInfoUtils.addClassPath(directoryPath)
             directory.walk().forEach { file ->
-                aopTaskUtils.processFileForConfig(file, directory, directoryPath)
+                val job = async(Dispatchers.IO) {
+                    aopTaskUtils.processFileForConfig(file, directory, directoryPath)
+                }
+                searchJobs.add(job)
             }
 
         }
-
+        val jarFiles = mutableListOf<JarFile>()
         allJars.forEach { file ->
-           aopTaskUtils.processJarForConfig(file)
+            val jarFile = aopTaskUtils.processJarForConfig(file,this@runBlocking,searchJobs)
+            jarFiles.add(jarFile)
+        }
+        searchJobs.awaitAll()
+        for (jarFile in jarFiles) {
+            withContext(Dispatchers.IO) {
+                jarFile.close()
+            }
         }
         aopTaskUtils.loadJoinPointConfigEnd(isApp)
     }
@@ -126,12 +138,9 @@ class CompileAndroidAopTask(
 
             }
         }
+        val jarFiles = mutableListOf<JarFile>()
         allJars.forEach { file ->
-            val job = async(Dispatchers.IO) {
-                aopTaskUtils.processJarForSearch(file, addClassMethodRecords, deleteClassMethodRecords)
-            }
-            searchJobs1.add(job)
-
+            jarFiles.add(aopTaskUtils.processJarForSearch(file, addClassMethodRecords, deleteClassMethodRecords,this@runBlocking,searchJobs1))
         }
         searchJobs1.awaitAll()
         aopTaskUtils.searchJoinPointLocationEnd(addClassMethodRecords, deleteClassMethodRecords)
@@ -146,6 +155,11 @@ class CompileAndroidAopTask(
             }
         }
         searchJobs2.awaitAll()
+        for (jarFile in jarFiles) {
+            withContext(Dispatchers.IO) {
+                jarFile.close()
+            }
+        }
     }
     private fun wovenIntoCode() = runBlocking{
         val invokeStaticClassName = Utils.extraPackage+".Invoke"+project.name.computeMD5()

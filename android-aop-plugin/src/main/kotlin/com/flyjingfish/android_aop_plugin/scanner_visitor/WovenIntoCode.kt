@@ -729,7 +729,7 @@ object WovenIntoCode {
 
 
         mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, "<clinit>", "()V", null, null)
-        val map: HashMap<String, String> = WovenInfoUtils.getAopInstances()
+        val map = WovenInfoUtils.getAopInstances()
         if (map.isNotEmpty()) {
             map.forEach { (key, value) ->
                 RegisterMapWovenInfoCode.registerCreators(mv,key, value)

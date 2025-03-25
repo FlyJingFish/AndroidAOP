@@ -35,10 +35,10 @@ object InitConfig {
     private lateinit var temporaryDir: File
     private lateinit var buildConfigCacheFile: File
     private lateinit var cutInfoFile: File
-    private val cutInfoMap = mutableMapOf<String, CutJsonMap?>()
+    private val cutInfoMap = ConcurrentHashMap<String, CutJsonMap?>()
     private val replaceMethodInfoMap = ConcurrentHashMap<String, ReplaceMethodInfo>()
-    private val modifyExtendsClassMap = mutableMapOf<String, ModifyExtendsClassJson>()
-    private val collectClassMap = mutableMapOf<String, MutableMap<String, CutCollectMethodJsonCache>>()
+    private val modifyExtendsClassMap = ConcurrentHashMap<String, ModifyExtendsClassJson>()
+    private val collectClassMap = ConcurrentHashMap<String, ConcurrentHashMap<String, CutCollectMethodJsonCache>>()
     var isInit: Boolean = false
     private val gson: Gson = GsonBuilder().create()
     fun <T> optFromJsonString(jsonString: String, clazz: Class<T>): T? {
@@ -266,18 +266,10 @@ object InitConfig {
     }
 
     fun addCollect(aopCollectClass: AopCollectClass){
-        var classMap = collectClassMap[aopCollectClass.invokeClassName]
-        if (classMap == null){
-            classMap = mutableMapOf()
-            collectClassMap[aopCollectClass.invokeClassName] = classMap
-        }
+        val classMap = collectClassMap.computeIfAbsent(aopCollectClass.invokeClassName) { ConcurrentHashMap() }
         val paramKey = if (aopCollectClass.isClazz) "Class<? extends ${aopCollectClass.collectClassName}>" else aopCollectClass.collectClassName
         val methodKey = "${aopCollectClass.invokeMethod}($paramKey)"
-        var methodSet = classMap[methodKey]
-        if (methodSet == null){
-            methodSet = CutCollectMethodJsonCache(aopCollectClass.collectType,aopCollectClass.regex)
-            classMap[methodKey] = methodSet
-        }
+        val methodSet = classMap.computeIfAbsent(methodKey) { CutCollectMethodJsonCache(aopCollectClass.collectType,aopCollectClass.regex) }
         methodSet.classes.add(aopCollectClass.collectExtendsClassName)
 
     }
