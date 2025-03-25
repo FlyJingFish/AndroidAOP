@@ -66,7 +66,6 @@ class CompileAndroidAopTask(
         ClassFileUtils.outputCacheDir = File(Utils.aopCompileTempInvokeDir(project, variantName))
         ClassFileUtils.outputDebugModeCacheDir = File(Utils.aopCompileTempInvokeCacheDir(project, variantName))
         ClassFileUtils.clear()
-        SuspendReturnScanner.hasSuspendReturn = false
         println("AndroidAOP woven info code start")
         val scanTimeCost = measureTimeMillis {
             scanFile()
@@ -409,6 +408,7 @@ class CompileAndroidAopTask(
             exportCutInfo()
             FileHashUtils.clearScanRecord()
             WovenInfoUtils.clear()
+            SuspendReturnScanner.hasSuspendReturn = false
         }
     }
     private fun exportCutInfo(){

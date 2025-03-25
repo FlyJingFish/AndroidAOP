@@ -182,7 +182,7 @@ object WovenInfoUtils {
 
     fun isContainAnno(info: String): Boolean {
         val anno = "@" + Type.getType(info).className
-        return aopMethodCuts.contains(anno)
+        return aopMethodCuts.containsKey(anno)
     }
 
     fun getAnnoInfo(info: String): AopMethodCut? {
@@ -692,10 +692,8 @@ object WovenInfoUtils {
                                                   newMethodName: String,
                                                   descriptor: String){
         if (descriptor.endsWith("Lkotlin/coroutines/Continuation;)Ljava/lang/Object;")) {
-            synchronized(aopMethodCutInnerClassInfoInvokeMethod){
-                val key = "$className&$newMethodName&$descriptor"
-                aopMethodCutInnerClassInfoInvokeMethod.add(key)
-            }
+            val key = "$className&$newMethodName&$descriptor"
+            aopMethodCutInnerClassInfoInvokeMethod.add(key)
 
         }
     }
@@ -704,10 +702,8 @@ object WovenInfoUtils {
                                                   newMethodName: String,
                                                   descriptor: String){
         if (descriptor.endsWith("Lkotlin/coroutines/Continuation;)Ljava/lang/Object;")) {
-            synchronized(aopMethodCutInnerClassInfoInvokeMethod){
-                val key = "$className&$newMethodName&$descriptor"
-                aopMethodCutInnerClassInfoInvokeMethod.remove(key)
-            }
+            val key = "$className&$newMethodName&$descriptor"
+            aopMethodCutInnerClassInfoInvokeMethod.remove(key)
 
         }
     }
