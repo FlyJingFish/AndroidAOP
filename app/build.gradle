@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'com.google.devtools.ksp'
     id 'kotlinx-serialization'
+    id 'easy.register'
     id 'android.aop'
 //    id 'kotlin-android'
 //    id 'kotlin-parcelize'

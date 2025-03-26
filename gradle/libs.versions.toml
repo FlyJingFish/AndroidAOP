@@ -23,6 +23,7 @@ androidx-test-ext-junit = "1.2.1"
 espresso-core = "3.6.1"
 test-rules = "1.5.0"
 flyjingfish_javassist_version = "1.0.1"
+fastTransform_version = "1.0.0"
 [libraries]
 kotlinpoet-ksp = { group = "com.squareup", name = "kotlinpoet-ksp", version.ref = "kotlinpoet_version" }
 kotlinpoet = { group = "com.squareup", name = "kotlinpoet", version.ref = "kotlinpoet_version" }
@@ -49,3 +50,4 @@ androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 androidx-rules = { group = "androidx.test", name = "rules", version.ref = "test-rules" }
 flyjingfish-javassist = { group = "io.github.FlyJingFish.javassist", name = "javassist", version.ref = "flyjingfish_javassist_version" }
+fastTransform = { group = "io.github.FlyJingFish.FastTransform", name = "fast-transform", version.ref = "fastTransform_version" }

@@ -1,0 +1,17 @@
+[
+  {
+    "wovenClass": "com.flyjingfish.test_lib.collect.InitCollect",
+    "wovenMethod": "void testEasyRegister()",
+    "createWovenClass": false,
+    "searchClass": {
+      "regex": "com.flyjingfish.androidaop.*?",
+      "extendsClass": "com.flyjingfish.test_lib.SubApplication",
+      "callType": "callee",
+      "callClass": "com.flyjingfish.test_lib.collect.InitCollect",
+      "callMethod": "void addEasyRegister(String)",
+      "callMethodValue": "searchClass",
+      "useType": "className"
+    }
+
+  }
+]

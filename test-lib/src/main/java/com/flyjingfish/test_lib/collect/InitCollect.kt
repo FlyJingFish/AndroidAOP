@@ -61,4 +61,14 @@ object InitCollect {
             Log.e("InitCollect", "----init----sub=$sub")
         }
     }
+
+    @JvmStatic
+    fun testEasyRegister(){
+
+    }
+
+    @JvmStatic
+    fun addEasyRegister(classname:String){
+
+    }
 }
