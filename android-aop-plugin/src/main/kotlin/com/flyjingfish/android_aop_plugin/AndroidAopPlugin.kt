@@ -13,6 +13,7 @@ class AndroidAopPlugin : Plugin<Project> {
         if (project.rootProject == project){
             deepSetDebugMode(project.rootProject)
         }
+        CleanWithCachePlugin().apply(project)
         CompilePlugin(false).apply(project)
         TransformPlugin.apply(project)
     }

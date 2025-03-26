@@ -13,14 +13,17 @@ class CleanWithCachePlugin : Plugin<Project> {
     }
 
     private fun cleanWithCache(project:Project){
-        project.tasks.register("aaaCleanWithCache") {
-            setTask(project)
+        try {
+            project.tasks.register("aaaCleanKeepAopCache") {
+                setTask(project)
 
-            it.dependsOn(project.allprojects.mapNotNull { pro -> pro.tasks.findByName("clean") })
+                it.dependsOn(project.allprojects.mapNotNull { pro -> pro.tasks.findByName("clean") })
 
-            it.doLast {
-                println("✅ All modules have been cleaned successfully!")
+                it.doLast {
+                    println("✅ All modules have been cleaned successfully!")
+                }
             }
+        } catch (_: Exception) {
         }
     }
 

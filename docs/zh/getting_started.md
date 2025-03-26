@@ -30,7 +30,7 @@
         
         plugins {
             //👇必须项 (1)👈 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五的方式二
-            id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.4.7" apply true
+            id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.4.8" apply true
         }
         ```
         
@@ -41,7 +41,7 @@
         buildscript {
           dependencies {
               //👇必须项 (1)👈
-              classpath "io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.4.7"
+              classpath "io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.4.8"
           }
         }
         // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五的方式二
@@ -57,7 +57,7 @@
         ```kotlin
         plugins {
             //👇必须项 (1)👈 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五的方式二
-            id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.4.7" apply true
+            id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.4.8" apply true
         }
         ```
         
@@ -68,7 +68,7 @@
         buildscript {
           dependencies {
               //👇必须项 (1)👈
-              classpath("io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.4.7")
+              classpath("io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.4.8")
           }
         }
         // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五的方式二
@@ -137,7 +137,7 @@
     //必须项 👇
     plugins {
         ...
-        id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.4.7"//最好放在最后一行
+        id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.4.8"//最好放在最后一行
     }
     ```
 
@@ -147,7 +147,7 @@
     //必须项 👇
     plugins {
         ...
-        id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.4.7"//最好放在最后一行
+        id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.4.8"//最好放在最后一行
     }
     ```
 
@@ -185,18 +185,18 @@
     
     dependencies {
         //👇必须项 
-        implementation "io.github.FlyJingFish.AndroidAop:android-aop-core:2.4.7"
+        implementation "io.github.FlyJingFish.AndroidAop:android-aop-core:2.4.8"
         //👇非必须项 (1)👈 这个包提供了一些常见的注解切面
-        implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.4.7" 
+        implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.4.8" 
         
         //👇必须项 如果您项目内已经有了这项不用加也可以
         implementation "androidx.appcompat:appcompat:1.3.0" // 至少在1.3.0及以上
         
         //👇非必须项 (2)👈点击+查看详细说明，⚠️支持Java和Kotlin代码写的切面
-        ksp "io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.4.7"
+        ksp "io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.4.8"
         
         //👇非必须项 (3)👈点击+查看详细说明，⚠️只适用于Java代码写的切面
-        annotationProcessor "io.github.FlyJingFish.AndroidAop:android-aop-processor:2.4.7"
+        annotationProcessor "io.github.FlyJingFish.AndroidAop:android-aop-processor:2.4.8"
         //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
     }
     
@@ -215,18 +215,18 @@
     
     dependencies {
         //👇必须项 
-        implementation("io.github.FlyJingFish.AndroidAop:android-aop-core:2.4.7")
+        implementation("io.github.FlyJingFish.AndroidAop:android-aop-core:2.4.8")
         //👇非必须项 (1)👈 这个包提供了一些常见的注解切面
-        implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.4.7")
+        implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.4.8")
         
         //👇必须项 如果您项目内已经有了这项不用加也可以
         implementation("androidx.appcompat:appcompat:1.3.0") // 至少在1.3.0及以上
         
         //👇非必须项 (2)👈点击+查看详细说明，⚠️支持Java和Kotlin代码写的切面
-        ksp("io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.4.7")
+        ksp("io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.4.8")
         
         //👇非必须项 (3)👈点击+查看详细说明，⚠️只适用于Java代码写的切面
-        annotationProcessor("io.github.FlyJingFish.AndroidAop:android-aop-processor:2.4.7")
+        annotationProcessor("io.github.FlyJingFish.AndroidAop:android-aop-processor:2.4.8")
         //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
     }
     ```
@@ -417,19 +417,34 @@ androidAop.reflectInvokeMethod.static = true // 设置为 true 模拟了非反�
     3、`androidAop.reflectInvokeMethod.static` 设置为 true 模拟了非反射的情况兼顾了反射的编译速度，不写默认true，如果想使用反射建议设置此项为 true。设置为 false 则为纯反射 <br>
     **4、`androidAop.reflectInvokeMethod.variantOnlyDebug` 只对 Android 的 Library 有效,对 Java 或 Kotlin 的 Library 无效**
 
-#### :pushpin: CleanWithCache
+#### :pushpin: CleanKeepAopCache
 
 当你想要 clean 项目的时候，可以使用这个命令，方便 clean 后使编译时间减少一些
 
 - 在命令行中使用
 
     ```
-    ./gradlew aaaCleanWithCache
+    ./gradlew aaaCleanKeepAopCache
     ```
 
 - 双击命令
 
-    <img src="../../screenshot/cleanWithCache.png" alt="show" width="300px"/>
+    <img src="../../screenshot/cleanKeepAopCache.png" alt="show" width="300px"/>
+
+如果找不到 `aaaCleanKeepAopCache` 命令，你需要在 **根目录** 的 `build.gradle` 添加如下设置
+
+=== "Groovy"
+
+    ```groovy
+    apply plugin: 'android.aop.clean'
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    apply(plugin = "android.aop.clean")
+    ```
+
 
 ### 本库内置了一些功能注解可供你直接使用
 

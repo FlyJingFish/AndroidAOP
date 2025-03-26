@@ -28,7 +28,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
         
         plugins {
           //👇Required item (1)👈 apply is set to true to automatically apply debugMode to all modules, if false, follow step 5 below.
-          id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.4.7" apply true
+          id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.4.8" apply true
         }
         ```
 
@@ -40,7 +40,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
         buildscript {
              dependencies {
                  //👇equired items (1)👈
-                 classpath "io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.4.7"
+                 classpath "io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.4.8"
              }
         }
         //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below.
@@ -56,7 +56,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
         
         plugins {
           //👇Required item (1)👈 apply is set to true to automatically apply debugMode to all modules, if false, follow step 5 below.
-          id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.4.7" apply true
+          id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.4.8" apply true
         }
         ```
 
@@ -68,7 +68,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
         buildscript {
              dependencies {
                  //👇Required items (1)👈
-                 classpath("io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.4.7")
+                 classpath("io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.4.8")
              }
         }
         //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below.
@@ -136,7 +136,7 @@ Add in `build.gradle` of **app**
     //Required items 👇
     plugins {
        ...
-       id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.4.7"
+       id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.4.8"
     }
     ```
 
@@ -146,7 +146,7 @@ Add in `build.gradle` of **app**
     //Required items 👇
     plugins {
        ...
-       id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.4.7"
+       id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.4.8"
     }
     ```
 
@@ -189,17 +189,17 @@ Add in `build.gradle` of **app**
     
     dependencies {
          //👇Required items 
-         implementation "io.github.FlyJingFish.AndroidAop:android-aop-core:2.4.7"
+         implementation "io.github.FlyJingFish.AndroidAop:android-aop-core:2.4.8"
          //👇Optional (1)👈 This package provides some common annotation aspects
-         implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.4.7"
+         implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.4.8"
         
          //👇Required item  If you already have this item in your project, you don’t need to add it.
          implementation "androidx.appcompat:appcompat:1.3.0" // At least in 1.3.0 and above
          
          //👇Optional (2)👈Click + to view detailed description, ⚠️supports aspects written in Java and Kotlin code
-         ksp "io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.4.7"
+         ksp "io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.4.8"
          //👇Optional (3)👈Click + to view detailed description, ⚠️only applies to aspects written in Java code
-         annotationProcessor "io.github.FlyJingFish.AndroidAop:android-aop-processor:2.4.7"
+         annotationProcessor "io.github.FlyJingFish.AndroidAop:android-aop-processor:2.4.8"
          //⚠️Choose one of the above android-aop-ksp and android-aop-processor
     }
     ```
@@ -218,17 +218,17 @@ Add in `build.gradle` of **app**
     
     dependencies {
          //👇Required items 
-         implementation("io.github.FlyJingFish.AndroidAop:android-aop-core:2.4.7")
+         implementation("io.github.FlyJingFish.AndroidAop:android-aop-core:2.4.8")
          //👇Optional (1)👈 This package provides some common annotation aspects
-         implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.4.7")
+         implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.4.8")
         
          //👇Required item  If you already have this item in your project, you don’t need to add it.
          implementation("androidx.appcompat:appcompat:1.3.0") // At least in 1.3.0 and above
          
          //👇Optional (2)👈Click + to view detailed description, ⚠️supports aspects written in Java and Kotlin code
-         ksp("io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.4.7")
+         ksp("io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.4.8")
          //👇Optional (3)👈Click + to view detailed description, ⚠️only applies to aspects written in Java code
-         annotationProcessor("io.github.FlyJingFish.AndroidAop:android-aop-processor:2.4.7")
+         annotationProcessor("io.github.FlyJingFish.AndroidAop:android-aop-processor:2.4.8")
          //⚠️Choose one of the above android-aop-ksp and android-aop-processor
     }
     ```
@@ -420,19 +420,33 @@ androidAop.reflectInvokeMethod.static = true // Set to true to simulate non-refl
     3. `androidAop.reflectInvokeMethod.static` is set to true to simulate the non-reflective situation and take into account the compilation speed of reflection. If it is not written, the default is true. If you want to use reflection, it is recommended to set this to true. Set it to false for pure reflection <br>
     4. **`androidAop.reflectInvokeMethod.variantOnlyDebug` is only valid for Android libraries, not for Java or Kotlin libraries**
 
-#### :pushpin: CleanWithCache
+#### :pushpin: CleanKeepAopCache
 
 When you want to clean the project, you can use this command to reduce the compilation time after cleaning
 
 - Use in the command line
 
     ```
-    ./gradlew aaaCleanWithCache
+    ./gradlew aaaCleanKeepAopCache
     ```
 
 - Double-click the command
 
-    <img src="../screenshot/cleanWithCache.png" alt="show" width="300px"/>
+    <img src="../screenshot/cleanKeepAopCache.png" alt="show" width="300px"/>
+
+If you can't find the `aaaCleanKeepAopCache` command, you need to add the following settings to the `build.gradle` in the **root directory**
+
+=== "Groovy"
+
+    ```groovy
+    apply plugin: 'android.aop.clean'
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    apply(plugin = "android.aop.clean")
+    ```
 
 ### This library has some built-in functional annotations for you to use directly.
 
