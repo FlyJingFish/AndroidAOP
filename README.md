@@ -249,7 +249,7 @@ dependencies {
 
 [点此查看如何配置](https://flyjingfish.github.io/AndroidAOP/zh/getting_started/#app-buildgradle-androidaopconfig)
 
-### 五、开发中可设置代码织入方式（此步为可选配置项，只为在开发过程中提高打包速度）
+### 五、开发中可设置打包方式（此步为可选配置项，建议配置此项加速开发）
 
 [点此查看如何配置](https://flyjingfish.github.io/AndroidAOP/zh/getting_started/#_4)
 
