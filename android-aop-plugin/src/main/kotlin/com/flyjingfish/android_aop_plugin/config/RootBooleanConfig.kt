@@ -9,7 +9,7 @@ enum class RootBooleanConfig(
     INCREMENTAL("androidAop.debugMode.isIncremental", true),
     REFLECT_INVOKE_METHOD("androidAop.reflectInvokeMethod", false),
     REFLECT_INVOKE_METHOD_ONLY_DEBUG("androidAop.reflectInvokeMethod.variantOnlyDebug", false),
-    BUILD_CONFIG("androidAop.debugMode.buildConfig", false),
+    BUILD_CONFIG("androidAop.debugMode.buildConfig", true),
     REFLECT_INVOKE_METHOD_STATIC("androidAop.reflectInvokeMethod.static", true),
     FAST_DEX("androidAop.fastDex", false),
     FAST_DEX_DEBUG("androidAop.fastDex.variantOnlyDebug", false);
