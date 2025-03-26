@@ -417,6 +417,19 @@ androidAop.reflectInvokeMethod.static = true // 设置为 true 模拟了非反�
     3、`androidAop.reflectInvokeMethod.static` 设置为 true 模拟了非反射的情况兼顾了反射的编译速度，不写默认true，如果想使用反射建议设置此项为 true。设置为 false 则为纯反射 <br>
     **4、`androidAop.reflectInvokeMethod.variantOnlyDebug` 只对 Android 的 Library 有效,对 Java 或 Kotlin 的 Library 无效**
 
+#### :pushpin: CleanWithCache
+
+当你想要 clean 项目的时候，可以使用这个命令，方便 clean 后使编译时间减少一些
+
+- 在命令行中使用
+
+    ```
+    ./gradlew aaaCleanWithCache
+    ```
+
+- 双击命令
+
+    <img src="../../screenshot/cleanWithCache.png" alt="show" width="300px"/>
 
 ### 本库内置了一些功能注解可供你直接使用
 

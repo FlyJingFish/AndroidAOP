@@ -420,7 +420,19 @@ androidAop.reflectInvokeMethod.static = true // Set to true to simulate non-refl
     3. `androidAop.reflectInvokeMethod.static` is set to true to simulate the non-reflective situation and take into account the compilation speed of reflection. If it is not written, the default is true. If you want to use reflection, it is recommended to set this to true. Set it to false for pure reflection <br>
     4. **`androidAop.reflectInvokeMethod.variantOnlyDebug` is only valid for Android libraries, not for Java or Kotlin libraries**
 
+#### :pushpin: CleanWithCache
 
+When you want to clean the project, you can use this command to reduce the compilation time after cleaning
+
+- Use in the command line
+
+    ```
+    ./gradlew aaaCleanWithCache
+    ```
+
+- Double-click the command
+
+    <img src="../screenshot/cleanWithCache.png" alt="show" width="300px"/>
 
 ### This library has some built-in functional annotations for you to use directly.
 
