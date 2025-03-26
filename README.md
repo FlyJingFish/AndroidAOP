@@ -251,7 +251,7 @@ dependencies {
 
 ### 五、开发中可设置打包方式（此步为可选配置项，建议配置此项加速开发）
 
-[点此查看如何配置](https://flyjingfish.github.io/AndroidAOP/zh/getting_started/#_4)
+[点此查看如何配置](https://flyjingfish.github.io/AndroidAOP/zh/getting_started/#_5)
 
 
 ### 本库内置了一些功能注解可供你直接使用

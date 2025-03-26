@@ -243,7 +243,7 @@ dependencies {
 
 ### 5. You can set the packaging method during development (this step is an optional configuration item, it is recommended to configure this item to speed up development)
 
-[Click here to see how to configure](https://flyjingfish.github.io/AndroidAOP/getting_started/#5-the-code-weaving-method-can-be-set-during-development-this-step-is-an-optional-configuration-item)
+[Click here to see how to configure](https://flyjingfish.github.io/AndroidAOP/getting_started/#5-you-can-set-the-packaging-method-during-development-this-step-is-an-optional-configuration-item-it-is-recommended-to-configure-this-item-to-speed-up-development)
 
 ### This library has some built-in functional annotations for you to use directly.
 
