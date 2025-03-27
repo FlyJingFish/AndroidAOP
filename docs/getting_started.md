@@ -309,7 +309,7 @@ Add in `build.gradle` of **app**
 !!! warning
     :warning::warning::warning:After setting include and exclude, all aspects are only valid within the rules you set. Please remember your settings! In addition, since Android Studio may have cache after setting here, it is recommended to clean before continuing development
 
-### 5. The code weaving method can be set during development (this step is an optional configuration item)
+### 5. You can set the packaging method during development (this step is an optional configuration item, it is recommended to configure this item to speed up development)
 
 #### :pushpin: Method 1 (fastDex mode)
 
