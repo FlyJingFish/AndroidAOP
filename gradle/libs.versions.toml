@@ -15,7 +15,7 @@ annotation = "1.3.0"
 material = "1.6.0"
 leakcanary_version = "2.7"
 bcprov-jdk15on-version = "1.68"
-rxpermissions = "0.12"
+rxpermissions = "v0.12"
 rxjava = "3.0.4"
 kotlin = "1.8.0"
 junit-junit = "4.13.2"
@@ -23,7 +23,7 @@ androidx-test-ext-junit = "1.2.1"
 espresso-core = "3.6.1"
 test-rules = "1.5.0"
 flyjingfish_javassist_version = "1.0.1"
-fastTransform_version = "1.0.0"
+fastTransform_version = "1.0.1"
 [libraries]
 kotlinpoet-ksp = { group = "com.squareup", name = "kotlinpoet-ksp", version.ref = "kotlinpoet_version" }
 kotlinpoet = { group = "com.squareup", name = "kotlinpoet", version.ref = "kotlinpoet_version" }
@@ -40,7 +40,7 @@ annotation = { group = "androidx.annotation", name = "annotation", version.ref =
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 leakcanary = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanary_version" }
 bcprov-jdk15on = { group = "org.bouncycastle", name = "bcprov-jdk15on", version.ref = "bcprov-jdk15on-version" }
-rxpermissions = { group = "com.github.tbruyelle", name = "rxpermissions", version.ref = "rxpermissions" }
+rxpermissions = { group = "com.github.tbruyelle", name = "RxPermissions", version.ref = "rxpermissions" }
 rxjava = { group = "io.reactivex.rxjava3", name = "rxjava", version.ref = "rxjava" }
 kotlin-stdLib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin" }
