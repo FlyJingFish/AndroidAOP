@@ -3,7 +3,7 @@ buildscript {
     dependencies {
         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:'+TestVersion
         classpath 'org.jetbrains.kotlin:kotlin-serialization:1.5.0'
-        classpath 'io.github.FlyJingFish.EasyRegister:plugin:1.0.4'
+        classpath 'io.github.FlyJingFish.EasyRegister:plugin:1.0.5'
     }
 }
 plugins {
@@ -94,11 +94,26 @@ task aaBumpVersion() {
 
 
         gradleFile.write(text2)
+
+        version = newVersionName
+        rootProject.subprojects { subproject ->
+            subproject.version = newVersionName
+        }
         println("升级版本号完成，versionName = "+newVersionName)
     }
 }
 
-
+subprojects { subproject ->
+    subproject.afterEvaluate {
+        def list = new ArrayList<String>()
+        subproject.tasks.forEach { task ->
+            if ("publishAllPublicationsToNexusRepository" == task.name){
+                list.add("${subproject.path}:publishMavenJavaPublicationToMavenLocal")
+            }
+        }
+        aaBumpVersion.finalizedBy(list.toArray())
+    }
+}
 def updateREADME(readme,oldVersionName,newVersionName) {
     File configFile = new File(readme)
     String exportText = configFile.text
