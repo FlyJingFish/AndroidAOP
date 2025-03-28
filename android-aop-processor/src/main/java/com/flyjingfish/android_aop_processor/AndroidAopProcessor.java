@@ -67,7 +67,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
     private TypeMirror matchClassMethodType;
     private Types types;
     private static final String AOP_METHOD_NAME = "aopConfigMethod";
-    private static final String DOC_TEXT = "当前类是由 AndroidAOP 自动生成，请勿随意修改！！！";
+    private static final String DOC_TEXT = "当前类是由 AndroidAOP 自动生成，请勿随意修改！！！\n<a href=\"https://github.com/FlyJingFish/AndroidAOP\">点此访问AndroidAOP</a>";
     private Elements elementUtils;
     private static final Gson mGson = new Gson();
 

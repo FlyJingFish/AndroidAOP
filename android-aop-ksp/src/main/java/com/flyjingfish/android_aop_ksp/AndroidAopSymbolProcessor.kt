@@ -53,7 +53,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
 ) : SymbolProcessor {
   companion object{
     const val AOP_METHOD_NAME = "aopConfigMethod"
-    const val DOC_TEXT = "当前类是由 AndroidAOP 自动生成，请勿随意修改！！！"
+    const val DOC_TEXT = "当前类是由 AndroidAOP 自动生成，请勿随意修改！！！\n[点此访问AndroidAOP](https://github.com/FlyJingFish/AndroidAOP)"
     val IGNORE_TYPE = mutableSetOf<String>().apply {
       add("kotlin.Int")
       add("kotlin.Float")
