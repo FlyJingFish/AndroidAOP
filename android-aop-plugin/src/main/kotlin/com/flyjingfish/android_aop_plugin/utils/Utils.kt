@@ -293,10 +293,16 @@ object Utils {
         return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempTransformIgnoreJar/".adapterOSPath()
     }
     fun aopDebugModeJavaDir(variantName:String):String{
-        return "/generated/android_aop/${variantName}/".adapterOSPath()
+        return aopDebugModeJavaDirNoAdapter(variantName).adapterOSPath()
     }
     fun aopDebugModeJavaDir4Java():String{
-        return "/generated/sources/android_aop/".adapterOSPath()
+        return aopDebugModeJavaDir4JavaNoAdapter().adapterOSPath()
+    }
+    fun aopDebugModeJavaDirNoAdapter(variantName:String):String{
+        return "/generated/android_aop/${variantName}/"
+    }
+    fun aopDebugModeJavaDir4JavaNoAdapter():String{
+        return "/generated/sources/android_aop/"
     }
     fun configJsonFile(project:Project):String{
         return project.buildDir.absolutePath+"/tmp/android-aop/config/androidAopConfig.json".adapterOSPath()

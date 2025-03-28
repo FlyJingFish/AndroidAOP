@@ -53,11 +53,6 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                     val javaPluginExtension = project.extensions.getByType(JavaPluginExtension::class.java)
                     val path = Utils.aopDebugModeJavaDir4Java()
                     val debugModeDir = File("${project.buildDir.absolutePath}$path")
-                    if (!debugModeDir.exists()){
-                        debugModeDir.mkdirs()
-                    }
-                    // 设置新的 Java 源代码路径
-                    javaPluginExtension.sourceSets.getByName("main").java.srcDirs("build$path")
                     var packageName :String ?=null
                     for (srcDir in javaPluginExtension.sourceSets.getByName("main").java.srcDirs) {
                         if (srcDir.absolutePath != debugModeDir.absolutePath){
@@ -107,7 +102,6 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                         return@doLast
                     }
                     val javaCompile: AbstractCompile = compileTask
-
                     val cacheDir = try {
                         val compileKotlinTask = project.tasks.named("compileKotlin", KotlinCompile::class.java)
                         if (compileKotlinTask.get() !is KotlinCompile){
@@ -208,12 +202,6 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                 val variantName = variant.name
                 val path = Utils.aopDebugModeJavaDir(variantName)
                 val debugModeDir = File("${project.buildDir.absolutePath}$path")
-                variant.sources.java?.let { java ->
-                    if (!debugModeDir.exists()){
-                        debugModeDir.mkdirs()
-                    }
-                    java.addStaticSourceDirectory("build$path")
-                }
                 val variantNameCapitalized = variantName.capitalized()
                 var packageName = if (android.namespace == null || android.namespace == "null"){
                     android.defaultConfig.applicationId.toString()
@@ -287,6 +275,15 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                 .withPropertyName("kotlinClasses")
                 .withPathSensitivity(PathSensitivity.RELATIVE)
         } catch (_: Exception) {
+        }
+
+        if (hasBuildConfig()){
+            val generatedDir = if (variantName.isEmpty()){
+                project.file("build"+Utils.aopDebugModeJavaDir4JavaNoAdapter())
+            }else{
+                project.file("build"+Utils.aopDebugModeJavaDirNoAdapter(variantName))
+            }
+            javaCompile.source(generatedDir)
         }
     }
 
