@@ -26,6 +26,7 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.WildcardTypeName;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -172,7 +173,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
 
             TypeName implementClassName = ClassName.get(packageName, element.getSimpleName().toString());
             ClassName bindClassName = ClassName.bestGuess(BasePointCut.class.getName());
-            ParameterizedTypeName returnType = ParameterizedTypeName.get(bindClassName,implementClassName);
+            ParameterizedTypeName returnType = ParameterizedTypeName.get(bindClassName, WildcardTypeName.subtypeOf(Object.class));
 
             MethodSpec.Builder whatsMyName2 = whatsMyName("newInstance")
                     .addAnnotation(Override.class)

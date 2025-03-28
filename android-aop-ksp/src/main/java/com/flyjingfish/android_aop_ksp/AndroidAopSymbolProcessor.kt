@@ -40,6 +40,7 @@ import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.STAR
 import com.squareup.kotlinpoet.TypeSpec
 import java.lang.annotation.ElementType
 import java.security.MessageDigest
@@ -169,9 +170,8 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         .addAnnotation(AopClass::class)
         .addSuperinterface(superinterface)
 
-      val implementClassName = ClassName(symbol.packageName.asString(), "$symbol")
       val bindClassName = ClassName.bestGuess(BasePointCut::class.qualifiedName!!)
-      val returnType = bindClassName.parameterizedBy(implementClassName)
+      val returnType = bindClassName.parameterizedBy(STAR)
 
       val whatsMyName2 = whatsMyName("newInstance")
         .addModifiers(KModifier.OVERRIDE)

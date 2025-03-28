@@ -24,6 +24,7 @@ import com.flyjingfish.androidaop.test.NextKey
 import com.flyjingfish.androidaop.test.OrderFillTransaction
 import com.flyjingfish.androidaop.test.OrderFillTransactionBean
 import com.flyjingfish.androidaop.test.Round
+import com.flyjingfish.androidaop.test.TestAnno
 import com.flyjingfish.androidaop.test.TestBean
 import com.flyjingfish.androidaop.test.TestReplace
 import com.flyjingfish.androidaop.test2.StaticClass
@@ -188,6 +189,7 @@ class MainActivity: BaseVActivity<ActivityMainBinding>(),PermissionRejectListene
         startActivity(Intent(this,SecondActivity::class.java))
     }
 
+    @TestAnno
     private fun toThirdActivity(){
         startActivity(Intent(this,ThirdActivity::class.java))
     }
