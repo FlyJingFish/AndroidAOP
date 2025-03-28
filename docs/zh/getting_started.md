@@ -386,7 +386,7 @@ androidAop.debugMode=true //设置为 true 走您项目当前的打包方式 ，
 androidAop.debugMode.variantOnlyDebug = true //默认不写这项就是true
 ```
 !!! note
-    1、这项不写默认就是true，请注意设置为 true 时 release 包会忽略 `androidAop.debugMode = true` 的设置自动走全量打包方式，设为 false 时则没有这种效果 <br>
+    1、这项不写默认就是true，请注意设置为 true 时 release 包会忽略 `androidAop.debugMode = true` 的设置自动走全量打包方式（相当于临时关闭了debugMode），设为 false 时则没有这种效果 <br>
     2、此项功能默认开启，因此release包无需手动关闭 `androidAop.debugMode` <br>
     **3、此项只对 Android 的 Library 有效,对 Java 或 Kotlin 的 Library 无效**
 
