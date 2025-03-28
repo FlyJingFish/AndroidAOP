@@ -53,6 +53,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
 ) : SymbolProcessor {
   companion object{
     const val AOP_METHOD_NAME = "aopConfigMethod"
+    const val DOC_TEXT = "当前类是由 AndroidAOP 自动生成，请勿随意修改！！！"
     val IGNORE_TYPE = mutableSetOf<String>().apply {
       add("kotlin.Int")
       add("kotlin.Float")
@@ -170,6 +171,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         .addAnnotation(AopClass::class)
         .addSuperinterface(superinterface)
 
+//      val implementClassName = ClassName(symbol.packageName.asString(), "$symbol")
       val bindClassName = ClassName.bestGuess(BasePointCut::class.qualifiedName!!)
       val returnType = bindClassName.parameterizedBy(STAR)
 
@@ -722,6 +724,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
     fileName: String,
     sourceFile: KSFile?
   ) {
+    typeBuilder.addKdoc(DOC_TEXT)
     val fileKey = "$packageName@$fileName"
     val oldConfig = ktFileMap[fileKey]
     if (oldConfig == null){

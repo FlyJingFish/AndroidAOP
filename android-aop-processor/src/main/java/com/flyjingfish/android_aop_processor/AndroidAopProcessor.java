@@ -67,6 +67,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
     private TypeMirror matchClassMethodType;
     private Types types;
     private static final String AOP_METHOD_NAME = "aopConfigMethod";
+    private static final String DOC_TEXT = "当前类是由 AndroidAOP 自动生成，请勿随意修改！！！";
     private Elements elementUtils;
     private static final Gson mGson = new Gson();
 
@@ -171,7 +172,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
             String packageName = elementClassName.substring(0, elementClassName.lastIndexOf("."));
             String cutClassPackageName = className.substring(0, className.lastIndexOf("."));
 
-            TypeName implementClassName = ClassName.get(packageName, element.getSimpleName().toString());
+//            TypeName implementClassName = ClassName.get(packageName, element.getSimpleName().toString());
             ClassName bindClassName = ClassName.bestGuess(BasePointCut.class.getName());
             ParameterizedTypeName returnType = ParameterizedTypeName.get(bindClassName, WildcardTypeName.subtypeOf(Object.class));
 
@@ -268,6 +269,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
             TypeSpec.Builder typeBuilder,
             String packageName
     ) {
+        typeBuilder.addJavadoc(DOC_TEXT);
         TypeSpec typeSpec = typeBuilder.build();
         String fileKey = packageName +"@" + typeSpec.name;
         JavaFileConfig config = javaFileMap.get(fileKey);
