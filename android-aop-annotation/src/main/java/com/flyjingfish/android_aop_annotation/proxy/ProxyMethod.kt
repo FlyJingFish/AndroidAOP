@@ -21,7 +21,7 @@ annotation class ProxyMethod(
     val proxyClass: KClass<*>,
     /**
      * 代理的方法的实际类型，为适配作准备
-     * 除了设置 [ProxyType.METHOD] ，其他类型不作适配
+     * 除了设置 [ProxyType.METHOD] ，其他类型暂时可以不作适配
      */
     val type: ProxyType
 )

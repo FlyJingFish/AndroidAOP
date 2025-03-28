@@ -4,7 +4,7 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceClass
 
 /**
- * [wiki 文档匹配类型说明](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopMatchClassMethod#%E7%AE%80%E8%BF%B0)
+ * [wiki 文档匹配类型说明](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopMatchClassMethod/#_1)
  */
 enum class MatchType {
     /**

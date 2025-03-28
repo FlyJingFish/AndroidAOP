@@ -3,7 +3,7 @@ package com.flyjingfish.android_aop_annotation.enums
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopCollectMethod
 
 /**
- * [wiki 文档匹配类型说明](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopCollectMethod#%E7%AE%80%E8%BF%B0)
+ * [wiki 文档匹配类型说明](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopCollectMethod/#collecttype-direct_extends)
  */
 enum class CollectType {
     /**
