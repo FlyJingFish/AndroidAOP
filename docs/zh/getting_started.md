@@ -29,7 +29,7 @@
         ```groovy
         
         plugins {
-            //👇必须项 (1)👈 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五的方式二
+            //👇必须项 (1)👈 apply 设置为 true 自动为所有module“预”配置 debugMode，false则按下边步骤五配置 debugMode 的手动模式
             id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.4.9" apply true
         }
         ```
@@ -44,7 +44,7 @@
               classpath "io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.4.9"
           }
         }
-        // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五的方式二
+        // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五配置 debugMode 的手动模式
         apply plugin: "android.aop"
         ```
         
@@ -56,7 +56,7 @@
 
         ```kotlin
         plugins {
-            //👇必须项 (1)👈 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五的方式二
+            //👇必须项 (1)👈 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五配置 debugMode 的手动模式
             id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.4.9" apply true
         }
         ```
@@ -71,7 +71,7 @@
               classpath("io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.4.9")
           }
         }
-        // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五的方式二
+        // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五配置 debugMode 的手动模式
         apply(plugin = "android.aop")
         ```
         

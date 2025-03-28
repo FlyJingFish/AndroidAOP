@@ -27,7 +27,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
         ```groovy
         
         plugins {
-          //👇Required item (1)👈 apply is set to true to automatically apply debugMode to all modules, if false, follow step 5 below.
+          //👇Required item (1)👈 apply is set to true to automatically apply debugMode to all modules, If false, follow step 5 below to configure debugMode in manual mode.
           id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.4.9" apply true
         }
         ```
@@ -43,7 +43,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
                  classpath "io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.4.9"
              }
         }
-        //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below.
+        //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below to configure debugMode in manual mode.
         apply plugin: "android.aop"
         ```
 
@@ -55,7 +55,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
         ```kotlin
         
         plugins {
-          //👇Required item (1)👈 apply is set to true to automatically apply debugMode to all modules, if false, follow step 5 below.
+          //👇Required item (1)👈 apply is set to true to automatically apply debugMode to all modules, If false, follow step 5 below to configure debugMode in manual mode.
           id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.4.9" apply true
         }
         ```
@@ -71,7 +71,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
                  classpath("io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.4.9")
              }
         }
-        //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below.
+        //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below to configure debugMode in manual mode.
         apply(plugin = "android.aop")
         ```
 
