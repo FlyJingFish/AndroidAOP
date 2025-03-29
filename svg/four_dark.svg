@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    width="26px" height="26px" viewBox="0 0 26 26" >
+    <circle cx="13px" cy="13px" r="12px" stroke="black" stroke-width="0" fill="white"/>
+    <text font-size="16px" font-weight="800" x="8px" y="18.5px">
+        <tspan fill="black">4</tspan>
+    </text>
+</svg>
