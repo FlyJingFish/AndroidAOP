@@ -108,6 +108,7 @@ class MethodReplaceInvokeAdapter(private val className:String,private val superN
                 InitConfig.addReplaceMethodInfo(replaceMethodInfo)
                 if (replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW && !replaceMethodInfo.isCallNew()){
                     super.visitMethodInsn(opcode, replaceMethodInfo.newClassName, name, descriptor, isInterface)
+                    onResultListener?.onBack()
                 }else{
                     if (canReplaceMethod){
                         // 注意，最后一个参数是false，会不会太武断呢？
