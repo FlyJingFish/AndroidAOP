@@ -258,9 +258,7 @@ Please upgrade to version 2.1.5 or later, and check the access step 3
 
 ### 14. Different modules of componentized projects use products such as aar for compilation. How to speed up the packaging speed?
 
-- The answer is still to use debugMode. This homepage
-  accesses [step 5](https://flyjingfish.github.io/AndroidAOP/getting_started/#5-the-code-weaving-method-can-be-set-during-development-this-step-is-an-optional-configuration-item)
-  has been explained. For this situation, you should configure it as follows
+- The answer is still to use debugMode, which has been explained in **"Getting Started"** [Step 5 - debugMode Mode](/AndroidAOP/getting_started/#method-2-debugmode). In this case, you should configure it as follows
 
 ```properties
 //👇This item is undoubtedly, it must be turned on! !
