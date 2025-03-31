@@ -26,6 +26,7 @@ class MethodReplaceInvokeAdapter(private val className:String,private val superN
             val replaceMethodInfo = getReplaceInfo(type, "<init>", "")
             if (replaceMethodInfo != null && replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW && replaceMethodInfo.newClassName.isNotEmpty()){
                 super.visitTypeInsn(opcode, replaceMethodInfo.newClassName)
+                onResultListener?.onBack()
                 return
             }
         }
