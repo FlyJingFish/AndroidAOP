@@ -234,7 +234,7 @@ Kotlin 中的 `vararg str : String` 相当于 Java 中的 `String...`，这种�
 
 ### 14、组件化的项目不同 module 采用的方案是 aar 这样的产物进行编译，如何加快打包速度呢？
 
-- 答案依旧还是使用 debugMode ，这个首页接入[步骤五](/AndroidAOP/zh/getting_started/)已经进行了说明，针对这种情况你应按照如下方法进行配置
+- 答案依旧还是使用 debugMode ，这个在 **「入门」** [接入步骤五-debugMode模式](/AndroidAOP/zh/getting_started/#debugmode)已经进行了说明，针对这种情况你应按照如下方法进行配置
 
 
 ```properties
