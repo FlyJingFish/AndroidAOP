@@ -29,3 +29,5 @@ Your stars and support are my biggest motivation to move forward!
 | *青       | 2025-01-21 | Alipay |          /           |   /   |       ¥ 13       |
 | 深度用户     | 2025-01-22 |   QQ   |     感谢群主，请你喝一杯咖啡     |   /   |       ¥ 13       |
 | **尧      | 2025-02-13 | Alipay | 今唯一能用的安卓AOP库，万不可亏待作者 |   /   |     ¥ 100.01     |
+| **天      | 2025-02-17 | Alipay |  感谢作者技术支持，coffee献上   |   /   |      ¥ 9.9       |
+| **天      | 2025-02-17 | Alipay |  感谢作者技术支持，coffee献上   |   /   |      ¥ 6.6       |

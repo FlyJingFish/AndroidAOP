@@ -133,7 +133,7 @@
   ```gradle
   
   plugins {
-      //必须项 👇 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五的方式二
+      //必须项 👇 apply 设置为 true 自动为所有module“预”配置debugMode，false则需手动配置
       id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.4.9" apply true
   }
   ```

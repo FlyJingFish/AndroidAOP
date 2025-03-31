@@ -130,7 +130,7 @@ Depend on the plug-in in <code>build.gradle</code> in the <strong>project root d
   ```gradle
   
   plugins {
-      //Required item 👇 apply is set to true to automatically apply debugMode to all modules, if false, follow step 5 below.
+      //Required item 👇 apply is set to true to automatically apply debugMode to all modules, if false, manual configuration is required.
       id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.4.9" apply true
   }
   ```
