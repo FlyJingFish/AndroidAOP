@@ -7,6 +7,7 @@ import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.DynamicFeaturePlugin
 import com.android.build.gradle.LibraryExtension
+import com.android.build.gradle.LibraryPlugin
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import com.flyjingfish.android_aop_plugin.tasks.CompileAndroidAopTask
@@ -29,9 +30,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 import java.io.File
 
-class CompilePlugin(private val root:Boolean): BasePlugin() {
+class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
     companion object{
-        private const val ANDROID_EXTENSION_NAME = "android"
+        const val ANDROID_EXTENSION_NAME = "android"
         private const val DEBUG_MODE_FILE_TASK_NAME = "debugModeFile"
     }
 
@@ -43,7 +44,23 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
         val isDynamicLibrary = project.plugins.hasPlugin(DynamicFeaturePlugin::class.java)
         val androidObject: Any? = project.extensions.findByName(ANDROID_EXTENSION_NAME)
         if (androidObject == null) {
-            if (project.rootProject == project || root){
+            if (project.rootProject != project && !fromRootSet){
+                project.afterEvaluate {
+                    val isAndroidProject: Boolean = project.extensions.findByName(ANDROID_EXTENSION_NAME) != null
+                    if (isAndroidProject){
+                        if (project.plugins.hasPlugin(LibraryPlugin::class.java)){
+                            throw RuntimeException("In the module of ${project.name}, [id 'android.aop'] must be written below [id 'com.android.library']")
+                        }else if (project.plugins.hasPlugin(DynamicFeaturePlugin::class.java)){
+                            throw RuntimeException("In the module of ${project.name}, [id 'android.aop'] must be written below [id 'com.android.dynamic-feature']")
+                        }
+                    }
+                    val isApp2 = project.plugins.hasPlugin(AppPlugin::class.java)
+                    if (!isApp2 && isAndroidProject){
+                        throw RuntimeException("In the module of ${project.name}, [id 'android.aop'] must be written below [id 'com.android.library']")
+                    }
+                }
+            }
+            if (project.rootProject == project || fromRootSet){
                 return
             }
             val buildTypeName = "release"
@@ -121,12 +138,12 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
 
 
         val hasConfig = project.extensions.findByName("androidAopConfig") != null
-        val syncConfig = !root && hasConfig && isApp
+        val syncConfig = !fromRootSet && hasConfig && isApp
         if (syncConfig){
             val taskName = "${project.name}AndroidAopConfigSyncTask"
             project.tasks.register(taskName, SyncConfigTask::class.java)
             project.afterEvaluate {
-                project.tasks.findByName("preBuild")?.finalizedBy(taskName)
+                project.tasks.findByName(taskName)?.dependsOn("preBuild")
             }
         }
 
@@ -262,7 +279,7 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
                 for (variant in variantList) {
                     val variantName = variant.name
                     val variantNameCapitalized = variantName.capitalized()
-                    project.tasks.findByName("pre${variantNameCapitalized}Build")?.finalizedBy("$DEBUG_MODE_FILE_TASK_NAME$variantNameCapitalized")
+                    project.tasks.findByName("pre${variantNameCapitalized}Build")?.dependsOn("$DEBUG_MODE_FILE_TASK_NAME$variantNameCapitalized")
                 }
             }
         }
@@ -333,7 +350,7 @@ class CompilePlugin(private val root:Boolean): BasePlugin() {
         }
         if (androidAopConfig.enabled && debugMode){
             ClassFileUtils.debugMode = true
-            val hint = "AndroidAOP提示：打正式包时请注意通过设置 androidAop.debugMode 或 androidAop.debugMode.variantOnlyDebug 关闭debug模式"
+            val hint = "AndroidAOP Tip: You are using debugMode mode"
             if (buildTypeName == "release"){
                 logger.error(hint)
             }else{

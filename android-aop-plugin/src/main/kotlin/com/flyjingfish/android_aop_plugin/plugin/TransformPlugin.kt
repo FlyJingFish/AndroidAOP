@@ -13,6 +13,15 @@ object TransformPlugin : BasePlugin() {
         super.apply(project)
         val isApp = project.plugins.hasPlugin(AppPlugin::class.java)
         if (!isApp) {
+            if (project.rootProject != project){
+                project.afterEvaluate {
+                    val isAndroidProject: Boolean = project.extensions.findByName(CompilePlugin.ANDROID_EXTENSION_NAME) != null
+                    val isApp2 = project.plugins.hasPlugin(AppPlugin::class.java)
+                    if (isApp2 && isAndroidProject){
+                        throw RuntimeException("In the module of ${project.name}, [id 'android.aop'] must be written below [id 'com.android.application']")
+                    }
+                }
+            }
             return
         }
 

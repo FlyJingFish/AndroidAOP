@@ -30,6 +30,10 @@ class AndroidAopPlugin : Plugin<Project> {
                 if (notApp && noneHasAop && it.hasProperty("android")){
                     CompilePlugin(true).apply(it)
                 }
+
+                if (!notApp && noneHasAop){
+                    throw RuntimeException("Missing plugin configuration [id 'android.aop'] in module ${it.name}")
+                }
             }
             deepSetDebugMode(value)
         }
