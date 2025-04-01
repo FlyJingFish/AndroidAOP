@@ -1,15 +1,16 @@
+
 <h4 align="right">
-  <strong>简体中文</strong> | <a href="https://github.com/FlyJingFish/AndroidAOP/blob/master/README_EN.md">English</a>
+  <strong>English</strong> | <a href="https://github.com/FlyJingFish/AndroidAOP/blob/master/README.md">简体中文</a>
 </h4>
 
 <div align="center">
-    <a href = "https://flyjingfish.github.io/AndroidAOP/zh/"><img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/docs/assets/webp/anim_css_image_pos.svg" width="200" height="200"/></a>
+    <a href = "https://flyjingfish.github.io/AndroidAOP/"><img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/docs/assets/webp/anim_css_image_pos.svg" width="200" height="200"/></a>
 </div>
 
 <p align="center">
   <strong>
-    🔥🔥🔥帮助 Android App 改造成AOP架构的框架
-    <a href="https://flyjingfish.github.io/AndroidAOP/zh/">AndroidAOP</a>
+    🔥🔥🔥Help you transform into an Android platform framework with AOP architecture
+    <a href="https://flyjingfish.github.io/AndroidAOP/">AndroidAOP</a>
   </strong>
 </p>
 
@@ -38,7 +39,7 @@
     src="https://img.shields.io/badge/%20MinSdk%20-21%2B-f0ad4e.svg"
     alt="Sponsors"
   /></a>
-  <a href="https://flyjingfish.github.io/AndroidAOP/zh/getting_started/#_1"><img
+  <a href="https://flyjingfish.github.io/AndroidAOP/getting_started/#version-restrictions"><img
     src="https://img.shields.io/badge/MinGradle-v7.6+-f0ad4e?logo=gradle"
     alt="Sponsors"
   /></a>
@@ -47,74 +48,72 @@
 
 # README.md
 
-建议直接点击下边的 **Docs** 直接看体验更好的文档
+It is recommended to click **Docs** below to directly view the documentation with better experience
 
 - en [English](https://github.com/FlyJingFish/AndroidAOP/blob/master/README_EN.md)&emsp;[Docs](https://flyjingfish.github.io/AndroidAOP/)
 - zh_CN [简体中文](https://github.com/FlyJingFish/AndroidAOP/blob/master/README.md)&emsp;[Docs](https://flyjingfish.github.io/AndroidAOP/zh/)
 
-# 简述
+# Brief Description
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这是一个帮助 Android App 改造成AOP架构的框架，只需一个注解就可以请求权限、切换线程、禁止多点、一次监测所有点击事件、监测生命周期等等，没有使用 AspectJ，也可以定制出属于你的 Aop 代码
-
-## 特色功能
-
-1、本库内置了开发中常用的一些切面注解供你使用
-
-2、本库支持让你自己做切面，语法简单易上手
-
-3、本库同步支持 Java项目 和 Kotlin项目
-
-4、本库支持切入三方库
-
-5、本库支持切点方法为 Lambda 表达式的情况
-
-6、本库支持切点方法为 suspend 修饰的协程函数
-
-7、本库支持生成所有切点信息Json文件，方便一览所有切点位置[在此配置](#%E5%9B%9B%E5%9C%A8-app-%E7%9A%84buildgradle%E6%B7%BB%E5%8A%A0-androidaopconfig-%E9%85%8D%E7%BD%AE%E9%A1%B9%E6%AD%A4%E6%AD%A5%E4%B8%BA%E5%8F%AF%E9%80%89%E9%85%8D%E7%BD%AE%E9%A1%B9)
-
-**8、本库支持 debug 快速开发模式，让你打包速度几乎不变[在此配置](#%E4%BA%94%E5%BC%80%E5%8F%91%E4%B8%AD%E5%8F%AF%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%A0%81%E7%BB%87%E5%85%A5%E6%96%B9%E5%BC%8F%E6%AD%A4%E6%AD%A5%E4%B8%BA%E5%8F%AF%E9%80%89%E9%85%8D%E7%BD%AE%E9%A1%B9%E5%8F%AA%E4%B8%BA%E5%9C%A8%E5%BC%80%E5%8F%91%E8%BF%87%E7%A8%8B%E4%B8%AD%E6%8F%90%E9%AB%98%E6%89%93%E5%8C%85%E9%80%9F%E5%BA%A6)**
-
-**9、本库支持 组件化开发[在此配置](#%E4%BA%94%E5%BC%80%E5%8F%91%E4%B8%AD%E5%8F%AF%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%A0%81%E7%BB%87%E5%85%A5%E6%96%B9%E5%BC%8F%E6%AD%A4%E6%AD%A5%E4%B8%BA%E5%8F%AF%E9%80%89%E9%85%8D%E7%BD%AE%E9%A1%B9%E5%8F%AA%E4%B8%BA%E5%9C%A8%E5%BC%80%E5%8F%91%E8%BF%87%E7%A8%8B%E4%B8%AD%E6%8F%90%E9%AB%98%E6%89%93%E5%8C%85%E9%80%9F%E5%BA%A6)**
-
-**10、本库是纯静态织入AOP代码**
-
-**11、本库不是基于 AspectJ 实现的，织入代码量极少，侵入性极低**
-
-**12、丰富完善的使用文档助你完全理解本库的使用规则[点此前往wiki文档](https://flyjingfish.github.io/AndroidAOP/zh/)**
-
-**13、更有帮助你生成切面代码的插件助手供你使用[点此前往下载](https://flyjingfish.github.io/AndroidAOP/zh/AOP_Helper/)**
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is a framework that helps Android App transform into AOP architecture. With just one annotation, you can request permissions, switch threads, prohibit multiple clicks, monitor all click events at once, monitor the life cycle, etc. You can also customize your own Aop code without using AspectJ.
 
 
-#### [点此下载apk,也可扫下边二维码下载](https://github.com/FlyJingFish/AndroidAOP/blob/master/apk/product/release/app-product-release.apk?raw=true)
+## Special feature
+
+1 . This library has built-in some aspect annotations commonly used in development for you to use.
+
+2 . This library supports you to make aspects by yourself, and the syntax is simple and easy to use.
+
+3 . This library supports Java and Kotlin code simultaneously
+
+4 . This library supports switching into third-party libraries
+
+5 . This library supports the case where the pointcut method is a Lambda expression.
+
+6 . This library supports coroutine functions whose pointcut methods are suspend.
+
+7 . This library supports generating Json files of all pointcut information to facilitate an overview of all pointcut locations [Configure here](#4-add-the-androidaopconfig-configuration-item-in-apps-buildgradle-this-step-is-an-optional-configuration-item)
+
+**8 . This library supports debug rapid development mode, allowing you to package at almost the same speed**
+
+**9 . This library supports component-based development mode**
+
+**10. This library is pure static weaving into AOP code**
+
+**11. This library is not implemented based on AspectJ. The amount of woven code is very small and the intrusion is extremely low**
+
+**12. Rich and complete usage documentation helps you fully understand the usage rules of this library [click here to go to the wiki document](https://flyjingfish.github.io/AndroidAOP)**
+
+**13. There are also plug-in assistants that help you generate section codes for your use [click here to download](https://flyjingfish.github.io/AndroidAOP/AOP_Helper)**
+
+#### [Click here to download apk, or scan the QR code below to download](https://github.com/FlyJingFish/AndroidAOP/blob/master/apk/product/release/app-product-release.apk?raw=true)
 
 <img src="/docs/screenshot/qrcode.png" alt="show" width="200px" />
 
-### 版本限制
+### Version restrictions
 
-最低Gradle版本：7.6👇（支持8.0以上）
+Minimum Gradle version: 7.6👇
 
 <img src="/docs/screenshot/gradle_version.png" alt="show" />
 
-最低SDK版本：minSdkVersion >= 21
 
-## Star趋势图
+Minimum SDK version: minSdkVersion >= 21
+
+## Star trend chart
 
 [![Stargazers over time](https://starchart.cc/FlyJingFish/AndroidAOP.svg?variant=adaptive)](https://starchart.cc/FlyJingFish/AndroidAOP)
 
 ---
 
-## 使用步骤
+## Steps for usage
 
-**在开始之前可以给项目一个Star吗？非常感谢，你的支持是我唯一的动力。欢迎Star和Issues!**
+**Can I give the project a Star before starting? Thank you very much, your support is my only motivation. Welcome Stars and Issues!**
 
-![Stargazers over time](https://github.com/FlyJingFish/AndroidAOP/blob/master/docs/screenshot/warning_maven_central.svg)
+For the full version of the document, please click [AndroidAOP](https://flyjingfish.github.io/AndroidAOP/zh/)
 
-完整版文档请点击 [AndroidAOP](https://flyjingfish.github.io/AndroidAOP/zh/)
+### 1. Introduce the plug-in, choose one of the two methods below (required)
 
-### 一、引入插件，下边两种方式二选一（必须）
-
-
-#### 方式一：```apply``` 方式（推荐）
+#### Method 1: ```apply``` method
 
 <p align = "left">    
 <picture>
@@ -125,34 +124,31 @@
   <!-- 默认图片 -->
   <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/docs/svg/one.svg" align = "center"  width="22" height="22" />
 </picture>
-在<strong>项目根目录</strong>的 <code>build.gradle</code> 里依赖插件
+Depend on the plug-in in <code>build.gradle</code> in the <strong>project root directory</strong>
 </p>  
 
-- 新版本
-
+- Using the **plugins DSL**:
   ```gradle
   
   plugins {
-      //必须项 👇 apply 设置为 true 自动为所有module“预”配置debugMode，false则需手动配置
+      //Required item 👇 apply is set to true to automatically apply debugMode to all modules, if false, manual configuration is required.
       id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.5.0" apply true
   }
   ```
   <details>
-  <summary><strong>或者老版本</strong></summary>
+  <summary><strong>Using legacy plugin application:</strong></summary>
 
   ```gradle
-    buildscript {
-        dependencies {
-            //必须项 👇
-            classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.5.0'
-        }
-    }
-    // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五的方式二
-    apply plugin: "android.aop"
-    ```
+  buildscript {
+       dependencies {
+           //Required items 👇
+           classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.5.0'
+       }
+  }
+  //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below.
+  apply plugin: "android.aop"
+  ```
   </details>
-
-  
 
 <p align = "left">    
 <picture>
@@ -163,150 +159,143 @@
   <!-- 默认图片 -->
   <img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/docs/svg/two.svg" align = "center"  width="22" height="22"/>
 </picture>
-在<strong>app</strong>的 <code>build.gradle</code> 添加
-</p> 
+ Add in <code>build.gradle</code> of <strong>app</strong>
+</p>  
 
-- 新版本
-
+- Using the **plugins DSL**:
   ```gradle
-  //必须项 👇
+  //Required items 👇
   plugins {
-      ...
-      id 'android.aop'//最好放在最后一行
+       ...
+       id 'android.aop'//It is best to put it on the last line
   }
   ```
-  
+
+
   <details>
-  <summary><strong>或者老版本</strong></summary>
+  <summary><strong>Using legacy plugin application:</strong></summary>
 
   ```gradle
-  //必须项 👇
-  apply plugin: 'android.aop' //最好放在最后一行
+  //Required items 👇
+  apply plugin: 'android.aop' //It's best to put it on the last line
   ```
+
   </details>
 
- 
+#### ~~Method 2: ```plugins``` method~~
 
-> [!CAUTION]\
-> **⚠️⚠️⚠️`id 'android.aop'` 这句尽量放在最后一行，尤其是必须在 `id 'com.android.application'` 或 `id 'com.android.library'` 的后边**
-
-
-#### ~~方式二：```plugins``` 方式（不推荐）~~
-
-- 直接在 **app** 的 ```build.gradle``` 添加
+- Add directly to ```build.gradle``` of **app**
 
   ```gradle
-  //必须项 👇
+  //Required items 👇
   plugins {
-      ...
-      id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.5.0"//最好放在最后一行
+       ...
+       id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.5.0"
   }
   ```
 
-### 二、如果你需要自定义切面，并且代码是 ```Kotlin``` (非必须)
 
-- 在 **项目根目录** 的 ```build.gradle``` 里依赖插件
+
+
+
+### 2. If you need to customize aspects, and the code is ```Kotlin``` (optional)
+
+- Depend on the plug-in in ```build.gradle``` in the **project root directory**
 
 ```gradle
 plugins {
-    //非必须项 👇，如果需要自定义切面，并且使用 android-aop-ksp 这个库的话需要配置 ，下边版本号根据你项目的 Kotlin 版本决定
-    id 'com.google.devtools.ksp' version '1.8.0-1.0.9' apply false
+     //Optional 👇, if you need to customize aspects and use the android-aop-ksp library, you need to configure it. The version number below is determined according to the Kotlin version of your project
+     id 'com.google.devtools.ksp' version '1.8.0-1.0.9' apply false
 }
 ```
-[Kotlin 和 KSP Github 的匹配版本号列表](https://github.com/google/ksp/releases)
+[List of matching version numbers for Kotlin and KSP Github](https://github.com/google/ksp/releases)
 
-### 三、引入依赖库(必须)
+### 3. Introduce dependent libraries (required)
 
 ```gradle
 plugins {
-    //非必须项 👇，如果需要自定义切面，并且使用 android-aop-ksp 这个库的话需要配置 
-    id 'com.google.devtools.ksp'
+     //Optional 👇, if you need to customize aspects and use the android-aop-ksp library, you need to configure it
+     id 'com.google.devtools.ksp'
 }
 
 dependencies {
-    //必须项 👇
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:2.5.0'
-    //非必须项 👇这个包提供了一些常见的注解切面
-    implementation 'io.github.FlyJingFish.AndroidAop:android-aop-extra:2.5.0'
+     //Required items 👇
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:2.5.0'
+     //Optional 👇This package provides some common annotation aspects
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-extra:2.5.0'
     
-    //必须项 👇如果您项目内已经有了这项不用加也可以
-    implementation 'androidx.appcompat:appcompat:1.3.0' // 至少在1.3.0及以上
-    
-    //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.5.0'
-    
-    //非必须项 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
-    annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:2.5.0'
-    //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
+     //Required item 👇If you already have this item in your project, you don’t need to add it.
+     implementation 'androidx.appcompat:appcompat:1.3.0' // At least in 1.3.0 and above
+     
+     //Optional 👇, if you want to customize aspects, you need to use them, ⚠️supports aspects written in Java and Kotlin code
+     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.5.0'
+     //Optional 👇, if you want to customize aspects, you need to use them, ⚠️only applies to aspects written in Java code
+     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:2.5.0'
+     //⚠️Choose one of the above android-aop-ksp and android-aop-processor
 }
 ```
+> [!TIP]\
+> 1、ksp or annotationProcessor can only scan the current module. Custom aspect codes are added to the module where they are located. **But custom aspect codes are globally effective**; required dependencies can be added only to public modules through the API. <br>
+> ["android-aop-extra" usage tutorial](https://flyjingfish.github.io/AndroidAOP/android_aop_extra/)
+
+### 4. Add the androidAopConfig configuration item in app’s build.gradle (this step is an optional configuration item)
+
+[Click here to see how to configure](https://flyjingfish.github.io/AndroidAOP/getting_started/#4-add-the-androidaopconfig-configuration-item-in-apps-buildgradle-this-step-is-an-optional-configuration-item)
+
+### 5. You can set the packaging method during development (this step is an optional configuration item, it is recommended to configure this item to speed up development)
+
+[Click here to see how to configure](https://flyjingfish.github.io/AndroidAOP/getting_started/#5-you-can-set-the-packaging-method-during-development-this-step-is-an-optional-configuration-item-it-is-recommended-to-configure-this-item-to-speed-up-development)
+
+### This library has some built-in functional annotations for you to use directly.
+
+| Annotation name          |                                                                            Parameter description                                                                            |                                                                          Function description                                                                           |
+|--------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| @SingleClick             |                                                              value = interval of quick clicks, default 1000ms                                                               |                                      Click the annotation and add this annotation to make your method accessible only when clicked                                      |
+| @DoubleClick             |                                                           value = maximum time between two clicks, default 300ms                                                            |                                   Double-click annotation, add this annotation to make your method enterable only when double-clicked                                   |
+| @IOThread                |                                                                          ThreadType = thread type                                                                           |                      Switch to the sub-thread operation. Adding this annotation can switch the code in your method to the sub-thread for execution                      |
+| @MainThread              |                                                                                No parameters                                                                                |                The operation of switching to the main thread. Adding this annotation can switch the code in your method to the main thread for execution                |
+| @OnLifecycle<sup>*</sup> |                                                                           value = Lifecycle.Event                                                                           |              Monitor life cycle operations. Adding this annotation allows the code in your method to be executed only during the corresponding life cycle               |
+| @TryCatch                |                                                                        value = a flag you customized                                                                        |                                                Adding this annotation can wrap a layer of try catch code for your method                                                |
+| @Permission<sup>*</sup>  |                                                                     value = String array of permissions                                                                     |                 The operation of applying for permissions. Adding this annotation will enable your code to be executed only after obtaining permissions                 |
+| @Scheduled               | initialDelay = delayed start time<br>interval = interval<br>repeatCount = number of repetitions<br>isOnMainThread = whether to be the main thread<br>id = unique identifier |       Scheduled tasks, add this annotation to make your method Executed every once in a while, call AndroidAop.shutdownNow(id) or AndroidAop.shutdown(id) to stop       |
+| @Delay                   |                                          delay = delay time<br>isOnMainThread = whether the main thread<br>id = unique identifier                                           | Delay task, add this annotation to delay the execution of your method for a period of time, call AndroidAop.shutdownNow(id) or AndroidAop .shutdown(id) can be canceled |
+| @CheckNetwork            |                   tag = custom tag<br>toastText = toast prompt when there is no network<br>invokeListener = whether to take over the check network logic                    |                       Check whether the network is available, adding this annotation will allow your method to enter only when there is a network                       |
+| @CustomIntercept         |                                                            value = a flag of a string array that you customized                                                             |                                          Custom interception, used with AndroidAop.setOnCustomInterceptListener, is a panacea                                           |
 
 > [!TIP]\
-> 1、ksp 或 annotationProcessor只能扫描当前 module ，在哪个 module 中有自定义切面代码就加在哪个 module，**但是自定义的切面代码是全局生效的**；必须依赖项可以通过 api 方式只加到公共 module 上 <br>
-> 2、["android-aop-extra" 使用教程](https://flyjingfish.github.io/AndroidAOP/zh/android_aop_extra/)
-
-### 四、在 app 的build.gradle添加 androidAopConfig 配置项（此步为可选配置项）
-
-[点此查看如何配置](https://flyjingfish.github.io/AndroidAOP/zh/getting_started/#app-buildgradle-androidaopconfig)
-
-### 五、开发中可设置打包方式（此步为可选配置项，建议配置此项加速开发）
-
-[点此查看如何配置](https://flyjingfish.github.io/AndroidAOP/zh/getting_started/#_5)
+> The above functions are located in the `android-aop-extra` library. [For detailed instructions, please see the documentation](https://flyjingfish.github.io/AndroidAOP/android_aop_extra/)
 
 
-### 本库内置了一些功能注解可供你直接使用
+## Custom Aspects
 
-| 注解名称                     |                                                参数说明                                                 |                                        功能说明                                         |
-|--------------------------|:---------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------:|
-| @SingleClick             |                                      value = 快速点击的间隔，默认1000ms                                       |                             单击注解，加入此注解，可使你的方法只有单击时才可进入                              |
-| @DoubleClick             |                                      value = 两次点击的最大用时，默认300ms                                      |                              双击注解，加入此注解，可使你的方法双击时才可进入                               |
-| @IOThread                |                                          ThreadType = 线程类型                                          |                          切换到子线程的操作，加入此注解可使你的方法内的代码切换到子线程执行                          |
-| @MainThread              |                                                 无参数                                                 |                          切换到主线程的操作，加入此注解可使你的方法内的代码切换到主线程执行                          |
-| @OnLifecycle<sup>*</sup> |                                       value = Lifecycle.Event                                       |                        监听生命周期的操作，加入此注解可使你的方法内的代码在对应生命周期内才去执行                        |
-| @TryCatch                |                                        value = 你自定义加的一个flag                                         |                            加入此注解可为您的方法包裹一层 try catch 代码                             |
-| @Permission<sup>*</sup>  |                                   tag = 自定义标记<br>value = 权限的字符串数组                                   |                            申请权限的操作，加入此注解可使您的代码在获取权限后才执行                             |
-| @Scheduled               | initialDelay = 延迟开始时间<br>interval = 间隔<br>repeatCount = 重复次数<br>isOnMainThread = 是否主线程<br>id = 唯一标识 | 定时任务，加入此注解，可使你的方法每隔一段时间执行一次，调用AndroidAop.shutdownNow(id)或AndroidAop.shutdown(id)可停止 |
-| @Delay                   |                         delay = 延迟时间<br>isOnMainThread = 是否主线程<br>id = 唯一标识                         |  延迟任务，加入此注解，可使你的方法延迟一段时间执行，调用AndroidAop.shutdownNow(id)或AndroidAop.shutdown(id)可取消  |
-| @CheckNetwork            |                tag = 自定义标记<br>toastText = 无网络时toast提示<br>invokeListener = 是否接管检查网络逻辑                |                            检查网络是否可用，加入此注解可使你的方法在有网络才可进去                             |
-| @CustomIntercept         |                                     value = 你自定义加的一个字符串数组的flag                                      |              自定义拦截，配合 AndroidAop.setOnCustomInterceptListener 使用，属于万金油              |
+### This library uses the following five annotations to implement custom aspects
+
+- @AndroidAopPointCut is an aspect that annotates methods
+- @AndroidAopMatchClassMethod is the aspect of matching class methods
+- @AndroidAopReplaceClass is called by the replacement method
+- @AndroidAopModifyExtendsClass is a modified inherited class
+- @AndroidAopCollectMethod Is a collection inheritance class
+
+#### 1. **@AndroidAopPointCut** is used to make aspects in the form of annotations on the method. The above annotations are all made through this. [Wiki documentation](https://flyjingfish.github.io/AndroidAOP/AndroidAopPointCut)
 
 
-> [!TIP]\
-> 以上功能位于 `android-aop-extra` 库中，[详细说明请看文档](https://flyjingfish.github.io/AndroidAOP/zh/android_aop_extra/)
-
-
-## 自定义切面
-
-**本库通过以下五种注解，实现自定义切面**
-
-本篇介绍是大纲式的大致讲解，[详细点此查看](https://flyjingfish.github.io/AndroidAOP/zh/)
-
-- @AndroidAopPointCut 是为方法加注解的切面
-- @AndroidAopMatchClassMethod 是匹配类的方法的切面
-- @AndroidAopReplaceClass 是替换方法调用的
-- @AndroidAopModifyExtendsClass 是修改继承类
-- @AndroidAopCollectMethod 是收集继承类
-
-
-#### 一、**@AndroidAopPointCut** 是在方法上通过注解的形式做切面的，上述中注解都是通过这个做的，[wiki文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopPointCut)
-
-- 创建注解(将 @AndroidAopPointCut 加到你的注解上)
+- Create annotations(You need to implement the BasePointCut interface, and fill in the annotations above for its generic type)
 
 ```kotlin
 @AndroidAopPointCut(CustomInterceptCut::class)
 @Target(
-        AnnotationTarget.FUNCTION,
-        AnnotationTarget.PROPERTY_GETTER,
-        AnnotationTarget.PROPERTY_SETTER
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY_GETTER,
+    AnnotationTarget.PROPERTY_SETTER
 )
 @Retention(
-        AnnotationRetention.RUNTIME
+    AnnotationRetention.RUNTIME
 )
 annotation class CustomIntercept(vararg val value: String = [])
 ```
 
 <details>
-<summary><strong>Java写法:</strong></summary>
+<summary><strong>Java writing method:</strong></summary>
 
 ```java
 @AndroidAopPointCut(CustomInterceptCut.class)
@@ -318,63 +307,64 @@ public @interface CustomIntercept {
 ```
 </details>
 
-- 创建注解处理切面的类（需要实现 BasePointCut 接口，它的泛型填上边的注解）
+- Create a class that annotates the aspect (needs to implement the BasePointCut interface, and fill in the above annotation with its generic type)
 
 ```kotlin
 class CustomInterceptCut : BasePointCut<CustomIntercept> {
-    override fun invoke(
-        joinPoint: ProceedJoinPoint,
-        annotation: CustomIntercept //annotation就是你加到方法上的注解
-    ): Any? {
-        // 在此写你的逻辑
-        // joinPoint.proceed() 表示继续执行切点方法的逻辑，不调用此方法不会执行切点方法里边的代码
-        // 关于 ProceedJoinPoint 可以看wiki 文档，详细点击下方链接
-        return joinPoint.proceed()
-    }
+     override fun invoke(
+         joinPoint: ProceedJoinPoint,
+         annotation: CustomIntercept //annotation is the annotation you add to the method
+     ): Any? {
+         //Write your logic here
+         // joinPoint.proceed() means to continue executing the logic of the point-cut method. If this method is not called, the code in the point-cut method will not be executed.
+         // About ProceedJoinPoint, you can see the wiki document, click the link below for details
+         return joinPoint.proceed()
+     }
 }
 ```
 
-- 使用
+- use
 
-直接将你写的注解加到任意一个方法上，例如加到了 onCustomIntercept() 当 onCustomIntercept() 被调用时首先会进入到上文提到的 CustomInterceptCut 的 invoke 方法上
+Directly add the annotation you wrote to any method, for example, to onCustomIntercept(). When onCustomIntercept() is called, it will first enter the invoke method of CustomInterceptCut mentioned above.
 
 ```kotlin
-@CustomIntercept("我是自定义数据")
+@CustomIntercept("I am custom data")
 fun onCustomIntercept(){
     
 }
 
 ```
 
-[本库内置了一些功能注解可供你直接使用](https://flyjingfish.github.io/AndroidAOP/zh/android_aop_extra/)
+[This library has some built-in functional annotations for you to use directly](https://flyjingfish.github.io/AndroidAOP/android_aop_extra/)
 
-#### 二、**@AndroidAopMatchClassMethod** 是做匹配某类及其对应方法的切面的,[wiki文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopMatchClassMethod)
+#### 2. **@AndroidAopMatchClassMethod** is used to match aspects of a certain class and its corresponding method, [Wiki documentation](https://flyjingfish.github.io/AndroidAOP/AndroidAopMatchClassMethod)
 
-假如想 Hook 所有的 android.view.View.OnClickListener 的 onClick，说白了就是想全局监测所有的设置 OnClickListener 的点击事件，代码如下：
+
+If you want to Hook all onClicks of android.view.View.OnClickListener, to put it bluntly, you want to globally monitor all click events of OnClickListener. The code is as follows:
 
 ```kotlin
 @AndroidAopMatchClassMethod(
-    targetClassName = "android.view.View.OnClickListener",
-    methodName = ["onClick"],
-    type = MatchType.EXTENDS //type 一定是 EXTENDS 因为你想 hook 所有继承了 OnClickListener 的类
+     targetClassName = "android.view.View.OnClickListener",
+     methodName = ["onClick"],
+     type = MatchType.EXTENDS //type must be EXTENDS because you want to hook all classes that inherit OnClickListener
 )
 class MatchOnClick : MatchClassMethod {
-//    @SingleClick(5000) //联合 @SingleClick ，给所有点击增加防多点，6不6
-    override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
-        Log.e("MatchOnClick", "=====invoke=====$methodName")
-        return joinPoint.proceed()
-    }
+// @SingleClick(5000) //Combined with @SingleClick, add multi-point prevention to all clicks, 6 is not 6
+     override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
+         Log.e("MatchOnClick", "======invoke=====$methodName")
+         return joinPoint.proceed()
+     }
 }
 ```
 
-#### 三、**@AndroidAopReplaceClass** 是做替换方法调用的，[wiki文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopReplaceClass)
 
-此方式是对 @AndroidAopMatchClassMethod 的一个补充
+#### 3. **@AndroidAopReplaceClass** is used for replacement method calls, [Wiki documentation](https://flyjingfish.github.io/AndroidAOP/AndroidAopReplaceClass)
 
-- Kotlin写法
+This method is a supplement to @AndroidAopMatchClassMethod
+
+- Kotlin
 
 ```kotlin
-
 @AndroidAopReplaceClass("android.util.Log")
 object ReplaceLog {
     @AndroidAopReplaceMethod("int e(java.lang.String,java.lang.String)")
@@ -383,58 +373,57 @@ object ReplaceLog {
         return Log.e(tag, "ReplaceLog-$msg")
     }
 }
-
-
 ```
 
-该例意思就是凡是代码中写```Log.e```的地方都被替换成```ReplaceLog.e```
-
 <details>
-<summary>Java写法</summary>
+<summary>Java</summary>
 
 ```java
 @AndroidAopReplaceClass(
-        "android.widget.Toast"
+         "android.widget.Toast"
 )
 public class ReplaceToast {
     @AndroidAopReplaceMethod(
             "android.widget.Toast makeText(android.content.Context, java.lang.CharSequence, int)"
     )
-    //  因为被替换方法是静态的，所以参数类型及顺序和被替换方法一一对应
+    //  Because the replaced method is static, the parameter type and order correspond to the replaced method one-to-one.
     public static Toast makeText(Context context, CharSequence text, int duration) {
         return Toast.makeText(context, "ReplaceToast-"+text, duration);
     }
     @AndroidAopReplaceMethod(
             "void setGravity(int , int , int )"
     )
-    //  因为被替换方法不是静态方法，所以参数第一个是被替换类，之后的参数和被替换方法一一对应
+    //  Because the replaced method is not a static method, the first parameter is the replaced class, and the subsequent parameters correspond to the replaced method one-to-one.
     public static void setGravity(Toast toast,int gravity, int xOffset, int yOffset) {
         toast.setGravity(Gravity.CENTER, xOffset, yOffset);
     }
     @AndroidAopReplaceMethod(
             "void show()"
     )
-    //  虽然被替换方法没有参数，但因为它不是静态方法，所以第一个参数仍然是被替换类
+    //  Although the replaced method has no parameters, because it is not a static method, the first parameter is still the replaced class.
     public static void show(Toast toast) {
         toast.show();
     }
 }
 ```
-
-该例意思就是凡是代码中写```Toast.makeText```和```Toast.show```  ...的地方都被替换成```ReplaceToast.makeText```和```ReplaceToast.show``` ...
 </details>
 
+#### 4. **@AndroidAopModifyExtendsClass** is an inherited class that modifies the target class[Wiki documentation](https://flyjingfish.github.io/AndroidAOP/AndroidAopModifyExtendsClass)
 
-#### 四、**@AndroidAopModifyExtendsClass** 是修改目标类的继承类，[wiki文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopModifyExtendsClass)
-
-通常是在某个类的继承关系中替换掉其中一层，然后重写一些函数，在重写的函数中加入一些你想加的逻辑代码，起到监听、改写原有逻辑的作用
-
+Usually, you replace one layer in the inheritance relationship of a class, then rewrite some functions, and add some logic code you want to add to the rewritten functions to monitor and rewrite the original logic.
 
 ```java
 @AndroidAopModifyExtendsClass("androidx.appcompat.widget.AppCompatImageView")
 public class ReplaceImageView extends ImageView {
+    public ReplaceImageView(@NonNull Context context) {
+        super(context);
+    }
     public ReplaceImageView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+    }
+
+    public ReplaceImageView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
     }
 
     @Override
@@ -445,59 +434,46 @@ public class ReplaceImageView extends ImageView {
 }
 ```
 
-该例就是要把 ```AppCompatImageView``` 的继承类替换成 ```ReplaceImageView```
+#### 5. **@AndroidAopCollectMethod** is a aspects that collects inherited classes of a class [Wiki documentation](https://flyjingfish.github.io/AndroidAOP/AndroidAopCollectMethod)
 
-#### 五、**@AndroidAopCollectMethod** 是收集继承类，[wiki文档](https://flyjingfish.github.io/AndroidAOP/zh/AndroidAopCollectMethod)
+It is extremely simple to use, the sample code has already explained
 
-使用起来极其简单，示例代码已经说明了
-
-- Kotlin 写法
+- Kotlin
 
 ```kotlin
 object InitCollect {
-    private val collects = mutableListOf<SubApplication>()
-    private val collectClazz: MutableList<Class<out SubApplication>> = mutableListOf()
+     private val collects = mutableListOf<SubApplication>()
 
-    @AndroidAopCollectMethod
-    @JvmStatic
-    fun collect(sub: SubApplication){
-      collects.add(sub)
-    }
-    @AndroidAopCollectMethod
-    @JvmStatic
-    fun collect2(sub:Class<out SubApplication>){
-      collectClazz.add(sub)
-    }
-  //直接调这个方法（方法名不限）上边的函数会被悉数回调
-    fun init(application: Application){
-        for (collect in collects) {
-            collect.onCreate(application)
-        }
-    }
+     @AndroidAopCollectMethod
+     @JvmStatic
+     fun collect(sub: SubApplication){
+       collects.add(sub)
+     }
+  
+     // Call this method directly. The collects collection contains data.
+     fun init(application: Application){
+         for (collect in collects) {
+             collect.onCreate(application)
+         }
+     }
 }
 ```
 
+
 <details>
-<summary>Java写法</summary>
+<summary>Java</summary>
 
 ```java
 public class InitCollect2 {
-  private static final List<SubApplication2> collects = new ArrayList<>();
-  private static final List<Class<? extends SubApplication2>> collectClazz = new ArrayList<>();
-
+  private static List<SubApplication2> collects = new ArrayList<>();
   @AndroidAopCollectMethod
-  public static void collect(SubApplication2 sub) {
+  public static void collect(SubApplication2 sub){
     collects.add(sub);
   }
 
-  @AndroidAopCollectMethod
-  public static void collect3(Class<? extends SubApplication2> sub) {
-    collectClazz.add(sub);
-  }
-
-  //直接调这个方法（方法名不限）上边的函数会被悉数回调
-  public static void init(Application application) {
-    Log.e("InitCollect2", "----init----");
+  // Call this method directly. The collects collection contains data.
+  public static void init(Application application){
+    Log.e("InitCollect2","----init----");
     for (SubApplication2 collect : collects) {
       collect.onCreate(application);
     }
@@ -508,48 +484,44 @@ public class InitCollect2 {
 
 
 
+#### [Obfuscation rules](https://flyjingfish.github.io/AndroidAOP/About_obfuscation)
+
+> The library comes with `proguard-rules.pro` rules and is automatically imported. Normally no manual import is required.
+> You can also go here to view [proguard-rules](https://github.com/FlyJingFish/AndroidAOP/blob/master/android-aop-core/proguard-rules.pro)
 
 
-#### [关于混淆](https://flyjingfish.github.io/AndroidAOP/zh/About_obfuscation/)
 
-> 此资源库自带[混淆规则](https://github.com/FlyJingFish/AndroidAOP/blob/master/android-aop-core/proguard-rules.pro)，并且会自动导入，正常情况下无需手动导入。
+### Appreciation
 
+You’ve all seen it here. If you like AndroidAOP, or feel that AndroidAOP has helped you, you can click “Star” in the upper right corner to support it. Your support is my motivation, thank you~ 😃
 
+If you feel that AndroidAOP has saved you a lot of development time and added luster to your project, you can also scan the QR code below and invite the author for a cup of coffee ☕
 
-### 赞赏
-
-都看到这里了，如果您喜欢 AndroidAOP，或感觉 AndroidAOP 帮助到了您，可以点右上角“Star”支持一下，您的支持就是我的动力，谢谢～ 😃
-
-如果感觉 AndroidAOP 为您节约了大量开发时间、为您的项目增光添彩，您也可以扫描下面的二维码，请作者喝杯咖啡 ☕
-
-#### [捐赠列表](https://flyjingfish.github.io/AndroidAOP/zh/give_list/)
+#### [Donation List](https://flyjingfish.github.io/AndroidAOP/zh/give_list/)
 
 <div>
 <img src="/docs/screenshot/IMG_4075.PNG" width="280" height="350">
 <img src="/docs/screenshot/IMG_4076.JPG" width="280" height="350">
 </div>
 
-如果在捐赠留言中备注名称，将会被记录到列表中~ 如果你也是github开源作者，捐赠时可以留下github项目地址或者个人主页地址，链接将会被添加到列表中
+If you comment on the name in the donation message, it will be recorded in the list~ If you are also a GitHub open source author, you can leave the GitHub project address or personal homepage address when donating, and the link will be added to the list.
 
+### Contact information
 
-
-### 联系方式
-
-* 有问题可以加群大家一起交流 [点此加QQ群：641697838](https://qm.qq.com/cgi-bin/qm/qr?k=w2qDbv_5bpLl0lO0qjXxijl3JHCQgtXx&jump_from=webapi&authKey=Q6/YB+7q9BvOGbYv1qXZGAZLigsfwaBxDC8kz03/5Pwy7018XunUcHoC11kVLqCb)
+* If you have any questions, you can join the group to communicate [QQ: 641697838](https://qm.qq.com/cgi-bin/qm/qr?k=w2qDbv_5bpLl0lO0qjXxijl3JHCQgtXx&jump_from=webapi&authKey=Q6/YB+7q9BvOGbYv1qXZGAZLigsfwaBxDC8kz03/5Pwy7018XunUcHoC11kVLqCb)
 
 <img src="/docs/screenshot/qq.jpg" width="220"/>
 
-### 最后推荐我写的另外一些库
+### Finally, I recommend some other libraries I wrote
 
-- [OpenImage 轻松实现在应用内点击小图查看大图的动画放大效果](https://github.com/FlyJingFish/OpenImage)
+- [OpenImage makes it easy to click on a small image in the application to view the animated enlargement effect of the large image](https://github.com/FlyJingFish/OpenImage)
 
-- [ShapeImageView 支持显示任意图形，只有你想不到没有它做不到](https://github.com/FlyJingFish/ShapeImageView)
+- [ShapeImageView supports displaying any graphics, you can’t think of it without it](https://github.com/FlyJingFish/ShapeImageView)
 
-- [GraphicsDrawable 支持显示任意图形，但更轻量](https://github.com/FlyJingFish/GraphicsDrawable)
+- [GraphicsDrawable supports displaying arbitrary graphics, but is more lightweight](https://github.com/FlyJingFish/GraphicsDrawable)
 
-- [ModuleCommunication 解决模块间的通信需求，更有方便的router功能](https://github.com/FlyJingFish/ModuleCommunication)
+- [ModuleCommunication solves the communication needs between modules and has more convenient router functions](https://github.com/FlyJingFish/ModuleCommunication)
 
-- [FormatTextViewLib 支持部分文本设置加粗、斜体、大小、下划线、删除线，下划线支持自定义距离、颜色、线的宽度；支持添加网络或本地图片](https://github.com/FlyJingFish/FormatTextViewLib)
+- [FormatTextViewLib supports bolding, italics, size, underline, and strikethrough for some text. The underline supports custom distance, color, and line width; supports adding network or local images](https://github.com/FlyJingFish/FormatTextViewLib )
 
-- [主页查看更多开源库](https://github.com/FlyJingFish)
-
+- [View more open source libraries on the homepage](https://github.com/FlyJingFish)
