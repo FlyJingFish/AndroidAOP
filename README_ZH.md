@@ -1,5 +1,5 @@
 <h3 align="right">
-  <strong>简体中文</strong> | <a href="https://github.com/FlyJingFish/AndroidAOP/blob/master/README_EN.md">English</a>
+  <strong>简体中文</strong> | <a href="https://github.com/FlyJingFish/AndroidAOP/blob/master/README.md">English</a>
 </h3>
 
 <div align="center">
