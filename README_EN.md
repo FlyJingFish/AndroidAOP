@@ -1,6 +1,6 @@
-<h4 align="right">
+<h3 align="right">
   <strong>简体中文</strong> | <a href="https://github.com/FlyJingFish/AndroidAOP/blob/master/README_EN.md">English</a>
-</h4>
+</h3>
 
 <div align="center">
     <a href = "https://flyjingfish.github.io/AndroidAOP/zh/"><img src="https://github.com/FlyJingFish/AndroidAOP/blob/master/docs/assets/webp/anim_css_image_pos.svg" width="200" height="200"/></a>
