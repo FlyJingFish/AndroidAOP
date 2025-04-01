@@ -49,8 +49,8 @@
 
 建议直接点击下边的 **Docs** 直接看体验更好的文档
 
-- en [English](https://github.com/FlyJingFish/AndroidAOP/blob/master/README_EN.md)&emsp;[Docs](https://flyjingfish.github.io/AndroidAOP/)
-- zh_CN [简体中文](https://github.com/FlyJingFish/AndroidAOP/blob/master/README.md)&emsp;[Docs](https://flyjingfish.github.io/AndroidAOP/zh/)
+- en [English](https://github.com/FlyJingFish/AndroidAOP/blob/master/README.md)&emsp;[Docs](https://flyjingfish.github.io/AndroidAOP/)
+- zh_CN [简体中文](https://github.com/FlyJingFish/AndroidAOP/blob/master/README_ZH.md)&emsp;[Docs](https://flyjingfish.github.io/AndroidAOP/zh/)
 
 # 简述
 
