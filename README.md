@@ -108,7 +108,7 @@ Minimum SDK version: minSdkVersion >= 21
 
 **Can I give the project a Star before starting? Thank you very much, your support is my only motivation. Welcome Stars and Issues!**
 
-For the full version of the document, please click [AndroidAOP](https://flyjingfish.github.io/AndroidAOP/zh/)
+For the full version of the document, please click [AndroidAOP](https://flyjingfish.github.io/AndroidAOP/)
 
 ### 1. Introduce the plug-in, choose one of the two methods below (required)
 
@@ -428,7 +428,7 @@ public class ReplaceImageView extends ImageView {
     @Override
     public void setImageDrawable(@Nullable Drawable drawable) {
         super.setImageDrawable(drawable);
-        //做一些监测或者再次修改
+        //Do some monitoring or modify again
     }
 }
 ```
