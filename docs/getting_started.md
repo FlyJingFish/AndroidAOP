@@ -28,7 +28,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
         
         plugins {
           //👇Required item (1)👈 apply is set to true to automatically apply debugMode to all modules, If false, follow step 5 below to configure debugMode in manual mode.
-          id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.5.2" apply true
+          id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.5.3" apply true
         }
         ```
 
@@ -40,7 +40,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
         buildscript {
              dependencies {
                  //👇equired items (1)👈
-                 classpath "io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.5.2"
+                 classpath "io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.5.3"
              }
         }
         //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below to configure debugMode in manual mode.
@@ -56,7 +56,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
         
         plugins {
           //👇Required item (1)👈 apply is set to true to automatically apply debugMode to all modules, If false, follow step 5 below to configure debugMode in manual mode.
-          id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.5.2" apply true
+          id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.5.3" apply true
         }
         ```
 
@@ -68,7 +68,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
         buildscript {
              dependencies {
                  //👇Required items (1)👈
-                 classpath("io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.5.2")
+                 classpath("io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.5.3")
              }
         }
         //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below to configure debugMode in manual mode.
@@ -136,7 +136,7 @@ Add in `build.gradle` of **app**
     //Required items 👇
     plugins {
        ...
-       id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.5.2"
+       id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.5.3"
     }
     ```
 
@@ -146,7 +146,7 @@ Add in `build.gradle` of **app**
     //Required items 👇
     plugins {
        ...
-       id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.5.2"
+       id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.5.3"
     }
     ```
 
@@ -189,17 +189,17 @@ Add in `build.gradle` of **app**
     
     dependencies {
          //👇Required items 
-         implementation "io.github.FlyJingFish.AndroidAop:android-aop-core:2.5.2"
+         implementation "io.github.FlyJingFish.AndroidAop:android-aop-core:2.5.3"
          //👇Optional (1)👈 This package provides some common annotation aspects
-         implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.5.2"
+         implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.5.3"
         
          //👇Required item  If you already have this item in your project, you don’t need to add it.
          implementation "androidx.appcompat:appcompat:1.3.0" // At least in 1.3.0 and above
          
          //👇Optional (2)👈Click + to view detailed description, ⚠️supports aspects written in Java and Kotlin code
-         ksp "io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.5.2"
+         ksp "io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.5.3"
          //👇Optional (3)👈Click + to view detailed description, ⚠️only applies to aspects written in Java code
-         annotationProcessor "io.github.FlyJingFish.AndroidAop:android-aop-processor:2.5.2"
+         annotationProcessor "io.github.FlyJingFish.AndroidAop:android-aop-processor:2.5.3"
          //⚠️Choose one of the above android-aop-ksp and android-aop-processor
     }
     ```
@@ -218,17 +218,17 @@ Add in `build.gradle` of **app**
     
     dependencies {
          //👇Required items 
-         implementation("io.github.FlyJingFish.AndroidAop:android-aop-core:2.5.2")
+         implementation("io.github.FlyJingFish.AndroidAop:android-aop-core:2.5.3")
          //👇Optional (1)👈 This package provides some common annotation aspects
-         implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.5.2")
+         implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.5.3")
         
          //👇Required item  If you already have this item in your project, you don’t need to add it.
          implementation("androidx.appcompat:appcompat:1.3.0") // At least in 1.3.0 and above
          
          //👇Optional (2)👈Click + to view detailed description, ⚠️supports aspects written in Java and Kotlin code
-         ksp("io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.5.2")
+         ksp("io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.5.3")
          //👇Optional (3)👈Click + to view detailed description, ⚠️only applies to aspects written in Java code
-         annotationProcessor("io.github.FlyJingFish.AndroidAop:android-aop-processor:2.5.2")
+         annotationProcessor("io.github.FlyJingFish.AndroidAop:android-aop-processor:2.5.3")
          //⚠️Choose one of the above android-aop-ksp and android-aop-processor
     }
     ```
