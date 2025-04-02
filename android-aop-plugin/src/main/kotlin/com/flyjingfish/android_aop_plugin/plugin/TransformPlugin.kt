@@ -43,8 +43,7 @@ object TransformPlugin : BasePlugin() {
                 lastCanModifyTask = task
             }
             if (lastCanModifyTask != null && dexTask != null && aopTask != null){
-//                if (lastCanModifyTask !is AssembleAndroidAopTask && lastCanModifyTask !is DefaultTransformTask){
-                if (lastCanModifyTask !is AssembleAndroidAopTask){
+                if (lastCanModifyTask !is AssembleAndroidAopTask && lastCanModifyTask !is DefaultTransformTask){
                     if (aopTask.isFastDex){
                         val hintText = "When fastDex is enabled, you should put [id 'android.aop'] at the end to make ${aopTask.name} execute after ${lastCanModifyTask.name}"
                         project.logger.error(hintText)
