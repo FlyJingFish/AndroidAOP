@@ -1,5 +1,5 @@
 <h3 align="right">
-  <strong>English</strong> | <a href="https://github.com/FlyJingFish/AndroidAOP/blob/master/README_ZH.md">简体中文</a>
+  <strong>English</strong> | <a href="https://github.com/FlyJingFish/AndroidAOP/blob/master/README-zh.md">简体中文</a>
 </h3>
 
 <div align="center">
@@ -50,7 +50,7 @@
 It is recommended to click **Docs** below to directly view the documentation with better experience
 
 - en [English](https://github.com/FlyJingFish/AndroidAOP/blob/master/README.md)&emsp;[Docs](https://flyjingfish.github.io/AndroidAOP/)
-- zh_CN [简体中文](https://github.com/FlyJingFish/AndroidAOP/blob/master/README_ZH.md)&emsp;[Docs](https://flyjingfish.github.io/AndroidAOP/zh/)
+- zh_CN [简体中文](https://github.com/FlyJingFish/AndroidAOP/blob/master/README-zh.md)&emsp;[Docs](https://flyjingfish.github.io/AndroidAOP/zh/)
 
 # Brief Description
 

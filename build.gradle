@@ -82,7 +82,7 @@ task aaBumpVersion() {
         versionProps.store(versionPropsFile.newWriter(), null)
 
         updateREADME("README.md",oldVersionName,newVersionName)
-        updateREADME("README_EN.md",oldVersionName,newVersionName)
+        updateREADME("README-zh.md",oldVersionName,newVersionName)
         updateREADME("docs/getting_started.md",oldVersionName,newVersionName)
         updateREADME("docs/android_aop_extra.md",oldVersionName,newVersionName)
         updateREADME("docs/zh/getting_started.md",oldVersionName,newVersionName)
