@@ -7,13 +7,11 @@ import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
 import com.flyjingfish.android_aop_plugin.utils.ClassNameToConversions
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
-import com.flyjingfish.android_aop_plugin.utils.FileHashUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils.CONVERSIONS_CLASS
 import com.flyjingfish.android_aop_plugin.utils.Utils.JOIN_POINT_CLASS
 import com.flyjingfish.android_aop_plugin.utils.Utils.KEEP_CLASS
-import com.flyjingfish.android_aop_plugin.utils.Utils.OBJECT_UTILS
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.adapterOSPath
 import com.flyjingfish.android_aop_plugin.utils.addPublic
@@ -26,6 +24,7 @@ import com.flyjingfish.android_aop_plugin.utils.printLog
 import com.flyjingfish.android_aop_plugin.utils.saveFile
 import javassist.CannotCompileException
 import javassist.CtClass
+import javassist.CtField
 import javassist.CtMethod
 import javassist.Modifier
 import javassist.NotFoundException
@@ -349,7 +348,7 @@ object WovenIntoCode {
         cp.importPackage(JOIN_POINT_CLASS)
         cp.importPackage(CONVERSIONS_CLASS)
         cp.importPackage(KEEP_CLASS)
-        cp.importPackage(OBJECT_UTILS)
+//        cp.importPackage(OBJECT_UTILS)
         val methodParamNamesScanner = MethodParamNamesScanner(newClassByte)
 
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
@@ -357,6 +356,7 @@ object WovenIntoCode {
             val oldMethodName = value.methodName
             val oldDescriptor = value.descriptor
             val targetMethodName = Utils.getTargetMethodName(oldMethodName,targetClassName,oldDescriptor)
+            val targetFieldName = Utils.getTargetFieldName(oldMethodName,targetClassName,oldDescriptor)
             val cutClassNameArray = StringBuilder()
             value.cutClassName.toList().forEachIndexed { index, item ->
                 cutClassNameArray.append("\"").append(item).append("\"")
@@ -403,6 +403,17 @@ object WovenIntoCode {
                     Modifier.isStatic(ctMethod.modifiers)
                 val ctClasses = ctMethod.parameterTypes
                 val len = ctClasses.size
+
+                val targetField = getCtField(ctClass,targetFieldName)
+                if (targetField == null){
+                    val extraField = CtField(cp.get(JOIN_POINT_CLASS), targetFieldName, ctClass)
+                    extraField.modifiers = if (isStaticMethod){
+                        Modifier.PRIVATE or Modifier.VOLATILE or Modifier.STATIC
+                    }else {
+                        Modifier.PRIVATE or Modifier.VOLATILE
+                    }
+                    ctClass.addField(extraField)
+                }
 
                 val argNameList = methodParamNamesScanner.getParamNames(
                     targetMethodName,
@@ -461,22 +472,22 @@ object WovenIntoCode {
                 }else{
                     returnType.name
                 }
-
+                val argsStr =if (isHasArgs) "new Object[]{$argsBuffer}" else "null"
                 val returnStr = if (isSuspend){
                     String.format(
-                        ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointReturnExecute(${if (returnClassName == null) null else "$returnClassName.class"})"
+                        ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointReturnExecute($argsStr,${if (returnClassName == null) null else "$returnClassName.class"})"
                     )
                 }else{
                     String.format(
-                        ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointExecute(${if (suspendMethod) "(kotlin.coroutines.Continuation)\$$len" else "null" })"
+                        ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointExecute($argsStr,${if (suspendMethod) "(kotlin.coroutines.Continuation)\$$len" else "null" })"
                     )
                 }
 
-                val returnStr2 = if (returnType.name == "void"){
-                    "$returnStr;\nreturn;"
-                }else{
-                    "$returnStr;\n"
-                }
+//                val returnStr2 = if (returnType.name == "void"){
+//                    "$returnStr;\nreturn;"
+//                }else{
+//                    "$returnStr;\n"
+//                }
 
                 val invokeReturnStr:String? = ClassNameToConversions.getReturnInvokeXObject(returnType.name)
                 val invokeStr =if (isStaticMethod){
@@ -499,11 +510,11 @@ object WovenIntoCode {
                     cp.appendClassPath(it.absolutePath)
                 }
                 cp.importPackage(realInvokeClassNameReal)
-                val constructor = "\"${invokeClassName.replace(".", "_")}\",$targetClassName.class,${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\",${value.lambda}"
-                val setArgsStr =
-                    "pointCut.setTarget(${if(isStaticMethod)"null" else "\$0"});"+
-                    (if (isHasArgs) "        Object[] args = new Object[]{$argsBuffer};\n" else "") +
-                        (if (isHasArgs) "        pointCut.setArgs(args);\n" else "        pointCut.setArgs(null);\n")
+//                val constructor = "\"${invokeClassName.replace(".", "_")}\",$targetClassName.class,${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\",${value.lambda}"
+                val constructor = "\"${invokeClassName.replace(".", "_")}\",$targetClassName.class,\"$oldMethodName\",\"$targetMethodName\",${value.lambda},${if(isStaticMethod)"null" else "\$0"}"
+//                val setArgsStr =
+//                    (if (isHasArgs) "        Object[] args = new Object[]{$argsBuffer};\n" else "") +
+//                        (if (isHasArgs) "        pointCut.setArgs(args);\n" else "        pointCut.setArgs(null);\n")
 
                 val invokeMethodStr = if (ClassFileUtils.reflectInvokeMethod){
                     if (ClassFileUtils.reflectInvokeMethodStatic){
@@ -515,12 +526,18 @@ object WovenIntoCode {
                     "new $invokeClassName()"
                 }
 
+                val synchronizedObject = if (isStaticMethod){
+                    "$targetClassName.class"
+                }else {
+                    "this"
+                }
+
                 newMethodBody =
-                    " {AndroidAopJoinPoint pointCut = ObjectGetUtils.INSTANCE.getAndroidAopJoinPoint($constructor);\n"+
-                            "if(pointCut.isInit()){\n" +
-                                setArgsStr+
-                            "   $returnStr2\n" +
-                            "}\n"+
+                    " { " +
+                            "if ($targetFieldName == null) {\n" +
+                            "        synchronized ($synchronizedObject) {\n" +
+                            "            if ($targetFieldName == null) {\n" +
+                            "                AndroidAopJoinPoint pointCut = new AndroidAopJoinPoint($constructor);\n" +
                             "String[] cutClassNames = new String[]{$cutClassNameArray};\n"+
                             "pointCut.setCutMatchClassNames(cutClassNames);\n"+
                             "Class[] classes = new Class[]{$paramsClassesBuffer};\n"+
@@ -528,8 +545,12 @@ object WovenIntoCode {
                             "String[] paramNames = new String[]{$paramsNamesBuffer};\n"+
                             "pointCut.setParamNames(paramNames);\n"+
                             "pointCut.setReturnClass($returnTypeClassName.class);\n"+
-                            "pointCut.setInvokeMethod($invokeMethodStr);\n"+
-                            setArgsStr +
+                            "pointCut.setInvokeMethod($invokeMethodStr,$suspendMethod);\n"+
+                            "                $targetFieldName = pointCut;\n" +
+                            "            }\n" +
+                            "        }\n" +
+                            "    }\n" +
+                    " AndroidAopJoinPoint pointCut = $targetFieldName;\n"+
                             "        "+returnStr+";}"
                 ctMethod.setBody(newMethodBody)
                 InitConfig.putCutInfo(value)
@@ -715,6 +736,13 @@ object WovenIntoCode {
         return null
     }
 
+    fun getCtField(ctClass: CtClass, name: String): CtField? {
+        return try {
+            ctClass.getDeclaredField(name)
+        } catch (e: NotFoundException) {
+            null
+        }
+    }
 
     fun createInitClass(output:File) :File{
         val className = "com.flyjingfish.android_aop_annotation.utils.DebugAndroidAopInit"

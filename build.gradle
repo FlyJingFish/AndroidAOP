@@ -3,7 +3,7 @@ buildscript {
     dependencies {
         classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:'+TestVersion
         classpath 'org.jetbrains.kotlin:kotlin-serialization:1.5.0'
-        classpath 'io.github.FlyJingFish.EasyRegister:plugin:1.0.8'
+        classpath 'io.github.FlyJingFish.EasyRegister:plugin:1.0.9'
     }
 }
 plugins {

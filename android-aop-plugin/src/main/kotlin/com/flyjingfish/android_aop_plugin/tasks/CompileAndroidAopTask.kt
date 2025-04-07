@@ -196,7 +196,9 @@ class CompileAndroidAopTask(
                 fun mkOutFile(){
                     outFile.checkExist()
                     val tmpFile = TmpFile(file,outFile)
-                    tempFiles.add(tmpFile)
+                    synchronized(tempFiles){
+                        tempFiles.add(tmpFile)
+                    }
                 }
                 if (realMethodsRecord != null){
                     mkOutFile()
