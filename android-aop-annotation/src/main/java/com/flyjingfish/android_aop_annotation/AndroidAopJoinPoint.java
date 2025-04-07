@@ -53,6 +53,7 @@ public final class AndroidAopJoinPoint {
     private AopMethod aopMethod;
     private List<PointCutAnnotation> pointCutAnnotations;
     private final AtomicBoolean reflectStatic = new AtomicBoolean(false);
+    private boolean initHasNextAop;
 
 
     public AndroidAopJoinPoint(String classMethodKey, Class<?> clazz, String originalMethodName, String targetMethodName, boolean lambda,Object target) {
@@ -82,7 +83,7 @@ public final class AndroidAopJoinPoint {
         this.mReturnClass = returnClass;
     }
 
-    public synchronized Object joinPointReturnExecute(Object[] args,Class returnTypeClassName) throws Throwable {
+    public Object joinPointReturnExecute(Object[] args,Class returnTypeClassName) throws Throwable {
         Object target = mTarget;
         Object[] returnValue = AndroidAopBeanUtils.INSTANCE.borrowReturnObject();
         ProceedReturnImpl proceedReturn = new ProceedReturnImpl(targetClass, args,target);
@@ -126,7 +127,7 @@ public final class AndroidAopJoinPoint {
         }
         return AndroidAopBeanUtils.INSTANCE.releaseReturnObject(returnValue);
     }
-    public synchronized Object joinPointExecute(Object[] args,Continuation continuation) throws Throwable {
+    public Object joinPointExecute(Object[] args,Continuation continuation) throws Throwable {
         Object target = mTarget;
         boolean isSuspend = continuation != null;
         Object[] returnValue = AndroidAopBeanUtils.INSTANCE.borrowReturnObject();
@@ -141,7 +142,7 @@ public final class AndroidAopJoinPoint {
 
 
         ListIterator<PointCutAnnotation> iterator = pointCutAnnotations.listIterator();
-        JoinPoint.INSTANCE.setHasNext(proceedJoinPoint, pointCutAnnotations.size() > 1);
+        JoinPoint.INSTANCE.setHasNext(proceedJoinPoint, initHasNextAop);
         if (!iterator.hasNext()){
             if (AndroidAOPDebugUtils.INSTANCE.isApkDebug()){
                 throw new AndroidAOPPointCutNotFoundException("在"+targetClassName + "." + originalMethodName+"上没有找到切面处理类，请 clean 项目并重新编译");
@@ -151,7 +152,7 @@ public final class AndroidAopJoinPoint {
         }
 
 
-        if (pointCutAnnotations.size() > 1) {
+        if (initHasNextAop) {
             JoinPoint.INSTANCE.setOnInvokeListener(proceedJoinPoint, () -> {
                 if (iterator.hasNext()) {
                     PointCutAnnotation nextCutAnnotation = iterator.next();
@@ -313,6 +314,8 @@ public final class AndroidAopJoinPoint {
                 }
             }
         }
+
+        initHasNextAop = pointCutAnnotations.size() > 1;
     }
 
     private void getTargetMethod(){

@@ -10,6 +10,7 @@ import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils.CONVERSIONS_CLASS
+import com.flyjingfish.android_aop_plugin.utils.Utils.JOIN_LOCK
 import com.flyjingfish.android_aop_plugin.utils.Utils.JOIN_POINT_CLASS
 import com.flyjingfish.android_aop_plugin.utils.Utils.KEEP_CLASS
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
@@ -348,6 +349,7 @@ object WovenIntoCode {
         cp.importPackage(JOIN_POINT_CLASS)
         cp.importPackage(CONVERSIONS_CLASS)
         cp.importPackage(KEEP_CLASS)
+        cp.importPackage(JOIN_LOCK)
 //        cp.importPackage(OBJECT_UTILS)
         val methodParamNamesScanner = MethodParamNamesScanner(newClassByte)
 
@@ -406,13 +408,13 @@ object WovenIntoCode {
 
                 val targetField = getCtField(ctClass,targetFieldName)
                 if (targetField == null){
-                    val extraField = CtField(cp.get(JOIN_POINT_CLASS), targetFieldName, ctClass)
+                    val extraField = CtField(cp.get(JOIN_LOCK), targetFieldName, ctClass)
                     extraField.modifiers = if (isStaticMethod){
-                        Modifier.PRIVATE or Modifier.VOLATILE or Modifier.STATIC
+                        Modifier.PRIVATE or Modifier.FINAL or Modifier.STATIC
                     }else {
-                        Modifier.PRIVATE or Modifier.VOLATILE
+                        Modifier.PRIVATE or Modifier.FINAL
                     }
-                    ctClass.addField(extraField)
+                    ctClass.addField(extraField, CtField.Initializer.byExpr("new $JOIN_LOCK()"));
                 }
 
                 val argNameList = methodParamNamesScanner.getParamNames(
@@ -526,17 +528,17 @@ object WovenIntoCode {
                     "new $invokeClassName()"
                 }
 
-                val synchronizedObject = if (isStaticMethod){
-                    "$targetClassName.class"
-                }else {
-                    "this"
-                }
+//                val synchronizedObject = if (isStaticMethod){
+//                    "$targetClassName.class"
+//                }else {
+//                    "this"
+//                }
 
                 newMethodBody =
                     " { " +
-                            "if ($targetFieldName == null) {\n" +
-                            "        synchronized ($synchronizedObject) {\n" +
-                            "            if ($targetFieldName == null) {\n" +
+                            "if ($targetFieldName.getJoinPoint() == null) {\n" +
+                            "        synchronized ($targetFieldName) {\n" +
+                            "            if ($targetFieldName.getJoinPoint() == null) {\n" +
                             "                AndroidAopJoinPoint pointCut = new AndroidAopJoinPoint($constructor);\n" +
                             "String[] cutClassNames = new String[]{$cutClassNameArray};\n"+
                             "pointCut.setCutMatchClassNames(cutClassNames);\n"+
@@ -546,11 +548,11 @@ object WovenIntoCode {
                             "pointCut.setParamNames(paramNames);\n"+
                             "pointCut.setReturnClass($returnTypeClassName.class);\n"+
                             "pointCut.setInvokeMethod($invokeMethodStr,$suspendMethod);\n"+
-                            "                $targetFieldName = pointCut;\n" +
+                            "                $targetFieldName.setJoinPoint(pointCut);\n" +
                             "            }\n" +
                             "        }\n" +
                             "    }\n" +
-                    " AndroidAopJoinPoint pointCut = $targetFieldName;\n"+
+                    " AndroidAopJoinPoint pointCut = $targetFieldName.getJoinPoint();\n"+
                             "        "+returnStr+";}"
                 ctMethod.setBody(newMethodBody)
                 InitConfig.putCutInfo(value)

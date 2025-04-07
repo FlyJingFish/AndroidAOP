@@ -28,6 +28,7 @@ object Utils {
     const val OBJECT_UTILS = "com.flyjingfish.android_aop_annotation.utils.ObjectGetUtils"
     const val JOIN_POINT_CLASS = "com.flyjingfish.android_aop_annotation.AndroidAopJoinPoint"
     const val CONVERSIONS_CLASS = "com.flyjingfish.android_aop_annotation.Conversions"
+    const val JOIN_LOCK = "com.flyjingfish.android_aop_annotation.utils.JoinPointLock"
     const val METHOD_SUFFIX = "\$\$AndroidAOP"
 
     fun dotToSlash(str: String): String {
@@ -423,7 +424,7 @@ object Utils {
     }
 
     fun getTargetFieldName(oldMethodName:String,className:String,descriptor:String):String{
-        return "${getTargetMethodName(oldMethodName, className, descriptor)}Field"
+        return "${getTargetMethodName(oldMethodName, className, descriptor)}Lock"
     }
 
     fun getRealMethodName(methodName:String):String{
