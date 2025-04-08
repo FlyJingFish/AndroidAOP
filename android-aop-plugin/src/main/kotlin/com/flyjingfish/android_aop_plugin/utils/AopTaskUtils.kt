@@ -258,8 +258,8 @@ class AopTaskUtils(
                                                 )
                                             }
 
-                                            override fun onThrowOverrideMethod(className: String) {
-                                                throwOverride(className)
+                                            override fun onThrowOverrideMethod(className: String,overrideMethods:Set<String> ) {
+                                                throwOverride(className,overrideMethods)
                                             }
                                         }
                                     ), ClassReader.EXPAND_FRAMES)
@@ -464,8 +464,8 @@ class AopTaskUtils(
                                                     )
                                                 }
 
-                                                override fun onThrowOverrideMethod(className: String) {
-                                                    throwOverride(className)
+                                                override fun onThrowOverrideMethod(className: String,overrideMethods:Set<String> ) {
+                                                    throwOverride(className,overrideMethods)
                                                 }
                                             }
                                         ), ClassReader.EXPAND_FRAMES)
@@ -520,10 +520,47 @@ class AopTaskUtils(
         return jarFile
     }
 
-    private fun throwOverride(className: String) {
-        val hintFilePath = Utils.overrideClassFile(project, variantName)
-        InitConfig.exportOverrideClassFile(File(hintFilePath), mutableListOf(className))
-        throw AndroidAOPOverrideMethodException("重写$className 的相关方法已经改变，需要 clean 后重新编译")
+    private fun throwOverride(className: String,overrideMethods:Set<String> ) {
+        val isThrow = if (ClassFileUtils.debugMode){
+            val ctClass = try {
+                ClassPoolUtils.classPool?.getCtClass(className) ?: return
+            } catch (e: Exception) {
+                return
+            }
+            val isInterface = Modifier.isInterface(ctClass.modifiers)
+            if (isInterface) {
+                return
+            }
+            val allMethods = ctClass.methods.filter { ct ->
+                !Modifier.isStatic(ct.modifiers)
+                        && !Modifier.isFinal(ct.modifiers)
+                        && !Modifier.isPrivate(ct.modifiers)
+            }
+            val overrideMethodsNew = overrideMethods.toMutableSet()
+            val iterator = overrideMethodsNew.iterator()
+
+            while (iterator.hasNext()){
+                val methodName = iterator.next()
+                val matchMethodInfo = methodName.split("@")
+                val overrideMethodName = matchMethodInfo[1]
+                val overrideMethodDesc = matchMethodInfo[2]
+                for (allMethod in allMethods) {
+                    val name = allMethod.name
+                    val descriptor = allMethod.signature
+                    if (name == overrideMethodName && descriptor == overrideMethodDesc){
+                        iterator.remove()
+                    }
+                }
+            }
+            overrideMethodsNew.isNotEmpty()
+        }else{
+            true
+        }
+        if (isThrow){
+            val hintFilePath = Utils.overrideClassFile(project, variantName)
+            InitConfig.exportOverrideClassFile(File(hintFilePath), mutableListOf(className))
+            throw AndroidAOPOverrideMethodException("重写$className 的相关方法已经改变，需要 clean 后重新编译")
+        }
     }
 
 

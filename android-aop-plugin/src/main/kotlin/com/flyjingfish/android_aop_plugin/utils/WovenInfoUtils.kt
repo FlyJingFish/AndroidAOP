@@ -737,7 +737,7 @@ object WovenInfoUtils {
     fun recordOverrideClassname(className: String, methodName: String, descriptor: String){
         overrideClassnameSet.add(className)
         val list = overrideMethodMap.computeIfAbsent(className) { ConcurrentHashMap.newKeySet() }
-        list.add("$className.$methodName($descriptor)")
+        list.add("$className@$methodName@$descriptor")
     }
 
     fun isLastOverrideClassname(className: String):Boolean{

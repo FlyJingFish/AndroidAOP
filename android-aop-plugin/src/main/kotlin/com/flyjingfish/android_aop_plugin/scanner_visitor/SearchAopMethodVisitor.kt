@@ -448,7 +448,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
             && !Modifier.isStatic(access)
             && !Modifier.isFinal(access)
             && !Modifier.isPrivate(access)){
-            overrideMethodSet.remove("${slashToDot(className)}.$name($descriptor)")
+            overrideMethodSet.remove("${slashToDot(className)}@$name@$descriptor")
         }
         if ("<init>" != name && "<clinit>" != name && aopMatchCuts.size > 0 && isBackMethod(access) && !isAOPMethod(name)) {
             for (aopMatchCut in aopMatchCuts) {
@@ -512,7 +512,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
     override fun visitEnd() {
         super.visitEnd()
         if (isOverrideClass && overrideMethodSet.isNotEmpty()){
-            onCallBackMethod?.onThrowOverrideMethod(slashToDot(className))
+            onCallBackMethod?.onThrowOverrideMethod(slashToDot(className),overrideMethodSet)
         }
 
         this.methods.forEach { methodNode ->
@@ -635,6 +635,6 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
         fun onBackMethodRecord(methodRecord: MethodRecord)
         fun onDeleteMethodRecord(methodRecord: MethodRecord)
         fun onBackReplaceMethodInfo(replaceMethodInfo: ReplaceMethodInfo)
-        fun onThrowOverrideMethod(className:String)
+        fun onThrowOverrideMethod(className:String,overrideMethods:Set<String> )
     }
 }
