@@ -17,7 +17,6 @@ androidAopConfig {
     // debug 为true打开日志方便调试
     debug true
     // 测试
-    include 'com.flyjingfish','androidx.appcompat.widget.AppCompatImageView','com.google.android.material.textview'
     //默认关闭，开启后将会生成切点信息json文件在 /build/tmp/cutInfo.json
     cutInfoJson true
     increment false

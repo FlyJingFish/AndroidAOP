@@ -498,6 +498,11 @@ fun Int.isStaticMethod():Boolean{
     return access and Opcodes.ACC_STATIC != 0
 }
 
+fun Int.isPrivate():Boolean{
+    val access: Int = this
+    return access and Opcodes.ACC_PRIVATE != 0
+}
+
 fun Int.addPublic(isAddPublic: Boolean):Int{
     return if (isAddPublic){
         if (Modifier.isPublic(this)){
