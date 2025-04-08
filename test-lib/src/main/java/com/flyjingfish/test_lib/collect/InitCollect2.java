@@ -55,11 +55,9 @@ public class InitCollect2 {
     public static void collectAndroidAopClassRegex(Object sub){
         Log.e("InitCollect2","----collectAndroidAopClassRegexObject----"+sub);
     }
-    static Object o;
     @AndroidAopCollectMethod(regex = ".*?\\$\\$AndroidAopClass")
     public static void collectAndroidAopClassRegex(Class<?> sub){
         Log.e("InitCollect2","----collectAndroidAopClassRegexClazz----"+sub);
-        o.toString();
     }
 
     @AndroidAopCollectMethod
