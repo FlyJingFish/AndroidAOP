@@ -909,6 +909,18 @@ object WovenIntoCode {
                                 }else !isAbstractClass
 
                                 if (isMatchExtends && isAdd){
+                                    val tryStart = Label()
+                                    val tryEnd = Label()
+                                    val labelCatch = Label()
+                                    val tryCatchBlockEnd = Label()
+
+                                    methodVisitor.visitTryCatchBlock(
+                                        tryStart,
+                                        tryEnd,
+                                        labelCatch,
+                                        "java/lang/Throwable"
+                                    )
+                                    methodVisitor.visitLabel(tryStart)
                                     if (aopCollectCut.isClazz){
                                         methodVisitor.visitLdcInsn(Type.getObjectType(collectExtendsClazz));
                                         val collectClazz = Utils.dotToSlash("java.lang.Class")
@@ -938,6 +950,22 @@ object WovenIntoCode {
                                             false
                                         )
                                     }
+                                    methodVisitor.visitLabel(tryEnd)
+                                    methodVisitor.visitJumpInsn(Opcodes.GOTO, tryCatchBlockEnd)
+
+                                    methodVisitor.visitLabel(labelCatch)
+                                    methodVisitor.visitVarInsn(Opcodes.ASTORE, 0)
+
+                                    methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
+                                    methodVisitor.visitMethodInsn(
+                                        Opcodes.INVOKEVIRTUAL,
+                                        "java/lang/IllegalAccessError",
+                                        "printStackTrace",
+                                        "()V",
+                                        false
+                                    )
+
+                                    mv.visitLabel(tryCatchBlockEnd)
                                     InitConfig.addCollect(aopCollectCut)
                                 }else{
                                     iterator.remove()
