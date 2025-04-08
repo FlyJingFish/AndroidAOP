@@ -22,7 +22,7 @@
 
 ### 3. Memory leak occurs in the cut-in processing class?
 
-- This situation is usually because you have made a strong reference in the aspect processing class
+- This situation is usually because you have made a strong reference in the aspect processing class （[Handling class lifecycle](#6-what-is-the-life-cycle-of-the-aspect-processing-class-of-the-matching-aspect-and-the-annotation-aspect)）
 
 ### 4. Want to see all the locations where the aspect code is added
 
@@ -135,10 +135,6 @@ into two cases
 
 No matter which type a or b is, the aspect processing class object will only be created when the
 method is executed.
-
-In short, the object of the aspect processing class is bound to the class or the object of the
-class, and its life cycle is slightly longer than the object of the class of the pointcut non-static
-method.
 
 This is different from Aspectj, because we often want to set some member variables in the aspect
 processing class to facilitate the use of the next aspect processing; if you want to do this in

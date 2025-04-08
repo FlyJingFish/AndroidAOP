@@ -12,7 +12,7 @@
 
 ### 3、 切面处理类发生内存泄漏？
 
-- 这种情况一般是因为你在切面处理类做了强引用
+- 这种情况一般是因为你在切面处理类做了强引用（[处理类的生命周期](#6)）
 
 ### 4、 想要看到所有的加入切面代码的位置
 - [在 app 的build.gradle添加 androidAopConfig 配置项，cutInfoJson 设置为 true](/AndroidAOP/zh/getting_started/#app-buildgradle-androidaopconfig)
@@ -119,8 +119,6 @@ class MatchTestMatchMethod : MatchClassMethod {
     - 并且一个类方法只对应一个切面处理类
 
 不管是a、b哪种类型，切面处理类对象只有在方法被执行时才会被创建出来。
-
-简单来说，切面处理类的对象和类或类的对象是绑定在一块的，它的生命周期略长于切点非静态方法的类的对象。
 
 这与 Aspectj 是不同的，因为我们往往想在切面处理类中设置一些成员变量，方便在下次切面处理时的使用；而 Aspectj 你要想这么做是需要将“成员变量”保存为一个“静态变量”，而且还需要区分执行切点方法的对象是什么，需要写很多的代码，AndroidAOP 刚好优化解决了这一问题。
 

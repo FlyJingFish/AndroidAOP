@@ -65,7 +65,9 @@ interface MatchClassMethod {
 
 - [ProceedJoinPoint Introduction](/AndroidAOP/ProceedJoinPoint/)
 - [Introduction to invoke return value](https://flyjingfish.github.io/AndroidAOP/Pointcut_return/)
-- [Life Cycle](/AndroidAOP/FAQ/#6-what-is-the-life-cycle-of-the-aspect-processing-class-of-the-matching-aspect-and-the-annotation-aspect) ## Matching rules
+- [Life Cycle](/AndroidAOP/FAQ/#6-what-is-the-life-cycle-of-the-aspect-processing-class-of-the-matching-aspect-and-the-annotation-aspect) 
+
+## Matching rules
 
 You can see that in the following examples, some of the method names are set with only the method name, while others also have the return value type and parameter type. The following is an introduction
 
