@@ -918,7 +918,7 @@ object WovenIntoCode {
                                         tryStart,
                                         tryEnd,
                                         labelCatch,
-                                        "java/lang/Throwable"
+                                        "java/lang/IllegalAccessError"
                                     )
                                     methodVisitor.visitLabel(tryStart)
                                     if (aopCollectCut.isClazz){
