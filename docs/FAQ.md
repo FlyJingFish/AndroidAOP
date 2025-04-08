@@ -125,8 +125,7 @@ The aspect processing class is bound to the corresponding method of the class, w
 into two cases
 
 - a. If the pointcut method is **not static**
-    - The aspect processing class will be recycled as the object where the method is located is
-    recycled, but this is not timely; the recycling time is when any other aspect is processed.
+    - The aspect processing class will be recycled as the object where the method is located is recycled, and it is timely (starting from 2.5.4, it is optimized to be timely).
     - And each object's pointcut method corresponds to an object of the aspect processing class, that
       is, there are as many objects as the class where the pointcut method is located creates.
 - b. If the pointcut method is **static**

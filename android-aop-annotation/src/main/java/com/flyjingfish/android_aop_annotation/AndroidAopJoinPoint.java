@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import kotlin.coroutines.Continuation;
 
@@ -35,7 +34,6 @@ public final class AndroidAopJoinPoint {
     }
     private final Object mTarget;
     private final Class<?> targetClass;
-    private Object[] mArgs;
     private Class<?>[] mArgClasses;
     private Class<?> mReturnClass;
     private String[] mParamNames;
@@ -52,7 +50,8 @@ public final class AndroidAopJoinPoint {
     private final String classMethodKey;
     private AopMethod aopMethod;
     private List<PointCutAnnotation> pointCutAnnotations;
-    private final AtomicBoolean reflectStatic = new AtomicBoolean(false);
+    private boolean reflectStatic = false;
+    private boolean suspendMethod = false;
     private boolean initHasNextAop;
 
 
@@ -64,23 +63,6 @@ public final class AndroidAopJoinPoint {
         this.targetClass = clazz;
         this.lambda = lambda;
         this.mTarget = target;
-    }
-
-
-    public void setCutMatchClassNames(String[] cutMatchClassNames) {
-        this.cutMatchClassNames = cutMatchClassNames;
-    }
-
-    public void setArgClasses(Class[] argClasses) {
-        this.mArgClasses = argClasses;
-    }
-
-    public void setParamNames(String[] paramNames) {
-        this.mParamNames = paramNames;
-    }
-
-    public void setReturnClass(Class returnClass) {
-        this.mReturnClass = returnClass;
     }
 
     public Object joinPointReturnExecute(Object[] args,Class returnTypeClassName) throws Throwable {
@@ -129,7 +111,7 @@ public final class AndroidAopJoinPoint {
     }
     public Object joinPointExecute(Object[] args,Continuation continuation) throws Throwable {
         Object target = mTarget;
-        boolean isSuspend = continuation != null;
+        boolean isSuspend = suspendMethod;
         Object[] returnValue = AndroidAopBeanUtils.INSTANCE.borrowReturnObject();
 
         ProceedJoinPoint proceedJoinPoint;
@@ -278,13 +260,30 @@ public final class AndroidAopJoinPoint {
         }
     }
 
+    public void setCutMatchClassNames(String[] cutMatchClassNames) {
+        this.cutMatchClassNames = cutMatchClassNames;
+    }
+
+    public void setArgClasses(Class[] argClasses) {
+        this.mArgClasses = argClasses;
+    }
+
+    public void setParamNames(String[] paramNames) {
+        this.mParamNames = paramNames;
+    }
+
+    public void setReturnClass(Class returnClass) {
+        this.mReturnClass = returnClass;
+    }
+
     public void setInvokeMethod(InvokeMethod invokeMethod,boolean suspendMethod) {
-        reflectStatic.set(invokeMethod instanceof InvokeMethods);
-        if (reflectStatic.get()){
+        reflectStatic = invokeMethod instanceof InvokeMethods;
+        if (reflectStatic){
             this.invokeStaticClass = invokeMethod.getClass();
         }else {
             this.invokeMethod = invokeMethod;
         }
+        this.suspendMethod = suspendMethod;
         getTargetMethod();
 
         if (aopMethod == null){
@@ -344,7 +343,7 @@ public final class AndroidAopJoinPoint {
             }
             targetMethod.setAccessible(true);
             originalMethod.setAccessible(true);
-            if (reflectStatic.get() && invokeStaticClass != null){
+            if (reflectStatic && invokeStaticClass != null){
                 targetStaticMethod = invokeStaticClass.getDeclaredMethod(classMethodKey, Object.class,Object[].class);
                 targetStaticMethod.setAccessible(true);
             }
