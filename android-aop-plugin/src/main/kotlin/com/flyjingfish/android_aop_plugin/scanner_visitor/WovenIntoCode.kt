@@ -408,13 +408,16 @@ object WovenIntoCode {
 
                 val targetField = getCtField(ctClass,targetFieldName)
                 if (targetField == null){
-                    val extraField = CtField(cp.get(JOIN_LOCK), targetFieldName, ctClass)
-                    extraField.modifiers = if (isStaticMethod){
-                        Modifier.PRIVATE or Modifier.FINAL or Modifier.STATIC
-                    }else {
-                        Modifier.PRIVATE or Modifier.FINAL
+                    if (isStaticMethod){
+                        val extraField = CtField(cp.get(JOIN_LOCK), targetFieldName, ctClass)
+                        extraField.modifiers = Modifier.PRIVATE or Modifier.FINAL or Modifier.STATIC
+                        ctClass.addField(extraField, CtField.Initializer.byExpr("new $JOIN_LOCK()"));
+                    }else{
+                        val extraField = CtField(cp.get(JOIN_POINT_CLASS), targetFieldName, ctClass)
+                        extraField.modifiers = Modifier.PRIVATE or Modifier.VOLATILE
+                        ctClass.addField(extraField)
                     }
-                    ctClass.addField(extraField, CtField.Initializer.byExpr("new $JOIN_LOCK()"));
+
                 }
 
                 val argNameList = methodParamNamesScanner.getParamNames(
@@ -528,32 +531,48 @@ object WovenIntoCode {
                     "new $invokeClassName()"
                 }
 
-//                val synchronizedObject = if (isStaticMethod){
-//                    "$targetClassName.class"
-//                }else {
-//                    "this"
-//                }
+                val synchronizedObject = if (isStaticMethod){
+                    "$targetClassName.class"
+                }else {
+                    "this"
+                }
 
-                newMethodBody =
+                val initBody = "AndroidAopJoinPoint pointCut = new AndroidAopJoinPoint($constructor);\n" +
+                                "String[] cutClassNames = new String[]{$cutClassNameArray};\n"+
+                                "pointCut.setCutMatchClassNames(cutClassNames);\n"+
+                                "Class[] classes = new Class[]{$paramsClassesBuffer};\n"+
+                                "pointCut.setArgClasses(classes);\n"+
+                                "String[] paramNames = new String[]{$paramsNamesBuffer};\n"+
+                                "pointCut.setParamNames(paramNames);\n"+
+                                "pointCut.setReturnClass($returnTypeClassName.class);\n"+
+                                "pointCut.setInvokeMethod($invokeMethodStr,$suspendMethod);\n"
+
+                newMethodBody = if (isStaticMethod){
                     " { " +
                             "if ($targetFieldName.getJoinPoint() == null) {\n" +
                             "        synchronized ($targetFieldName) {\n" +
                             "            if ($targetFieldName.getJoinPoint() == null) {\n" +
-                            "                AndroidAopJoinPoint pointCut = new AndroidAopJoinPoint($constructor);\n" +
-                            "String[] cutClassNames = new String[]{$cutClassNameArray};\n"+
-                            "pointCut.setCutMatchClassNames(cutClassNames);\n"+
-                            "Class[] classes = new Class[]{$paramsClassesBuffer};\n"+
-                            "pointCut.setArgClasses(classes);\n"+
-                            "String[] paramNames = new String[]{$paramsNamesBuffer};\n"+
-                            "pointCut.setParamNames(paramNames);\n"+
-                            "pointCut.setReturnClass($returnTypeClassName.class);\n"+
-                            "pointCut.setInvokeMethod($invokeMethodStr,$suspendMethod);\n"+
+                                            initBody+
                             "                $targetFieldName.setJoinPoint(pointCut);\n" +
                             "            }\n" +
                             "        }\n" +
                             "    }\n" +
-                    " AndroidAopJoinPoint pointCut = $targetFieldName.getJoinPoint();\n"+
+                            " AndroidAopJoinPoint pointCut = $targetFieldName.getJoinPoint();\n"+
                             "        "+returnStr+";}"
+                }else{
+                    " { " +
+                            "if ($targetFieldName == null) {\n" +
+                            "        synchronized ($synchronizedObject) {\n" +
+                            "            if ($targetFieldName == null) {\n" +
+                                            initBody+
+                            "                $targetFieldName = pointCut;\n" +
+                            "            }\n" +
+                            "        }\n" +
+                            "    }\n" +
+                            " AndroidAopJoinPoint pointCut = $targetFieldName;\n"+
+                            "        "+returnStr+";}"
+                }
+
                 ctMethod.setBody(newMethodBody)
                 InitConfig.putCutInfo(value)
             } catch (e: Exception) {

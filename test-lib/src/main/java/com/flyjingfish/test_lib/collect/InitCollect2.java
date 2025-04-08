@@ -61,9 +61,9 @@ public class InitCollect2 {
         Log.e("InitCollect2","----collectAndroidAopClassRegexClazz----"+sub);
     }
 
-    @AndroidAopCollectMethod
-    public static void collectOnClickListener(Class<? extends View.OnClickListener> listener){
-    }
+//    @AndroidAopCollectMethod
+//    public static void collectOnClickListener(Class<? extends View.OnClickListener> listener){
+//    }
 
     @MyAnno
     public static void init(Application application){

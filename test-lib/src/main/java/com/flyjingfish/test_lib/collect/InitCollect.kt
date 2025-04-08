@@ -47,10 +47,10 @@ object InitCollect {
         Log.e("InitCollect", "----collectAndroidAopClassRegexObject----$sub")
     }
 
-    @AndroidAopCollectMethod
-    @JvmStatic
-    fun collectOnClickListener(listener: Class<out OnClickListener>){
-    }
+//    @AndroidAopCollectMethod
+//    @JvmStatic
+//    fun collectOnClickListener(listener: Class<out OnClickListener>){
+//    }
     fun init(application: Application){
         Log.e("InitCollect","----init----");
         for (collect in Collects) {

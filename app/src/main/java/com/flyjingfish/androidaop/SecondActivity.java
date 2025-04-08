@@ -79,6 +79,8 @@ public class SecondActivity extends BaseActivity2 {
         testIntArray(new int[]{0,1},null,null,0,null,null,null,null,null,null,null,null);
         Log.e("Test_click", "onSingleClick");
         binding.ivImage.setImageResource(R.mipmap.ic_launcher);
+
+        getResources().getString(R.string.app_name);
     }
 
     @Override

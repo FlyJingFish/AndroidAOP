@@ -424,7 +424,7 @@ object Utils {
     }
 
     fun getTargetFieldName(oldMethodName:String,className:String,descriptor:String):String{
-        return "${getTargetMethodName(oldMethodName, className, descriptor)}Lock"
+        return "${getTargetMethodName(oldMethodName, className, descriptor)}Field"
     }
 
     fun getRealMethodName(methodName:String):String{

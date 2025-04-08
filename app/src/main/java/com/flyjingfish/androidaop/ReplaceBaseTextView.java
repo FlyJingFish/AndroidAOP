@@ -6,10 +6,13 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatTextView;
 
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopModifyExtendsClass;
 import com.google.android.material.textview.MaterialTextView;
 
-public class ReplaceBaseTextView extends MaterialTextView {
+@AndroidAopModifyExtendsClass(value = "androidx.appcompat.widget.AppCompatImageView",isParent = true)
+public class ReplaceBaseTextView extends AppCompatTextView {
     public ReplaceBaseTextView(@NonNull Context context) {
         super(context);
     }
