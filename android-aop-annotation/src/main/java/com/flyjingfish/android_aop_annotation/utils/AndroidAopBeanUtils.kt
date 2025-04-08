@@ -36,7 +36,7 @@ internal object AndroidAopBeanUtils {
     fun addSuspendReturnListener(key:Any,onSuspendReturnListener: OnBaseSuspendReturnListener){
         val list = try {
             mReturnListenerMap.computeIfAbsent(key) { mutableListOf() }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             synchronized(mReturnListenerMap){
                 var l = mReturnListenerMap[key]
                 if (l == null){

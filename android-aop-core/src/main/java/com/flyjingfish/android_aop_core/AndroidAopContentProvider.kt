@@ -7,6 +7,9 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 
+/**
+ * 如果你想复制此类，务必保证包名也一样
+ */
 class AndroidAopContentProvider : ContentProvider() {
     companion object{
         private var appContext: Context? = null
