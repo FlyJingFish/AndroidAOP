@@ -14,7 +14,7 @@ apply from: "$rootDir/gradle/java_publish.gradle"
 dependencies {
     implementation gradleApi()
     implementation localGroovy()
-    implementation libs.gradle
+    compileOnly libs.gradle
     implementation libs.asm.lib
     implementation libs.asm.commons
     implementation libs.flyjingfish.javassist

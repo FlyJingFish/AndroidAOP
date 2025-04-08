@@ -21,6 +21,7 @@ import com.flyjingfish.android_aop_plugin.utils.adapterOSPath
 import com.flyjingfish.android_aop_plugin.utils.getRelativePath
 import org.codehaus.groovy.runtime.DefaultGroovyMethods
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -148,7 +149,7 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
         }
 
 
-        val kotlinCompileFilePathMap = mutableMapOf<String, KotlinCompileTool>()
+        val kotlinCompileFilePathMap = mutableMapOf<String, Task>()
         val android = androidObject as BaseExtension
         val variants = if (isApp or isDynamicLibrary) {
             (android as AppExtension).applicationVariants
@@ -203,7 +204,9 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
                     null
                 }
                 val cacheDir = try {
-                    task?.destinationDirectory?.get()?.asFile
+                    task?.let {
+                        (it as KotlinCompileTool).destinationDirectory.get().asFile
+                    }
                 } catch (e: Throwable) {
                     null
                 }
