@@ -14,7 +14,7 @@ import com.flyjingfish.android_aop_annotation.enums.MatchType
 )
 class MatchAll : MatchClassMethod {
     override fun invoke(joinPoint: ProceedJoinPoint, methodName: String): Any? {
-        Log.i("MatchAll", "---->${joinPoint.targetClass}--${joinPoint.targetMethod.name}--${joinPoint.targetMethod.parameterTypes.toList()}");
+        Log.i("MatchAll", "---->${joinPoint.targetClass}--${joinPoint.targetMethod.name}--${joinPoint.targetMethod.parameterTypes.toList()}--${joinPoint.args?.toList()}");
         return joinPoint.proceed()
     }
 }
