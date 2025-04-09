@@ -99,7 +99,7 @@ For example, this method changes `new Thread()` to `new MyThread()`
          - And the return type cannot be empty (must inherit or be equal to the class of @AndroidAopReplaceClass)
          - The object returned by the method will replace the new object (of course, it is also possible to directly return the callback object)
     - 2、Fill in according to the following requirements. The function is completely different from the previous one. At this time, the object has not been created (this function is available in versions 2.5.7 and above)
-         - The parameters defined by the method must be exactly the same as the parameter types of the constructor
+         - The first parameter of the method definition must be of Class type, and the remaining parameters must be exactly the same as the parameter type and order of the constructor.
          - You need to manually rewrite the code to create the object, because the object has not been created in this case
          - And the return type cannot be empty (must inherit or be equal to the class of @AndroidAopReplaceClass)
          - The object returned by the method will be assigned to the original call
@@ -256,8 +256,8 @@ object ReplaceTestMatch {
 
     @AndroidAopReplaceMethod("<init>(int)")
     @JvmStatic
-    fun getTestBean(num: Int) : TestMatch{
-        //The parameters are exactly the same as the original construction method. The object is created in this method. No object has been created before.
+    fun getTestBean(clazz :Class<*>,num: Int) : TestMatch{
+        //The first parameter is of type Class. The types and order of the remaining parameters are exactly the same as the original constructor. The object is created in this method. No object has been created before.
         return TestMatch(num)
     }
 
