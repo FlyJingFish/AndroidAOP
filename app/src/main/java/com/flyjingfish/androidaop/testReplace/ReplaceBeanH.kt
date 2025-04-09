@@ -8,7 +8,7 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethod
 object ReplaceBeanH {
     @AndroidAopReplaceMethod("<init>(java.lang.Object,int,int)")
     @JvmStatic
-    fun getBeanH(o: Any, num1: Int, num2: Int): BeanH {
+    fun getBeanH(clazz: Class<*>,o: Any, num1: Int, num2: Int): BeanH {
         Log.e("ReplaceBeanH", "getBeanH")
         return BeanH(o,num1,num2)
     }

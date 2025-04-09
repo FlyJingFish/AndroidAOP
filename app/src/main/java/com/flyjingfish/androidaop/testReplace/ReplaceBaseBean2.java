@@ -14,7 +14,7 @@ public class ReplaceBaseBean2 {
 //    }
 
     @AndroidAopReplaceMethod("<init>(int,int)")
-    public static BaseBean getBaseBean(int num1, int num2)  {
+    public static BaseBean getBaseBean(Class<?> clazz,int num1, int num2)  {
         Log.e("ReplaceBaseBean2","getBaseBean");
         return new BaseBean(num1, num2);
     }
