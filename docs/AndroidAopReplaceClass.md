@@ -93,10 +93,16 @@ For example, this method changes `new Thread()` to `new MyThread()`
 
 - The replaced method must belong to the replaced class filled in by @AndroidAopReplaceClass
 
-- If the replaced method starts with `<init>`, the function is similar to @AndroidAopReplaceNew, except that it will only call back the new class, will not change the new class name, and can specify the construction method.
-    - The method must have only one parameter, which is the replaced class (must be equal to the class of @AndroidAopReplaceClass)
-    - And the return type cannot be empty (must inherit or be equal to the class of @AndroidAopReplaceClass)
-    - The object returned by the method will replace the new object (of course, it is also possible to directly return the callback object)
+- If the replaced method starts with `<init>`, the function is divided into two cases
+    - 1、Fill in according to the following requirements. The function is similar to @AndroidAopReplaceNew. The difference is that this will only call back the new class, will not change the new class name, and can specify the construction method. (The object has been created)
+         - The method must have only one parameter, which is the defined class to be replaced (must be equal to the class of @AndroidAopReplaceClass)
+         - And the return type cannot be empty (must inherit or be equal to the class of @AndroidAopReplaceClass)
+         - The object returned by the method will replace the new object (of course, it is also possible to directly return the callback object)
+    - 2、Fill in according to the following requirements. The function is completely different from the previous one. At this time, the object has not been created (this function is available in versions 2.5.7 and above)
+         - The parameters defined by the method must be exactly the same as the parameter types of the constructor
+         - You need to manually rewrite the code to create the object, because the object has not been created in this case
+         - And the return type cannot be empty (must inherit or be equal to the class of @AndroidAopReplaceClass)
+         - The object returned by the method will be assigned to the original call
 
 For specific writing requirements, please refer to the usage method below
 
@@ -231,21 +237,28 @@ object ReplaceTestMatch {
     @AndroidAopReplaceNew
     @JvmStatic
     fun newTestMatch1(testBean: TestMatch3) {
-//Replace the class name after new, the parameter type is the replaced type, the return type of this method is empty, and this method will not be called back
+        //Replace the class name after new, the parameter type is the replaced type, the return type of this method is empty, and this method will not be called back
     }
 
     @AndroidAopReplaceNew
     @JvmStatic
     fun newTestMatch2(testBean: TestMatch3): TestMatch {
-//Replace the class name after new, the parameter type is the replaced type, and the return type of this method is not empty, then this method will be called back, and the returned object will replace the new object
+        //Replace the class name after new, the parameter type is the replaced type, and the return type of this method is not empty, then this method will be called back, and the returned object will replace the new object
         return new TestMatch ()
     }
 
     @AndroidAopReplaceMethod("<init>(int)")
     @JvmStatic
     fun getTestBean(testBean: TestMatch): TestMatch {
-//Only one parameter can be the replaced class, the return type cannot be empty, and the object returned by the method will replace the newly created object
+        //Only one parameter can be the replaced class, the return type cannot be empty, and the object returned by the method will replace the newly created object
         return TestMatch(2)
+    }
+
+    @AndroidAopReplaceMethod("<init>(int)")
+    @JvmStatic
+    fun getTestBean(num: Int) : TestMatch{
+        //The parameters are exactly the same as the original construction method. The object is created in this method. No object has been created before.
+        return TestMatch(num)
     }
 
 }
@@ -258,6 +271,8 @@ The above three usage methods can replace the new object. The difference is
 - The second method not only replaces the new class name, but also calls back to the method. The object returned here will also replace the newly created object (the difference between the two is whether the return type is empty)
 
 - The third method is different from the first two in that it **does not replace the new class name**, but calls back to the method. The object returned here will replace the newly created object. And the defined parameter must be one and only one type defined by @AndroidAopReplaceClass, and the return type cannot be null
+
+- The fourth type is different from the first three in that it **will neither replace the new class name nor have an object callback**, you need to manually create this object. Its advantage is that it gets all the parameters for creating the object before the object is created, so that you can modify the parameters in advance and then create the object, **so its advantage is that it has a pre-effect**
 
 - The function defined by @AndroidAopReplaceNew has one and only one parameter, and the parameter type can be any type except the basic type
 

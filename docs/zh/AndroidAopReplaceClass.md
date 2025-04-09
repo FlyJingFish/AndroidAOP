@@ -93,10 +93,16 @@
 
 - 填写的被替换的方法必须是属于 @AndroidAopReplaceClass 填写的被替换类的方法
 
-- 如果填写的被替换的方法以 `<init>` 开头，则功能类似 @AndroidAopReplaceNew ，不同的是这只会回调 new 出来的类，不会改变 new 的类名，而且可以指定构造方法。
-    - 方法必须只有一个参数就是定义的被替换类（必须等于@AndroidAopReplaceClass 的类）
-    - 并且返回类型不可以为空（必须继承或等于@AndroidAopReplaceClass 的类）
-    - 方法返回的对象将会替换new的对象（当然直接返回回调进来对象也可以）
+- 如果填写的被替换的方法以 `<init>` 开头，功能分两种情况
+    - 1、按以下要求填写，功能类似 @AndroidAopReplaceNew ，不同的是这只会回调 new 出来的类，不会改变 new 的类名，而且可以指定构造方法。（对象已经被创建出来了）
+        - 方法必须只有一个参数就是定义的被替换类（必须等于@AndroidAopReplaceClass 的类）
+        - 并且返回类型不可以为空（必须继承或等于@AndroidAopReplaceClass 的类）
+        - 方法返回的对象将会替换new的对象（当然直接返回回调进来对象也可以）
+    - 2、按以下要求填写，功能与之前所述完全不同，此时对象尚未创建出来（此功能在2.5.7及以上的版本开始使用）
+        - 方法所定义参数必须和构造方法的参数类型完全一致
+        - 需要你手动重新去写创建对象的代码，因为这种情况尚未创建出对象来
+        - 并且返回类型不可以为空（必须继承或等于@AndroidAopReplaceClass 的类）
+        - 方法返回的对象将会赋值给原调用处
 
 具体写法要求看下边的使用方法
 
@@ -146,7 +152,7 @@
 | Double?   |  java.lang.Double   |               
 | Boolean?  |  java.lang.Boolean  |  
 | String    |  java.lang.String   |  
-| Unit（或不写）      |        void         |  
+| Unit（或不写） |        void         |  
 | Unit?     |   java.lang.Void    |  
 | Any       |  java.lang.Object   |   
 
@@ -251,6 +257,13 @@ object ReplaceTestMatch {
         return TestMatch(2)
     }
 
+    @AndroidAopReplaceMethod("<init>(int)")
+    @JvmStatic
+    fun getTestBean(num: Int) : TestMatch{
+        //参数和原构造方法完全一致，在这个方法内再去创建对象，此前并没有对象被创建出来
+        return TestMatch(num)
+    }
+
 }
 ```
 
@@ -261,6 +274,8 @@ object ReplaceTestMatch {
 - 第2种不但替换了 new 的类名，并且会回调到方法内，在此返回的对象也将会换掉刚刚 new 出来的对象（两者区别就是返回类型是否为空）
 
 - 第3种与前两者不同的是它 **不会替换 new 的类名**，但是会回调到方法内，在此返回的对象将会换掉刚刚 new 出来的对象。并且定义的参数有且只有一个必须是 @AndroidAopReplaceClass 定义的类型，返回类型不可为空
+
+- 第4种与前三者不同的是它 **既不会替换 new的类名，也没有对象回调进来**，需要你手动创建此对象，它的优点在于在尚未创建对象之前拿到创建对象的所有参数，这样可以提前去修改参数再去创建对象，**所以它的优点就是有一个前置作用**
 
 - @AndroidAopReplaceNew 定义的函数有且只有一个参数，参数类型可以是除了基础类型以外的任何类型
 
