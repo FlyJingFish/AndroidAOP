@@ -1,5 +1,7 @@
 package com.flyjingfish.androidaop.testReplace;
 
+import android.util.Log;
+
 public class BaseBean {
     int num1;
     int num2;
@@ -14,6 +16,6 @@ public class BaseBean {
     }
 
     public void test(){
-
+        Log.e("BaseBean","test");
     }
 }
