@@ -47,4 +47,8 @@ class MethodReplaceInvokeAdapter2(private val className:String, private val supe
         super.visitInsn(opcode)
     }
 
+    override fun superVisitLdcInsn(value: Any?) {
+        super.visitLdcInsn(value)
+    }
+
 }

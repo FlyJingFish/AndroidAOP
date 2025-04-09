@@ -49,13 +49,23 @@ data class ReplaceMethodInfo(
             return oldDeleteNew
         }
         val deleteNew = if (replaceType == ReplaceType.INIT){
-            val newReplace = Type.getArgumentTypes(newMethodDesc).joinToString("")
-            val oldReplace = Type.getArgumentTypes(oldMethodDesc).joinToString("")
-            newReplace == oldReplace
+            isDeleteNew(newMethodDesc,oldMethodDesc)
         }else{
             false
         }
         isDeleteNew = deleteNew
         return deleteNew
+    }
+
+    companion object{
+        fun isDeleteNew(newMethodDesc:String,oldMethodDesc:String):Boolean{
+            val newTypes = Type.getArgumentTypes(newMethodDesc)
+            val oldTypes = Type.getArgumentTypes(oldMethodDesc)
+            return if (newTypes.isNotEmpty()){
+                newTypes[0].className == Class::class.java.name && newTypes.toList().subList(1,newTypes.size).joinToString("") == oldTypes.joinToString("")
+            }else{
+                false
+            }
+        }
     }
 }

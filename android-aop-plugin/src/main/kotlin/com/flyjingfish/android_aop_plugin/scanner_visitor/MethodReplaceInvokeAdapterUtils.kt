@@ -31,6 +31,7 @@ class MethodReplaceInvokeAdapterUtils(private val className:String, private val 
 
         fun superVisitVarInsn(opcode: Int, varIndex:Int)
         fun superVisitInsn(opcode: Int)
+        fun superVisitLdcInsn(value: Any?)
     }
 
     fun visitTypeInsn(opcode: Int, type: String) {
@@ -131,6 +132,9 @@ class MethodReplaceInvokeAdapterUtils(private val className:String, private val 
                         // 弹掉 uninit_obj
                         superCall.superVisitInsn(Opcodes.POP)
 
+                        // 3. 加载类对象（传入静态方法）
+                        superCall.superVisitLdcInsn(Type.getObjectType(owner))
+
                         // 恢复参数
                         for (i in argTypes.indices) {
                             loadLocal(localIndexes[i], argTypes[i])
@@ -153,6 +157,9 @@ class MethodReplaceInvokeAdapterUtils(private val className:String, private val 
                             replaceMethodInfo.newMethodDesc,
                             false
                         )
+                        if (isInitAop){
+                            superCall.superVisitTypeInsn(Opcodes.CHECKCAST, owner)
+                        }
                         onResultListener?.onBack()
                     }else {
                         superCall.superVisitMethodInsn(opcode, owner, name, descriptor, isInterface)
