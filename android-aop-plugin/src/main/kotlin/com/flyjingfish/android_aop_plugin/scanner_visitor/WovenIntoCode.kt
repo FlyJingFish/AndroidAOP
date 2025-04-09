@@ -142,7 +142,7 @@ object WovenIntoCode {
                     thisHasStaticClock = isHasStaticClock
                     return mv
                 }
-            }, 0)
+            }, WovenInfoUtils.getWovenParsingOptions())
         }else{
             cr.accept(object : ReplaceBaseClassVisitor(cw) {
                 override fun visit(
@@ -181,7 +181,7 @@ object WovenIntoCode {
                     thisHasStaticClock = isHasStaticClock
                     return mv
                 }
-            }, 0)
+            }, WovenInfoUtils.getWovenParsingOptions())
         }
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
             if (value in wovenRecord){
@@ -287,7 +287,11 @@ object WovenIntoCode {
                         )
 
                         if (hasReplace && mv != null && access.isHasMethodBody()) {
-                            mv = MethodReplaceInvokeAdapter(className,oldSuperName,name,descriptor,mv)
+                            mv = if (WovenInfoUtils.getWovenParsingOptions() != 0){
+                                MethodReplaceInvokeAdapter2(className,oldSuperName,access,name,descriptor,mv)
+                            }else{
+                                MethodReplaceInvokeAdapter(className,oldSuperName,access,name,descriptor,mv)
+                            }
                         }
 //                        WovenInfoUtils.addAopMethodCutInnerClassInfoInvokeMethod(className,newMethodName,descriptor)
                         RemoveAnnotation(mv)
@@ -299,7 +303,7 @@ object WovenIntoCode {
                 override fun visitEnd() {
                     super.visitEnd()
                 }
-            }, 0)
+            }, WovenInfoUtils.getWovenParsingOptions())
         }
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
             if (value in wovenRecord){

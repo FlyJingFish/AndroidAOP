@@ -12,8 +12,10 @@ import com.flyjingfish.android_aop_plugin.beans.OverrideClassJson
 import com.flyjingfish.android_aop_plugin.beans.ReplaceInnerClassInfo
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
+import com.flyjingfish.android_aop_plugin.scanner_visitor.MethodReplaceInvokeAdapter2
 import com.flyjingfish.android_aop_plugin.ex.AndroidAOPOverrideMethodException
 import org.gradle.api.Project
+import org.objectweb.asm.ClassReader
 import org.objectweb.asm.Type
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
@@ -116,6 +118,8 @@ object WovenInfoUtils {
         for (mutableEntry in replaceMethodInfoMap) {
             replaceMethodInfoMapUse.putAll(mutableEntry.value)
         }
+        parsingOptions = null
+        getWovenParsingOptions()
     }
     fun getReplaceMethodInfoUse(key: String):ReplaceMethodInfo? {
         return replaceMethodInfoMapUse[key]
@@ -751,5 +755,27 @@ object WovenInfoUtils {
             set.addAll(it)
         }
         return set
+    }
+
+    @Volatile
+    private var parsingOptions : Int ?= null
+
+    /**
+     * 为了使用 [MethodReplaceInvokeAdapter2]
+     */
+    fun getWovenParsingOptions():Int{
+        var option = parsingOptions
+        return if (option == null){
+            val isHasDeleteNew = replaceMethodInfoMapUse.values.any { it.isDeleteNew() }
+            option = if (isHasDeleteNew){
+                ClassReader.EXPAND_FRAMES
+            }else{
+                0
+            }
+            parsingOptions = option
+            option
+        }else{
+            option
+        }
     }
 }

@@ -12,6 +12,7 @@ import com.flyjingfish.android_aop_core.annotations.Scheduled;
 import com.flyjingfish.android_aop_core.utils.AndroidAop;
 import com.flyjingfish.androidaop.databinding.ActivitySecondBinding;
 import com.flyjingfish.androidaop.test.MyOnClickListener2;
+import com.flyjingfish.androidaop.testReplace.BeanH;
 import com.flyjingfish.test_lib.annotation.MyAnno;
 import com.flyjingfish.test_lib.replace.ReplaceLog;
 

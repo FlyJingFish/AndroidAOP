@@ -9,9 +9,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopModifyExtendsClass;
-import com.google.android.material.textview.MaterialTextView;
 
-@AndroidAopModifyExtendsClass(value = "androidx.appcompat.widget.AppCompatImageView",isParent = true)
+@AndroidAopModifyExtendsClass(value = "androidx.appcompat.widget.AppCompatTextView",isParent = true)
 public class ReplaceBaseTextView extends AppCompatTextView {
     public ReplaceBaseTextView(@NonNull Context context) {
         super(context);

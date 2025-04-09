@@ -1,7 +1,8 @@
 package com.flyjingfish.androidaop.testReplace;
 
 public class BeanH extends BaseBean{
-    public BeanH(int num1, int num2) {
+
+    public BeanH(Object o,int num1, int num2) {
         super(num1, num2);
     }
 

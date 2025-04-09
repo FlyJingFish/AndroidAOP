@@ -1,5 +1,6 @@
 package com.flyjingfish.android_aop_plugin.scanner_visitor
 
+import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.isHasMethodBody
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
@@ -32,10 +33,21 @@ open class MethodReplaceInvokeVisitor(
         var mv: MethodVisitor? = super.visitMethod(access, name, descriptor, signature, exceptions)
 
         if (mv != null && access.isHasMethodBody()) {
-            mv = MethodReplaceInvokeAdapter(className,superName,name,descriptor,mv)
-            mv.onResultListener = object : MethodReplaceInvokeAdapter.OnResultListener{
-                override fun onBack() {
-                    replaced = true
+            mv = if (WovenInfoUtils.getWovenParsingOptions() != 0){
+                MethodReplaceInvokeAdapter2(className,superName,access,name,descriptor,mv).apply {
+                    utils.onResultListener = object : MethodReplaceInvokeAdapterUtils.OnResultListener{
+                        override fun onBack() {
+                            replaced = true
+                        }
+                    }
+                }
+            }else{
+                MethodReplaceInvokeAdapter(className,superName,access,name,descriptor,mv).apply {
+                    utils.onResultListener = object : MethodReplaceInvokeAdapterUtils.OnResultListener{
+                        override fun onBack() {
+                            replaced = true
+                        }
+                    }
                 }
             }
         }

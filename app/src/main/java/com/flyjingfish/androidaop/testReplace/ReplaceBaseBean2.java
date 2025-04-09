@@ -7,10 +7,16 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethod;
 
 @AndroidAopReplaceClass("com.flyjingfish.androidaop.testReplace.BaseBean")
 public class ReplaceBaseBean2 {
+//    @AndroidAopReplaceMethod("<init>(int,int)")
+//    public static BaseBean getBaseBean(BaseBean testBean)  {
+//        Log.e("ReplaceBaseBean2","getBaseBean");
+//        return testBean;
+//    }
+
     @AndroidAopReplaceMethod("<init>(int,int)")
-    public static BaseBean getBaseBean(BaseBean testBean)  {
+    public static BaseBean getBaseBean(int num1, int num2)  {
         Log.e("ReplaceBaseBean2","getBaseBean");
-        return testBean;
+        return new BaseBean(num1, num2);
     }
 
     @AndroidAopReplaceMethod("void test()")

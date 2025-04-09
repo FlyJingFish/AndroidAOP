@@ -2,11 +2,12 @@ package com.flyjingfish.android_aop_plugin.scanner_visitor
 
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
+import org.objectweb.asm.commons.LocalVariablesSorter
 
 
-class MethodReplaceInvokeAdapter(private val className:String,private val superName: String,private val methodAccess:Int,
-                                 private val methodName:String,private val methodDesc:String, methodVisitor: MethodVisitor?) :
-    MethodVisitor(Opcodes.ASM9, methodVisitor) ,MethodReplaceInvokeAdapterUtils.SuperCall {
+class MethodReplaceInvokeAdapter2(private val className:String, private val superName: String, private val methodAccess:Int,
+                                  private val methodName:String, private val methodDesc:String, methodVisitor: MethodVisitor?) :
+    LocalVariablesSorter(Opcodes.ASM9,methodAccess,methodDesc,methodVisitor),MethodReplaceInvokeAdapterUtils.SuperCall {
 
     val utils = MethodReplaceInvokeAdapterUtils(className,superName,methodAccess,methodName,methodDesc,this,this)
 

@@ -29,6 +29,7 @@ import com.flyjingfish.androidaop.test.TestBean
 import com.flyjingfish.androidaop.test.TestReplace
 import com.flyjingfish.androidaop.test2.StaticClass
 import com.flyjingfish.androidaop.testReplace.BaseBean
+import com.flyjingfish.androidaop.testReplace.BeanH
 import com.flyjingfish.test_lib.BaseActivity
 import com.flyjingfish.test_lib.PermissionRejectListener
 import com.flyjingfish.test_lib.TestMatch2
@@ -93,6 +94,8 @@ class MainActivity: BaseVActivity<ActivityMainBinding>(),PermissionRejectListene
         })
         val bbean = BaseBean(0,0)
         bbean.test()
+        val beanH = BeanH(Any(),0,0)
+        beanH.test()
 //        binding.btnIOThread.setOnClickListener {
 //            onIOThread()
 //        }

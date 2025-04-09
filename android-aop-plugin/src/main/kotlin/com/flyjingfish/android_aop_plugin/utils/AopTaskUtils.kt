@@ -681,7 +681,7 @@ class AopTaskUtils(
             }
         }
 
-        cr.accept(cv, 0)
+        cr.accept(cv, WovenInfoUtils.getWovenParsingOptions())
 
         thisCollectClassName?.let {
             if (thisHasCollect && !thisHasStaticClock) {
@@ -740,7 +740,7 @@ class AopTaskUtils(
             }
         }
 
-        cr.accept(cv, 0)
+        cr.accept(cv, WovenInfoUtils.getWovenParsingOptions())
 
         thisCollectClassName?.let {
             if (thisHasCollect && !thisHasStaticClock) {

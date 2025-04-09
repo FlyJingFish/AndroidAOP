@@ -13,6 +13,7 @@ data class ReplaceMethodInfo(
     var newClassName :String = ""
 ){
     private var isCallNew:Boolean?=null
+    private var isDeleteNew:Boolean?=null
     enum class ReplaceType{
         METHOD,INIT,NEW
     }
@@ -40,5 +41,21 @@ data class ReplaceMethodInfo(
         }
         isCallNew = callNew
         return callNew
+    }
+
+    fun isDeleteNew():Boolean{
+        val oldDeleteNew = isDeleteNew
+        if (oldDeleteNew != null){
+            return oldDeleteNew
+        }
+        val deleteNew = if (replaceType == ReplaceType.INIT){
+            val newReplace = Type.getArgumentTypes(newMethodDesc).joinToString("")
+            val oldReplace = Type.getArgumentTypes(oldMethodDesc).joinToString("")
+            newReplace == oldReplace
+        }else{
+            false
+        }
+        isDeleteNew = deleteNew
+        return deleteNew
     }
 }
