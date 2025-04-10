@@ -554,6 +554,7 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
                                     }else{
                                         logger.error("Merge jar error1 entry:[${jarEntry.name}], error message:$e,通常情况下你需要先重启Android Studio,然后clean一下项目即可，如果还有问题请到Github联系作者")
                                     }
+                                    e.printStackTrace()
                                     null
                                 }
                                 byteArray?.let {

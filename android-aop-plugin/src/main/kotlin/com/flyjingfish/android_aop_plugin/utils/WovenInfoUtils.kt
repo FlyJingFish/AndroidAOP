@@ -16,6 +16,7 @@ import com.flyjingfish.android_aop_plugin.scanner_visitor.MethodReplaceInvokeAda
 import com.flyjingfish.android_aop_plugin.ex.AndroidAOPOverrideMethodException
 import org.gradle.api.Project
 import org.objectweb.asm.ClassReader
+import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Type
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
@@ -120,9 +121,21 @@ object WovenInfoUtils {
         }
         parsingOptions = null
         getWovenParsingOptions()
+        getWovenClassWriterFlags()
     }
     fun getReplaceMethodInfoUse(key: String):ReplaceMethodInfo? {
         return replaceMethodInfoMapUse[key]
+    }
+
+    fun getReplaceMethodInfoUseIgnoreDescriptor(owner: String,name:String):List<ReplaceMethodInfo> {
+        val keyIgnoreDescriptor = owner+name
+        val list = mutableListOf<ReplaceMethodInfo>()
+        replaceMethodInfoMapUse.forEach { (key, replaceMethodInfo) ->
+            if (key.contains(keyIgnoreDescriptor) && owner == replaceMethodInfo.oldOwner && name == replaceMethodInfo.oldMethodName){
+                list.add(replaceMethodInfo)
+            }
+        }
+        return list
     }
     fun hasReplace():Boolean{
         return replaceMethodInfoMapUse.isNotEmpty()
@@ -760,6 +773,9 @@ object WovenInfoUtils {
     @Volatile
     private var parsingOptions : Int ?= null
 
+    @Volatile
+    private var classWriterFlags : Int ?= null
+
     /**
      * 为了使用 [MethodReplaceInvokeAdapter2]
      */
@@ -776,6 +792,25 @@ object WovenInfoUtils {
             option
         }else{
             option
+        }
+    }
+
+    /**
+     * 为了使用 [MethodReplaceInvokeAdapter2]
+     */
+    fun getWovenClassWriterFlags():Int{
+        var flags = classWriterFlags
+        return if (flags == null){
+            val isHasDeleteNew = replaceMethodInfoMapUse.values.any { it.isDeleteNew() }
+            flags = if (isHasDeleteNew){
+                ClassWriter.COMPUTE_FRAMES or ClassWriter.COMPUTE_MAXS
+            }else{
+                0
+            }
+            classWriterFlags = flags
+            flags
+        }else{
+            flags
         }
     }
 }

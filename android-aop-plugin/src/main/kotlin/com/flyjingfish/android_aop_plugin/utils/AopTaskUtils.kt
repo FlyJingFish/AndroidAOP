@@ -10,7 +10,9 @@ import com.flyjingfish.android_aop_plugin.beans.TmpFile
 import com.flyjingfish.android_aop_plugin.beans.WovenResult
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.ex.AndroidAOPOverrideMethodException
+import com.flyjingfish.android_aop_plugin.ex.AndroidAOPReplaceSetErrorException
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ClassSuperScanner
+import com.flyjingfish.android_aop_plugin.scanner_visitor.FixBugClassWriter
 import com.flyjingfish.android_aop_plugin.scanner_visitor.MethodReplaceInvokeVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.RegisterMapWovenInfoCode
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ReplaceBaseClassVisitor
@@ -261,6 +263,10 @@ class AopTaskUtils(
                                             override fun onThrowOverrideMethod(className: String,overrideMethods:Set<String> ) {
                                                 throwOverride(className,overrideMethods)
                                             }
+
+                                            override fun onThrow(throwable: Throwable) {
+                                                throw throwable
+                                            }
                                         }
                                     ), ClassReader.EXPAND_FRAMES)
                                     processOverride(
@@ -272,7 +278,7 @@ class AopTaskUtils(
                                         addClassMethodRecords[file.absolutePath + it.getKey()] = record
                                     }
                                 } catch (e: Exception) {
-                                    if (e is AndroidAOPOverrideMethodException) {
+                                    if (e is AndroidAOPOverrideMethodException||e is AndroidAOPReplaceSetErrorException) {
                                         throw e
                                     }
                                     e.printStackTrace()
@@ -467,6 +473,11 @@ class AopTaskUtils(
                                                 override fun onThrowOverrideMethod(className: String,overrideMethods:Set<String> ) {
                                                     throwOverride(className,overrideMethods)
                                                 }
+
+
+                                                override fun onThrow(throwable: Throwable) {
+                                                    throw throwable
+                                                }
                                             }
                                         ), ClassReader.EXPAND_FRAMES)
                                         processOverride(
@@ -509,7 +520,7 @@ class AopTaskUtils(
 
                 }
             } catch (e: Exception) {
-                if (e is AndroidAOPOverrideMethodException) {
+                if (e is AndroidAOPOverrideMethodException||e is AndroidAOPReplaceSetErrorException) {
                     throw e
                 }
                 printLog("Merge jar error entry:[${jarEntry.name}], error message:$e")
@@ -635,7 +646,7 @@ class AopTaskUtils(
 
     fun wovenIntoCodeForReplace(byteArray: ByteArray): WovenResult {
         val cr = ClassReader(byteArray)
-        val cw = ClassWriter(cr, 0)
+        val cw = FixBugClassWriter(cr, WovenInfoUtils.getWovenClassWriterFlags())
         var thisHasCollect = false
         var thisHasStaticClock = false
         var thisCollectClassName: String? = null
@@ -694,7 +705,7 @@ class AopTaskUtils(
 
     fun wovenIntoCodeForExtendsClass(byteArray: ByteArray): WovenResult {
         val cr = ClassReader(byteArray)
-        val cw = ClassWriter(cr, 0)
+        val cw = FixBugClassWriter(cr, WovenInfoUtils.getWovenClassWriterFlags())
         var thisHasCollect = false
         var thisHasStaticClock = false
         var thisCollectClassName: String? = null

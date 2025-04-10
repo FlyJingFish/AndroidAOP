@@ -14,6 +14,7 @@ import com.flyjingfish.android_aop_plugin.beans.CutMethodJson
 import com.flyjingfish.android_aop_plugin.beans.LambdaMethod
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
+import com.flyjingfish.android_aop_plugin.ex.AndroidAOPReplaceSetErrorException
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils.getMethodInfo
 import com.flyjingfish.android_aop_plugin.utils.Utils.isAOPMethod
@@ -325,13 +326,16 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
 
                     val paramType0Descriptor = paramType0?.descriptor ?:""
                     val paramType0ClassName = paramType0?.className ?:""
-
-                    if (paramType0Descriptor.startsWith("L")
-                        && paramType0Descriptor.endsWith(";")
-                        && (returnTypeDescriptor == "V" || (returnTypeDescriptor.startsWith("L") && returnTypeDescriptor.endsWith(";")))){
+                    val isRuleParams = paramType0Descriptor.startsWith("L") && paramType0Descriptor.endsWith(";")
+                    val isRuleReturn = returnTypeDescriptor == "V" || (returnTypeDescriptor.startsWith("L") && returnTypeDescriptor.endsWith(";"))
+                    if (isRuleParams && isRuleReturn){
                         replaceMethodInfo.oldMethodName = "<init>"
                         replaceMethodInfo.newClassName = paramType0Descriptor.substring(1,paramType0Descriptor.length - 1)
                         onCallBackMethod?.onBackReplaceMethodInfo(replaceMethodInfo)
+                    }else if (!isRuleParams){
+                        onCallBackMethod?.onThrow(AndroidAOPReplaceSetErrorException("${slashToDot(className)}.${methodName}(${Type.getArgumentTypes(methoddescriptor).joinToString("")})的参数应该设置为引用数据类型"))
+                    }else {
+                        onCallBackMethod?.onThrow(AndroidAOPReplaceSetErrorException("${slashToDot(className)}.${methodName}(${Type.getArgumentTypes(methoddescriptor).joinToString("")})的返回类型应该是 void 或 引用数据类型"))
                     }
                 }else{
                     return ReplaceMethodVisitor(replaceMethodInfo)
@@ -384,9 +388,25 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
 
                                     val isDeleteNew = ReplaceMethodInfo.isDeleteNew(replaceMethodInfo.newMethodDesc, replaceMethodInfo.oldMethodDesc)
 
-                                    if (returnTypeDescriptor.startsWith("L") && returnTypeDescriptor.endsWith(";")
-                                        && (paramType0?.className == slashToDotClassName(replaceMethodInfo.oldOwner)||isDeleteNew)
-                                        && (returnTypeClassName == slashToDotClassName(replaceMethodInfo.oldOwner) || slashToDotClassName(returnTypeClassName).instanceof(slashToDotClassName(replaceMethodInfo.oldOwner)))){
+                                    val isRuleReturn = returnTypeDescriptor.startsWith("L") && returnTypeDescriptor.endsWith(";")
+
+                                    if (!isRuleReturn){
+                                        onCallBackMethod?.onThrow(AndroidAOPReplaceSetErrorException("${slashToDot(className)}.${methodName}(${Type.getArgumentTypes(methoddescriptor).joinToString("")})的返回类型应该是 void 或 引用数据类型"))
+                                    }
+
+                                    val isRuleParams = paramType0?.className == slashToDotClassName(replaceMethodInfo.oldOwner)||isDeleteNew
+
+                                    if (!isRuleParams){
+                                        onCallBackMethod?.onThrow(AndroidAOPReplaceSetErrorException("${slashToDot(className)}.${methodName}(${Type.getArgumentTypes(methoddescriptor).joinToString("")})的参数类型应该是 (${slashToDot(replaceMethodInfo.oldOwner)}) 或 (java.lang.Class,${paramsTypes.joinToString {it.className}})"))
+                                    }
+
+                                    val isRuleReturn2 = (returnTypeClassName == slashToDotClassName(replaceMethodInfo.oldOwner) || slashToDotClassName(returnTypeClassName).instanceof(slashToDotClassName(replaceMethodInfo.oldOwner)))
+
+                                    if (!isRuleReturn2){
+                                        onCallBackMethod?.onThrow(AndroidAOPReplaceSetErrorException("${slashToDot(className)}.${methodName}(${Type.getArgumentTypes(methoddescriptor).joinToString("")})的返回类型应该是 ${slashToDot(replaceMethodInfo.oldOwner)} 或 继承自 ${slashToDot(replaceMethodInfo.oldOwner)}"))
+                                    }
+
+                                    if (isRuleReturn && isRuleParams && isRuleReturn2){
                                         onCallBackMethod?.onBackReplaceMethodInfo(replaceMethodInfo)
                                     }
                                 } else{
@@ -638,5 +658,6 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
         fun onDeleteMethodRecord(methodRecord: MethodRecord)
         fun onBackReplaceMethodInfo(replaceMethodInfo: ReplaceMethodInfo)
         fun onThrowOverrideMethod(className:String,overrideMethods:Set<String> )
+        fun onThrow(throwable: Throwable)
     }
 }

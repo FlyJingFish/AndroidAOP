@@ -1,0 +1,77 @@
+package com.flyjingfish.androidaop
+
+import android.content.Context
+import android.util.AttributeSet
+import android.util.Log
+import android.view.View
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceClass
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethod
+import com.flyjingfish.android_aop_annotation.enums.MatchType
+
+@AndroidAopReplaceClass("android.view.View", type = MatchType.EXTENDS)
+object ViewReplaceAop {
+
+    @AndroidAopReplaceMethod("<init>(android.content.Context)")
+    @JvmStatic
+    fun newViewConstruction1(
+        clazz: Class<*>,
+        context: Context,
+    ): View {
+        return newViewConstruction2(
+            clazz,
+            context,
+            null
+        )
+    }
+
+    @AndroidAopReplaceMethod("<init>(android.content.Context,android.util.AttributeSet)")
+    @JvmStatic
+    fun newViewConstruction2(
+        clazz: Class<*>,
+        context: Context,
+        attrs: AttributeSet?,
+    ): View {
+        //第一个参数是Class类型其余参数类型及顺序和原构造方法完全一致，在这个方法内再去创建对象，此前并没有对象被创建出来
+        return newViewConstruction3(
+            clazz,
+            context,
+            attrs,
+            0
+        )
+    }
+
+    @AndroidAopReplaceMethod("<init>(android.content.Context,android.util.AttributeSet,int)")
+    @JvmStatic
+    fun newViewConstruction3(
+        clazz: Class<*>,
+        context: Context,
+        attrs: AttributeSet?,
+        defStyleAttr: Int
+    ): View {
+        //第一个参数是Class类型其余参数类型及顺序和原构造方法完全一致，在这个方法内再去创建对象，此前并没有对象被创建出来
+        return newViewConstruction4(
+            clazz,
+            context,
+            attrs,
+            defStyleAttr,
+            0
+        )
+    }
+
+    @AndroidAopReplaceMethod("<init>(android.content.Context,android.util.AttributeSet,int,int)")
+    @JvmStatic
+    fun newViewConstruction4(
+        clazz: Class<*>,
+        context: Context,
+        attrs: AttributeSet?,
+        defStyleAttr: Int,
+        defStyleRes: Int
+    ): View {
+        Log.d(
+            "ViewReplaceAop",
+            "newViewConstruction4: $clazz,$context,$attrs,$defStyleAttr,$defStyleRes"
+        )
+        //第一个参数是Class类型其余参数类型及顺序和原构造方法完全一致，在这个方法内再去创建对象，此前并没有对象被创建出来
+        return clazz.getConstructor(Context::class.java,AttributeSet::class.java,Int::class.java,Int::class.java).newInstance(context,attrs,defStyleAttr,defStyleRes) as View
+    }
+}

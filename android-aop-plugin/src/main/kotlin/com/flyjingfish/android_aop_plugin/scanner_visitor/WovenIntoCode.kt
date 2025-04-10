@@ -68,7 +68,7 @@ object WovenIntoCode {
         var returnClassName :String ?= null
 
         val cr = ClassReader(inputStreamBytes)
-        val cw = ClassWriter(cr, 0)
+        val cw = FixBugClassWriter(cr, WovenInfoUtils.getWovenClassWriterFlags())
         val returnTypeMap = mutableMapOf<String,String?>()
         val isModifyPublic = ClassFileUtils.reflectInvokeMethod && ClassFileUtils.reflectInvokeMethodStatic
 
