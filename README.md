@@ -441,20 +441,27 @@ It is extremely simple to use, the sample code has already explained
 
 ```kotlin
 object InitCollect {
-     private val collects = mutableListOf<SubApplication>()
-
-     @AndroidAopCollectMethod
-     @JvmStatic
-     fun collect(sub: SubApplication){
-       collects.add(sub)
-     }
+    private val collects = mutableListOf<SubApplication>()
+    private val collectClazz: MutableList<Class<out SubApplication>> = mutableListOf()
+    
+    @AndroidAopCollectMethod
+    @JvmStatic
+    fun collect(sub: SubApplication){
+     collects.add(sub)
+    }
   
-     // Call this method directly. The collects collection contains data.
-     fun init(application: Application){
-         for (collect in collects) {
-             collect.onCreate(application)
-         }
-     }
+    @AndroidAopCollectMethod
+    @JvmStatic
+    fun collect2(sub:Class<out SubApplication>){
+      collectClazz.add(sub)
+    }
+  
+    // Call this method directly. The collects collection contains data.
+    fun init(application: Application){
+       for (collect in collects) {
+           collect.onCreate(application)
+       }
+    }
 }
 ```
 
@@ -464,19 +471,26 @@ object InitCollect {
 
 ```java
 public class InitCollect2 {
-  private static List<SubApplication2> collects = new ArrayList<>();
-  @AndroidAopCollectMethod
-  public static void collect(SubApplication2 sub){
-    collects.add(sub);
-  }
-
-  // Call this method directly. The collects collection contains data.
-  public static void init(Application application){
-    Log.e("InitCollect2","----init----");
-    for (SubApplication2 collect : collects) {
-      collect.onCreate(application);
+    private static List<SubApplication2> collects = new ArrayList<>();
+    private static final List<Class<? extends SubApplication2>> collectClazz = new ArrayList<>();
+    
+    @AndroidAopCollectMethod
+    public static void collect(SubApplication2 sub){
+      collects.add(sub);
     }
-  }
+    
+    @AndroidAopCollectMethod
+    public static void collect3(Class<? extends SubApplication2> sub) {
+      collectClazz.add(sub);
+    }
+    
+    // Call this method directly. The collects collection contains data.
+    public static void init(Application application){
+      Log.e("InitCollect2","----init----");
+      for (SubApplication2 collect : collects) {
+        collect.onCreate(application);
+      }
+    }
 }
 ```
 </details>
