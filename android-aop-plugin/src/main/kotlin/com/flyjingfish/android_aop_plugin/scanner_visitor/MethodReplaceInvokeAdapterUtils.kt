@@ -4,7 +4,6 @@ import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
-import com.flyjingfish.android_aop_plugin.utils.printLog
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.Type
@@ -34,66 +33,24 @@ class MethodReplaceInvokeAdapterUtils(private val className:String, private val 
         fun superVisitInsn(opcode: Int)
         fun superVisitLdcInsn(value: Any?)
     }
-    var pendingNewType: String? = null
-    var newDupped = false
-    fun visitInsn(opcode: Int) {
-        if (className.contains("TextInputLayout") && methodName.equals("<init>")){
-            printLog("MethodReplace==>visitInsn=$opcode")
-        }
-        if (opcode == Opcodes.DUP && pendingNewType != null) {
-            newDupped = true
-            if (className.contains("TextInputLayout") && methodName.equals("<init>")){
-                printLog("MethodReplace==>visitInsn=$opcode,newDupped=$newDupped")
-            }
-            return // 也是延迟输出
-        }
-        // 非 DUP，丢弃 NEW
-        flushPendingNewIfNeeded()
-        superCall.superVisitInsn(opcode)
-    }
 
-    private fun flushPendingNewIfNeeded() {
-        pendingNewType?.let {
-            superCall.superVisitTypeInsn(Opcodes.NEW, it)
-            if (newDupped) {
-                superCall.superVisitInsn(Opcodes.DUP)
-            }
-            pendingNewType = null
-            newDupped = false
-        }
-
-    }
     fun visitTypeInsn(opcode: Int, type: String) {
-        if (className.contains("TextInputLayout") && methodName.equals("<init>")){
-
-            printLog("MethodReplace==>visitTypeInsn=$opcode,type=$type")
-        }
         if (opcode == Opcodes.NEW) {
             val replaceMethodInfo = getReplaceInfo(type, "<init>", "")
             if (replaceMethodInfo != null && replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW && replaceMethodInfo.newClassName.isNotEmpty()){
                 superCall.superVisitTypeInsn(opcode, replaceMethodInfo.newClassName)
                 onResultListener?.onBack()
                 return
-            }else {
-                val replaceMethodInfos = getReplaceInfo(type, "<init>")
-                if (replaceMethodInfos.isNotEmpty() && replaceMethodInfos.any{it.replaceType == ReplaceMethodInfo.ReplaceType.INIT && it.isDeleteNew()}){
-                    pendingNewType = type
-                    if (className.contains("TextInputLayout") && methodName.equals("<init>")){
-
-                        printLog("MethodReplace==>visitTypeInsn=$opcode,type=$type,pendingNewType=$pendingNewType")
-                    }
-                    return
-                }
             }
         }
-
         superCall.superVisitTypeInsn(opcode, type)
     }
 
     private fun getReplaceInfo(owner: String,
-                        name: String,
-                        descriptor: String):ReplaceMethodInfo?{
-        var replaceMethodInfo = WovenInfoUtils.getReplaceMethodInfoUse(owner + name + descriptor)
+                               name: String,
+                               descriptor: String):ReplaceMethodInfo?{
+        val key = owner + name + descriptor
+        var replaceMethodInfo = WovenInfoUtils.getReplaceMethodInfoUse(key)
         var isReplaceClass = false
         if (replaceMethodInfo == null){
             val oldOwner = WovenInfoUtils.getRealReplaceInfo(owner)
@@ -112,18 +69,6 @@ class MethodReplaceInvokeAdapterUtils(private val className:String, private val 
         }
     }
 
-    private fun getReplaceInfo(owner: String,
-                               name: String):List<ReplaceMethodInfo>{
-        var list = WovenInfoUtils.getReplaceMethodInfoUseIgnoreDescriptor(owner, name)
-        if (list.isEmpty()){
-            val oldOwner = WovenInfoUtils.getRealReplaceInfo(owner)
-            if (oldOwner != null){
-                list = WovenInfoUtils.getReplaceMethodInfoUseIgnoreDescriptor(oldOwner,name)
-            }
-        }
-        return list
-    }
-
     fun visitMethodInsn(
         opcode: Int,
         owner: String,
@@ -131,10 +76,6 @@ class MethodReplaceInvokeAdapterUtils(private val className:String, private val 
         descriptor: String,
         isInterface: Boolean
     ) {
-        if (className.contains("TextInputLayout") && methodName.equals("<init>")){
-
-            printLog("MethodReplace==>visitMethodInsn=$opcode,owner=$owner,name=$name,descriptor=$descriptor")
-        }
         val isInMethodInner = opcode == Opcodes.INVOKESPECIAL && owner == superName  && name == methodName && descriptor == methodDesc
 
         var replaceMethodInfo = getReplaceInfo(owner, name, "")
@@ -170,12 +111,10 @@ class MethodReplaceInvokeAdapterUtils(private val className:String, private val 
                 val isThisInit = owner == className && methodName == "<init>" && methodName == name
                 val isInitAop = replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.INIT
                 if (isInitAop && isThisInit){
-                    flushPendingNewIfNeeded()
                     superCall.superVisitMethodInsn(opcode, owner, name, descriptor, isInterface)
                     return
                 }
                 if (replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW && replaceMethodInfo.isCallNew()) {
-                    flushPendingNewIfNeeded()
                     superCall.superVisitMethodInsn(opcode, replaceMethodInfo.newClassName, name, descriptor, isInterface)
                 }else if (isInitAop) {
                     if (replaceMethodInfo.isDeleteNew()){
@@ -189,26 +128,23 @@ class MethodReplaceInvokeAdapterUtils(private val className:String, private val 
                             storeLocal(local, argType)
                             localIndexes.add(0, local) // 顺序压入
                         }
-                        if (!(newDupped && pendingNewType != null)){
-                            // 弹掉 uninit_obj
-                            superCall.superVisitInsn(Opcodes.POP)
-                        }
 
-                        // 3. 加载类对象（传入静态方法）
+                        // 弹掉 uninit_obj
+                        superCall.superVisitInsn(Opcodes.POP)
+
+//                        // 3. 加载类对象（传入静态方法）
                         superCall.superVisitLdcInsn(Type.getObjectType(owner))
-
+//
                         // 恢复参数
                         for (i in argTypes.indices) {
                             loadLocal(localIndexes[i], argTypes[i])
                         }
                     }else{
-                        flushPendingNewIfNeeded()
                         superCall.superVisitMethodInsn(opcode, owner, name, descriptor, isInterface)
                     }
                 }
                 InitConfig.addReplaceMethodInfo(replaceMethodInfo)
                 if (replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW && !replaceMethodInfo.isCallNew()){
-                    flushPendingNewIfNeeded()
                     superCall.superVisitMethodInsn(opcode, replaceMethodInfo.newClassName, name, descriptor, isInterface)
                     onResultListener?.onBack()
                 }else{
@@ -223,21 +159,16 @@ class MethodReplaceInvokeAdapterUtils(private val className:String, private val 
                         )
                         if (isInitAop){
                             superCall.superVisitTypeInsn(Opcodes.CHECKCAST, owner)
-                            pendingNewType = null
-                            newDupped = false
                         }
                         onResultListener?.onBack()
                     }else {
-                        flushPendingNewIfNeeded()
                         superCall.superVisitMethodInsn(opcode, owner, name, descriptor, isInterface)
                     }
                 }
             } else {
-                flushPendingNewIfNeeded()
                 superCall.superVisitMethodInsn(opcode, owner, name, descriptor, isInterface)
             }
         } else {
-            flushPendingNewIfNeeded()
             superCall.superVisitMethodInsn(opcode, owner, name, descriptor, isInterface)
         }
     }

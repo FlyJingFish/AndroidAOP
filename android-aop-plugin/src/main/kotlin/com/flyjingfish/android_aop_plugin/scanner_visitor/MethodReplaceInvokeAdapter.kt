@@ -13,9 +13,7 @@ class MethodReplaceInvokeAdapter(private val className:String,private val superN
     override fun visitTypeInsn(opcode: Int, type: String) {
         utils.visitTypeInsn(opcode, type)
     }
-    override fun visitInsn(opcode: Int) {
-        utils.visitInsn(opcode)
-    }
+
     override fun visitMethodInsn(
         opcode: Int,
         owner: String,

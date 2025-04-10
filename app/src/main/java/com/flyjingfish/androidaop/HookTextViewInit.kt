@@ -10,7 +10,7 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethod
 import com.flyjingfish.android_aop_annotation.enums.MatchType
 import com.google.android.material.textview.MaterialTextView
 
-@AndroidAopReplaceClass(value = "android.widget.TextView", type = MatchType.EXTENDS)
+//@AndroidAopReplaceClass(value = "android.widget.TextView", type = MatchType.EXTENDS)
 object HookTextViewInit {
 
     @AndroidAopReplaceMethod("<init>(android.content.Context,android.util.AttributeSet,int,int)")

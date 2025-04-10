@@ -15,7 +15,7 @@ object ViewReplaceAop {
     @JvmStatic
     fun newViewConstruction1(
         clazz: Class<*>,
-        context: Context,
+        context: Context
     ): View {
         return newViewConstruction2(
             clazz,
@@ -72,6 +72,14 @@ object ViewReplaceAop {
             "newViewConstruction4: $clazz,$context,$attrs,$defStyleAttr,$defStyleRes"
         )
         //第一个参数是Class类型其余参数类型及顺序和原构造方法完全一致，在这个方法内再去创建对象，此前并没有对象被创建出来
-        return clazz.getConstructor(Context::class.java,AttributeSet::class.java,Int::class.java,Int::class.java).newInstance(context,attrs,defStyleAttr,defStyleRes) as View
+        try {
+            return clazz.getConstructor(Context::class.java,AttributeSet::class.java,Int::class.java,Int::class.java).newInstance(context,attrs,defStyleAttr,defStyleRes) as View
+        } catch (e: Exception) {
+            try {
+                return clazz.getConstructor(Context::class.java,AttributeSet::class.java,Int::class.java).newInstance(context,attrs,defStyleAttr) as View
+            } catch (e: Exception) {
+                return clazz.getConstructor(Context::class.java,AttributeSet::class.java).newInstance(context,attrs) as View
+            }
+        }
     }
 }
