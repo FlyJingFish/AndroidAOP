@@ -6,7 +6,6 @@ import com.flyjingfish.android_aop_plugin.beans.CutInfo
 import com.flyjingfish.android_aop_plugin.beans.CutMethodJson
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
-import com.flyjingfish.android_aop_plugin.beans.TmpFile
 import com.flyjingfish.android_aop_plugin.beans.WovenResult
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.ex.AndroidAOPOverrideMethodException
@@ -14,9 +13,7 @@ import com.flyjingfish.android_aop_plugin.ex.AndroidAOPReplaceSetErrorException
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ClassSuperScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.FixBugClassWriter
 import com.flyjingfish.android_aop_plugin.scanner_visitor.MethodReplaceInvokeVisitor
-import com.flyjingfish.android_aop_plugin.scanner_visitor.RegisterMapWovenInfoCode
 import com.flyjingfish.android_aop_plugin.scanner_visitor.ReplaceBaseClassVisitor
-import com.flyjingfish.android_aop_plugin.scanner_visitor.ReplaceInvokeMethodVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.SearchAOPConfigVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.SearchAopMethodVisitor
 import com.flyjingfish.android_aop_plugin.scanner_visitor.SuspendReturnScanner
@@ -30,10 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import org.gradle.api.Project
 import org.objectweb.asm.ClassReader
-import org.objectweb.asm.ClassVisitor
-import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.MethodVisitor
-import org.objectweb.asm.Opcodes
 import java.io.File
 import java.io.FileInputStream
 import java.util.UUID
@@ -644,14 +638,16 @@ class AopTaskUtils(
 
     }
 
-    fun wovenIntoCodeForReplace(byteArray: ByteArray): WovenResult {
+    fun wovenIntoCodeForReplace(byteArray: ByteArray,wovenClassWriterFlags:Int,wovenParsingOptions:Int): WovenResult {
         val cr = ClassReader(byteArray)
-        val cw = FixBugClassWriter(cr, WovenInfoUtils.getWovenClassWriterFlags())
+        val cw = FixBugClassWriter(cr, wovenClassWriterFlags)
         var thisHasCollect = false
         var thisHasStaticClock = false
         var thisCollectClassName: String? = null
         var replaceResult = false
-        val cv = object : MethodReplaceInvokeVisitor(cw) {
+        val deleteNews = mutableMapOf<String,List<ReplaceMethodInfo>>()
+
+        val cv = object : MethodReplaceInvokeVisitor(cw,wovenClassWriterFlags, wovenParsingOptions) {
             override fun visit(
                 version: Int,
                 access: Int,
@@ -689,10 +685,10 @@ class AopTaskUtils(
                 if (modifyed) {
                     replaceResult = true
                 }
+                deleteNews.putAll(mDeleteNews)
             }
         }
-
-        cr.accept(cv, WovenInfoUtils.getWovenParsingOptions())
+        cr.accept(cv, wovenParsingOptions)
 
         thisCollectClassName?.let {
             if (thisHasCollect && !thisHasStaticClock) {
@@ -700,12 +696,12 @@ class AopTaskUtils(
                 replaceResult = true
             }
         }
-        return WovenResult(cw.toByteArray(), replaceResult)
+        return WovenResult(WovenIntoCode.deleteNews(cw.toByteArray(),deleteNews,wovenClassWriterFlags,wovenParsingOptions), replaceResult)
     }
 
-    fun wovenIntoCodeForExtendsClass(byteArray: ByteArray): WovenResult {
+    fun wovenIntoCodeForExtendsClass(byteArray: ByteArray,wovenClassWriterFlags:Int,wovenParsingOptions:Int): WovenResult {
         val cr = ClassReader(byteArray)
-        val cw = FixBugClassWriter(cr, WovenInfoUtils.getWovenClassWriterFlags())
+        val cw = FixBugClassWriter(cr, wovenClassWriterFlags)
         var thisHasCollect = false
         var thisHasStaticClock = false
         var thisCollectClassName: String? = null
@@ -751,7 +747,7 @@ class AopTaskUtils(
             }
         }
 
-        cr.accept(cv, WovenInfoUtils.getWovenParsingOptions())
+        cr.accept(cv, wovenParsingOptions)
 
         thisCollectClassName?.let {
             if (thisHasCollect && !thisHasStaticClock) {

@@ -62,8 +62,8 @@ data class ReplaceMethodInfo(
             val newTypes = Type.getArgumentTypes(newMethodDesc)
             val oldTypes = Type.getArgumentTypes(oldMethodDesc)
             return if (newTypes.isNotEmpty()){
-                newTypes[0].className == Class::class.java.name && newTypes.toList().subList(1,newTypes.size).joinToString("") == oldTypes.joinToString("")
-//                newTypes[newTypes.size - 1].className == Class::class.java.name && newTypes.toList().subList(0,newTypes.size-1).joinToString("") == oldTypes.joinToString("")
+//                newTypes[0].className == Class::class.java.name && newTypes.toList().subList(1,newTypes.size).joinToString("") == oldTypes.joinToString("")
+                newTypes[newTypes.size - 1].className == Class::class.java.name && newTypes.toList().subList(0,newTypes.size-1).joinToString("") == oldTypes.joinToString("")
             }else{
                 false
             }

@@ -35,7 +35,7 @@ object HookTextViewInit {
 
     @AndroidAopReplaceMethod("<init>(android.content.Context,android.util.AttributeSet)")
     @JvmStatic
-    fun getTextView3(clazz: Class<*>,context: Context,set: AttributeSet): TextView {
+    fun getTextView3(context: Context,set: AttributeSet,clazz: Class<*>): TextView {
         android.util.Log.e(
             "ResourcesPack",
             "HookTextViewInit: Initializing TextView with HookTextView getTextView3=$clazz"

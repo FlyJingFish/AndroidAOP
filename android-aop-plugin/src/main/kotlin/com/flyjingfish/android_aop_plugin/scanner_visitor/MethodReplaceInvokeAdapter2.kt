@@ -25,6 +25,13 @@ class MethodReplaceInvokeAdapter2(private val className:String, private val supe
         utils.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
     }
 
+    override fun visitEnd() {
+        super.visitEnd()
+        if (utils.deleteNews.isNotEmpty()){
+            utils.onResultListener?.onBack(utils.deleteNews)
+        }
+    }
+
     override fun superVisitTypeInsn(opcode: Int, type: String) {
         super.visitTypeInsn(opcode, type)
     }

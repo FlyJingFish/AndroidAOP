@@ -12,13 +12,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:flow_wrapMode="chain"
-        app:constraint_referenced_ids="btn_SingleClick,
+        app:constraint_referenced_ids="input,btn_SingleClick,
         btn_DoubleClick, btn_IOThread,
         btn_MainThread,btn_OnLifecycle,btn_TryCatch,
         btn_Permission,btn_CustomIntercept,btn_MatchClassMethod,
         btn_topFun,btn_static_method,btn_static_method2,btn_field_set,
         btn_field_get,btn_kotlin_anno,btn_test_much,btn_demo3,btn_demo4"
         />
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/input"
+        android:layout_width="30dp"
+        android:layout_height="30dp"/>
     <Button
         android:id="@+id/btn_SingleClick"
         android:layout_width="wrap_content"

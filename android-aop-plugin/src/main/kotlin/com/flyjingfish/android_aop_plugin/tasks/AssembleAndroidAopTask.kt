@@ -300,15 +300,19 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
                     if (realMethodsRecord != null){
                         FileInputStream(file).use { inputs ->
                             val byteArray = try {
-                                WovenIntoCode.modifyClass(project,inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,isSuspend)
+                                WovenIntoCode.modifyClass(project,inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,WovenInfoUtils.getWovenClassWriterFlags(),WovenInfoUtils.getWovenParsingOptions(),isSuspend)
                             } catch (e: Exception) {
-                                realCopy()
-                                if (isSuspend){
-                                    logger.error("Merge directory error1 entry:[${entryName}], error message:$e,如果这个类是包含必须的切点类，请到Github联系作者")
-                                }else{
-                                    logger.error("Merge directory error1 entry:[${entryName}], error message:$e,通常情况下你需要先重启Android Studio,然后clean一下项目即可，如果还有问题请到Github联系作者")
+                                try {
+                                    WovenIntoCode.modifyClass(project,inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,WovenInfoUtils.getWovenClassWriterFlags2(),WovenInfoUtils.getWovenParsingOptions2(),isSuspend)
+                                } catch (e: Exception) {
+                                    realCopy()
+                                    if (isSuspend){
+                                        logger.error("Merge directory error1 entry:[${entryName}], error message:$e,如果这个类是包含必须的切点类，请到Github联系作者")
+                                    }else{
+                                        logger.error("Merge directory error1 entry:[${entryName}], error message:$e,通常情况下你需要先重启Android Studio,然后clean一下项目即可，如果还有问题请到Github联系作者")
+                                    }
+                                    null
                                 }
-                                null
                             }
                             byteArray?.let { bytes ->
                                 bytes.inputStream().use {
@@ -392,7 +396,11 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
                                 val byteArray = inputs.readAllBytes()
                                 if (byteArray.isNotEmpty()){
                                     try {
-                                        val newByteArray = aopTaskUtils.wovenIntoCodeForReplace(byteArray)
+                                        val newByteArray = try {
+                                            aopTaskUtils.wovenIntoCodeForReplace(byteArray,WovenInfoUtils.getWovenClassWriterFlags(),WovenInfoUtils.getWovenParsingOptions())
+                                        } catch (e: Exception) {
+                                            aopTaskUtils.wovenIntoCodeForReplace(byteArray,WovenInfoUtils.getWovenClassWriterFlags2(),WovenInfoUtils.getWovenParsingOptions2())
+                                        }
                                         newByteArray.byteArray.inputStream().use {
                                             saveEntryCache(directory,jarEntryName,it)
                                         }
@@ -409,7 +417,11 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
                                 val byteArray = inputs.readAllBytes()
                                 if (byteArray.isNotEmpty()){
                                     try {
-                                        val newByteArray = aopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
+                                        val newByteArray = try {
+                                            aopTaskUtils.wovenIntoCodeForExtendsClass(byteArray,WovenInfoUtils.getWovenClassWriterFlags(),WovenInfoUtils.getWovenParsingOptions())
+                                        } catch (e: Exception) {
+                                            aopTaskUtils.wovenIntoCodeForExtendsClass(byteArray,WovenInfoUtils.getWovenClassWriterFlags2(),WovenInfoUtils.getWovenParsingOptions2())
+                                        }
                                         if (newByteArray.modified){
                                             newByteArray.byteArray.inputStream().use {
                                                 saveEntryCache(directory,jarEntryName,it)
@@ -546,16 +558,20 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
                         if (realMethodsRecord != null){
                             jarFile.getInputStream(jarEntry).use { inputs ->
                                 val byteArray = try {
-                                    WovenIntoCode.modifyClass(project,inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,isSuspend)
+                                    WovenIntoCode.modifyClass(project,inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,WovenInfoUtils.getWovenClassWriterFlags(),WovenInfoUtils.getWovenParsingOptions(),isSuspend)
                                 } catch (e: Exception) {
-                                    realCopy()
-                                    if (isSuspend){
-                                        logger.error("Merge jar error1 entry:[${jarEntry.name}], error message:$e,如果这个类是包含必须的切点类，请到Github联系作者")
-                                    }else{
-                                        logger.error("Merge jar error1 entry:[${jarEntry.name}], error message:$e,通常情况下你需要先重启Android Studio,然后clean一下项目即可，如果还有问题请到Github联系作者")
+                                    try {
+                                        WovenIntoCode.modifyClass(project,inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,WovenInfoUtils.getWovenClassWriterFlags2(),WovenInfoUtils.getWovenParsingOptions2(),isSuspend)
+                                    } catch (e: Exception) {
+                                        realCopy()
+                                        if (isSuspend){
+                                            logger.error("Merge jar error1 entry:[${jarEntry.name}], error message:$e,如果这个类是包含必须的切点类，请到Github联系作者")
+                                        }else{
+                                            logger.error("Merge jar error1 entry:[${jarEntry.name}], error message:$e,通常情况下你需要先重启Android Studio,然后clean一下项目即可，如果还有问题请到Github联系作者")
+                                        }
+                                        e.printStackTrace()
+                                        null
                                     }
-                                    e.printStackTrace()
-                                    null
                                 }
                                 byteArray?.let {
                                     it.inputStream().use {
@@ -640,12 +656,17 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
                                     val byteArray = inputs.readAllBytes()
                                     if (byteArray.isNotEmpty()){
                                         try {
-                                            val newByteArray = aopTaskUtils.wovenIntoCodeForReplace(byteArray)
+                                            val newByteArray = try {
+                                                aopTaskUtils.wovenIntoCodeForReplace(byteArray,WovenInfoUtils.getWovenClassWriterFlags(),WovenInfoUtils.getWovenParsingOptions())
+                                            } catch (e: Exception) {
+                                                aopTaskUtils.wovenIntoCodeForReplace(byteArray,WovenInfoUtils.getWovenClassWriterFlags2(),WovenInfoUtils.getWovenParsingOptions2())
+                                            }
                                             newByteArray.byteArray.inputStream().use {
                                                 saveEntryCache(oldJarFileName,entryName,it)
                                             }
 //                                        newClasses.add(newByteArray)
                                         } catch (e: Exception) {
+                                            e.printStackTrace()
                                             copy()
                                         }
                                     }else{
@@ -657,7 +678,11 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
                                     val byteArray = inputs.readAllBytes()
                                     if (byteArray.isNotEmpty()){
                                         try {
-                                            val newByteArray = aopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
+                                            val newByteArray = try {
+                                                aopTaskUtils.wovenIntoCodeForExtendsClass(byteArray,WovenInfoUtils.getWovenClassWriterFlags(),WovenInfoUtils.getWovenParsingOptions())
+                                            } catch (e: Exception) {
+                                                aopTaskUtils.wovenIntoCodeForExtendsClass(byteArray,WovenInfoUtils.getWovenClassWriterFlags2(),WovenInfoUtils.getWovenParsingOptions2())
+                                            }
                                             if (newByteArray.modified){
                                                 newByteArray.byteArray.inputStream().use {
                                                     saveEntryCache(oldJarFileName,entryName,it)
@@ -667,6 +692,7 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
                                             }
 //                                            newClasses.add(newByteArray)
                                         } catch (e: Exception) {
+                                            e.printStackTrace()
                                             copy()
                                         }
                                     }else{

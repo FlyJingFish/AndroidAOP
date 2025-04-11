@@ -12,7 +12,6 @@ import com.flyjingfish.android_aop_plugin.beans.OverrideClassJson
 import com.flyjingfish.android_aop_plugin.beans.ReplaceInnerClassInfo
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
-import com.flyjingfish.android_aop_plugin.scanner_visitor.MethodReplaceInvokeAdapter2
 import com.flyjingfish.android_aop_plugin.ex.AndroidAOPOverrideMethodException
 import org.gradle.api.Project
 import org.objectweb.asm.ClassReader
@@ -777,7 +776,7 @@ object WovenInfoUtils {
     private var classWriterFlags : Int ?= null
 
     /**
-     * 为了使用 [MethodReplaceInvokeAdapter2]
+     * 为了使用重新计算栈帧
      */
     fun getWovenParsingOptions():Int{
         var option = parsingOptions
@@ -795,8 +794,12 @@ object WovenInfoUtils {
         }
     }
 
+    fun getWovenParsingOptions2():Int{
+        return 0
+    }
+
     /**
-     * 为了使用 [MethodReplaceInvokeAdapter2]
+     * 为了使用重新计算栈帧
      */
     fun getWovenClassWriterFlags():Int{
         var flags = classWriterFlags
@@ -811,6 +814,14 @@ object WovenInfoUtils {
             flags
         }else{
             flags
+        }
+    }
+
+    fun getWovenClassWriterFlags2():Int{
+        return if (getWovenClassWriterFlags() != 0){
+            ClassWriter.COMPUTE_MAXS
+        }else{
+            0
         }
     }
 }

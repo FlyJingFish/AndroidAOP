@@ -98,8 +98,8 @@
         - 方法必须只有一个参数就是定义的被替换类（必须等于@AndroidAopReplaceClass 的类）
         - 并且返回类型不可以为空（必须继承或等于@AndroidAopReplaceClass 的类）
         - 方法返回的对象将会替换new的对象（当然直接返回回调进来对象也可以）
-    - 2、按以下要求填写，功能与之前所述完全不同，此时对象尚未创建出来（此功能在2.5.7及以上的版本开始使用）
-        - 方法所定义参数第一个参数必须是Class类型，其余参数必须和构造方法的参数类型和顺序完全一致
+    - 2、按以下要求填写，功能与之前所述完全不同，此时对象尚未创建出来（此功能在2.5.8及以上的版本开始使用）
+        - 方法所定义参数 **最后一个** 参数必须是Class类型，其余参数必须和构造方法的参数类型和顺序完全一致
         - 需要你手动重新去写创建对象的代码，因为这种情况尚未创建出对象来
         - 并且返回类型不可以为空（必须继承或等于@AndroidAopReplaceClass 的类）
         - 方法返回的对象将会赋值给原调用处
@@ -259,8 +259,8 @@ object ReplaceTestMatch {
 
     @AndroidAopReplaceMethod("<init>(int)")
     @JvmStatic
-    fun getTestBean(clazz :Class<*>,num: Int) : TestMatch{
-        //第一个参数是Class类型其余参数类型及顺序和原构造方法完全一致，在这个方法内再去创建对象，此前并没有对象被创建出来
+    fun getTestBean(num: Int,clazz :Class<*>) : TestMatch{
+        //最后一个参数是Class类型其余参数类型及顺序和原构造方法完全一致，在这个方法内再去创建对象，此前并没有对象被创建出来
         return TestMatch(num)
     }
 

@@ -4,6 +4,7 @@ import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
+import com.flyjingfish.android_aop_plugin.utils.printLog
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.Type
@@ -15,9 +16,10 @@ class MethodReplaceInvokeAdapterUtils(private val className:String, private val 
     private val methodNameDesc = Utils.getRealMethodName(methodName)+methodDesc
     private val isConstructorMethod = methodNameDesc.startsWith("<init>(")
     private val canReplaceMethod = !(superName == "kotlin/coroutines/jvm/internal/ContinuationImpl" && methodNameDesc == "invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;" )
-
+    val deleteNews = mutableListOf<ReplaceMethodInfo>()
     interface OnResultListener{
         fun onBack()
+        fun onBack(delNews:List<ReplaceMethodInfo>)
     }
     var onResultListener : OnResultListener ?= null
     interface SuperCall{
@@ -118,27 +120,29 @@ class MethodReplaceInvokeAdapterUtils(private val className:String, private val 
                     superCall.superVisitMethodInsn(opcode, replaceMethodInfo.newClassName, name, descriptor, isInterface)
                 }else if (isInitAop) {
                     if (replaceMethodInfo.isDeleteNew()){
-                        val argTypes = Type.getArgumentTypes(descriptor)
-
-                        // 保存参数到本地变量表，注意逆序存储
-                        val localIndexes = mutableListOf<Int>()
-                        for (i in argTypes.indices.reversed()) {
-                            val argType = argTypes[i]
-                            val local = (methodVisitor as LocalVariablesSorter).newLocal(argType)
-                            storeLocal(local, argType)
-                            localIndexes.add(0, local) // 顺序压入
-                        }
+//                        val argTypes = Type.getArgumentTypes(descriptor)
+//
+//                        // 保存参数到本地变量表，注意逆序存储
+//                        val localIndexes = mutableListOf<Int>()
+//                        for (i in argTypes.indices.reversed()) {
+//                            val argType = argTypes[i]
+//                            val local = (methodVisitor as LocalVariablesSorter).newLocal(argType)
+//                            storeLocal(local, argType)
+//                            localIndexes.add(0, local) // 顺序压入
+//                        }
 
                         // 弹掉 uninit_obj
-                        superCall.superVisitInsn(Opcodes.POP)
+//                        superCall.superVisitInsn(Opcodes.POP)
 
 //                        // 3. 加载类对象（传入静态方法）
-                        superCall.superVisitLdcInsn(Type.getObjectType(owner))
+//                        superCall.superVisitLdcInsn(Type.getObjectType(owner))
 //
                         // 恢复参数
-                        for (i in argTypes.indices) {
-                            loadLocal(localIndexes[i], argTypes[i])
-                        }
+//                        for (i in argTypes.indices) {
+//                            loadLocal(localIndexes[i], argTypes[i])
+//                        }
+                        deleteNews.add(replaceMethodInfo.copy(oldOwner = owner))
+
                     }else{
                         superCall.superVisitMethodInsn(opcode, owner, name, descriptor, isInterface)
                     }
@@ -148,7 +152,7 @@ class MethodReplaceInvokeAdapterUtils(private val className:String, private val 
                     superCall.superVisitMethodInsn(opcode, replaceMethodInfo.newClassName, name, descriptor, isInterface)
                     onResultListener?.onBack()
                 }else{
-                    if (canReplaceMethod){
+                    if (canReplaceMethod && !replaceMethodInfo.isDeleteNew()){
                         // 注意，最后一个参数是false，会不会太武断呢？
                         superCall.superVisitMethodInsn(
                             Opcodes.INVOKESTATIC,

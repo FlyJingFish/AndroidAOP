@@ -23,7 +23,7 @@ class FixBugClassWriter(classReader: ClassReader,flags: Int) : ClassWriter(class
 
                 val common = findCommonSuperClass(ct1, ct2,pool)
                 val realType = Utils.dotToSlash(common.name)
-                printLog("getCommonSuperClass: type1=$type1, type2=$type2 => $realType")
+//                printLog("getCommonSuperClass: type1=$type1, type2=$type2 => $realType")
                 realType
             } catch (e: NotFoundException) {
                 e.printStackTrace()

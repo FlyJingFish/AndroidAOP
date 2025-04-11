@@ -4,6 +4,7 @@ import com.flyjingfish.android_aop_plugin.beans.AopCollectClass
 import com.flyjingfish.android_aop_plugin.beans.AopCollectCut
 import com.flyjingfish.android_aop_plugin.beans.CutFileJson
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
+import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
 import com.flyjingfish.android_aop_plugin.utils.ClassNameToConversions
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
@@ -61,14 +62,15 @@ object WovenIntoCode {
         methodRecordHashMap: HashMap<String, MethodRecord>,
         hasReplace:Boolean,
         invokeStaticClass:String,
-        isSuspend:Boolean = false
+        wovenClassWriterFlags:Int,wovenParsingOptions:Int,
+        isSuspend:Boolean
     ): ByteArray {
         val wovenRecord = mutableListOf<MethodRecord>()
         val overrideRecord = mutableListOf<MethodRecord>()
         var returnClassName :String ?= null
 
         val cr = ClassReader(inputStreamBytes)
-        val cw = FixBugClassWriter(cr, WovenInfoUtils.getWovenClassWriterFlags())
+        var cw = FixBugClassWriter(cr, wovenClassWriterFlags)
         val returnTypeMap = mutableMapOf<String,String?>()
         val isModifyPublic = ClassFileUtils.reflectInvokeMethod && ClassFileUtils.reflectInvokeMethodStatic
 
@@ -104,8 +106,9 @@ object WovenIntoCode {
         var thisCollectClassName :String ?= null
         var ctClazzName :String ?= null
         var superClassName :String ?= null
+        val deleteNews = mutableMapOf<String,List<ReplaceMethodInfo>>()
         if (hasReplace){
-            cr.accept(object :MethodReplaceInvokeVisitor(cw){
+            cr.accept(object :MethodReplaceInvokeVisitor(cw,wovenClassWriterFlags,wovenParsingOptions){
                 override fun visit(
                     version: Int,
                     access: Int,
@@ -117,11 +120,7 @@ object WovenIntoCode {
                     super.visit(version, access.addPublic(isModifyPublic), name, signature, superName, interfaces)
                     thisHasCollect = hasCollect
                     thisCollectClassName = thisClassName
-                    superClassName = if (modifyExtendsClassName != null){
-                        modifyExtendsClassName
-                    }else{
-                        superName
-                    }
+                    superClassName = modifyExtendsClassName ?: superName
                     ctClazzName = name
                 }
                 override fun visitMethod(
@@ -142,7 +141,12 @@ object WovenIntoCode {
                     thisHasStaticClock = isHasStaticClock
                     return mv
                 }
-            }, WovenInfoUtils.getWovenParsingOptions())
+
+                override fun visitEnd() {
+                    super.visitEnd()
+                    deleteNews.putAll(mDeleteNews)
+                }
+            }, wovenParsingOptions)
         }else{
             cr.accept(object : ReplaceBaseClassVisitor(cw) {
                 override fun visit(
@@ -181,7 +185,7 @@ object WovenIntoCode {
                     thisHasStaticClock = isHasStaticClock
                     return mv
                 }
-            }, WovenInfoUtils.getWovenParsingOptions())
+            }, wovenParsingOptions)
         }
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
             if (value in wovenRecord){
@@ -287,8 +291,20 @@ object WovenIntoCode {
                         )
 
                         if (hasReplace && mv != null && access.isHasMethodBody()) {
-                            mv = if (WovenInfoUtils.getWovenParsingOptions() != 0){
-                                MethodReplaceInvokeAdapter2(className,oldSuperName,access,name,descriptor,mv)
+                            mv = if (wovenParsingOptions != 0){
+                                MethodReplaceInvokeAdapter2(className,oldSuperName,access,name,descriptor,mv).apply {
+                                    utils.onResultListener = object : MethodReplaceInvokeAdapterUtils.OnResultListener{
+                                        override fun onBack() {
+
+                                        }
+
+                                        override fun onBack(delNews:List<ReplaceMethodInfo>) {
+                                            if (delNews.isNotEmpty()){
+                                                deleteNews["$newMethodName@$descriptor"] = delNews
+                                            }
+                                        }
+                                    }
+                                }
                             }else{
                                 MethodReplaceInvokeAdapter(className,oldSuperName,access,name,descriptor,mv)
                             }
@@ -303,7 +319,7 @@ object WovenIntoCode {
                 override fun visitEnd() {
                     super.visitEnd()
                 }
-            }, WovenInfoUtils.getWovenParsingOptions())
+            }, wovenParsingOptions)
         }
         methodRecordHashMap.forEach { (key: String, value: MethodRecord) ->
             if (value in wovenRecord){
@@ -346,7 +362,7 @@ object WovenIntoCode {
 
         val cp = ClassPoolUtils.getNewClassPool()
 //        val cp = ClassPool.getDefault();
-        val newClassByte = cw.toByteArray()
+        val newClassByte = deleteNews(cw.toByteArray(),deleteNews,wovenClassWriterFlags,wovenParsingOptions)
         val byteArrayInputStream: InputStream =
             ByteArrayInputStream(newClassByte)
         val ctClass = cp.makeClass(byteArrayInputStream)
@@ -593,6 +609,54 @@ object WovenIntoCode {
         val wovenBytes = ctClass.toBytecode()
 //        ctClass.detach()
         return wovenBytes
+    }
+
+    fun deleteNews(classByte:ByteArray,deleteNews : MutableMap<String,List<ReplaceMethodInfo>>,wovenClassWriterFlags:Int,wovenParsingOptions:Int):ByteArray{
+        return if (deleteNews.isNotEmpty()){
+            val cr = ClassReader(classByte)
+            val cw = FixBugClassWriter(cr, wovenClassWriterFlags)
+            val cv = object : ClassVisitor(Opcodes.ASM9, cw) {
+                lateinit var className:String
+                lateinit var _superClassName:String
+                override fun visit(
+                    version: Int,
+                    access: Int,
+                    name: String,
+                    signature: String?,
+                    superName: String,
+                    interfaces: Array<out String>?
+                ) {
+                    className = name
+                    _superClassName = superName
+                    super.visit(version, access, name, signature, superName, interfaces)
+                }
+                override fun visitMethod(
+                    access: Int,
+                    name: String,
+                    descriptor: String,
+                    signature: String?,
+                    exceptions: Array<String?>?
+                ): MethodVisitor {
+                    val mv = super.visitMethod(
+                        access,
+                        name,
+                        descriptor,
+                        signature,
+                        exceptions
+                    )
+                    val list = deleteNews["$name@$descriptor"]
+                    return if (!list.isNullOrEmpty()){
+                        MethodReplaceInvokeInitAdapter(className,_superClassName,access,name,descriptor,signature,exceptions,mv,list)
+                    }else{
+                        mv
+                    }
+                }
+            }
+            cr.accept(cv, wovenParsingOptions)
+            cw.toByteArray()
+        }else{
+            classByte
+        }
     }
 
 

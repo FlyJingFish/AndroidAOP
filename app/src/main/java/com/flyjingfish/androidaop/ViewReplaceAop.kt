@@ -14,58 +14,58 @@ object ViewReplaceAop {
     @AndroidAopReplaceMethod("<init>(android.content.Context)")
     @JvmStatic
     fun newViewConstruction1(
-        clazz: Class<*>,
-        context: Context
+        context: Context,
+        clazz: Class<*>
     ): View {
         return newViewConstruction2(
-            clazz,
             context,
-            null
+            null,
+            clazz
         )
     }
 
     @AndroidAopReplaceMethod("<init>(android.content.Context,android.util.AttributeSet)")
     @JvmStatic
     fun newViewConstruction2(
-        clazz: Class<*>,
         context: Context,
         attrs: AttributeSet?,
+        clazz: Class<*>,
     ): View {
         //第一个参数是Class类型其余参数类型及顺序和原构造方法完全一致，在这个方法内再去创建对象，此前并没有对象被创建出来
         return newViewConstruction3(
-            clazz,
             context,
             attrs,
-            0
+            0,
+            clazz
         )
     }
 
     @AndroidAopReplaceMethod("<init>(android.content.Context,android.util.AttributeSet,int)")
     @JvmStatic
     fun newViewConstruction3(
-        clazz: Class<*>,
         context: Context,
         attrs: AttributeSet?,
-        defStyleAttr: Int
+        defStyleAttr: Int,
+        clazz: Class<*>
     ): View {
         //第一个参数是Class类型其余参数类型及顺序和原构造方法完全一致，在这个方法内再去创建对象，此前并没有对象被创建出来
         return newViewConstruction4(
-            clazz,
             context,
             attrs,
             defStyleAttr,
-            0
+            0,
+            clazz
         )
     }
 
     @AndroidAopReplaceMethod("<init>(android.content.Context,android.util.AttributeSet,int,int)")
     @JvmStatic
     fun newViewConstruction4(
-        clazz: Class<*>,
         context: Context,
         attrs: AttributeSet?,
         defStyleAttr: Int,
-        defStyleRes: Int
+        defStyleRes: Int,
+        clazz: Class<*>
     ): View {
         Log.d(
             "ViewReplaceAop",

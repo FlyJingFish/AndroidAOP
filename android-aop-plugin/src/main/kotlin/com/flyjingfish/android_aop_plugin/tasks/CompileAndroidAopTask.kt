@@ -203,7 +203,11 @@ class CompileAndroidAopTask(
                 if (realMethodsRecord != null){
                     mkOutFile()
                     FileInputStream(file).use { inputs ->
-                        val byteArray = WovenIntoCode.modifyClass(project,inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,isSuspend)
+                        val byteArray = try {
+                            WovenIntoCode.modifyClass(project,inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,WovenInfoUtils.getWovenClassWriterFlags(),WovenInfoUtils.getWovenParsingOptions(),isSuspend)
+                        } catch (e: Exception) {
+                            WovenIntoCode.modifyClass(project,inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,WovenInfoUtils.getWovenClassWriterFlags2(),WovenInfoUtils.getWovenParsingOptions2(),isSuspend)
+                        }
                         byteArray.saveFile(outFile)
                         synchronized(newClasses){
                             newClasses.add(byteArray)
@@ -269,7 +273,11 @@ class CompileAndroidAopTask(
                             val byteArray = inputs.readAllBytes()
                             if (byteArray.isNotEmpty()){
                                 try {
-                                    val newByteArray = aopTaskUtils.wovenIntoCodeForReplace(byteArray)
+                                    val newByteArray = try {
+                                        aopTaskUtils.wovenIntoCodeForReplace(byteArray,WovenInfoUtils.getWovenClassWriterFlags(),WovenInfoUtils.getWovenParsingOptions())
+                                    } catch (e: Exception) {
+                                        aopTaskUtils.wovenIntoCodeForReplace(byteArray,WovenInfoUtils.getWovenClassWriterFlags2(),WovenInfoUtils.getWovenParsingOptions2())
+                                    }
                                     if (newByteArray.modified){
                                         mkOutFile()
                                         newByteArray.byteArray.saveFile(outFile)
@@ -286,7 +294,11 @@ class CompileAndroidAopTask(
                             val byteArray = inputs.readAllBytes()
                             if (byteArray.isNotEmpty()){
                                 try {
-                                    val newByteArray = aopTaskUtils.wovenIntoCodeForExtendsClass(byteArray)
+                                    val newByteArray = try {
+                                        aopTaskUtils.wovenIntoCodeForExtendsClass(byteArray,WovenInfoUtils.getWovenClassWriterFlags(),WovenInfoUtils.getWovenParsingOptions())
+                                    } catch (e: Exception) {
+                                        aopTaskUtils.wovenIntoCodeForExtendsClass(byteArray,WovenInfoUtils.getWovenClassWriterFlags2(),WovenInfoUtils.getWovenParsingOptions2())
+                                    }
                                     if (newByteArray.modified){
                                         mkOutFile()
                                         newByteArray.byteArray.saveFile(outFile)

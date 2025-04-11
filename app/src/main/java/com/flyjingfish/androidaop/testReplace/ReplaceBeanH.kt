@@ -4,7 +4,7 @@ import android.util.Log
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceClass
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethod
 
-//@AndroidAopReplaceClass("com.flyjingfish.androidaop.testReplace.BeanH")
+@AndroidAopReplaceClass("com.flyjingfish.androidaop.testReplace.BeanH")
 object ReplaceBeanH {
     @AndroidAopReplaceMethod("<init>(java.lang.Object,int,int)")
     @JvmStatic

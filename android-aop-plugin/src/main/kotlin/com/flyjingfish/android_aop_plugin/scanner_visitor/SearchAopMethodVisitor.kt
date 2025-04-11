@@ -397,7 +397,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                                     val isRuleParams = paramType0?.className == slashToDotClassName(replaceMethodInfo.oldOwner)||isDeleteNew
 
                                     if (!isRuleParams){
-                                        onCallBackMethod?.onThrow(AndroidAOPReplaceSetErrorException("${slashToDot(className)}.${methodName}(${Type.getArgumentTypes(methoddescriptor).joinToString("")})的参数类型应该是 (${slashToDot(replaceMethodInfo.oldOwner)}) 或 (java.lang.Class,${paramsTypes.joinToString {it.className}})"))
+                                        onCallBackMethod?.onThrow(AndroidAOPReplaceSetErrorException("${slashToDot(className)}.${methodName}(${Type.getArgumentTypes(methoddescriptor).joinToString("")})的参数类型应该是 (${slashToDot(replaceMethodInfo.oldOwner)}) 或 (${paramsTypes.joinToString {it.className}},java.lang.Class)"))
                                     }
 
                                     val isRuleReturn2 = (returnTypeClassName == slashToDotClassName(replaceMethodInfo.oldOwner) || slashToDotClassName(returnTypeClassName).instanceof(slashToDotClassName(replaceMethodInfo.oldOwner)))
