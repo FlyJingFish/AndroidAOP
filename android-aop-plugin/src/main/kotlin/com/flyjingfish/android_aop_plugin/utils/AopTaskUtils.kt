@@ -697,7 +697,7 @@ class AopTaskUtils(
             }
         }
         val newByte = cw.toByteArray()
-        val newByte2 = WovenIntoCode.deleteNews(cw.toByteArray(),deleteNews,wovenClassWriterFlags,wovenParsingOptions)
+        val newByte2 = WovenIntoCode.deleteNews(newByte,deleteNews,wovenClassWriterFlags,wovenParsingOptions)
         if (newByte !== newByte2){
             replaceResult = true
         }
