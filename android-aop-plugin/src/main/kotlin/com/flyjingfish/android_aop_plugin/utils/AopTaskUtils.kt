@@ -696,7 +696,12 @@ class AopTaskUtils(
                 replaceResult = true
             }
         }
-        return WovenResult(WovenIntoCode.deleteNews(cw.toByteArray(),deleteNews,wovenClassWriterFlags,wovenParsingOptions), replaceResult)
+        val newByte = cw.toByteArray()
+        val newByte2 = WovenIntoCode.deleteNews(cw.toByteArray(),deleteNews,wovenClassWriterFlags,wovenParsingOptions)
+        if (newByte !== newByte2){
+            replaceResult = true
+        }
+        return WovenResult(newByte2, replaceResult)
     }
 
     fun wovenIntoCodeForExtendsClass(byteArray: ByteArray,wovenClassWriterFlags:Int,wovenParsingOptions:Int): WovenResult {

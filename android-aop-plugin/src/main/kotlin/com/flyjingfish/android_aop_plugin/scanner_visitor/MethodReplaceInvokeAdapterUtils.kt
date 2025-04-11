@@ -117,7 +117,9 @@ class MethodReplaceInvokeAdapterUtils(private val className:String, private val 
                     return
                 }
                 if (replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW && replaceMethodInfo.isCallNew()) {
+                    InitConfig.addReplaceMethodInfo(replaceMethodInfo)
                     superCall.superVisitMethodInsn(opcode, replaceMethodInfo.newClassName, name, descriptor, isInterface)
+                    onResultListener?.onBack()
                 }else if (isInitAop) {
                     if (replaceMethodInfo.isDeleteNew()){
 //                        val argTypes = Type.getArgumentTypes(descriptor)
@@ -141,18 +143,20 @@ class MethodReplaceInvokeAdapterUtils(private val className:String, private val 
 //                        for (i in argTypes.indices) {
 //                            loadLocal(localIndexes[i], argTypes[i])
 //                        }
-                        deleteNews.add(replaceMethodInfo.copy(oldOwner = owner))
+                        deleteNews.add(replaceMethodInfo.copy(oldOwner = owner,newClassName = replaceMethodInfo.oldOwner))
 
                     }else{
                         superCall.superVisitMethodInsn(opcode, owner, name, descriptor, isInterface)
                     }
                 }
-                InitConfig.addReplaceMethodInfo(replaceMethodInfo)
+
                 if (replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW && !replaceMethodInfo.isCallNew()){
+                    InitConfig.addReplaceMethodInfo(replaceMethodInfo)
                     superCall.superVisitMethodInsn(opcode, replaceMethodInfo.newClassName, name, descriptor, isInterface)
                     onResultListener?.onBack()
                 }else{
                     if (canReplaceMethod && !replaceMethodInfo.isDeleteNew()){
+                        InitConfig.addReplaceMethodInfo(replaceMethodInfo)
                         // 注意，最后一个参数是false，会不会太武断呢？
                         superCall.superVisitMethodInsn(
                             Opcodes.INVOKESTATIC,

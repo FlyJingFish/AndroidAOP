@@ -1,6 +1,7 @@
 package com.flyjingfish.android_aop_plugin.scanner_visitor
 
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
+import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.printLog
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
@@ -66,6 +67,8 @@ class MethodReplaceInvokeInitAdapter(private val className:String, private val s
 
                 val castInsn = TypeInsnNode(Opcodes.CHECKCAST, owner)
                 instructions.insert(staticMethodInsn, castInsn)
+
+                InitConfig.addReplaceMethodInfo(relaceInfo.copy(oldOwner = relaceInfo.newClassName, newClassName = ""))
             }
         }
 
