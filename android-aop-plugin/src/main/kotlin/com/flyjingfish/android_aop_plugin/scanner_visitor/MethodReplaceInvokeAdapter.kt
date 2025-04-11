@@ -27,9 +27,9 @@ class MethodReplaceInvokeAdapter(private val className:String,private val superN
 
     override fun visitEnd() {
         super.visitEnd()
-        if (utils.deleteNews.isNotEmpty()){
-            utils.onResultListener?.onBack(utils.deleteNews)
-        }
+//        if (utils.deleteNews.isNotEmpty()){
+//            utils.onResultListener?.onBack(utils.deleteNews)
+//        }
     }
 
     override fun superVisitTypeInsn(opcode: Int, type: String) {
