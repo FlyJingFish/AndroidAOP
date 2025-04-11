@@ -99,8 +99,8 @@ For example, this method changes `new Thread()` to `new MyThread()`
          - And the return type cannot be empty (must inherit or be equal to the class of @AndroidAopReplaceClass)
          - The object returned by the method will replace the new object (of course, it is also possible to directly return the callback object)
     - 2、Fill in according to the following requirements. The function is completely different from the previous one. At this time, the object has not been created (this function is available in versions 2.5.8 and above)
-         - The last parameter of the method must be of type Class, and the remaining parameters must be exactly the same as the type and order of the constructor parameters.
-         - You need to manually rewrite the code to create the object, because the object has not been created in this case
+         - The parameters must be exactly the same as the constructor's parameter type and order, and finally a Class type parameter is appended (this is to let you know which class the original constructor belongs to)
+         - You need to manually rewrite the code to create the object, because in this case the object has not yet been created (the constructor can be called based on the Class returned to you and the current constructor type)
          - And the return type cannot be empty (must inherit or be equal to the class of @AndroidAopReplaceClass)
          - The object returned by the method will be assigned to the original call
 
