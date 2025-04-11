@@ -566,3 +566,9 @@ fun String.adapterOSPath():String {
 fun String.toClassPath():String {
     return replace(File.separatorChar, '/')
 }
+
+fun Throwable.printDetail(){
+    if (AndroidAopConfig.debug) {
+        printStackTrace()
+    }
+}

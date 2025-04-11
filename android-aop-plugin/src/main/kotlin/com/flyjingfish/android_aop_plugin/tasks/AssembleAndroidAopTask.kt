@@ -21,6 +21,7 @@ import com.flyjingfish.android_aop_plugin.utils.getRelativePath
 import com.flyjingfish.android_aop_plugin.utils.inExcludePackingRules
 import com.flyjingfish.android_aop_plugin.utils.inRules
 import com.flyjingfish.android_aop_plugin.utils.isJarSignatureRelatedFiles
+import com.flyjingfish.android_aop_plugin.utils.printDetail
 import com.flyjingfish.android_aop_plugin.utils.printLog
 import com.flyjingfish.android_aop_plugin.utils.toClassPath
 import io.github.flyjingfish.fast_transform.tasks.DefaultTransformTask
@@ -311,6 +312,7 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
                                     }else{
                                         logger.error("Merge directory error1 entry:[${entryName}], error message:$e,通常情况下你需要先重启Android Studio,然后clean一下项目即可，如果还有问题请到Github联系作者")
                                     }
+                                    e.printDetail()
                                     null
                                 }
                             }
@@ -379,6 +381,7 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
                                                 saveEntryCache(directory,jarEntryName,it)
                                             }
                                         } catch (e: Exception) {
+                                            e.printDetail()
                                             realCopy()
                                         }
                                     }else{
@@ -406,6 +409,7 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
                                         }
                                         //                                    newClasses.add(newByteArray)
                                     } catch (e: Exception) {
+                                        e.printDetail()
                                         copy()
                                     }
                                 }else{
@@ -432,6 +436,7 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
 
                                         //                                        newClasses.add(newByteArray)
                                     } catch (e: Exception) {
+                                        e.printDetail()
                                         copy()
                                     }
                                 }else{
@@ -477,6 +482,7 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
                                         }
                                         //                                    newClasses.add(newByteArray)
                                     } catch (e: Exception) {
+                                        e.printDetail()
                                         copy()
                                     }
                                 }else{
@@ -489,6 +495,7 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
                     }
                 } catch (e: Exception) {
                     logger.error("Merge directory error2 entry:[${entryName}], error message:$e,通常情况下你需要先重启Android Studio,然后clean一下项目即可，如果还有问题请到Github联系作者")
+                    e.printDetail()
                 }
             }
         }
@@ -569,7 +576,7 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
                                         }else{
                                             logger.error("Merge jar error1 entry:[${jarEntry.name}], error message:$e,通常情况下你需要先重启Android Studio,然后clean一下项目即可，如果还有问题请到Github联系作者")
                                         }
-                                        e.printStackTrace()
+                                        e.printDetail()
                                         null
                                     }
                                 }
@@ -639,6 +646,7 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
                                                 }
 //                                        newClasses.add(newByteArray)
                                             } catch (e: Exception) {
+                                                e.printDetail()
                                                 realCopy()
                                             }
                                         }else{
@@ -666,7 +674,7 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
                                             }
 //                                        newClasses.add(newByteArray)
                                         } catch (e: Exception) {
-                                            e.printStackTrace()
+                                            e.printDetail()
                                             copy()
                                         }
                                     }else{
@@ -692,7 +700,7 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
                                             }
 //                                            newClasses.add(newByteArray)
                                         } catch (e: Exception) {
-                                            e.printStackTrace()
+                                            e.printDetail()
                                             copy()
                                         }
                                     }else{
@@ -738,6 +746,7 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
                                             }
 //                                        newClasses.add(newByteArray)
                                         } catch (e: Exception) {
+                                            e.printDetail()
                                             copy()
                                         }
                                     }else{
@@ -756,6 +765,7 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
 //                    e.printStackTrace()
 //                    throw RuntimeException("Merge jar error entry:[${jarEntry.name}], error message:$e,通常情况下你需要先重启Android Studio,然后clean一下项目即可，如果还有问题请到Github联系作者")
                         logger.error("Merge jar error2 entry:[${jarEntry.name}], error message:$e,通常情况下你需要先重启Android Studio,然后clean一下项目即可，如果还有问题请到Github联系作者")
+                        e.printDetail()
                     }
                 }
                 val job = async(Dispatchers.IO) {

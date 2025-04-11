@@ -22,6 +22,7 @@ import com.flyjingfish.android_aop_plugin.utils.computeMD5
 import com.flyjingfish.android_aop_plugin.utils.instanceof
 import com.flyjingfish.android_aop_plugin.utils.isHasMethodBody
 import com.flyjingfish.android_aop_plugin.utils.isStaticMethod
+import com.flyjingfish.android_aop_plugin.utils.printDetail
 import com.flyjingfish.android_aop_plugin.utils.printLog
 import com.flyjingfish.android_aop_plugin.utils.saveFile
 import javassist.CannotCompileException
@@ -613,47 +614,52 @@ object WovenIntoCode {
 
     fun deleteNews(classByte:ByteArray,deleteNews : MutableMap<String,List<ReplaceMethodInfo>>,wovenClassWriterFlags:Int,wovenParsingOptions:Int):ByteArray{
         return if (deleteNews.isNotEmpty()){
-            val cr = ClassReader(classByte)
-            val cw = FixBugClassWriter(cr, wovenClassWriterFlags)
-            val cv = object : ClassVisitor(Opcodes.ASM9, cw) {
-                lateinit var className:String
-                lateinit var _superClassName:String
-                override fun visit(
-                    version: Int,
-                    access: Int,
-                    name: String,
-                    signature: String?,
-                    superName: String,
-                    interfaces: Array<out String>?
-                ) {
-                    className = name
-                    _superClassName = superName
-                    super.visit(version, access, name, signature, superName, interfaces)
-                }
-                override fun visitMethod(
-                    access: Int,
-                    name: String,
-                    descriptor: String,
-                    signature: String?,
-                    exceptions: Array<String?>?
-                ): MethodVisitor {
-                    val mv = super.visitMethod(
-                        access,
-                        name,
-                        descriptor,
-                        signature,
-                        exceptions
-                    )
-                    val list = deleteNews["$name@$descriptor"]
-                    return if (!list.isNullOrEmpty()){
-                        MethodReplaceInvokeInitAdapter(className,_superClassName,access,name,descriptor,signature,exceptions,mv,list)
-                    }else{
-                        mv
+            try {
+                val cr = ClassReader(classByte)
+                val cw = FixBugClassWriter(cr, wovenClassWriterFlags)
+                val cv = object : ClassVisitor(Opcodes.ASM9, cw) {
+                    lateinit var className:String
+                    lateinit var _superClassName:String
+                    override fun visit(
+                        version: Int,
+                        access: Int,
+                        name: String,
+                        signature: String?,
+                        superName: String,
+                        interfaces: Array<out String>?
+                    ) {
+                        className = name
+                        _superClassName = superName
+                        super.visit(version, access, name, signature, superName, interfaces)
+                    }
+                    override fun visitMethod(
+                        access: Int,
+                        name: String,
+                        descriptor: String,
+                        signature: String?,
+                        exceptions: Array<String?>?
+                    ): MethodVisitor {
+                        val mv = super.visitMethod(
+                            access,
+                            name,
+                            descriptor,
+                            signature,
+                            exceptions
+                        )
+                        val list = deleteNews["$name@$descriptor"]
+                        return if (!list.isNullOrEmpty()){
+                            MethodReplaceInvokeInitAdapter(className,_superClassName,access,name,descriptor,signature,exceptions,mv,list)
+                        }else{
+                            mv
+                        }
                     }
                 }
+                cr.accept(cv, wovenParsingOptions)
+                cw.toByteArray()
+            } catch (e: Exception) {
+                e.printDetail()
+                classByte
             }
-            cr.accept(cv, wovenParsingOptions)
-            cw.toByteArray()
         }else{
             classByte
         }

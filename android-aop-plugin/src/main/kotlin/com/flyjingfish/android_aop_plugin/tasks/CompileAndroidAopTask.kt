@@ -21,6 +21,7 @@ import com.flyjingfish.android_aop_plugin.utils.computeMD5
 import com.flyjingfish.android_aop_plugin.utils.getFileClassname
 import com.flyjingfish.android_aop_plugin.utils.getRelativePath
 import com.flyjingfish.android_aop_plugin.utils.inRules
+import com.flyjingfish.android_aop_plugin.utils.printDetail
 import com.flyjingfish.android_aop_plugin.utils.printLog
 import com.flyjingfish.android_aop_plugin.utils.saveEntry
 import com.flyjingfish.android_aop_plugin.utils.saveFile
@@ -261,7 +262,8 @@ class CompileAndroidAopTask(
 
                                         mkOutFile()
                                         cw.toByteArray().saveFile(outFile)
-                                    } catch (_: Exception) {
+                                    } catch (e: Exception) {
+                                        e.printDetail()
                                     }
                                 }
                             }
@@ -283,6 +285,7 @@ class CompileAndroidAopTask(
                                         newByteArray.byteArray.saveFile(outFile)
                                     }
                                 } catch (e: Exception) {
+                                    e.printDetail()
                                     copy()
                                 }
                             }else{
@@ -304,6 +307,7 @@ class CompileAndroidAopTask(
                                         newByteArray.byteArray.saveFile(outFile)
                                     }
                                 } catch (e: Exception) {
+                                    e.printDetail()
                                     copy()
                                 }
                             }else{
@@ -346,6 +350,7 @@ class CompileAndroidAopTask(
                                     mkOutFile()
                                     cw.toByteArray().saveFile(outFile)
                                 } catch (e: Exception) {
+                                    e.printDetail()
                                     copy()
                                 }
                             }else{
