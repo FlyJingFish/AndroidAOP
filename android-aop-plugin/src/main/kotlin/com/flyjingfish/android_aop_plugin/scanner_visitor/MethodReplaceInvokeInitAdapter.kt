@@ -23,7 +23,7 @@ class MethodReplaceInvokeInitAdapter(private val className:String, private val s
             addAll(delNews)
         }
         val insnList = this.instructions
-        val removeList = mutableListOf<AbstractInsnNode?>()
+        val removeList = mutableListOf<AbstractInsnNode>()
         val array = insnList.toArray()
 
         for (i in array.indices) {
@@ -44,7 +44,7 @@ class MethodReplaceInvokeInitAdapter(private val className:String, private val s
 
                 deleteNews.remove(relaceInfo)
                 // 查找 new/dup
-                val (newInsn, dupInsn) = findNewAndDup(insn,relaceInfo.oldOwner)
+                val (newInsn, dupInsn) = findNewAndDup(insn,relaceInfo.oldOwner,removeList)
                     ?: continue
 
                 removeList += listOf(newInsn, dupInsn)
@@ -78,11 +78,15 @@ class MethodReplaceInvokeInitAdapter(private val className:String, private val s
         accept(methodVisitor)
     }
 
-    private fun findNewAndDup(initInsn: AbstractInsnNode,owner: String): Pair<AbstractInsnNode?, AbstractInsnNode?>? {
+    private fun findNewAndDup(initInsn: AbstractInsnNode,owner: String,removeList:List<AbstractInsnNode>): Pair<AbstractInsnNode, AbstractInsnNode>? {
         var current = initInsn.previous
         var dup: AbstractInsnNode? = null
         var newInsn: AbstractInsnNode? = null
         while (current != null) {
+            if (removeList.contains(current)){
+                current = current.previous
+                continue
+            }
             if (current.opcode == Opcodes.DUP) {
                 dup = current
             } else if (current.opcode == Opcodes.NEW && current is TypeInsnNode && current.desc == owner) {

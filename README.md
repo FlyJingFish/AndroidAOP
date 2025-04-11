@@ -131,7 +131,7 @@ Depend on the plug-in in <code>build.gradle</code> in the <strong>project root d
   
   plugins {
       //Required item 👇 apply is set to true to automatically apply debugMode to all modules, if false, manual configuration is required.
-      id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.5.7" apply true
+      id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.5.8" apply true
   }
   ```
   <details>
@@ -141,7 +141,7 @@ Depend on the plug-in in <code>build.gradle</code> in the <strong>project root d
   buildscript {
        dependencies {
            //Required items 👇
-           classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.5.7'
+           classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.5.8'
        }
   }
   //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below.
@@ -189,7 +189,7 @@ Depend on the plug-in in <code>build.gradle</code> in the <strong>project root d
   //Required items 👇
   plugins {
        ...
-       id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.5.7"
+       id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.5.8"
   }
   ```
 
@@ -219,17 +219,17 @@ plugins {
 
 dependencies {
      //Required items 👇
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:2.5.7'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-core:2.5.8'
      //Optional 👇This package provides some common annotation aspects
-     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-extra:2.5.7'
+     implementation 'io.github.FlyJingFish.AndroidAop:android-aop-extra:2.5.8'
     
      //Required item 👇If you already have this item in your project, you don’t need to add it.
      implementation 'androidx.appcompat:appcompat:1.3.0' // At least in 1.3.0 and above
      
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️supports aspects written in Java and Kotlin code
-     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.5.7'
+     ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.5.8'
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️only applies to aspects written in Java code
-     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:2.5.7'
+     annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:2.5.8'
      //⚠️Choose one of the above android-aop-ksp and android-aop-processor
 }
 ```

@@ -94,7 +94,7 @@ class MainActivity: BaseVActivity<ActivityMainBinding>(),PermissionRejectListene
         })
         val bbean = BaseBean(0,0)
         bbean.test()
-        val beanH = BeanH(Any(),0,0)
+        val beanH = BeanH(BeanH(0,0),0,0)
         beanH.test()
 //        binding.btnIOThread.setOnClickListener {
 //            onIOThread()
