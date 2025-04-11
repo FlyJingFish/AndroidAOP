@@ -27,7 +27,38 @@ object TransformPlugin : BasePlugin() {
             }
             return
         }
-
+        project.rootProject.gradle.taskGraph.addTaskExecutionGraphListener {
+            try {
+                var lastCanModifyTask : Task? =null
+                var dexTask : DexArchiveBuilderTask? =null
+                var aopTask : AssembleAndroidAopTask? =null
+                for (task in it.allTasks) {
+                    if (task is AssembleAndroidAopTask){
+                        aopTask = task
+                    }
+                    if (task is DexArchiveBuilderTask){
+                        dexTask = task
+                        break
+                    }
+                    lastCanModifyTask = task
+                }
+                if (lastCanModifyTask != null && dexTask != null && aopTask != null){
+                    if (lastCanModifyTask !is AssembleAndroidAopTask && lastCanModifyTask !is DefaultTransformTask){
+                        if (aopTask.isFastDex){
+                            val hintText = "When fastDex is enabled, you should put [id 'android.aop'] at the end to make ${aopTask.name} execute after ${lastCanModifyTask.name}"
+                            project.logger.error(hintText)
+                            aopTask.doLast {
+                                project.logger.error(hintText)
+                            }
+                            it.allTasks[it.allTasks.size - 1].doLast {
+                                project.logger.error(hintText)
+                            }
+                        }
+                    }
+                }
+            } catch (_: Exception) {
+            }
+        }
         val androidComponents = project.extensions.getByType(AndroidComponentsExtension::class.java)
         androidComponents.onVariants { variant ->
             val androidAopConfig = project.extensions.getByType(AndroidAopConfig::class.java)
