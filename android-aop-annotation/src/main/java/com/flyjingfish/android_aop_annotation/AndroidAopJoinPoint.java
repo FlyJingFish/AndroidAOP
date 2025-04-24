@@ -116,15 +116,15 @@ public final class AndroidAopJoinPoint {
 
         ProceedJoinPoint proceedJoinPoint;
         if (isSuspend){
-            proceedJoinPoint = JoinPoint.INSTANCE.getJoinPointSuspend(targetClass, args,target,true,targetMethod,invokeMethod, aopMethod);
+            proceedJoinPoint = JoinPoint.getJoinPointSuspend(targetClass, args,target,true,targetMethod,invokeMethod, aopMethod);
         }else {
-            proceedJoinPoint = JoinPoint.INSTANCE.getJoinPoint(targetClass, args,target,false,targetMethod,invokeMethod, aopMethod);
+            proceedJoinPoint = JoinPoint.getJoinPoint(targetClass, args,target,false,targetMethod,invokeMethod, aopMethod);
         }
-        JoinPoint.INSTANCE.setStaticMethod(proceedJoinPoint,targetStaticMethod);
+        JoinPoint.setStaticMethod(proceedJoinPoint,targetStaticMethod);
 
 
         ListIterator<PointCutAnnotation> iterator = pointCutAnnotations.listIterator();
-        JoinPoint.INSTANCE.setHasNext(proceedJoinPoint, initHasNextAop);
+        JoinPoint.setHasNext(proceedJoinPoint, initHasNextAop);
         if (!iterator.hasNext()){
             if (AndroidAOPDebugUtils.INSTANCE.isApkDebug()){
                 throw new AndroidAOPPointCutNotFoundException("在"+targetClassName + "." + originalMethodName+"上没有找到切面处理类，请 clean 项目并重新编译");
@@ -135,10 +135,10 @@ public final class AndroidAopJoinPoint {
 
 
         if (initHasNextAop) {
-            JoinPoint.INSTANCE.setOnInvokeListener(proceedJoinPoint, () -> {
+            JoinPoint.setOnInvokeListener(proceedJoinPoint, () -> {
                 if (iterator.hasNext()) {
                     PointCutAnnotation nextCutAnnotation = iterator.next();
-                    JoinPoint.INSTANCE.setHasNext(proceedJoinPoint,iterator.hasNext());
+                    JoinPoint.setHasNext(proceedJoinPoint,iterator.hasNext());
                     Object value;
                     if (nextCutAnnotation.basePointCut != null) {
                         if (isSuspend){
