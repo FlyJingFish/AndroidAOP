@@ -4,11 +4,14 @@
 @AndroidAopModifyExtendsClass(
     value = "Modify target class",
     isParent = false // value refers to the class name or the inherited class of the class
+    excludeWeaving = exclude weaving range
+    includeWeaving = include weaving range
 )
 ```
 
 - `isParent = true` means modifying all classes whose inherited classes are value
 - `isParent = false` means modifying the class whose class name is value
+- excludeWeaving and includeWeaving are similar to exclude and include in the [getting started](/AndroidAOP/getting_started/#4-add-the-androidaopconfig-configuration-item-in-apps-buildgradle-this-step-is-an-optional-configuration-item)
 
 This function is relatively simple. It modifies the inherited class of a class. Fill in the full name of the class to be modified in the ```value``` position. The annotated class is the modified inherited class.
 

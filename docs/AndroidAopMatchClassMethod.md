@@ -8,6 +8,8 @@ This aspect is used to match a class and its corresponding method. This aspect f
     methodName = method name array,
     type = match type, optional, default EXTENDS
     excludeClasses = array of classes to exclude in inheritance relationship (valid only when type is not SELF), optional
+    excludeWeaving = exclude weaving range
+    includeWeaving = include weaving range
 )
 ```
 
@@ -42,6 +44,9 @@ This aspect is used to match a class and its corresponding method. This aspect f
         - The overridden method cannot be private or final
 
     - Set to false, if there is no matching method in the subclass, no processing is done
+
+- excludeWeaving and includeWeaving are similar to exclude and include in the [getting started](/AndroidAOP/getting_started/#4-add-the-androidaopconfig-configuration-item-in-apps-buildgradle-this-step-is-an-optional-configuration-item)
+
 
 !!! note
     In addition, not all classes can be hooked in

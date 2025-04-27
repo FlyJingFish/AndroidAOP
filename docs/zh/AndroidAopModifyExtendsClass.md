@@ -4,11 +4,14 @@
 @AndroidAopModifyExtendsClass(
     value = "修改目标类",
     isParent = false // value 是指向类的类名还是类的继承类，默认false
+    excludeWeaving = 排除织入的范围
+    includeWeaving = 包括织入的范围
 )
 ```
 
 - `isParent = true` 就是修改所有继承类是 value 的类
 - `isParent = false` 就是修改类名是 value 的类
+- excludeWeaving 和 includeWeaving 类似于 [入门处的配置](/AndroidAOP/zh/getting_started/#app-buildgradle-androidaopconfig) 的 exclude 和 include
 
 这个功能比较简单，修改类的继承类，```value``` 位置填写要修改的类的全名，被注解的类就是修改后的继承类。
 

@@ -12,6 +12,8 @@
     methodName = 方法名数组,
     type = 匹配类型，非必须，默认 EXTENDS
     excludeClasses = 排除继承关系中的一些类的数组（type 不是 SELF 才有效），非必须
+    excludeWeaving = 排除织入的范围
+    includeWeaving = 包括织入的范围
 )
 ```
 
@@ -47,6 +49,9 @@
         - 重写的方法不能是private 、final修饰的才可以
 
     - 设置为false，如果子类没有匹配的方法则不作处理
+
+- excludeWeaving 和 includeWeaving 类似于 [入门处的配置](/AndroidAOP/zh/getting_started/#app-buildgradle-androidaopconfig) 的 exclude 和 include
+
 
 !!! note 
     另外不是所有类都可以Hook进去
