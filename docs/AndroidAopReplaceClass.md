@@ -50,7 +50,7 @@ This aspect is used to replace the method call in the code, and needs to be used
   
     In simple terms, ```LEAF_EXTENDS``` and ```DIRECT_EXTENDS``` are two extremes. The former focuses on the last node in the inheritance relationship, while the latter focuses on the first node in the inheritance relationship.
 
-- excludeWeaving and includeWeaving are similar to exclude and include in the [getting started](https://flyjingfish.github.io/AndroidAOP/zh/getting_started/#app-buildgradle-androidaopconfig)
+- excludeWeaving and includeWeaving are similar to exclude and include in the [getting started](/AndroidAOP/getting_started/#4-add-the-androidaopconfig-configuration-item-in-apps-buildgradle-this-step-is-an-optional-configuration-item)
 
 ### @AndroidAopReplaceNew
 

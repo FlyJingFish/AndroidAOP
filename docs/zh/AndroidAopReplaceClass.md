@@ -51,7 +51,7 @@
 
     简单来说，```LEAF_EXTENDS```和```DIRECT_EXTENDS```是两个极端，前者关注的是继承关系中最后一个节点，后者关注的是继承关系中第一个节点。
 
-- excludeWeaving 和 includeWeaving 类似于 [入门处的配置](https://flyjingfish.github.io/AndroidAOP/zh/getting_started/#app-buildgradle-androidaopconfig) 的 exclude 和 include
+- excludeWeaving 和 includeWeaving 类似于 [入门处的配置](/AndroidAOP/zh/getting_started/#app-buildgradle-androidaopconfig) 的 exclude 和 include
 
 ### @AndroidAopReplaceNew
 
