@@ -4,6 +4,7 @@ import com.flyjingfish.android_aop_plugin.beans.AopCollectCut
 import com.flyjingfish.android_aop_plugin.beans.AopMatchCut
 import com.flyjingfish.android_aop_plugin.beans.AopMethodCut
 import com.flyjingfish.android_aop_plugin.beans.AopReplaceCut
+import com.flyjingfish.android_aop_plugin.beans.WeavingRules
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addAnnoInfo
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addAopInstance
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addCollectConfig
@@ -100,6 +101,7 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
         private var invokeClassName: String? = null
         private var matchType = "EXTENDS"
         private var excludeClasses: String? = null
+        private var weavingRules: String? = null
         override fun visit(name: String, value: Any) {
             if (isAndroidAopClass) {
                 if (name == "targetClassName") {
@@ -114,6 +116,9 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
                 if (name == "excludeClasses") {
                     excludeClasses = value.toString()
                 }
+                if (name == "weavingRules") {
+                    weavingRules = value.toString()
+                }
             }
             super.visit(name, value)
         }
@@ -122,12 +127,16 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
             super.visitEnd()
             if (targetClassName != null && invokeClassName != null) {
                 addReplaceInfo(targetClassName!!, invokeClassName!!)
-                var strings: Array<String>? = null
+                var excludeClassesArray: Array<String>? = null
                 if (excludeClasses != null) {
-                    strings = mGson.fromJson(excludeClasses, Array<String>::class.java)
+                    excludeClassesArray = mGson.fromJson(excludeClasses, Array<String>::class.java)
+                }
+                var weavingRulesBean: WeavingRules? = null
+                if (weavingRules != null) {
+                    weavingRulesBean = mGson.fromJson(weavingRules, WeavingRules::class.java)
                 }
 
-                addReplaceCut(AopReplaceCut(targetClassName!!,invokeClassName!!,matchType,strings))
+                addReplaceCut(AopReplaceCut(targetClassName!!,invokeClassName!!,matchType,excludeClassesArray,weavingRulesBean))
             }
         }
     }

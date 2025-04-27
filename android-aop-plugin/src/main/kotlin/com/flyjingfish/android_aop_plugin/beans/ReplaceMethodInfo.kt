@@ -9,6 +9,7 @@ data class ReplaceMethodInfo(
     var newOwner: String,
     var newMethodName: String,
     var newMethodDesc: String,
+    val weavingRules: WeavingRules?,
     var replaceType:ReplaceType = ReplaceType.METHOD,
     var newClassName :String = ""
 ){

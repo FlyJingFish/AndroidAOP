@@ -1,6 +1,10 @@
 package com.flyjingfish.android_aop_plugin.beans
 
-data class AopReplaceCut(val targetClassName:String, val invokeClassName:String,val matchType:String = "EXTENDS",val excludeClass:Array<String>?) {
+data class AopReplaceCut(val targetClassName:String,
+                         val invokeClassName:String,
+                         val matchType:String = "EXTENDS",
+                         val excludeClass:Array<String>?,
+                         val weavingRules:WeavingRules?) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -14,6 +18,7 @@ data class AopReplaceCut(val targetClassName:String, val invokeClassName:String,
             if (other.excludeClass == null) return false
             if (!excludeClass.contentEquals(other.excludeClass)) return false
         } else if (other.excludeClass != null) return false
+        if (weavingRules != other.weavingRules) return false
 
         return true
     }
@@ -23,6 +28,7 @@ data class AopReplaceCut(val targetClassName:String, val invokeClassName:String,
         result = 31 * result + invokeClassName.hashCode()
         result = 31 * result + matchType.hashCode()
         result = 31 * result + (excludeClass?.contentHashCode() ?: 0)
+        result = 31 * result + weavingRules.hashCode()
         return result
     }
 }

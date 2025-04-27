@@ -306,6 +306,8 @@ public class AndroidAopProcessor extends AbstractProcessor {
             AndroidAopReplaceClass cut = element.getAnnotation(AndroidAopReplaceClass.class);
             String className = cut.value();
             String[] excludeClasses = cut.excludeClasses();
+            String[] includeWeaving = cut.includeWeaving();
+            String[] excludeWeaving = cut.excludeWeaving();
             MatchType matchType = cut.type();
             StringBuilder excludeClassesBuilder = new StringBuilder();
             for (int i = 0; i < excludeClasses.length; i++) {
@@ -317,12 +319,16 @@ public class AndroidAopProcessor extends AbstractProcessor {
             TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(name1+"$$AndroidAopClass")
                     .addAnnotation(AopClass.class)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
+            Map<String,Object> weavingRules = new HashMap<>();
+            weavingRules.put("includeWeaving",includeWeaving);
+            weavingRules.put("excludeWeaving",excludeWeaving);
             MethodSpec.Builder whatsMyName1 = whatsMyName(AOP_METHOD_NAME+"ForReplace")
                     .addAnnotation(AnnotationSpec.builder(AopReplaceMethod.class)
                             .addMember("targetClassName", "$S", className)
                             .addMember("invokeClassName", "$S", element)
                             .addMember("matchType", "$S", matchType.name())
                             .addMember("excludeClasses", "$S", mGson.toJson(excludeClasses))
+                            .addMember("weavingRules", "$S", mGson.toJson(weavingRules))
                             .build());
 
             typeBuilder.addMethod(whatsMyName1.build());

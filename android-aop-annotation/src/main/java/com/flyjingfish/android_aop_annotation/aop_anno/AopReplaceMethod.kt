@@ -15,5 +15,6 @@ annotation class AopReplaceMethod(
      */
     val invokeClassName: String,
     val matchType: String,
-    val excludeClasses: String
+    val excludeClasses: String,
+    val weavingRules: String = ""
 )

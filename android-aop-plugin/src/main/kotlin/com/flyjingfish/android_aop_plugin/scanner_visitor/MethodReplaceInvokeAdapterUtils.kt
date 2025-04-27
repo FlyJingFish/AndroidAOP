@@ -3,7 +3,9 @@ package com.flyjingfish.android_aop_plugin.scanner_visitor
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
+import com.flyjingfish.android_aop_plugin.utils.Utils.slashToDotClassName
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
+import com.flyjingfish.android_aop_plugin.utils.inRules
 import com.flyjingfish.android_aop_plugin.utils.printLog
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
@@ -40,9 +42,12 @@ class MethodReplaceInvokeAdapterUtils(private val className:String, private val 
         if (opcode == Opcodes.NEW) {
             val replaceMethodInfo = getReplaceInfo(type, "<init>", "")
             if (replaceMethodInfo != null && replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW && replaceMethodInfo.newClassName.isNotEmpty()){
-                superCall.superVisitTypeInsn(opcode, replaceMethodInfo.newClassName)
-                onResultListener?.onBack()
-                return
+                val inRule = replaceMethodInfo.inRules(slashToDotClassName(className))
+                if (inRule){
+                    superCall.superVisitTypeInsn(opcode, replaceMethodInfo.newClassName)
+                    onResultListener?.onBack()
+                    return
+                }
             }
         }
         superCall.superVisitTypeInsn(opcode, type)
@@ -109,7 +114,12 @@ class MethodReplaceInvokeAdapterUtils(private val className:String, private val 
             } else {
                 descriptor.replace("(", "(L${replaceMethodInfo.oldOwner};") == replaceMethodInfo.newMethodDesc || descriptor.replace("(", "(Ljava/lang/Object;") == replaceMethodInfo.newMethodDesc
             }
-            if (shouldReplace && !isInMethodInner) {
+            val inRule = if (shouldReplace){
+                replaceMethodInfo.inRules(slashToDotClassName(className))
+            }else{
+                false
+            }
+            if (shouldReplace && !isInMethodInner && inRule) {
                 val isThisInit = owner == className && methodName == "<init>" && methodName == name
                 val isInitAop = replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.INIT
                 if (isInitAop && isThisInit){

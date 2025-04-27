@@ -22,5 +22,15 @@ annotation class AndroidAopReplaceClass(
      *
      * @return 排除继承中的类名数组（包含包名）
      */
-    val excludeClasses: Array<String> = []
+    val excludeClasses: Array<String> = [],
+    /**
+     *
+     * @return 排除织入的范围，类似于 [入门处的配置](https://flyjingfish.github.io/AndroidAOP/zh/getting_started/#app-buildgradle-androidaopconfig) 的 exclude
+     */
+    val excludeWeaving: Array<String> = [],
+    /**
+     *
+     * @return 包括织入的范围，类似于 [入门处的配置](https://flyjingfish.github.io/AndroidAOP/zh/getting_started/#app-buildgradle-androidaopconfig) 的 include
+     */
+    val includeWeaving: Array<String> = []
 )

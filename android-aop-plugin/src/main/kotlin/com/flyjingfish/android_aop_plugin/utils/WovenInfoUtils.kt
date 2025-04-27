@@ -38,7 +38,7 @@ object WovenInfoUtils {
     private val classSuperCacheMap = ConcurrentHashMap<String, String>()
     private val classMethodRecords: ConcurrentHashMap<String, HashMap<String, MethodRecord>> =
         ConcurrentHashMap()//类名为key，value为方法map集合
-    private val invokeMethodCuts = CopyOnWriteArrayList<AopReplaceCut>()
+    private val invokeMethodCuts = ConcurrentHashMap<String,AopReplaceCut>()
     private val realInvokeMethodMap = ConcurrentHashMap<String, String>()
     private val invokeMethodMap = ConcurrentHashMap<String, String>()
     private val replaceMethodMap = ConcurrentHashMap<String, String>()
@@ -145,7 +145,11 @@ object WovenInfoUtils {
     }
 
     fun addReplaceCut(aopReplaceCut: AopReplaceCut) {
-        invokeMethodCuts.add(aopReplaceCut)
+        invokeMethodCuts[aopReplaceCut.invokeClassName] = aopReplaceCut
+    }
+
+    fun getReplaceCut(invokeClassName: String):AopReplaceCut? {
+        return invokeMethodCuts[invokeClassName]
     }
 
     fun addRealReplaceInfo(targetClassName: String,invokeClassName: String) {
@@ -435,7 +439,7 @@ object WovenInfoUtils {
         if (invokeMethodCutCache == null){
             synchronized(this){
                 if (invokeMethodCutCache == null){
-                    invokeMethodCutCache = invokeMethodCuts.filter {
+                    invokeMethodCutCache = invokeMethodCuts.values.filter {
                         it.matchType != AopMatchCut.MatchType.SELF.name
                     }.toMutableList()
                 }
@@ -655,7 +659,7 @@ object WovenInfoUtils {
                 }
             }
             //@AndroidAopReplaceClass
-            invokeMethodCuts.forEach { cutConfig ->
+            invokeMethodCuts.values.forEach { cutConfig ->
                 if (cutConfig.matchType == AopMatchCut.MatchType.LEAF_EXTENDS.name){
                     throw IllegalArgumentException(getHintText(cutConfig.invokeClassName))
                 }

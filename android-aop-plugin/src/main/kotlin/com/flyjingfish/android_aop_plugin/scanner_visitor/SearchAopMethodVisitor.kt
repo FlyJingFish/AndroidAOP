@@ -9,11 +9,13 @@ import com.flyjingfish.android_aop_annotation.utils.InvokeMethod
 import com.flyjingfish.android_aop_plugin.beans.AopCollectClass
 import com.flyjingfish.android_aop_plugin.beans.AopCollectCut
 import com.flyjingfish.android_aop_plugin.beans.AopMatchCut
+import com.flyjingfish.android_aop_plugin.beans.AopReplaceCut
 import com.flyjingfish.android_aop_plugin.beans.CutInfo
 import com.flyjingfish.android_aop_plugin.beans.CutMethodJson
 import com.flyjingfish.android_aop_plugin.beans.LambdaMethod
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
+import com.flyjingfish.android_aop_plugin.beans.WeavingRules
 import com.flyjingfish.android_aop_plugin.ex.AndroidAOPReplaceSetErrorException
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils.getMethodInfo
@@ -51,6 +53,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
     lateinit var className: String
     private var replaceInvokeClassName: String?=null
     private var replaceTargetClassName: String?=null
+    private var aopReplaceCut: AopReplaceCut?=null
     private var isOverrideClass = false
     private var overrideMethodSet :MutableSet<String> = mutableSetOf()
 
@@ -73,12 +76,17 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
         if (isReplaceClass){
             replaceInvokeClassName = className
 
-            replaceTargetClassName = WovenInfoUtils.getTargetClassName(seeClsName)
+            var replaceTargetClassName = WovenInfoUtils.getTargetClassName(seeClsName)
             if (replaceTargetClassName != null){
-                val classString = WovenInfoUtils.getClassString(replaceTargetClassName!!)
+                val classString = WovenInfoUtils.getClassString(replaceTargetClassName)
                 if (classString != null){
                     replaceTargetClassName = Utils.dotToSlash(classString)
                 }
+            }
+            val aopReplaceCut = WovenInfoUtils.getReplaceCut(seeClsName)
+            aopReplaceCut?.let {
+                this.replaceTargetClassName = replaceTargetClassName
+                this.aopReplaceCut = it
             }
         }
         val isAbstractClass = access and Opcodes.ACC_ABSTRACT != 0
@@ -312,7 +320,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
 
                 val replaceMethodInfo = ReplaceMethodInfo(
                     replaceTargetClassName!!,"","",
-                    className,methodname,methoddescriptor
+                    className,methodname,methoddescriptor,aopReplaceCut?.weavingRules
                 )
                 if (descriptor.contains(NEW_POINT)){
                     replaceMethodInfo.replaceType = ReplaceMethodInfo.ReplaceType.NEW

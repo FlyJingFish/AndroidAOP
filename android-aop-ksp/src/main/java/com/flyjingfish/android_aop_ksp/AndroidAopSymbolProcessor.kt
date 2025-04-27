@@ -344,6 +344,10 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
 
       val excludeClasses: ArrayList<String> =
         if (classMethodMap["excludeClasses"] is ArrayList<*>) classMethodMap["excludeClasses"] as ArrayList<String> else ArrayList()
+      val excludeWeaving: ArrayList<String> =
+        if (classMethodMap["excludeWeaving"] is ArrayList<*>) classMethodMap["excludeWeaving"] as ArrayList<String> else ArrayList()
+      val includeWeaving: ArrayList<String> =
+        if (classMethodMap["includeWeaving"] is ArrayList<*>) classMethodMap["includeWeaving"] as ArrayList<String> else ArrayList()
       val typeStr: String? = classMethodMap["type"]?.toString()
       val matchType = typeStr?.substring(typeStr.lastIndexOf(".") + 1) ?: "EXTENDS"
 
@@ -377,6 +381,13 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
             .addMember(
               "excludeClasses = %S",
               mGson.toJson(excludeClasses)
+            )
+            .addMember(
+              "weavingRules = %S",
+              mGson.toJson(mutableMapOf<String,ArrayList<String>>().apply {
+                put("excludeWeaving",excludeWeaving)
+                put("includeWeaving",includeWeaving)
+              })
             )
             .build()
         )

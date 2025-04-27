@@ -1,6 +1,7 @@
 package com.flyjingfish.android_aop_plugin.utils
 
 import com.flyjingfish.android_aop_plugin.beans.MatchMethodInfo
+import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import javassist.Modifier
 import org.gradle.api.Project
@@ -541,6 +542,13 @@ fun AndroidAopConfig.Companion.inRules(className: String):Boolean{
     return Utils.isIncludeFilterMatched(className, includes) && !Utils.isExcludeFilterMatched(
         className,
         excludes
+    )
+}
+
+fun ReplaceMethodInfo.inRules(className: String):Boolean{
+    return Utils.isIncludeFilterMatched(className, weavingRules?.includeWeaving) && !Utils.isExcludeFilterMatched(
+        className,
+        weavingRules?.excludeWeaving
     )
 }
 
