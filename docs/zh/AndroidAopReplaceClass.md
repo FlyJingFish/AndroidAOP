@@ -22,6 +22,8 @@
     value = "类的全称（包括包名）"
     type = 匹配类型，非必须，默认 SELF
     excludeClasses = 排除继承关系中的一些类的数组（type 不是 SELF 才有效），非必须
+    excludeWeaving = 排除织入的范围
+    includeWeaving = 包括织入的范围
 )
 ```
 
@@ -49,7 +51,7 @@
 
     简单来说，```LEAF_EXTENDS```和```DIRECT_EXTENDS```是两个极端，前者关注的是继承关系中最后一个节点，后者关注的是继承关系中第一个节点。
 
-
+- excludeWeaving 和 includeWeaving 类似于 [入门处的配置](https://flyjingfish.github.io/AndroidAOP/zh/getting_started/#app-buildgradle-androidaopconfig) 的 exclude 和 include
 
 ### @AndroidAopReplaceNew
 

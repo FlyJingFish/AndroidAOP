@@ -22,6 +22,8 @@ This aspect is used to replace the method call in the code, and needs to be used
     value = "Full name of the class (including package name)"
     type = Matching type, not required, default SELF
     excludeClasses = An array of classes that exclude inheritance(valid only when type is not SELF), not required
+    excludeWeaving = exclude weaving range
+    includeWeaving = include weaving range
 )
 ```
 - If the class name filled in by value is an internal class, do not use the `$` character, but `.`
@@ -48,9 +50,7 @@ This aspect is used to replace the method call in the code, and needs to be used
   
     In simple terms, ```LEAF_EXTENDS``` and ```DIRECT_EXTENDS``` are two extremes. The former focuses on the last node in the inheritance relationship, while the latter focuses on the first node in the inheritance relationship.
 
-!!! warning
-    Also note that when type is not [SELF], it will slow down the packaging speed. Please use it as appropriate and try not to use it if possible.
-
+- excludeWeaving and includeWeaving are similar to exclude and include in the [getting started](https://flyjingfish.github.io/AndroidAOP/zh/getting_started/#app-buildgradle-androidaopconfig)
 
 ### @AndroidAopReplaceNew
 
