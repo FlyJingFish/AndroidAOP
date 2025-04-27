@@ -1,10 +1,13 @@
 package com.flyjingfish.android_aop_plugin.utils
 
+import com.flyjingfish.android_aop_plugin.beans.AopMatchCut
+import com.flyjingfish.android_aop_plugin.beans.ExtendsWeavingRules
 import com.flyjingfish.android_aop_plugin.beans.MatchMethodInfo
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import javassist.Modifier
 import org.gradle.api.Project
+import org.gradle.api.logging.Logger
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.commons.Method
 import java.io.File
@@ -31,6 +34,7 @@ object Utils {
     const val CONVERSIONS_CLASS = "com.flyjingfish.android_aop_annotation.Conversions"
     const val JOIN_LOCK = "com.flyjingfish.android_aop_annotation.utils.JoinPointLock"
     const val METHOD_SUFFIX = "\$\$AndroidAOP"
+    var logger: Logger ?= null
 
     fun dotToSlash(str: String): String {
         return str.replace(".", "/")
@@ -444,6 +448,10 @@ fun printLog(text: String) {
     }
 }
 
+fun printError(text: String) {
+    Utils.logger?.error(text)
+}
+
 fun File.checkExist(delete:Boolean = false){
     if (!parentFile.exists()){
         parentFile.mkdirs()
@@ -539,17 +547,26 @@ fun File.saveEntry(inputStream: InputStream) {
 }
 
 fun AndroidAopConfig.Companion.inRules(className: String):Boolean{
-    return Utils.isIncludeFilterMatched(className, includes) && !Utils.isExcludeFilterMatched(
-        className,
-        excludes
-    )
+    return className.inWeavingRules(includes,excludes)
 }
 
 fun ReplaceMethodInfo.inRules(className: String):Boolean{
-    return Utils.isIncludeFilterMatched(className, weavingRules?.includeWeaving) && !Utils.isExcludeFilterMatched(
-        className,
-        weavingRules?.excludeWeaving
+    return className.inWeavingRules( weavingRules?.includeWeaving,weavingRules?.excludeWeaving)
+}
+
+fun String.inWeavingRules(includeWeaving: List<String>?,excludeWeaving: List<String>?):Boolean{
+    return Utils.isIncludeFilterMatched(this, includeWeaving) && !Utils.isExcludeFilterMatched(
+        this,
+        excludeWeaving
     )
+}
+
+fun ExtendsWeavingRules.inRules(className: String):Boolean{
+    return className.inWeavingRules(weavingRules?.includeWeaving,weavingRules?.excludeWeaving)
+}
+
+fun AopMatchCut.inRules(className: String):Boolean{
+    return className.inWeavingRules(weavingRules?.includeWeaving,weavingRules?.excludeWeaving)
 }
 
 fun AndroidAopConfig.Companion.inExcludePackingRules(entryName: String):Boolean{

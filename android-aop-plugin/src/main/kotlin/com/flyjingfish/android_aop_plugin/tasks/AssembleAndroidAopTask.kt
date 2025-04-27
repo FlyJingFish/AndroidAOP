@@ -65,6 +65,7 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
     private val allDirectoryFiles = mutableListOf<File>()
 
     override fun startTask() {
+        Utils.logger = logger
         aopTaskUtils = AopTaskUtils(project,variant)
         ClassPoolUtils.release(project)
         ClassFileUtils.debugMode = false

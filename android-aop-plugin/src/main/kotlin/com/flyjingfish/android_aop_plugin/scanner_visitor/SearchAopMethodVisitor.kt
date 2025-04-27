@@ -27,6 +27,7 @@ import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.addCollectClass
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.getAnnoInfo
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.isContainAnno
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils.isLeaf
+import com.flyjingfish.android_aop_plugin.utils.inRules
 import com.flyjingfish.android_aop_plugin.utils.instanceof
 import com.flyjingfish.android_aop_plugin.utils.isHasMethodBody
 import com.flyjingfish.android_aop_plugin.utils.isStaticMethod
@@ -166,6 +167,9 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
         val aopMatchCuts = mutableListOf<AopMatchCut>();
         //        logger.error("className="+className+",superName="+superName+",interfaces="+ Arrays.asList(interfaces));
         WovenInfoUtils.getAopMatchCuts().forEach { (_: String?, aopMatchCut: AopMatchCut) ->
+            if (!aopMatchCut.inRules(seeClsName)){
+                return@forEach
+            }
             if (aopMatchCut.isPackageName()){
                 if (aopMatchCut.isMatchPackageName()){
                     val clsName = slashToDotClassName(className)
@@ -266,7 +270,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
             }
         }
         for (aopMatchCut in aopMatchCuts) {
-            this.aopMatchCuts.add(AopMatchCut(aopMatchCut.baseClassName,aopMatchCut.methodNames.copyOf(),aopMatchCut.cutClassName,aopMatchCut.matchType,aopMatchCut.excludeClass?.copyOf(),aopMatchCut.overrideMethod))
+            this.aopMatchCuts.add(AopMatchCut(aopMatchCut.baseClassName,aopMatchCut.methodNames.copyOf(),aopMatchCut.cutClassName,aopMatchCut.matchType,aopMatchCut.excludeClass?.copyOf(),aopMatchCut.overrideMethod,aopMatchCut.weavingRules?.copy()))
         }
         if (aopMatchCuts.isNotEmpty()){
             onCallBackMethod?.onBackMatch(this.aopMatchCuts)

@@ -2,7 +2,13 @@ package com.flyjingfish.android_aop_plugin.beans
 
 import java.util.regex.Pattern
 
-data class AopMatchCut(val baseClassName:String, val methodNames:Array<String>,val cutClassName:String,val matchType:String = "EXTENDS",val excludeClass:Array<String>?, val overrideMethod: Boolean = false) {
+data class AopMatchCut(val baseClassName:String,
+                       val methodNames:Array<String>,
+                       val cutClassName:String,
+                       val matchType:String = "EXTENDS",
+                       val excludeClass:Array<String>?,
+                       val overrideMethod: Boolean = false,
+                       val weavingRules: WeavingRules?) {
     enum class MatchType{
         EXTENDS,SELF,DIRECT_EXTENDS,LEAF_EXTENDS
     }
@@ -59,6 +65,7 @@ data class AopMatchCut(val baseClassName:String, val methodNames:Array<String>,v
             if (!excludeClass.contentEquals(other.excludeClass)) return false
         } else if (other.excludeClass != null) return false
         if (overrideMethod != other.overrideMethod) return false
+        if (weavingRules != other.weavingRules) return false
         if (AllClassnamePattern != other.AllClassnamePattern) return false
 
         return true
@@ -71,8 +78,10 @@ data class AopMatchCut(val baseClassName:String, val methodNames:Array<String>,v
         result = 31 * result + matchType.hashCode()
         result = 31 * result + (excludeClass?.contentHashCode() ?: 0)
         result = 31 * result + overrideMethod.hashCode()
+        result = 31 * result + (weavingRules?.hashCode() ?: 0)
         result = 31 * result + (AllClassnamePattern?.hashCode() ?: 0)
         return result
     }
+
 
 }

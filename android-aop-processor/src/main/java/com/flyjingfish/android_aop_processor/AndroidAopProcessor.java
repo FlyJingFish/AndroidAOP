@@ -233,7 +233,11 @@ public class AndroidAopProcessor extends AbstractProcessor {
                 throw new IllegalArgumentException("注意："+element+" 匹配所有方法或匹配包名时不可以设置 overrideMethod 为 true");
             }
             ClassName superinterface = ClassName.bestGuess(MatchClassMethodCreator.class.getName());
-
+            String[] includeWeaving = cut.includeWeaving();
+            String[] excludeWeaving = cut.excludeWeaving();
+            Map<String,Object> weavingRules = new HashMap<>();
+            weavingRules.put("includeWeaving",includeWeaving);
+            weavingRules.put("excludeWeaving",excludeWeaving);
             TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(name1+"$$AndroidAopClass")
                     .addAnnotation(AopClass.class)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
@@ -254,6 +258,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
                             .addMember("matchType", "$S", matchType.name())
                             .addMember("excludeClasses", "$S", mGson.toJson(excludeClasses))
                             .addMember("overrideMethod", "$L", overrideMethod)
+                            .addMember("weavingRules", "$S", mGson.toJson(weavingRules))
                             .build());
 
             typeBuilder.addMethod(whatsMyName2.build());
@@ -347,7 +352,11 @@ public class AndroidAopProcessor extends AbstractProcessor {
             AndroidAopModifyExtendsClass cut = element.getAnnotation(AndroidAopModifyExtendsClass.class);
             String className = cut.value();
             boolean isParent = cut.isParent();
-
+            String[] includeWeaving = cut.includeWeaving();
+            String[] excludeWeaving = cut.excludeWeaving();
+            Map<String,Object> weavingRules = new HashMap<>();
+            weavingRules.put("includeWeaving",includeWeaving);
+            weavingRules.put("excludeWeaving",excludeWeaving);
             TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(name1+"$$AndroidAopClass")
                     .addAnnotation(AopClass.class)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
@@ -356,6 +365,7 @@ public class AndroidAopProcessor extends AbstractProcessor {
                             .addMember("targetClassName", "$S", className)
                             .addMember("extendsClassName", "$S", element)
                             .addMember("isParent", "$L", isParent)
+                            .addMember("weavingRules", "$S", mGson.toJson(weavingRules))
                             .build());
 
             typeBuilder.addMethod(whatsMyName1.build());

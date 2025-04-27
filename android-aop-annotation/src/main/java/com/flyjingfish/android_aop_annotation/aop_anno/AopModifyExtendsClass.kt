@@ -15,5 +15,6 @@ annotation class AopModifyExtendsClass(
      */
     val extendsClassName: String,
 
-    val isParent: Boolean = false
+    val isParent: Boolean = false,
+    val weavingRules: String = ""
 )

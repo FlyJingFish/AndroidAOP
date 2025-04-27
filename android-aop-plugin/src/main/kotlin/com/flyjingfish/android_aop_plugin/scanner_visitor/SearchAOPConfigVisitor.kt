@@ -38,6 +38,7 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
         private var matchType = "EXTENDS"
         private var excludeClasses: String? = null
         private var overrideMethod: Boolean = false
+        private var weavingRules: String? = null
         override fun visit(name: String, value: Any) {
             if (isAndroidAopClass) {
                 if (name == "value") {
@@ -64,6 +65,9 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
                 if (name == "overrideMethod" && value is Boolean) {
                     overrideMethod = value
                 }
+                if (name == "weavingRules") {
+                    weavingRules = value.toString()
+                }
                 //                WovenInfoUtils.INSTANCE.addAnnoInfo(value.toString());
             }
             super.visit(name, value)
@@ -82,13 +86,18 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
                 if (excludeClasses != null) {
                     strings = mGson.fromJson(excludeClasses, Array<String>::class.java)
                 }
+                var weavingRulesBean: WeavingRules? = null
+                if (weavingRules != null) {
+                    weavingRulesBean = mGson.fromJson(weavingRules, WeavingRules::class.java)
+                }
                 val cut = AopMatchCut(
                     baseClassName!!,
                     mGson.fromJson(methodNames, Array<String>::class.java),
                     pointCutClassName!!,
                     matchType,
                     strings,
-                    overrideMethod
+                    overrideMethod,
+                    weavingRulesBean
                 )
                 addMatchInfo(cut)
                 addAopInstance(pointCutClassName!!, className)
@@ -145,6 +154,7 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
         private var targetClassName: String? = null
         private var extendsClassName: String? = null
         private var isParent: Boolean = false
+        private var weavingRules: String? = null
         override fun visit(name: String, value: Any) {
             if (isAndroidAopClass) {
                 if (name == "targetClassName") {
@@ -156,6 +166,9 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
                 if (name == "isParent" && value is Boolean) {
                     isParent = value
                 }
+                if (name == "weavingRules") {
+                    weavingRules = value.toString()
+                }
             }
             super.visit(name, value)
         }
@@ -163,7 +176,11 @@ class SearchAOPConfigVisitor() : ClassVisitor(Opcodes.ASM9) {
         override fun visitEnd() {
             super.visitEnd()
             if (targetClassName != null && extendsClassName != null) {
-                addModifyExtendsClassInfo(targetClassName!!, extendsClassName!!,isParent)
+                var weavingRulesBean: WeavingRules? = null
+                if (weavingRules != null) {
+                    weavingRulesBean = mGson.fromJson(weavingRules, WeavingRules::class.java)
+                }
+                addModifyExtendsClassInfo(targetClassName!!, extendsClassName!!,isParent,weavingRulesBean)
             }
         }
     }

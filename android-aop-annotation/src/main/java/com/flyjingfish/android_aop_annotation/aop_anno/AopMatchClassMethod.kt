@@ -13,5 +13,6 @@ annotation class AopMatchClassMethod(
     val pointCutClassName: String,
     val matchType: String,
     val excludeClasses: String,
-    val overrideMethod: Boolean = false
+    val overrideMethod: Boolean = false,
+    val weavingRules: String = ""
 )

@@ -7,10 +7,12 @@ import com.flyjingfish.android_aop_plugin.beans.AopMethodCut
 import com.flyjingfish.android_aop_plugin.beans.AopReplaceCut
 import com.flyjingfish.android_aop_plugin.beans.ClassMethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ClassSuperInfo
+import com.flyjingfish.android_aop_plugin.beans.ExtendsWeavingRules
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.OverrideClassJson
 import com.flyjingfish.android_aop_plugin.beans.ReplaceInnerClassInfo
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
+import com.flyjingfish.android_aop_plugin.beans.WeavingRules
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.ex.AndroidAOPOverrideMethodException
 import org.gradle.api.Project
@@ -19,7 +21,6 @@ import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Type
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.jar.JarFile
 
@@ -45,7 +46,7 @@ object WovenInfoUtils {
     private val replaceMethodInfoMap = ConcurrentHashMap<String, ConcurrentHashMap<String, ReplaceMethodInfo>>()
     private val replaceMethodInfoMapUse = ConcurrentHashMap<String, ReplaceMethodInfo>()
     private val modifyExtendsClassMap = ConcurrentHashMap<String, String>()
-    private val modifyExtendsClassParentMap = ConcurrentHashMap<String, Boolean>()
+    private val modifyExtendsClassRulesMap = ConcurrentHashMap<String, ExtendsWeavingRules>()
     private val allClassName = ConcurrentHashMap.newKeySet<String>()
     private val aopCollectInfoMap = ConcurrentHashMap<String,AopCollectCut>()
     private val lastAopCollectInfoMap = ConcurrentHashMap<String,AopCollectCut>()
@@ -82,16 +83,19 @@ object WovenInfoUtils {
     fun getAopMatchCuts(): Map<String, AopMatchCut>{
         return aopMatchCuts
     }
-    fun addModifyExtendsClassInfo(targetClassName: String, extendsClassName: String,isParent:Boolean) {
+    fun addModifyExtendsClassInfo(targetClassName: String, extendsClassName: String,isParent:Boolean,weavingRulesBean: WeavingRules?) {
         modifyExtendsClassMap[targetClassName] = extendsClassName
-        modifyExtendsClassParentMap[targetClassName] = isParent
+        modifyExtendsClassRulesMap[targetClassName] = ExtendsWeavingRules(isParent,weavingRulesBean)
         InitConfig.addModifyClassInfo(targetClassName, extendsClassName)
     }
     fun getModifyExtendsClass(targetClassName: String) :String?{
         return modifyExtendsClassMap[targetClassName]
     }
     fun getModifyExtendsClassParent(targetClassName: String) :Boolean{
-        return modifyExtendsClassParentMap[targetClassName] == true
+        return modifyExtendsClassRulesMap[targetClassName]?.isParent == true
+    }
+    fun getModifyExtendsClassRules(targetClassName: String) :ExtendsWeavingRules?{
+        return modifyExtendsClassRulesMap[targetClassName]
     }
     fun verifyModifyExtendsClassInfo() {
         for (mutableEntry in modifyExtendsClassMap) {
@@ -265,7 +269,7 @@ object WovenInfoUtils {
         replaceMethodMap.clear()
         replaceMethodInfoMapUse.clear()
         modifyExtendsClassMap.clear()
-        modifyExtendsClassParentMap.clear()
+        modifyExtendsClassRulesMap.clear()
         invokeMethodCuts.clear()
         realInvokeMethodMap.clear()
         invokeMethodCutCache = null

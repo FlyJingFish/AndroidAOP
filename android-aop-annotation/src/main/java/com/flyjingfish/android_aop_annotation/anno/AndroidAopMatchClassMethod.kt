@@ -33,5 +33,15 @@ annotation class AndroidAopMatchClassMethod(
      *
      * @return 如果子类中没有匹配的方法则重写父类的方法，targetClassName 不可以包含 * ，methodName 不可以定义 [ "*" ]，并且方法不能是private 、final修饰的才可以，重写所在类不可以是接口
      */
-    val overrideMethod: Boolean = false
+    val overrideMethod: Boolean = false,
+    /**
+     *
+     * @return 排除织入的范围，类似于 [入门处的配置](https://flyjingfish.github.io/AndroidAOP/zh/getting_started/#app-buildgradle-androidaopconfig) 的 exclude
+     */
+    val excludeWeaving: Array<String> = [],
+    /**
+     *
+     * @return 包括织入的范围，类似于 [入门处的配置](https://flyjingfish.github.io/AndroidAOP/zh/getting_started/#app-buildgradle-androidaopconfig) 的 include
+     */
+    val includeWeaving: Array<String> = []
 )

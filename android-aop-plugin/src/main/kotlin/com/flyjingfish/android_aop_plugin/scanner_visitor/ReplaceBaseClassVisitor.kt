@@ -7,6 +7,8 @@ import com.flyjingfish.android_aop_plugin.utils.Utils.slashToDot
 import com.flyjingfish.android_aop_plugin.utils.Utils.slashToDotClassName
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.computeMD5
+import com.flyjingfish.android_aop_plugin.utils.inRules
+import com.flyjingfish.android_aop_plugin.utils.printError
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
@@ -37,20 +39,27 @@ open class ReplaceBaseClassVisitor(
         oldSuperName = superName
         thisClassName = slashToDotClassName(name)
         hasCollect = WovenInfoUtils.getAopCollectClassMap()[thisClassName] != null
-        var replaceExtendsClassName = WovenInfoUtils.getModifyExtendsClass(slashToDotClassName(name))
+        var replaceExtendsClassName = WovenInfoUtils.getModifyExtendsClass(thisClassName)
         if (replaceExtendsClassName == null){
-            replaceExtendsClassName = WovenInfoUtils.getModifyExtendsClass(slashToDotClassName(superName))
+            val superDotName = slashToDotClassName(superName)
+            replaceExtendsClassName = WovenInfoUtils.getModifyExtendsClass(superDotName)
             if (replaceExtendsClassName != null){
-                val isParent = WovenInfoUtils.getModifyExtendsClassParent(slashToDotClassName(superName))
+                val isParent = WovenInfoUtils.getModifyExtendsClassParent(superDotName)
                 if (!isParent){
                     replaceExtendsClassName = null
-                }else if (replaceExtendsClassName == slashToDotClassName(name)){
+                }else if (replaceExtendsClassName == thisClassName){
+                    replaceExtendsClassName = null
+                }
+                if (WovenInfoUtils.getModifyExtendsClassRules(superDotName)?.inRules(thisClassName) != true){
                     replaceExtendsClassName = null
                 }
             }
         }else{
-            val isParent = WovenInfoUtils.getModifyExtendsClassParent(slashToDotClassName(name))
+            val isParent = WovenInfoUtils.getModifyExtendsClassParent(thisClassName)
             if (isParent){
+                replaceExtendsClassName = null
+            }
+            if (WovenInfoUtils.getModifyExtendsClassRules(thisClassName)?.inRules(thisClassName) != true){
                 replaceExtendsClassName = null
             }
         }
@@ -60,7 +69,7 @@ open class ReplaceBaseClassVisitor(
             )
         }
         if (!replaceExtendsClassName.isNullOrEmpty() && !newReplaceExtendsClassName.isNullOrEmpty()){
-            InitConfig.useModifyClassInfo(slashToDotClassName(name))
+            InitConfig.useModifyClassInfo(thisClassName)
             modifyExtendsClassName = dotToSlash(newReplaceExtendsClassName)
             val newSignature = if (signature != null) {
                 updateSignature(signature, superName, modifyExtendsClassName!!);
@@ -207,7 +216,10 @@ open class ReplaceBaseClassVisitor(
             isInterface: Boolean
         ) {
             val extendClass = modifyExtendsClassName
-            if (name == "<init>" && oldSuperName == owner && extendClass != null && hasConstructor(slashToDot(extendClass),descriptor)) {
+            if (name == "<init>" && oldSuperName == owner && extendClass != null) {
+                if (!hasConstructor(slashToDot(extendClass),descriptor)){
+                    printError("你需要保证 ${slashToDotClassName(extendClass)} 的构造方法和被修改类的构造方法的个数和定义都一致")
+                }
                 modifyed = true
                 super.visitMethodInsn(opcode, extendClass, name, descriptor, isInterface)
             } else {
