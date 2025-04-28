@@ -304,16 +304,17 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
                             val byteArray = try {
                                 WovenIntoCode.modifyClass(project,inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,WovenInfoUtils.getWovenClassWriterFlags(),WovenInfoUtils.getWovenParsingOptions(),isSuspend)
                             } catch (e: Exception) {
+                                e.printDetail()
                                 try {
                                     WovenIntoCode.modifyClass(project,inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,WovenInfoUtils.getWovenClassWriterFlags2(),WovenInfoUtils.getWovenParsingOptions2(),isSuspend)
-                                } catch (e: Exception) {
+                                } catch (e2: Exception) {
                                     realCopy()
                                     if (isSuspend){
-                                        logger.error("Merge directory error1 entry:[${entryName}], error message:$e,如果这个类是包含必须的切点类，请到Github联系作者")
+                                        logger.error("Merge directory error1 entry:[${entryName}], error message:$e2,如果这个类是包含必须的切点类，请到Github联系作者")
                                     }else{
-                                        logger.error("Merge directory error1 entry:[${entryName}], error message:$e,通常情况下你需要先重启Android Studio,然后clean一下项目即可，如果还有问题请到Github联系作者")
+                                        logger.error("Merge directory error1 entry:[${entryName}], error message:$e2,通常情况下你需要先重启Android Studio,然后clean一下项目即可，如果还有问题请到Github联系作者")
                                     }
-                                    e.printDetail()
+                                    e2.printDetail()
                                     null
                                 }
                             }

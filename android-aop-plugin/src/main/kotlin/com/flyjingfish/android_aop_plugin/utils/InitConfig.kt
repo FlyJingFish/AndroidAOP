@@ -199,8 +199,10 @@ object InitConfig {
 //        val replaceMethodMap = ConcurrentHashMap<String, ConcurrentHashMap<String, ReplaceJson>>()
         val aopClassName:String = Utils.slashToDot(replaceMethodInfo.newOwner)
         val aopMethod:String = Type.getReturnType(replaceMethodInfo.newMethodDesc).className+" "+replaceMethodInfo.newMethodName+"("+Type.getArgumentTypes(replaceMethodInfo.newMethodDesc).joinToString{it.className}+")"
-        val oldMethod:String = if (replaceMethodInfo.oldMethodName == "<init>"){
-            replaceMethodInfo.oldMethodName+"("+Type.getArgumentTypes(replaceMethodInfo.oldMethodDesc).joinToString{it.className}+")"
+        val oldMethod:String = if (replaceMethodInfo.isCallNew()){
+            "new ${Utils.slashToDot(replaceMethodInfo.oldOwner)}() -> new ${Utils.slashToDot(replaceMethodInfo.newClassName)}()"
+        }else if (replaceMethodInfo.oldMethodName == "<init>"){
+            replaceMethodInfo.oldMethodName+"("+ Type.getArgumentTypes(replaceMethodInfo.oldMethodDesc).joinToString{it.className}+")"
         }else{
             Type.getReturnType(replaceMethodInfo.oldMethodDesc).className+" "+replaceMethodInfo.oldMethodName+"("+Type.getArgumentTypes(replaceMethodInfo.oldMethodDesc).joinToString{it.className}+")"
         }
