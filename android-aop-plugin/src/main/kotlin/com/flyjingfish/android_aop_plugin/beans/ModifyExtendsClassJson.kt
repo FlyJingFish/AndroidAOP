@@ -6,5 +6,6 @@ data class ModifyExtendsClassJson(
     val type :String,
     val targetClassName: String,
     val extendsClassName: String,
-    var used: MutableSet<String> = ConcurrentHashMap.newKeySet()
+    var modifiedCount: Int = 0,
+    var modified: MutableSet<String> = ConcurrentHashMap.newKeySet()
 )

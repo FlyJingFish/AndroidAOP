@@ -167,6 +167,7 @@ object InitConfig {
                         val locations = locationStr.split("@")
                         json.locations.add(CutReplaceLocationMap(locations[0],locations[1]))
                     }
+                    json.locationCount = json.locations.size
                     map.method.add(json)
                 }
                 replaceCutList.add(map)
@@ -177,6 +178,7 @@ object InitConfig {
             }
 
             for (mutableEntry in modifyExtendsClassMap) {
+                mutableEntry.value.modifiedCount = mutableEntry.value.modified.size
                 cutJsons.add(mutableEntry.value)
             }
             collectClassMap.forEach {(classKey,classMap)->
@@ -227,7 +229,7 @@ object InitConfig {
 
     fun useModifyClassInfo(targetClassName: String,extendsClassName:String){
         val json = modifyExtendsClassMap[extendsClassName]
-        json?.used?.add(targetClassName)
+        json?.modified?.add(targetClassName)
     }
 
     private fun temporaryDirMkdirs() {
