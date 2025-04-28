@@ -205,10 +205,11 @@ class CompileAndroidAopTask(
                 if (realMethodsRecord != null){
                     mkOutFile()
                     FileInputStream(file).use { inputs ->
+                        val oldBytes = inputs.readAllBytes()
                         val byteArray = try {
-                            WovenIntoCode.modifyClass(project,inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,WovenInfoUtils.getWovenClassWriterFlags(),WovenInfoUtils.getWovenParsingOptions(),isSuspend)
+                            WovenIntoCode.modifyClass(project,oldBytes,realMethodsRecord,hasReplace,invokeStaticClassName,WovenInfoUtils.getWovenClassWriterFlags(),WovenInfoUtils.getWovenParsingOptions(),isSuspend)
                         } catch (e: Exception) {
-                            WovenIntoCode.modifyClass(project,inputs.readAllBytes(),realMethodsRecord,hasReplace,invokeStaticClassName,WovenInfoUtils.getWovenClassWriterFlags2(),WovenInfoUtils.getWovenParsingOptions2(),isSuspend)
+                            WovenIntoCode.modifyClass(project,oldBytes,realMethodsRecord,hasReplace,invokeStaticClassName,WovenInfoUtils.getWovenClassWriterFlags2(),WovenInfoUtils.getWovenParsingOptions2(),isSuspend)
                         }
                         byteArray.saveFile(outFile)
                         synchronized(newClasses){
