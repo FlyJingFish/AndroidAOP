@@ -11,7 +11,7 @@ import com.flyjingfish.android_aop_annotation.base.OnBaseSuspendReturnListener;
 import com.flyjingfish.android_aop_annotation.ex.AndroidAOPPointCutNotFoundException;
 import com.flyjingfish.android_aop_annotation.ex.AndroidAOPSuspendReturnException;
 import com.flyjingfish.android_aop_annotation.impl.AopMethodImpl;
-import com.flyjingfish.android_aop_annotation.impl.JoinPoint;
+import com.flyjingfish.android_aop_annotation.impl.JoinPointBridge;
 import com.flyjingfish.android_aop_annotation.impl.ProceedReturnImpl;
 import com.flyjingfish.android_aop_annotation.utils.AndroidAOPDebugUtils;
 import com.flyjingfish.android_aop_annotation.utils.AndroidAopBeanUtils;
@@ -116,15 +116,15 @@ public final class AndroidAopJoinPoint {
 
         ProceedJoinPoint proceedJoinPoint;
         if (isSuspend){
-            proceedJoinPoint = JoinPoint.getJoinPointSuspend(targetClass, args,target,true,targetMethod,invokeMethod, aopMethod);
+            proceedJoinPoint = JoinPointBridge.getJoinPointSuspend(targetClass, args,target,true,targetMethod,invokeMethod, aopMethod);
         }else {
-            proceedJoinPoint = JoinPoint.getJoinPoint(targetClass, args,target,false,targetMethod,invokeMethod, aopMethod);
+            proceedJoinPoint = JoinPointBridge.getJoinPoint(targetClass, args,target,false,targetMethod,invokeMethod, aopMethod);
         }
-        JoinPoint.setStaticMethod(proceedJoinPoint,targetStaticMethod);
+        JoinPointBridge.setStaticMethod(proceedJoinPoint,targetStaticMethod);
 
 
         ListIterator<PointCutAnnotation> iterator = pointCutAnnotations.listIterator();
-        JoinPoint.setHasNext(proceedJoinPoint, initHasNextAop);
+        JoinPointBridge.setHasNext(proceedJoinPoint, initHasNextAop);
         if (!iterator.hasNext()){
             if (AndroidAOPDebugUtils.INSTANCE.isApkDebug()){
                 throw new AndroidAOPPointCutNotFoundException("在"+targetClassName + "." + originalMethodName+"上没有找到切面处理类，请 clean 项目并重新编译");
@@ -135,10 +135,10 @@ public final class AndroidAopJoinPoint {
 
 
         if (initHasNextAop) {
-            JoinPoint.setOnInvokeListener(proceedJoinPoint, () -> {
+            JoinPointBridge.setOnInvokeListener(proceedJoinPoint, () -> {
                 if (iterator.hasNext()) {
                     PointCutAnnotation nextCutAnnotation = iterator.next();
-                    JoinPoint.setHasNext(proceedJoinPoint,iterator.hasNext());
+                    JoinPointBridge.setHasNext(proceedJoinPoint,iterator.hasNext());
                     Object value;
                     if (nextCutAnnotation.basePointCut != null) {
                         if (isSuspend){

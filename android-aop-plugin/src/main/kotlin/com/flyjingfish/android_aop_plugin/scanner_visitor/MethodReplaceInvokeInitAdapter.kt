@@ -68,7 +68,7 @@ class MethodReplaceInvokeInitAdapter(private val className:String, private val s
                 val castInsn = TypeInsnNode(Opcodes.CHECKCAST, owner)
                 instructions.insert(staticMethodInsn, castInsn)
 
-                InitConfig.addReplaceMethodInfo(relaceInfo.copy(oldOwner = relaceInfo.newClassName, newClassName = ""))
+                InitConfig.addReplaceMethodInfo(relaceInfo.copy(oldOwner = relaceInfo.newClassName, newClassName = ""),className,methodName,methodDesc)
             }
         }
 

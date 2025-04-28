@@ -312,7 +312,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                         val cutInfo = CutInfo(
                             "注解切面", slashToDot(className), aopMethodCut.anno,
                             CutMethodJson(methodName.methodName, methodName.descriptor, false)
-                        );
+                        )
                         methodName.cutInfo[UUID.randomUUID().toString()] = cutInfo
                     }
                     onCallBackMethod?.onBackMethodRecord(methodName)

@@ -5,7 +5,7 @@ import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
 import com.flyjingfish.android_aop_annotation.utils.InvokeMethod
 import java.lang.reflect.Method
 
-internal object JoinPoint {
+internal object JoinPointBridge {
     @JvmStatic
     fun getJoinPoint(
         targetClass: Class<*>,

@@ -69,7 +69,7 @@ open class ReplaceBaseClassVisitor(
             )
         }
         if (!replaceExtendsClassName.isNullOrEmpty() && !newReplaceExtendsClassName.isNullOrEmpty()){
-            InitConfig.useModifyClassInfo(thisClassName)
+            InitConfig.useModifyClassInfo(thisClassName,newReplaceExtendsClassName)
             modifyExtendsClassName = dotToSlash(newReplaceExtendsClassName)
             val newSignature = if (signature != null) {
                 updateSignature(signature, superName, modifyExtendsClassName!!);

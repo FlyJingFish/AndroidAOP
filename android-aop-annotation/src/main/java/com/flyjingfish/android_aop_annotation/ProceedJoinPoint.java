@@ -17,6 +17,14 @@ public interface ProceedJoinPoint {
     Object[] getArgs();
 
     /**
+     * 和 {@link ProceedJoinPoint#getArgs()} 相比，返回的引用地址不同，但数组里边的对象一致。多用于多个切面逻辑时在某一个切面中获得最初的传入参数
+     *
+     * @return 最开始进入方法时的参数  <a href = "https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint/#getargs">wiki 文档使用说明</a>
+     */
+    @Nullable
+    Object[] getOriginalArgs();
+
+    /**
      * 调用切点方法内代码
      *
      * @return 返回切点方法返回值 <a href = "https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint/#proceed">wiki 文档使用说明</a>
@@ -52,14 +60,5 @@ public interface ProceedJoinPoint {
      */
     @NonNull
     Class<?> getTargetClass();
-
-    /**
-     * 和 {@link ProceedJoinPoint#getArgs()} 相比，返回的引用地址不同，但数组里边的对象一致。多用于多个切面逻辑时在某一个切面中获得最初的传入参数
-     *
-     * @return 最开始进入方法时的参数  <a href = "https://flyjingfish.github.io/AndroidAOP/zh/ProceedJoinPoint/#getargs">wiki 文档使用说明</a>
-     */
-    @Nullable
-    Object[] getOriginalArgs();
-
 
 }

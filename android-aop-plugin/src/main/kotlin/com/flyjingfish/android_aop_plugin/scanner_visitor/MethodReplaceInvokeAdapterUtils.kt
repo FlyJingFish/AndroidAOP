@@ -127,7 +127,7 @@ class MethodReplaceInvokeAdapterUtils(private val className:String, private val 
                     return
                 }
                 if (replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW && replaceMethodInfo.isCallNew()) {
-                    InitConfig.addReplaceMethodInfo(replaceMethodInfo)
+                    InitConfig.addReplaceMethodInfo(replaceMethodInfo,className,methodName,methodDesc)
                     superCall.superVisitMethodInsn(opcode, replaceMethodInfo.newClassName, name, descriptor, isInterface)
                     onResultListener?.onBack()
                 }else if (isInitAop) {
@@ -161,12 +161,12 @@ class MethodReplaceInvokeAdapterUtils(private val className:String, private val 
                 }
 
                 if (replaceMethodInfo.replaceType == ReplaceMethodInfo.ReplaceType.NEW && !replaceMethodInfo.isCallNew()){
-                    InitConfig.addReplaceMethodInfo(replaceMethodInfo)
+                    InitConfig.addReplaceMethodInfo(replaceMethodInfo,className,methodName,methodDesc)
                     superCall.superVisitMethodInsn(opcode, replaceMethodInfo.newClassName, name, descriptor, isInterface)
                     onResultListener?.onBack()
                 }else{
                     if (canReplaceMethod && !replaceMethodInfo.isDeleteNew()){
-                        InitConfig.addReplaceMethodInfo(replaceMethodInfo)
+                        InitConfig.addReplaceMethodInfo(replaceMethodInfo,className,methodName,methodDesc)
                         // 注意，最后一个参数是false，会不会太武断呢？
                         superCall.superVisitMethodInsn(
                             Opcodes.INVOKESTATIC,

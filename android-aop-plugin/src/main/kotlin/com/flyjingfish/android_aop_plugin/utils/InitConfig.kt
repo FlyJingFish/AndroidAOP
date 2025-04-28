@@ -12,17 +12,19 @@ import com.flyjingfish.android_aop_plugin.beans.CutJson
 import com.flyjingfish.android_aop_plugin.beans.CutJsonMap
 import com.flyjingfish.android_aop_plugin.beans.CutMethodJson
 import com.flyjingfish.android_aop_plugin.beans.CutReplaceClassJson
-import com.flyjingfish.android_aop_plugin.beans.CutReplaceClassMap
+import com.flyjingfish.android_aop_plugin.beans.CutReplaceLocationMap
 import com.flyjingfish.android_aop_plugin.beans.CutReplaceMethodJson
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ModifyExtendsClassJson
 import com.flyjingfish.android_aop_plugin.beans.OverrideClassJson
+import com.flyjingfish.android_aop_plugin.beans.ReplaceJson
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig.Companion.cutInfoJson
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.gradle.api.Project
+import org.objectweb.asm.Type
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -36,7 +38,7 @@ object InitConfig {
     private lateinit var buildConfigCacheFile: File
     private lateinit var cutInfoFile: File
     private val cutInfoMap = ConcurrentHashMap<String, CutJsonMap?>()
-    private val replaceMethodInfoMap = ConcurrentHashMap<String, ReplaceMethodInfo>()
+    private val replaceMethodInfoMap = ConcurrentHashMap<String, ConcurrentHashMap<String, ReplaceJson>>()
     private val modifyExtendsClassMap = ConcurrentHashMap<String, ModifyExtendsClassJson>()
     private val collectClassMap = ConcurrentHashMap<String, ConcurrentHashMap<String, CutCollectMethodJsonCache>>()
     var isInit: Boolean = false
@@ -151,54 +153,22 @@ object InitConfig {
                     cutJsons.add(cutJson)
                 }
             }
-            val allReplaceMethodInfo = mutableMapOf<String, ReplaceMethodInfo>()
-            allReplaceMethodInfo.putAll(WovenInfoUtils.getReplaceMethodInfoMapUse())
-            val replaceCutMap = mutableMapOf<String,CutReplaceClassMap>()
-            for (replaceMethodInfo in replaceMethodInfoMap) {
-                var cutJson = replaceCutMap[replaceMethodInfo.value.getReplaceJsonKey()]
-                if (cutJson == null){
-                    cutJson = CutReplaceClassMap(
-                        "替换切面",
-                        Utils.slashToDotClassName(replaceMethodInfo.value.newOwner),
-                        Utils.slashToDotClassName(replaceMethodInfo.value.oldOwner)
-                    )
-                    replaceCutMap[replaceMethodInfo.value.getReplaceJsonKey()] = cutJson
-                }
-                cutJson.method[replaceMethodInfo.value.getReplaceKey()] = CutReplaceMethodJson(
-                    replaceMethodInfo.value.newMethodName,
-                    replaceMethodInfo.value.newMethodDesc,
-                    replaceMethodInfo.value.oldMethodName,
-                    replaceMethodInfo.value.oldMethodDesc,
-                    "已被使用")
 
-                allReplaceMethodInfo.remove(replaceMethodInfo.value.getReplaceKey())
+            val replaceCutList = mutableListOf<CutReplaceClassJson>()
+            replaceMethodInfoMap.forEach { (aopClassName, concurrentHashMap) ->
+                val map = CutReplaceClassJson("替换切面",aopClassName)
+                concurrentHashMap.forEach { (s, replaceJson) ->
+                    val json = CutReplaceMethodJson(s,replaceJson.oldClassName,replaceJson.oldMethod)
+                    for (locationStr in replaceJson.methodLocationMap) {
+                        val locations = locationStr.split("@")
+                        json.locations.add(CutReplaceLocationMap(locations[0],locations[1]))
+                    }
+                    map.method.add(json)
+                }
+                replaceCutList.add(map)
             }
 
-            for (replaceMethodInfo in allReplaceMethodInfo) {
-                var cutJson = replaceCutMap[replaceMethodInfo.value.getReplaceJsonKey()]
-                if (cutJson == null){
-                    cutJson = CutReplaceClassMap(
-                        "替换切面",
-                        Utils.slashToDotClassName(replaceMethodInfo.value.newOwner),
-                        Utils.slashToDotClassName(replaceMethodInfo.value.oldOwner)
-                    )
-                    replaceCutMap[replaceMethodInfo.value.getReplaceJsonKey()] = cutJson
-                }
-                cutJson.method[replaceMethodInfo.value.getReplaceKey()] = CutReplaceMethodJson(
-                    replaceMethodInfo.value.newMethodName,
-                    replaceMethodInfo.value.newMethodDesc,
-                    replaceMethodInfo.value.oldMethodName,
-                    replaceMethodInfo.value.oldMethodDesc,
-                    "未被使用")
-            }
-
-            for (mutableEntry in replaceCutMap) {
-                val json = CutReplaceClassJson(
-                    mutableEntry.value.type,
-                    mutableEntry.value.replaceClassName,
-                    mutableEntry.value.targetClassName,
-                    mutableEntry.value.method.values.toMutableList()
-                )
+            for (json in replaceCutList) {
                 cutJsons.add(json)
             }
 
@@ -224,17 +194,30 @@ object InitConfig {
         }
     }
 
-    fun addReplaceMethodInfo(replaceMethodInfo: ReplaceMethodInfo) {
-        replaceMethodInfoMap[replaceMethodInfo.getReplaceKey()] = replaceMethodInfo
+
+    fun addReplaceMethodInfo(replaceMethodInfo: ReplaceMethodInfo,locationClassName:String,locationMethodName:String,locationMethodDesc:String) {
+//        val replaceMethodMap = ConcurrentHashMap<String, ConcurrentHashMap<String, ReplaceJson>>()
+        val aopClassName:String = Utils.slashToDot(replaceMethodInfo.newOwner)
+        val aopMethod:String = Type.getReturnType(replaceMethodInfo.newMethodDesc).className+" "+replaceMethodInfo.newMethodName+"("+Type.getArgumentTypes(replaceMethodInfo.newMethodDesc).joinToString{it.className}+")"
+        val oldMethod:String = if (replaceMethodInfo.oldMethodName == "<init>"){
+            replaceMethodInfo.oldMethodName+"("+Type.getArgumentTypes(replaceMethodInfo.oldMethodDesc).joinToString{it.className}+")"
+        }else{
+            Type.getReturnType(replaceMethodInfo.oldMethodDesc).className+" "+replaceMethodInfo.oldMethodName+"("+Type.getArgumentTypes(replaceMethodInfo.oldMethodDesc).joinToString{it.className}+")"
+        }
+        val cutMap = replaceMethodInfoMap.computeIfAbsent(aopClassName) { ConcurrentHashMap() }
+        val methodJson = cutMap.computeIfAbsent(aopMethod) { ReplaceJson(Utils.slashToDot(replaceMethodInfo.oldOwner),oldMethod) }
+        val location:String = "${Utils.slashToDot(locationClassName)}@"+Type.getReturnType(locationMethodDesc).className+" "+locationMethodName+"("+Type.getArgumentTypes(locationMethodDesc).joinToString{it.className}+")"
+
+        methodJson.methodLocationMap.add(location)
     }
 
     fun addModifyClassInfo(targetClassName: String, extendsClassName: String){
-        modifyExtendsClassMap[targetClassName] = ModifyExtendsClassJson("修改继承类",targetClassName,extendsClassName,"未被使用")
+        modifyExtendsClassMap[extendsClassName] = ModifyExtendsClassJson("修改继承类",targetClassName,extendsClassName)
     }
 
-    fun useModifyClassInfo(targetClassName: String){
-        val json = modifyExtendsClassMap[targetClassName]
-        json?.used = "已被使用"
+    fun useModifyClassInfo(targetClassName: String,extendsClassName:String){
+        val json = modifyExtendsClassMap[extendsClassName]
+        json?.used?.add(targetClassName)
     }
 
     private fun temporaryDirMkdirs() {
