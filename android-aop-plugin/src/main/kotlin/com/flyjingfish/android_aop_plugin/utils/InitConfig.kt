@@ -115,20 +115,24 @@ object InitConfig {
     }
 
     private fun putCutInfo(type: String, className: String, anno: String, cutMethodJson: CutMethodJson) {
-        var cutJson = cutInfoMap[anno]
-        if (cutJson == null) {
-            val cutJsonMap = CutJsonMap(type, anno)
-            cutInfoMap[anno] = cutJsonMap
-            cutJson = cutJsonMap
+        try {
+            var cutJson = cutInfoMap[anno]
+            if (cutJson == null) {
+                val cutJsonMap = CutJsonMap(type, anno)
+                cutInfoMap[anno] = cutJsonMap
+                cutJson = cutJsonMap
+            }
+            val cutClasses = cutJson.cutClasses
+            var cutClassesJsonMap = cutClasses[className]
+            if (cutClassesJsonMap == null) {
+                val cutClassesJson = CutClassesJsonMap(className)
+                cutClasses[className] = cutClassesJson
+                cutClassesJsonMap = cutClassesJson
+            }
+            cutClassesJsonMap.method[cutMethodJson.toString()] = cutMethodJson
+        } catch (e: Exception) {
+            e.printDetail()
         }
-        val cutClasses = cutJson.cutClasses
-        var cutClassesJsonMap = cutClasses[className]
-        if (cutClassesJsonMap == null) {
-            val cutClassesJson = CutClassesJsonMap(className)
-            cutClasses[className] = cutClassesJson
-            cutClassesJsonMap = cutClassesJson
-        }
-        cutClassesJsonMap.method[cutMethodJson.toString()] = cutMethodJson
 
     }
 
@@ -197,20 +201,24 @@ object InitConfig {
 
     fun addReplaceMethodInfo(replaceMethodInfo: ReplaceMethodInfo,locationClassName:String,locationMethodName:String,locationMethodDesc:String) {
 //        val replaceMethodMap = ConcurrentHashMap<String, ConcurrentHashMap<String, ReplaceJson>>()
-        val aopClassName:String = Utils.slashToDot(replaceMethodInfo.newOwner)
-        val aopMethod:String = Type.getReturnType(replaceMethodInfo.newMethodDesc).className+" "+replaceMethodInfo.newMethodName+"("+Type.getArgumentTypes(replaceMethodInfo.newMethodDesc).joinToString{it.className}+")"
-        val oldMethod:String = if (replaceMethodInfo.isCallNew()){
-            "new ${Utils.slashToDot(replaceMethodInfo.oldOwner)}() -> new ${Utils.slashToDot(replaceMethodInfo.newClassName)}()"
-        }else if (replaceMethodInfo.oldMethodName == "<init>"){
-            replaceMethodInfo.oldMethodName+"("+ Type.getArgumentTypes(replaceMethodInfo.oldMethodDesc).joinToString{it.className}+")"
-        }else{
-            Type.getReturnType(replaceMethodInfo.oldMethodDesc).className+" "+replaceMethodInfo.oldMethodName+"("+Type.getArgumentTypes(replaceMethodInfo.oldMethodDesc).joinToString{it.className}+")"
-        }
-        val cutMap = replaceMethodInfoMap.computeIfAbsent(aopClassName) { ConcurrentHashMap() }
-        val methodJson = cutMap.computeIfAbsent(aopMethod) { ReplaceJson(Utils.slashToDot(replaceMethodInfo.oldOwner),oldMethod) }
-        val location:String = "${Utils.slashToDot(locationClassName)}@"+Type.getReturnType(locationMethodDesc).className+" "+locationMethodName+"("+Type.getArgumentTypes(locationMethodDesc).joinToString{it.className}+")"
+        try {
+            val aopClassName:String = Utils.slashToDot(replaceMethodInfo.newOwner)
+            val aopMethod:String = Type.getReturnType(replaceMethodInfo.newMethodDesc).className+" "+replaceMethodInfo.newMethodName+"("+Type.getArgumentTypes(replaceMethodInfo.newMethodDesc).joinToString{it.className}+")"
+            val oldMethod:String = if (replaceMethodInfo.isCallNew()){
+                "new ${Utils.slashToDot(replaceMethodInfo.oldOwner)}() -> new ${Utils.slashToDot(replaceMethodInfo.newClassName)}()"
+            }else if (replaceMethodInfo.oldMethodName == "<init>"){
+                replaceMethodInfo.oldMethodName+"("+ Type.getArgumentTypes(replaceMethodInfo.oldMethodDesc).joinToString{it.className}+")"
+            }else{
+                Type.getReturnType(replaceMethodInfo.oldMethodDesc).className+" "+replaceMethodInfo.oldMethodName+"("+Type.getArgumentTypes(replaceMethodInfo.oldMethodDesc).joinToString{it.className}+")"
+            }
+            val cutMap = replaceMethodInfoMap.computeIfAbsent(aopClassName) { ConcurrentHashMap() }
+            val methodJson = cutMap.computeIfAbsent(aopMethod) { ReplaceJson(Utils.slashToDot(replaceMethodInfo.oldOwner),oldMethod) }
+            val location:String = "${Utils.slashToDot(locationClassName)}@"+Type.getReturnType(locationMethodDesc).className+" "+locationMethodName+"("+Type.getArgumentTypes(locationMethodDesc).joinToString{it.className}+")"
 
-        methodJson.methodLocationMap.add(location)
+            methodJson.methodLocationMap.add(location)
+        } catch (e: Exception) {
+            e.printDetail()
+        }
     }
 
     fun addModifyClassInfo(targetClassName: String, extendsClassName: String){
@@ -251,11 +259,15 @@ object InitConfig {
     }
 
     fun addCollect(aopCollectClass: AopCollectClass){
-        val classMap = collectClassMap.computeIfAbsent(aopCollectClass.invokeClassName) { ConcurrentHashMap() }
-        val paramKey = if (aopCollectClass.isClazz) "Class<? extends ${aopCollectClass.collectClassName}>" else aopCollectClass.collectClassName
-        val methodKey = "${aopCollectClass.invokeMethod}($paramKey)"
-        val methodSet = classMap.computeIfAbsent(methodKey) { CutCollectMethodJsonCache(aopCollectClass.collectType,aopCollectClass.regex) }
-        methodSet.classes.add(aopCollectClass.collectExtendsClassName)
+        try {
+            val classMap = collectClassMap.computeIfAbsent(aopCollectClass.invokeClassName) { ConcurrentHashMap() }
+            val paramKey = if (aopCollectClass.isClazz) "Class<? extends ${aopCollectClass.collectClassName}>" else aopCollectClass.collectClassName
+            val methodKey = "${aopCollectClass.invokeMethod}($paramKey)"
+            val methodSet = classMap.computeIfAbsent(methodKey) { CutCollectMethodJsonCache(aopCollectClass.collectType,aopCollectClass.regex) }
+            methodSet.classes.add(aopCollectClass.collectExtendsClassName)
+        } catch (e: Exception) {
+            e.printDetail()
+        }
 
     }
 }
