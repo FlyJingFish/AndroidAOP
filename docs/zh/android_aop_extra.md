@@ -6,7 +6,7 @@
     ```groovy
     dependencies {
         //非必须项 👇这个包提供了一些常见的注解切面
-        implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.6.0"
+        implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.6.1"
     }
     ```
 
@@ -15,7 +15,7 @@
     ```kotlin
     dependencies {
         //非必须项 👇这个包提供了一些常见的注解切面
-        implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.6.0")
+        implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.6.1")
     }
     ```
 

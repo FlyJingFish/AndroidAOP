@@ -30,7 +30,7 @@
         
         plugins {
             //👇必须项 (1)👈 apply 设置为 true 自动为所有module“预”配置 debugMode，false则按下边步骤五配置 debugMode 的手动模式
-            id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.6.0" apply true
+            id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.6.1" apply true
         }
         ```
         
@@ -41,7 +41,7 @@
         buildscript {
           dependencies {
               //👇必须项 (1)👈
-              classpath "io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.6.0"
+              classpath "io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.6.1"
           }
         }
         // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五配置 debugMode 的手动模式
@@ -57,7 +57,7 @@
         ```kotlin
         plugins {
             //👇必须项 (1)👈 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五配置 debugMode 的手动模式
-            id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.6.0" apply true
+            id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.6.1" apply true
         }
         ```
         
@@ -68,7 +68,7 @@
         buildscript {
           dependencies {
               //👇必须项 (1)👈
-              classpath("io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.6.0")
+              classpath("io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.6.1")
           }
         }
         // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五配置 debugMode 的手动模式
@@ -137,7 +137,7 @@
     //必须项 👇
     plugins {
         ...
-        id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.6.0"//最好放在最后一行
+        id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.6.1"//最好放在最后一行
     }
     ```
 
@@ -147,7 +147,7 @@
     //必须项 👇
     plugins {
         ...
-        id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.6.0"//最好放在最后一行
+        id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.6.1"//最好放在最后一行
     }
     ```
 
@@ -185,18 +185,18 @@
     
     dependencies {
         //👇必须项 
-        implementation "io.github.FlyJingFish.AndroidAop:android-aop-core:2.6.0"
+        implementation "io.github.FlyJingFish.AndroidAop:android-aop-core:2.6.1"
         //👇非必须项 (1)👈 这个包提供了一些常见的注解切面
-        implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.6.0" 
+        implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.6.1" 
         
         //👇必须项 如果您项目内已经有了这项不用加也可以
         implementation "androidx.appcompat:appcompat:1.3.0" // 至少在1.3.0及以上
         
         //👇非必须项 (2)👈点击+查看详细说明，⚠️支持Java和Kotlin代码写的切面
-        ksp "io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.6.0"
+        ksp "io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.6.1"
         
         //👇非必须项 (3)👈点击+查看详细说明，⚠️只适用于Java代码写的切面
-        annotationProcessor "io.github.FlyJingFish.AndroidAop:android-aop-processor:2.6.0"
+        annotationProcessor "io.github.FlyJingFish.AndroidAop:android-aop-processor:2.6.1"
         //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
     }
     
@@ -215,18 +215,18 @@
     
     dependencies {
         //👇必须项 
-        implementation("io.github.FlyJingFish.AndroidAop:android-aop-core:2.6.0")
+        implementation("io.github.FlyJingFish.AndroidAop:android-aop-core:2.6.1")
         //👇非必须项 (1)👈 这个包提供了一些常见的注解切面
-        implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.6.0")
+        implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.6.1")
         
         //👇必须项 如果您项目内已经有了这项不用加也可以
         implementation("androidx.appcompat:appcompat:1.3.0") // 至少在1.3.0及以上
         
         //👇非必须项 (2)👈点击+查看详细说明，⚠️支持Java和Kotlin代码写的切面
-        ksp("io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.6.0")
+        ksp("io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.6.1")
         
         //👇非必须项 (3)👈点击+查看详细说明，⚠️只适用于Java代码写的切面
-        annotationProcessor("io.github.FlyJingFish.AndroidAop:android-aop-processor:2.6.0")
+        annotationProcessor("io.github.FlyJingFish.AndroidAop:android-aop-processor:2.6.1")
         //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
     }
     ```
@@ -262,7 +262,7 @@
 
         // verifyLeafExtends 是否开启验证叶子继承，默认打开，@AndroidAopMatchClassMethod 和 @AndroidAopCollectMethod 如果没有设置 LEAF_EXTENDS，可以关闭
         verifyLeafExtends true
-        //默认关闭，开启在 Build 或 打包后 将会生成切点信息json文件在 app/build/tmp/cutInfo.json
+        //默认关闭，开启在 Build 或 打包后 将会生成切点信息文件在 app/build/tmp/(cutInfo.json、cutInfo.html)
         cutInfoJson false
     }
     android {
@@ -290,7 +290,7 @@
 
         // verifyLeafExtends 是否开启验证叶子继承，默认打开，@AndroidAopMatchClassMethod 和 @AndroidAopCollectMethod 如果没有设置 LEAF_EXTENDS，可以关闭
         verifyLeafExtends = true
-        //默认关闭，开启在 Build 或 打包后 将会生成切点信息json文件在 app/build/tmp/cutInfo.json
+        //默认关闭，开启在 Build 或 打包后 将会生成切点信息文件在 app/build/tmp/(cutInfo.json、cutInfo.html)
         cutInfoJson = false
     }
     android {
