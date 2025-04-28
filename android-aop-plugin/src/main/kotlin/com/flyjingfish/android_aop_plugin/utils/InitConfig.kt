@@ -37,6 +37,7 @@ object InitConfig {
     private lateinit var temporaryDir: File
     private lateinit var buildConfigCacheFile: File
     private lateinit var cutInfoFile: File
+    private lateinit var cutInfoHtmlFile: File
     private val cutInfoMap = ConcurrentHashMap<String, CutJsonMap?>()
     private val replaceMethodInfoMap = ConcurrentHashMap<String, ConcurrentHashMap<String, ReplaceJson>>()
     private val modifyExtendsClassMap = ConcurrentHashMap<String, ModifyExtendsClassJson>()
@@ -94,6 +95,7 @@ object InitConfig {
     fun initCutInfo(project: Project,clear:Boolean = true): Boolean {
         temporaryDir = File(project.buildDir.absolutePath + "/tmp".adapterOSPath())
         cutInfoFile = File(temporaryDir, "cutInfo.json")
+        cutInfoHtmlFile = File(temporaryDir, "cutInfo.html")
         if (clear){
             clearCache()
         }
@@ -193,6 +195,7 @@ object InitConfig {
             val json = GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(cutJsons)
 
             saveFile(cutInfoFile, json)
+            saveFile(cutInfoHtmlFile, CutInfoHtml.getHtml(json))
 
             if (clearCache){
                 clearCache()
