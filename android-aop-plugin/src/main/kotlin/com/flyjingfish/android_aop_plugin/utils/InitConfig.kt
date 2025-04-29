@@ -152,7 +152,7 @@ object InitConfig {
                             CutClassesJson(cutClasses.className, cutClasses.method.size)
                         cutJson.cutClasses.add(cutClassesJson)
                         cutClassesJson.method.addAll(cutClasses.method.values.map { CutMethodJson2(Type.getReturnType(it.descriptor).className+" "+Utils.getRealMethodName(it.name)+"("+Type.getArgumentTypes(it.descriptor).joinToString{ type -> type.className}+")",it.lambda) })
-                        count = cutClassesJson.method.size
+                        count += cutClassesJson.method.size
                     }
                     cutJson.cutCount = count
                     cutJsons.add(cutJson)
