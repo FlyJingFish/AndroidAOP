@@ -11,6 +11,7 @@ import com.flyjingfish.android_aop_plugin.beans.CutFileJson
 import com.flyjingfish.android_aop_plugin.beans.CutJson
 import com.flyjingfish.android_aop_plugin.beans.CutJsonMap
 import com.flyjingfish.android_aop_plugin.beans.CutMethodJson
+import com.flyjingfish.android_aop_plugin.beans.CutMethodJson2
 import com.flyjingfish.android_aop_plugin.beans.CutReplaceClassJson
 import com.flyjingfish.android_aop_plugin.beans.CutReplaceLocationMap
 import com.flyjingfish.android_aop_plugin.beans.CutReplaceMethodJson
@@ -150,10 +151,8 @@ object InitConfig {
                         val cutClassesJson =
                             CutClassesJson(cutClasses.className, cutClasses.method.size)
                         cutJson.cutClasses.add(cutClassesJson)
-                        cutClasses.method.forEach { (_, cutMethodJson) ->
-                            cutClassesJson.method.add(cutMethodJson)
-                            count++
-                        }
+                        cutClassesJson.method.addAll(cutClasses.method.values.map { CutMethodJson2(Type.getReturnType(it.descriptor).className+" "+Utils.getRealMethodName(it.name)+"("+Type.getArgumentTypes(it.descriptor).joinToString{ type -> type.className}+")",it.lambda) })
+                        count = cutClassesJson.method.size
                     }
                     cutJson.cutCount = count
                     cutJsons.add(cutJson)
@@ -187,7 +186,7 @@ object InitConfig {
                 val collectClassJson = CutCollectJson("收集切面",classKey)
                 classMap.forEach {(methodName,methodCache)->
                     val methodJson = CutCollectMethodJson(methodName,methodCache.collectType,methodCache.regex,methodCache.classes.size)
-                    methodJson.classes.addAll(methodCache.classes)
+                    methodJson.classes.addAll(methodCache.classes.map { Utils.slashToDot(it) })
                     collectClassJson.collectMethod.add(methodJson)
                 }
                 cutJsons.add(collectClassJson)
@@ -212,13 +211,13 @@ object InitConfig {
             val oldMethod:String = if (replaceMethodInfo.isCallNew()){
                 "new ${Utils.slashToDot(replaceMethodInfo.oldOwner)}() -> new ${Utils.slashToDot(replaceMethodInfo.newClassName)}()"
             }else if (replaceMethodInfo.oldMethodName == "<init>"){
-                replaceMethodInfo.oldMethodName+"("+ Type.getArgumentTypes(replaceMethodInfo.oldMethodDesc).joinToString{it.className}+")"
+                "<init>("+ Type.getArgumentTypes(replaceMethodInfo.oldMethodDesc).joinToString{it.className}+")"
             }else{
                 Type.getReturnType(replaceMethodInfo.oldMethodDesc).className+" "+replaceMethodInfo.oldMethodName+"("+Type.getArgumentTypes(replaceMethodInfo.oldMethodDesc).joinToString{it.className}+")"
             }
             val cutMap = replaceMethodInfoMap.computeIfAbsent(aopClassName) { ConcurrentHashMap() }
             val methodJson = cutMap.computeIfAbsent(aopMethod) { ReplaceJson(Utils.slashToDot(replaceMethodInfo.oldOwner),oldMethod) }
-            val location:String = "${Utils.slashToDot(locationClassName)}@"+Type.getReturnType(locationMethodDesc).className+" "+locationMethodName+"("+Type.getArgumentTypes(locationMethodDesc).joinToString{it.className}+")"
+            val location:String = "${Utils.slashToDot(locationClassName)}@"+Type.getReturnType(locationMethodDesc).className+" "+Utils.getRealMethodName(locationMethodName)+"("+Type.getArgumentTypes(locationMethodDesc).joinToString{it.className}+")"
 
             methodJson.methodLocationMap.add(location)
         } catch (e: Exception) {
