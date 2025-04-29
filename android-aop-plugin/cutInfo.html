@@ -1,402 +1,400 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AOP Data Viewer</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 20px;
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #ddd;
-        }
-        .tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            background-color: #f1f1f1;
-            border: 1px solid #ddd;
-            border-bottom: none;
-            border-radius: 5px 5px 0 0;
-            margin-right: 5px;
-            transition: background-color 0.3s;
-        }
-        .tab:hover {
-            background-color: #ddd;
-        }
-        .tab.active {
-            background-color: #4CAF50;
-            color: white;
-            border-color: #4CAF50;
-        }
-        .tab-content {
-            display: none;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 0 0 5px 5px;
-            background-color: white;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .aspect-item {
-            margin-bottom: 20px;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-radius: 5px;
-            border-left: 4px solid #4CAF50;
-        }
-        .aspect-header {
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #333;
-            font-size: 1.1em;
-        }
-        .class-item {
-            margin-left: 20px;
-            margin-bottom: 15px;
-            padding: 10px;
-            background-color: #e9e9e9;
-            border-radius: 4px;
-        }
-        .method-item {
-            margin-left: 40px;
-            padding: 5px;
-            background-color: #f0f0f0;
-            border-radius: 3px;
-            margin-bottom: 5px;
-        }
-        .replace-method {
-            margin-left: 20px;
-            padding: 10px;
-            background-color: #e6f7ff;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-        .location-item {
-            margin-left: 40px;
-            padding: 5px;
-            background-color: #e6f7ff;
-            border-radius: 3px;
-            margin-bottom: 5px;
-        }
-        .modified-class {
-            margin-left: 20px;
-            padding: 8px;
-            background-color: #fff2e6;
-            border-radius: 4px;
-            margin-bottom: 8px;
-        }
-        .collect-method {
-            margin-left: 20px;
-            padding: 10px;
-            background-color: #f0fff0;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-        .collect-class {
-            margin-left: 40px;
-            padding: 5px;
-            background-color: #f0fff0;
-            border-radius: 3px;
-            margin-bottom: 5px;
-        }
-        .count-badge {
-            display: inline-block;
-            padding: 2px 6px;
-            background-color: #4CAF50;
-            color: white;
-            border-radius: 10px;
-            font-size: 0.8em;
-            margin-left: 5px;
-        }
-        .type-count {
-            float: right;
-            background-color: #2196F3;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.9em;
-        }
-    </style>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>AOP Data Viewer</title>
+   <style>
+       body {
+           font-family: Arial, sans-serif;
+           margin: 0;
+           padding: 20px;
+           background-color: #f5f5f5;
+       }
+       .container {
+           max-width: 1200px;
+           margin: 0 auto;
+           background-color: white;
+           border-radius: 8px;
+           box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+           padding: 20px;
+       }
+       h1 {
+           color: #333;
+           text-align: center;
+           margin-bottom: 30px;
+       }
+       .tabs {
+           display: flex;
+           margin-bottom: 20px;
+           border-bottom: 1px solid #ddd;
+       }
+       .tab {
+           padding: 10px 20px;
+           cursor: pointer;
+           background-color: #f1f1f1;
+           border: 1px solid #ddd;
+           border-bottom: none;
+           border-radius: 5px 5px 0 0;
+           margin-right: 5px;
+           transition: background-color 0.3s;
+       }
+       .tab:hover {
+           background-color: #ddd;
+       }
+       .tab.active {
+           background-color: #4CAF50;
+           color: white;
+           border-color: #4CAF50;
+       }
+       .tab-content {
+           display: none;
+           padding: 20px;
+           border: 1px solid #ddd;
+           border-radius: 0 0 5px 5px;
+           background-color: white;
+       }
+       .tab-content.active {
+           display: block;
+       }
+       .aspect-item {
+           margin-bottom: 20px;
+           padding: 15px;
+           background-color: #f9f9f9;
+           border-radius: 5px;
+           border-left: 4px solid #4CAF50;
+       }
+       .aspect-header {
+           font-weight: bold;
+           margin-bottom: 10px;
+           color: #333;
+           font-size: 1.1em;
+       }
+       .class-item {
+           margin-left: 20px;
+           margin-bottom: 15px;
+           padding: 10px;
+           background-color: #e9e9e9;
+           border-radius: 4px;
+       }
+       .method-item {
+           margin-left: 40px;
+           padding: 5px;
+           background-color: #f0f0f0;
+           border-radius: 3px;
+           margin-bottom: 5px;
+       }
+       .replace-method {
+           margin-left: 20px;
+           padding: 10px;
+           background-color: #e6f7ff;
+           border-radius: 4px;
+           margin-bottom: 10px;
+       }
+       .location-item {
+           margin-left: 40px;
+           padding: 5px;
+           background-color: #fff2e6;
+           border-radius: 3px;
+           margin-bottom: 5px;
+       }
+       .modified-class {
+           margin-left: 20px;
+           padding: 8px;
+           background-color: #fff2e6;
+           border-radius: 4px;
+           margin-bottom: 8px;
+       }
+       .collect-method {
+           margin-left: 20px;
+           padding: 10px;
+           background-color: #fff2e6;
+           border-radius: 4px;
+           margin-bottom: 10px;
+       }
+       .collect-class {
+           margin-left: 40px;
+           padding: 5px;
+           background-color: #f0fff0;
+           border-radius: 3px;
+           margin-bottom: 5px;
+       }
+       .count-badge {
+           display: inline-block;
+           padding: 2px 6px;
+           background-color: #4CAF50;
+           color: white;
+           border-radius: 10px;
+           font-size: 0.8em;
+           margin-left: 5px;
+       }
+       .type-count {
+           float: right;
+           background-color: #2196F3;
+           color: white;
+           padding: 2px 8px;
+           border-radius: 10px;
+           font-size: 0.9em;
+       }
+   </style>
 </head>
 <body>
 <div class="container">
-    <h1>AOP Data Viewer</h1>
+   <h1>AOP Data Viewer</h1>
 
-    <div class="tabs">
-        <div class="tab active" onclick="openTab('annotation')">注解切面 <span class="type-count" id="annotation-count">0</span></div>
-        <div class="tab" onclick="openTab('matching')">匹配切面 <span class="type-count" id="matching-count">0</span></div>
-        <div class="tab" onclick="openTab('replacement')">替换切面 <span class="type-count" id="replacement-count">0</span></div>
-        <div class="tab" onclick="openTab('inheritance')">修改继承类 <span class="type-count" id="inheritance-count">0</span></div>
-        <div class="tab" onclick="openTab('collection')">收集切面 <span class="type-count" id="collection-count">0</span></div>
-    </div>
+   <div class="tabs">
+       <div class="tab active" onclick="openTab('annotation')">注解切面 <span class="type-count" id="annotation-count">0</span></div>
+       <div class="tab" onclick="openTab('matching')">匹配切面 <span class="type-count" id="matching-count">0</span></div>
+       <div class="tab" onclick="openTab('replacement')">替换切面 <span class="type-count" id="replacement-count">0</span></div>
+       <div class="tab" onclick="openTab('inheritance')">修改继承类 <span class="type-count" id="inheritance-count">0</span></div>
+       <div class="tab" onclick="openTab('collection')">收集切面 <span class="type-count" id="collection-count">0</span></div>
+   </div>
 
-    <div id="annotation" class="tab-content active">
-        <h2>注解切面数据</h2>
-        <div id="annotation-content"></div>
-    </div>
+   <div id="annotation" class="tab-content active">
+       <h2>注解切面数据</h2>
+       <div id="annotation-content"></div>
+   </div>
 
-    <div id="matching" class="tab-content">
-        <h2>匹配切面数据</h2>
-        <div id="matching-content"></div>
-    </div>
+   <div id="matching" class="tab-content">
+       <h2>匹配切面数据</h2>
+       <div id="matching-content"></div>
+   </div>
 
-    <div id="replacement" class="tab-content">
-        <h2>替换切面数据</h2>
-        <div id="replacement-content"></div>
-    </div>
+   <div id="replacement" class="tab-content">
+       <h2>替换切面数据</h2>
+       <div id="replacement-content"></div>
+   </div>
 
-    <div id="inheritance" class="tab-content">
-        <h2>修改继承类数据</h2>
-        <div id="inheritance-content"></div>
-    </div>
+   <div id="inheritance" class="tab-content">
+       <h2>修改继承类数据</h2>
+       <div id="inheritance-content"></div>
+   </div>
 
-    <div id="collection" class="tab-content">
-        <h2>收集切面数据</h2>
-        <div id="collection-content"></div>
-    </div>
+   <div id="collection" class="tab-content">
+       <h2>收集切面数据</h2>
+       <div id="collection-content"></div>
+   </div>
 </div>
 
 <script>
-        const data = [];
+       const data = [];
 
-        function openTab(tabName) {
-            const tabs = document.getElementsByClassName('tab');
-            for (let i = 0; i < tabs.length; i++) {
-                tabs[i].classList.remove('active');
-            }
+       function openTab(tabName) {
+           const tabs = document.getElementsByClassName('tab');
+           for (let i = 0; i < tabs.length; i++) {
+               tabs[i].classList.remove('active');
+           }
 
-            const tabContents = document.getElementsByClassName('tab-content');
-            for (let i = 0; i < tabContents.length; i++) {
-                tabContents[i].classList.remove('active');
-            }
+           const tabContents = document.getElementsByClassName('tab-content');
+           for (let i = 0; i < tabContents.length; i++) {
+               tabContents[i].classList.remove('active');
+           }
 
-            document.querySelector(`.tab[onclick="openTab('${tabName}')"]`).classList.add('active');
-            document.getElementById(tabName).classList.add('active');
-        }
+           document.querySelector(`.tab[onclick="openTab('${tabName}')"]`).classList.add('active');
+           document.getElementById(tabName).classList.add('active');
+       }
 
-        function renderAnnotationAspect() {
-            const annotationData = data.filter(item => item.type === "注解切面");
-            const container = document.getElementById('annotation-content');
-            document.getElementById('annotation-count').textContent = annotationData.length;
+       function renderAnnotationAspect() {
+           const annotationData = data.filter(item => item.type === "注解切面");
+           const container = document.getElementById('annotation-content');
+           document.getElementById('annotation-count').textContent = annotationData.length;
 
-            let html = '';
+           let html = '';
 
-            annotationData.forEach(aspect => {
-                html += `
-                    <div class="aspect-item">
-                        <div class="aspect-header">
-                            注解类: ${aspect.className}
-                            <span class="count-badge">影响方法数: ${aspect.cutCount}</span>
-                        </div>
-                `;
+           annotationData.forEach(aspect => {
+               html += `
+                   <div class="aspect-item">
+                       <div class="aspect-header">
+                           注解类: ${aspect.className}
+                           <span class="count-badge">影响方法数: ${aspect.cutCount}</span>
+                       </div>
+               `;
 
-                aspect.cutClasses.forEach(cutClass => {
-                    html += `
-                        <div class="class-item">
-                            <div>类名: ${cutClass.className} <span class="count-badge">方法数: ${cutClass.methodCount}</span></div>
-                    `;
+               aspect.cutClasses.forEach(cutClass => {
+                   html += `
+                       <div class="class-item">
+                           <div>类名: ${cutClass.className} <span class="count-badge">方法数: ${cutClass.methodCount}</span></div>
+                   `;
 
-                    cutClass.method.forEach(method => {
-                        html += `
-                            <div class="method-item">
-                                方法名: ${method.name} <br>
-                                描述符: ${method.descriptor} <br>
-                                Lambda: ${method.lambda ? '是' : '否'}
-                            </div>
-                        `;
-                    });
+                   cutClass.method.forEach(method => {
+                       html += `
+                           <div class="method-item">
+                               方法: ${method.method} <br>
+                               Lambda: ${method.lambda ? '是' : '否'}
+                           </div>
+                       `;
+                   });
 
-                    html += `</div>`;
-                });
+                   html += `</div>`;
+               });
 
-                html += `</div>`;
-            });
+               html += `</div>`;
+           });
 
-            container.innerHTML = html;
-        }
+           container.innerHTML = html;
+       }
 
-        function renderMatchingAspect() {
-            const matchingData = data.filter(item => item.type === "匹配切面");
-            const container = document.getElementById('matching-content');
-            document.getElementById('matching-count').textContent = matchingData.length;
+       function renderMatchingAspect() {
+           const matchingData = data.filter(item => item.type === "匹配切面");
+           const container = document.getElementById('matching-content');
+           document.getElementById('matching-count').textContent = matchingData.length;
 
-            let html = '';
+           let html = '';
 
-            matchingData.forEach(aspect => {
-                html += `
-                    <div class="aspect-item">
-                        <div class="aspect-header">
-                            匹配类: ${aspect.className}
-                            <span class="count-badge">影响方法数: ${aspect.cutCount}</span>
-                        </div>
-                `;
+           matchingData.forEach(aspect => {
+               html += `
+                   <div class="aspect-item">
+                       <div class="aspect-header">
+                           匹配类: ${aspect.className}
+                           <span class="count-badge">影响方法数: ${aspect.cutCount}</span>
+                       </div>
+               `;
 
-                aspect.cutClasses.forEach(cutClass => {
-                    html += `
-                        <div class="class-item">
-                            <div>类名: ${cutClass.className} <span class="count-badge">方法数: ${cutClass.methodCount}</span></div>
-                    `;
+               aspect.cutClasses.forEach(cutClass => {
+                   html += `
+                       <div class="class-item">
+                           <div>类名: ${cutClass.className} <span class="count-badge">方法数: ${cutClass.methodCount}</span></div>
+                   `;
 
-                    cutClass.method.forEach(method => {
-                        html += `
-                            <div class="method-item">
-                                方法名: ${method.name} <br>
-                                描述符: ${method.descriptor} <br>
-                                Lambda: ${method.lambda ? '是' : '否'}
-                            </div>
-                        `;
-                    });
+                   cutClass.method.forEach(method => {
+                       html += `
+                           <div class="method-item">
+                               方法: ${method.method} <br>
+                               Lambda: ${method.lambda ? '是' : '否'}
+                           </div>
+                       `;
+                   });
 
-                    html += `</div>`;
-                });
+                   html += `</div>`;
+               });
 
-                html += `</div>`;
-            });
+               html += `</div>`;
+           });
 
-            container.innerHTML = html;
-        }
+           container.innerHTML = html;
+       }
 
-        function renderReplacementAspect() {
-            const replacementData = data.filter(item => item.type === "替换切面");
-            const container = document.getElementById('replacement-content');
-            document.getElementById('replacement-count').textContent = replacementData.length;
+       function renderReplacementAspect() {
+           const replacementData = data.filter(item => item.type === "替换切面");
+           const container = document.getElementById('replacement-content');
+           document.getElementById('replacement-count').textContent = replacementData.length;
 
-            let html = '';
+           let html = '';
 
-            replacementData.forEach(aspect => {
-                html += `
-                    <div class="aspect-item">
-                        <div class="aspect-header">
-                            替换类: ${aspect.replaceClassName}
-                        </div>
-                `;
+           replacementData.forEach(aspect => {
+               html += `
+                   <div class="aspect-item">
+                       <div class="aspect-header">
+                           替换类: ${aspect.replaceClassName}
+                       </div>
+               `;
 
-                aspect.method.forEach(method => {
-                    html += `
-                        <div class="replace-method">
-                            <div><strong>替换方法:</strong> ${method.replaceMethod}</div>
-                            <div><strong>目标类:</strong> ${method.targetClassName}</div>
-                            <div><strong>目标方法:</strong> ${method.targetMethod}</div>
-                            <div><strong>影响位置数:</strong> ${method.locationCount}</div>
-                            <div><strong>影响位置:</strong></div>
-                    `;
+               aspect.method.forEach(method => {
+                   html += `
+                       <div class="replace-method">
+                           <div><strong>替换方法:</strong> ${method.replaceMethod}</div>
+                           <div><strong>目标类:</strong> ${method.targetClassName}</div>
+                           <div><strong>目标方法:</strong> ${method.targetMethod.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+                           <div><strong>影响位置数:</strong> ${method.locationCount}</div>
+                           <div><strong>影响位置:</strong></div>
+                   `;
 
-                    method.locations.forEach(location => {
-                        html += `
-                            <div class="location-item">
-                                <div>类名: ${location.className}</div>
-                                <div>方法: ${location.method}</div>
-                            </div>
-                        `;
-                    });
+                   method.locations.forEach(location => {
+                       html += `
+                           <div class="location-item">
+                               <div>类名: ${location.className}</div>
+                               <div>方法: ${location.method}</div>
+                           </div>
+                       `;
+                   });
 
-                    html += `</div>`;
-                });
+                   html += `</div>`;
+               });
 
-                html += `</div>`;
-            });
+               html += `</div>`;
+           });
 
-            container.innerHTML = html;
-        }
+           container.innerHTML = html;
+       }
 
-        function renderInheritanceAspect() {
-            const inheritanceData = data.filter(item => item.type === "修改继承类");
-            const container = document.getElementById('inheritance-content');
-            document.getElementById('inheritance-count').textContent = inheritanceData.length;
+       function renderInheritanceAspect() {
+           const inheritanceData = data.filter(item => item.type === "修改继承类");
+           const container = document.getElementById('inheritance-content');
+           document.getElementById('inheritance-count').textContent = inheritanceData.length;
 
-            let html = '';
+           let html = '';
 
-            inheritanceData.forEach(aspect => {
-                html += `
-                    <div class="aspect-item">
-                        <div class="aspect-header">
-                            目标类: ${aspect.targetClassName}
-                            <span class="count-badge">修改类数: ${aspect.modifiedCount}</span>
-                        </div>
-                        <div>继承类: ${aspect.extendsClassName}</div>
-                        <div><strong>修改的类:</strong></div>
-                `;
+           inheritanceData.forEach(aspect => {
+               html += `
+                   <div class="aspect-item">
+                       <div class="aspect-header">
+                           目标类: ${aspect.targetClassName}
+                           <span class="count-badge">修改类数: ${aspect.modifiedCount}</span>
+                       </div>
+                       <div>继承类: ${aspect.extendsClassName}</div>
+                       <div><strong>修改的类:</strong></div>
+               `;
 
-                aspect.modified.forEach(modifiedClass => {
-                    html += `
-                        <div class="modified-class">${modifiedClass}</div>
-                    `;
-                });
+               aspect.modified.forEach(modifiedClass => {
+                   html += `
+                       <div class="modified-class">${modifiedClass}</div>
+                   `;
+               });
 
-                html += `</div>`;
-            });
+               html += `</div>`;
+           });
 
-            container.innerHTML = html;
-        }
+           container.innerHTML = html;
+       }
 
-        function renderCollectionAspect() {
-            const collectionData = data.filter(item => item.type === "收集切面");
-            const container = document.getElementById('collection-content');
-            document.getElementById('collection-count').textContent = collectionData.length;
+       function renderCollectionAspect() {
+           const collectionData = data.filter(item => item.type === "收集切面");
+           const container = document.getElementById('collection-content');
+           document.getElementById('collection-count').textContent = collectionData.length;
 
-            let html = '';
+           let html = '';
 
-            collectionData.forEach(aspect => {
-                html += `
-                    <div class="aspect-item">
-                        <div class="aspect-header">
-                            收集类: ${aspect.collectClass}
-                        </div>
-                `;
+           collectionData.forEach(aspect => {
+               html += `
+                   <div class="aspect-item">
+                       <div class="aspect-header">
+                           收集类: ${aspect.collectClass}
+                       </div>
+               `;
 
-                aspect.collectMethod.forEach(method => {
-                    html += `
-                        <div class="collect-method">
-                            <div><strong>收集方法:</strong> ${method.method}</div>
-                            <div><strong>收集类型:</strong> ${method.collectType}</div>
-                            <div><strong>正则表达式:</strong> ${method.regex || '无'}</div>
-                            <div><strong>收集类数:</strong> ${method.classCount}</div>
-                            <div><strong>收集的类:</strong></div>
-                    `;
+               aspect.collectMethod.forEach(method => {
+                   html += `
+                       <div class="collect-method">
+                           <div><strong>收集方法:</strong> ${method.method}</div>
+                           <div><strong>收集类型:</strong> ${method.collectType}</div>
+                           <div><strong>正则表达式:</strong> ${method.regex || '无'}</div>
+                           <div><strong>收集类数:</strong> ${method.classCount}</div>
+                           <div><strong>收集的类:</strong></div>
+                   `;
 
-                    method.classes.forEach(cls => {
-                        html += `
-                            <div class="collect-class">${cls}</div>
-                        `;
-                    });
+                   method.classes.forEach(cls => {
+                       html += `
+                           <div class="collect-class">${cls}</div>
+                       `;
+                   });
 
-                    html += `</div>`;
-                });
+                   html += `</div>`;
+               });
 
-                html += `</div>`;
-            });
+               html += `</div>`;
+           });
 
-            container.innerHTML = html;
-        }
+           container.innerHTML = html;
+       }
 
-        // Initialize the page
-        document.addEventListener('DOMContentLoaded', function() {
-            renderAnnotationAspect();
-            renderMatchingAspect();
-            renderReplacementAspect();
-            renderInheritanceAspect();
-            renderCollectionAspect();
-        });
-    </script>
+       // Initialize the page
+       document.addEventListener('DOMContentLoaded', function() {
+           renderAnnotationAspect();
+           renderMatchingAspect();
+           renderReplacementAspect();
+           renderInheritanceAspect();
+           renderCollectionAspect();
+       });
+   </script>
 </body>
 </html>
