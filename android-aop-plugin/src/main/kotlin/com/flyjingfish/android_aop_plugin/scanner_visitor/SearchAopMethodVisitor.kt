@@ -15,7 +15,6 @@ import com.flyjingfish.android_aop_plugin.beans.CutMethodJson
 import com.flyjingfish.android_aop_plugin.beans.LambdaMethod
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
-import com.flyjingfish.android_aop_plugin.beans.WeavingRules
 import com.flyjingfish.android_aop_plugin.ex.AndroidAOPReplaceSetErrorException
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils.getMethodInfo
@@ -509,8 +508,7 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                 if (aopMatchCut.isMatchAllMethod()){
                     addMatchMethodCut()
                 }else{
-                    val removeIndex = mutableSetOf<Int>()
-                    for ((index,methodName) in aopMatchCut.methodNames.withIndex()) {
+                    for (methodName in aopMatchCut.methodNames) {
                         val matchMethodInfo = getMethodInfo(methodName)
                         if (matchMethodInfo != null && name == matchMethodInfo.name) {
                             val isBack = try {
@@ -520,13 +518,10 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                             }
                             if (isBack) {
                                 addMatchMethodCut()
-                                removeIndex.add(index)
+                                aopMatchCut.addMatchedMethodName(methodName)
                                 //                            cacheMethodRecords.add(new MethodRecord(name, descriptor, aopMatchCut.getCutClassName()));
                             }
                         }
-                    }
-                    for (index in removeIndex) {
-                        aopMatchCut.methodNames[index] = "@null"
                     }
                 }
 

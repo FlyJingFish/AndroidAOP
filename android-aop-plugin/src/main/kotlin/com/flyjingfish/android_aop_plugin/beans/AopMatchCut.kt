@@ -1,5 +1,6 @@
 package com.flyjingfish.android_aop_plugin.beans
 
+import java.util.concurrent.ConcurrentHashMap
 import java.util.regex.Pattern
 
 data class AopMatchCut(val baseClassName:String,
@@ -9,6 +10,13 @@ data class AopMatchCut(val baseClassName:String,
                        val excludeClass:Array<String>?,
                        val overrideMethod: Boolean = false,
                        val weavingRules: WeavingRules?) {
+    private val matchedMethodNames = ConcurrentHashMap.newKeySet<String>()
+    fun addMatchedMethodName(name:String){
+        matchedMethodNames.add(name)
+    }
+    fun isMatchedMethodName(name:String):Boolean{
+        return matchedMethodNames.contains(name)
+    }
     enum class MatchType{
         EXTENDS,SELF,DIRECT_EXTENDS,LEAF_EXTENDS
     }

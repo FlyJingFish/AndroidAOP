@@ -331,7 +331,7 @@ class AopTaskUtils(
                 val ctClassName = ctClass.name
                 for (aopMatchCut in it) {
                     for (methodName in aopMatchCut.methodNames) {
-                        if (methodName != "@null") {
+                        if (!aopMatchCut.isMatchedMethodName(methodName)) {
                             val matchMethodInfo =
                                 Utils.getMethodInfo(methodName)
                             for (allMethod in allMethods) {
