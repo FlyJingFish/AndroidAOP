@@ -3,7 +3,7 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>AOP Data Viewer</title>
+   <title>AndroidAOP Result Viewer</title>
    <style>
        body {
            font-family: Arial, sans-serif;
@@ -140,7 +140,7 @@
 </head>
 <body>
 <div class="container">
-   <h1>AOP Data Viewer</h1>
+   <h1>AndroidAOP Result Viewer</h1>
 
    <div class="tabs">
        <div class="tab active" onclick="openTab('annotation')">注解切面 <span class="type-count" id="annotation-count">0</span></div>
@@ -365,7 +365,7 @@
                aspect.collectMethod.forEach(method => {
                    html += `
                        <div class="collect-method">
-                           <div><strong>收集方法:</strong> ${method.method}</div>
+                           <div><strong>收集方法:</strong> ${method.method.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
                            <div><strong>收集类型:</strong> ${method.collectType}</div>
                            <div><strong>正则表达式:</strong> ${method.regex || '无'}</div>
                            <div><strong>收集类数:</strong> ${method.classCount}</div>
