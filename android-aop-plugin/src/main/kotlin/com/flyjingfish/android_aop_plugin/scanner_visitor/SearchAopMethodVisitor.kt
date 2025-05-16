@@ -617,9 +617,9 @@ class SearchAopMethodVisitor(val onCallBackMethod: OnCallBackMethod?) :
                                     fun addMatchMethodCut(){
                                         val cutInfo = CutInfo(
                                             "匹配切面",
-                                            originalClassName + "_" + lambdaName,
+                                            className,
                                             aopMatchCut.cutClassName,
-                                            CutMethodJson(name, descriptor, true)
+                                            CutMethodJson(lambdaName, lambdaDesc, true)
                                         )
                                         val methodRecord = MethodRecord(
                                             lambdaName,

@@ -1,11 +1,13 @@
 package com.flyjingfish.android_aop_plugin.beans
 
+import java.util.concurrent.ConcurrentHashMap
+
 data class MethodRecord(
     val methodName: String,
     val descriptor: String,
     val cutClassName:MutableSet<String> = mutableSetOf(),
     val lambda: Boolean = false,
-    val cutInfo: MutableMap<String, CutInfo> = mutableMapOf(),
+    val cutInfo: ConcurrentHashMap<String, CutInfo> = ConcurrentHashMap(),
     val overrideMethod: Boolean = false,
     val overrideClassname: String = "",
 ) {

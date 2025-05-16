@@ -31,6 +31,7 @@ import org.objectweb.asm.MethodVisitor
 import java.io.File
 import java.io.FileInputStream
 import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 import java.util.jar.JarFile
 
 class AopTaskUtils(
@@ -378,7 +379,7 @@ class AopTaskUtils(
                                             descriptor,
                                             mutableSetOf(aopMatchCut.cutClassName),
                                             false,
-                                            mutableMapOf<String, CutInfo>().apply {
+                                            ConcurrentHashMap<String, CutInfo>().apply {
                                                 put(
                                                     UUID.randomUUID().toString(), cutInfo
                                                 )
