@@ -39,7 +39,7 @@ object InitConfig {
     private lateinit var buildConfigCacheFile: File
     private lateinit var cutInfoFile: File
     private lateinit var cutInfoHtmlFile: File
-    private val cutInfoMap = ConcurrentHashMap<String, CutJsonMap?>()
+    private val cutInfoMap = ConcurrentHashMap<String, CutJsonMap>()
     private val replaceMethodInfoMap = ConcurrentHashMap<String, ConcurrentHashMap<String, ReplaceJson>>()
     private val modifyExtendsClassMap = ConcurrentHashMap<String, ModifyExtendsClassJson>()
     private val collectClassMap = ConcurrentHashMap<String, ConcurrentHashMap<String, CutCollectMethodJsonCache>>()
@@ -119,19 +119,8 @@ object InitConfig {
 
     private fun putCutInfo(type: String, className: String, anno: String, cutMethodJson: CutMethodJson) {
         try {
-            var cutJson = cutInfoMap[anno]
-            if (cutJson == null) {
-                val cutJsonMap = CutJsonMap(type, anno)
-                cutInfoMap[anno] = cutJsonMap
-                cutJson = cutJsonMap
-            }
-            val cutClasses = cutJson.cutClasses
-            var cutClassesJsonMap = cutClasses[className]
-            if (cutClassesJsonMap == null) {
-                val cutClassesJson = CutClassesJsonMap(className)
-                cutClasses[className] = cutClassesJson
-                cutClassesJsonMap = cutClassesJson
-            }
+            val cutJson = cutInfoMap.computeIfAbsent(anno) { CutJsonMap(type, anno) }
+            val cutClassesJsonMap = cutJson.cutClasses.computeIfAbsent(className) { CutClassesJsonMap(className) }
             cutClassesJsonMap.method[cutMethodJson.toString()] = cutMethodJson
         } catch (e: Exception) {
             e.printDetail()
@@ -144,19 +133,17 @@ object InitConfig {
             //CutJson
             val cutJsons = mutableListOf<Any>()
             cutInfoMap.forEach { (_, cutInfo) ->
-                if (cutInfo != null) {
-                    val cutJson = CutJson(cutInfo.type, cutInfo.className)
-                    var count = 0
-                    cutInfo.cutClasses.forEach { (_, cutClasses) ->
-                        val cutClassesJson =
-                            CutClassesJson(cutClasses.className, cutClasses.method.size)
-                        cutJson.cutClasses.add(cutClassesJson)
-                        cutClassesJson.method.addAll(cutClasses.method.values.map { CutMethodJson2(Type.getReturnType(it.descriptor).className+" "+Utils.getRealMethodName(it.name)+"("+Type.getArgumentTypes(it.descriptor).joinToString{ type -> type.className}+")",it.lambda) })
-                        count += cutClassesJson.method.size
-                    }
-                    cutJson.cutCount = count
-                    cutJsons.add(cutJson)
+                val cutJson = CutJson(cutInfo.type, cutInfo.className)
+                var count = 0
+                cutInfo.cutClasses.forEach { (_, cutClasses) ->
+                    val cutClassesJson =
+                        CutClassesJson(cutClasses.className, cutClasses.method.size)
+                    cutJson.cutClasses.add(cutClassesJson)
+                    cutClassesJson.method.addAll(cutClasses.method.values.map { CutMethodJson2(Type.getReturnType(it.descriptor).className+" "+Utils.getRealMethodName(it.name)+"("+Type.getArgumentTypes(it.descriptor).joinToString{ type -> type.className}+")",it.lambda) })
+                    count += cutClassesJson.method.size
                 }
+                cutJson.cutCount = count
+                cutJsons.add(cutJson)
             }
 
             val replaceCutList = mutableListOf<CutReplaceClassJson>()
@@ -268,7 +255,9 @@ object InitConfig {
             val paramKey = if (aopCollectClass.isClazz) "Class<? extends ${aopCollectClass.collectClassName}>" else aopCollectClass.collectClassName
             val methodKey = "${aopCollectClass.invokeMethod}($paramKey)"
             val methodSet = classMap.computeIfAbsent(methodKey) { CutCollectMethodJsonCache(aopCollectClass.collectType,aopCollectClass.regex) }
-            methodSet.classes.add(aopCollectClass.collectExtendsClassName)
+            synchronized(methodSet.classes){
+                methodSet.classes.add(aopCollectClass.collectExtendsClassName)
+            }
         } catch (e: Exception) {
             e.printDetail()
         }

@@ -1,3 +1,5 @@
 package com.flyjingfish.android_aop_plugin.beans
 
-data class CutClassesJsonMap(val className:String, val method:MutableMap<String,CutMethodJson> = mutableMapOf())
+import java.util.concurrent.ConcurrentHashMap
+
+data class CutClassesJsonMap(val className:String, val method: ConcurrentHashMap<String, CutMethodJson> = ConcurrentHashMap())
