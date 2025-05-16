@@ -231,6 +231,7 @@ dependencies {
      //Optional 👇, if you want to customize aspects, you need to use them, ⚠️only applies to aspects written in Java code
      annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:2.6.3'
      //⚠️Choose one of the above android-aop-ksp and android-aop-processor
+     //If you only use the functions in android-aop-extra, you don't need to select these two options
 }
 ```
 > [!TIP]\

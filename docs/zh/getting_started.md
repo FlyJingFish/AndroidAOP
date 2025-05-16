@@ -198,6 +198,7 @@
         //👇非必须项 (3)👈点击+查看详细说明，⚠️只适用于Java代码写的切面
         annotationProcessor "io.github.FlyJingFish.AndroidAop:android-aop-processor:2.6.3"
         //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
+        //如果只是使用 android-aop-extra 中的功能就不需要选择这两项
     }
     
     ```
@@ -228,6 +229,7 @@
         //👇非必须项 (3)👈点击+查看详细说明，⚠️只适用于Java代码写的切面
         annotationProcessor("io.github.FlyJingFish.AndroidAop:android-aop-processor:2.6.3")
         //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
+        //如果只是使用 android-aop-extra 中的功能就不需要选择这两项
     }
     ```
 
