@@ -303,13 +303,15 @@ class ClassFileUtils {
             return
         }
         for (invokeClass in invokeClasses) {
-            val value = invokeClass.value ?: continue
+            val value = invokeClass.value
             val iterator = value.iterator()
-            while (iterator.hasNext()){
-                val item = iterator.next()
-                if (item.packageName == className){
-                    iterator.remove()
-                    break
+            synchronized(value){
+                while (iterator.hasNext()){
+                    val item = iterator.next()
+                    if (item.packageName == className){
+                        iterator.remove()
+                        break
+                    }
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.flyjingfish.android_aop_plugin.scanner_visitor
 
+import com.flyjingfish.android_aop_annotation.utils.InvokeMethod
 import com.flyjingfish.android_aop_plugin.beans.AopCollectClass
 import com.flyjingfish.android_aop_plugin.beans.AopCollectCut
 import com.flyjingfish.android_aop_plugin.beans.CutFileJson
@@ -9,6 +10,7 @@ import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
 import com.flyjingfish.android_aop_plugin.utils.ClassNameToConversions
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
+import com.flyjingfish.android_aop_plugin.utils.KeywordChecker
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils.CONVERSIONS_CLASS
 import com.flyjingfish.android_aop_plugin.utils.Utils.JOIN_LOCK
@@ -467,6 +469,7 @@ object WovenIntoCode {
                 val pos =  1
                 val isHasArgs = len > 0
                 val invokeBuffer = StringBuffer()
+                var argClassHasKeyword = false
                 for (i in ctClasses.indices) {
                     val aClass = ctClasses[i]
                     val name = aClass.name
@@ -478,7 +481,9 @@ object WovenIntoCode {
 
                     argsBuffer.append(String.format(ClassNameToConversions.getArgsXObject(name), "\$"+index))
                     invokeBuffer.append(String.format(ClassNameToConversions.getInvokeXObject(name), "\$2[$i]"))
-
+                    if (KeywordChecker.containsKeywordAsWord(name)){
+                        argClassHasKeyword = true
+                    }
                     if (i != len - 1) {
                         paramsClassNamesBuffer.append(",")
                         paramsClassesBuffer.append(",")
@@ -501,7 +506,7 @@ object WovenIntoCode {
                 val argsStr =if (isHasArgs) "new Object[]{$argsBuffer}" else "null"
                 val returnStr = if (isSuspend){
                     String.format(
-                        ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointReturnExecute($argsStr,${if (returnClassName == null) null else "$returnClassName.class"})"
+                        ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointReturnExecute($argsStr,${if (returnClassName == null) null else KeywordChecker.getClass(returnClassName)})"
                     )
                 }else{
                     String.format(
@@ -529,27 +534,32 @@ object WovenIntoCode {
                     "{${String.format(invokeReturnStr,invokeStr)};"+
                             "        return returnValue;}"
                 }
-
-
-                ClassFileUtils.get(project).createInvokeClass(invokeStaticClass,invokeClassName,invokeBody, oldMethodName + oldDescriptor)
+                val isCreateInvokeClass = !KeywordChecker.containsKeywordAsWord(targetClassName) && !argClassHasKeyword
+                if (isCreateInvokeClass){
+                    ClassFileUtils.get(project).createInvokeClass(invokeStaticClass,invokeClassName,invokeBody, oldMethodName + oldDescriptor)
+                }
                 ClassFileUtils.get(project).outputCacheDir?.let {
                     cp.appendClassPath(it.absolutePath)
                 }
                 cp.importPackage(realInvokeClassNameReal)
 //                val constructor = "\"${invokeClassName.replace(".", "_")}\",$targetClassName.class,${if(isStaticMethod)"null" else "\$0"},\"$oldMethodName\",\"$targetMethodName\",${value.lambda}"
-                val constructor = "\"${invokeClassName.replace(".", "_")}\",$targetClassName.class,\"$oldMethodName\",\"$targetMethodName\",${value.lambda},${if(isStaticMethod)"null" else "\$0"}"
+                val constructor = "\"${invokeClassName.replace(".", "_")}\",${KeywordChecker.getClass(targetClassName)},\"$oldMethodName\",\"$targetMethodName\",${value.lambda},${if(isStaticMethod)"null" else "\$0"}"
 //                val setArgsStr =
 //                    (if (isHasArgs) "        Object[] args = new Object[]{$argsBuffer};\n" else "") +
 //                        (if (isHasArgs) "        pointCut.setArgs(args);\n" else "        pointCut.setArgs(null);\n")
 
-                val invokeMethodStr = if (ClassFileUtils.reflectInvokeMethod){
-                    if (ClassFileUtils.reflectInvokeMethodStatic){
-                        "new $invokeStaticClass()"
-                    }else{
-                        "null"
-                    }
+                val invokeMethodStr = if (!isCreateInvokeClass){
+                    "null"
                 }else{
-                    "new $invokeClassName()"
+                    if (ClassFileUtils.reflectInvokeMethod){
+                        if (ClassFileUtils.reflectInvokeMethodStatic){
+                            KeywordChecker.getInstance(invokeStaticClass,InvokeMethod::class.java.name)
+                        }else{
+                            "null"
+                        }
+                    }else{
+                        KeywordChecker.getInstance(invokeClassName,InvokeMethod::class.java.name)
+                    }
                 }
 
                 val synchronizedObject = if (isStaticMethod){
@@ -565,7 +575,7 @@ object WovenIntoCode {
                                 "pointCut.setArgClasses(classes);\n"+
                                 "String[] paramNames = new String[]{$paramsNamesBuffer};\n"+
                                 "pointCut.setParamNames(paramNames);\n"+
-                                "pointCut.setReturnClass($returnTypeClassName.class);\n"+
+                                "pointCut.setReturnClass(${KeywordChecker.getClass(returnTypeClassName)});\n"+
                                 "pointCut.setInvokeMethod($invokeMethodStr,$suspendMethod);\n"
 
                 newMethodBody = if (isStaticMethod){
@@ -601,7 +611,7 @@ object WovenIntoCode {
                 if (e is NotFoundException || e is CannotCompileException){
                     WovenInfoUtils.deleteAopMethodCutInnerClassInfoInvokeMethod(Utils.dotToSlash(targetClassName),targetMethodName,oldDescriptor)
                     ClassFileUtils.get(project).deleteInvokeClass(invokeClassName)
-                    e.printStackTrace()
+                    e.printDetail()
                 }else{
                     throw e
                 }

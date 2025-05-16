@@ -38,7 +38,11 @@ object ClassNameToConversions {
     fun getInvokeXObject(key: String): String {
         var value = returnToValue[key]
         value = if (value == null) {
-            "($key)%1\$s"
+            if(KeywordChecker.containsKeywordAsWord(key)){
+                "Class.forName(\"$key\").cast(%1\$s)"
+            }else{
+                "($key)%1\$s"
+            }
         } else {
             "com.flyjingfish.android_aop_annotation.Conversions.$value"
         }
@@ -50,7 +54,11 @@ object ClassNameToConversions {
         value = if(key == "void"){
             "%1\$s"
         }else if (value == null) {
-            "return ($key)%1\$s"
+            if(KeywordChecker.containsKeywordAsWord(key)){
+                "return Class.forName(\"$key\").cast(%1\$s)"
+            }else{
+                "return ($key)%1\$s"
+            }
         } else {
             "return com.flyjingfish.android_aop_annotation.Conversions.$value"
         }
@@ -81,6 +89,6 @@ object ClassNameToConversions {
     }
 
     fun string2Class(className: String): String {
-        return "$className.class"
+        return KeywordChecker.getClass(className)
     }
 }
