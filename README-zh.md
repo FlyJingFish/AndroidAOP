@@ -14,13 +14,6 @@
 </p>
 
 <p align="center">
-  告别样板代码，用 AOP 解放双手，一行注解，织就高效 Android 应用
-</p>
-<p align="center">
-  AndroidAOP，专为开发者而生！
-</p>
-
-<p align="center">
   <a href="https://central.sonatype.com/search?q=io.github.FlyJingFish.AndroidAop"><img
     src="https://img.shields.io/maven-central/v/io.github.FlyJingFish.AndroidAop/android-aop-plugin"
     alt="Build"
@@ -51,6 +44,12 @@
   /></a>
 </p>
 
+<p align="center">
+  告别样板代码，用 AOP 解放双手，一行注解，织就高效 Android 应用
+</p>
+<p align="center">
+  AndroidAOP，专为开发者而生！
+</p>
 
 # README.md
 
