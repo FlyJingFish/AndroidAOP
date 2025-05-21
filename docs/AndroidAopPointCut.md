@@ -11,32 +11,26 @@
 
 Create an annotation named CustomIntercept and add **@AndroidAopPointCut** to your annotation
 
-```kotlin
-@AndroidAopPointCut(CustomInterceptCut::class)
-@Target(
-    AnnotationTarget.FUNCTION,
-    AnnotationTarget.PROPERTY_GETTER,
-    AnnotationTarget.PROPERTY_SETTER
-)
-@Retention(
-    AnnotationRetention.RUNTIME
-)
-annotation class CustomIntercept(vararg val value: String = [])
-```
+=== "Kotlin"
+    ```kotlin
+    @AndroidAopPointCut(CustomInterceptCut::class)
+    @Target(AnnotationTarget.FUNCTION,AnnotationTarget.PROPERTY_GETTER,AnnotationTarget.PROPERTY_SETTER)
+    @Retention(AnnotationRetention.RUNTIME)
+    annotation class CustomIntercept(
+        vararg val value: String = []
+    )
+    ```
 
-<details>
-<summary><strong>Java writing:</strong></summary>
-
-```java
-
-@AndroidAopPointCut(CustomInterceptCut.class)
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface CustomIntercept {
-    String[] value() default {};
-}
-```
-</details>
+=== "Java"
+    ```java
+    
+    @AndroidAopPointCut(CustomInterceptCut.class)
+    @Target({ElementType.METHOD})
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface CustomIntercept {
+        String[] value() default {};
+    }
+    ```
 
 - **@AndroidAopPointCut**'s **CustomInterceptCut.class** is the class that handles the section for you (described below)
 

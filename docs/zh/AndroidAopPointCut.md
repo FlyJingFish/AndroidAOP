@@ -13,31 +13,25 @@
 
 创建一个名为 CustomIntercept 的注解 将 **@AndroidAopPointCut** 加到你的注解上
 
-```kotlin
-@AndroidAopPointCut(CustomInterceptCut::class)
-@Target(
-    AnnotationTarget.FUNCTION,
-    AnnotationTarget.PROPERTY_GETTER,
-    AnnotationTarget.PROPERTY_SETTER
-)
-@Retention(
-    AnnotationRetention.RUNTIME
-)
-annotation class CustomIntercept(vararg val value: String = [])
-```
+=== "Kotlin"
+    ```kotlin
+    @AndroidAopPointCut(CustomInterceptCut::class)
+    @Target(AnnotationTarget.FUNCTION,AnnotationTarget.PROPERTY_GETTER,AnnotationTarget.PROPERTY_SETTER)
+    @Retention(AnnotationRetention.RUNTIME)
+    annotation class CustomIntercept(
+        vararg val value: String = []
+    )
+    ```
+=== "Java"
 
-<details>
-<summary><strong>Java写法:</strong></summary>
-
-```java
-@AndroidAopPointCut(CustomInterceptCut.class)
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface CustomIntercept {
-    String[] value() default {};
-}
-```
-</details>
+    ```java
+    @AndroidAopPointCut(CustomInterceptCut.class)
+    @Target({ElementType.METHOD})
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface CustomIntercept {
+        String[] value() default {};
+    }
+    ```
 
 
 - **@AndroidAopPointCut** 的 **CustomInterceptCut.class** 为您处理切面的类（下文有介绍）

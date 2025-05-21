@@ -64,86 +64,91 @@ After setting the regular expression, the class name that meets the requirements
 
 It is extremely simple to use, and the sample code has already explained it
 
-- Kotlin
+=== "Kotlin"
 
-```kotlin
-object InitCollect {
-    private val collects = mutableListOf<SubApplication>()
-    private val collectClazz: MutableList<Class<out SubApplication>> = mutableListOf()
-
-    @AndroidAopCollectMethod
-    @JvmStatic
-//Collect classes inherited from SubApplication and call back its instance object
-    fun collect(sub: SubApplication) {
-        collects.add(sub)
-    }
-
-    @AndroidAopCollectMethod
-    @JvmStatic
-//Collect classes inherited from SubApplication and call back its class object
-    fun collect2(sub: Class<out SubApplication>) {
-        collectClazz.add(sub)
-    }
-
-    @AndroidAopCollectMethod(regex = ".*?\\$\\\$Router")
-    @JvmStatic
-//Collect classes that match the regex regular expression and call back their class objects. Can also be used in conjunction with inheritance
-    fun collectRouterClassRegex(sub: Class<out Any>) {
-        Log.e("InitCollect", "----collectRouterClassRegexClazz----$sub")
-    }
-
-    @AndroidAopCollectMethod(regex = ".*?\\$\\\$Router")
-    @JvmStatic
-//Collect classes that match the regex regular expression and call back their instance objects. Can also be used in combination with inheritance
-    fun collectRouterClassRegex(sub: Any) {
-        Log.e("InitCollect", "----collectRouterClassRegexObject----$sub")
-    }
-
-    //Directly call this method (method name is not limited) The above functions will be called back
-    fun init(application: Application) {
-        for (collect in collects) {
-            collect.onCreate(application)
+    ```kotlin
+    object InitCollect {
+        private val collects = mutableListOf<SubApplication>()
+        private val collectClazz: MutableList<Class<out SubApplication>> = mutableListOf()
+    
+        @AndroidAopCollectMethod
+        @JvmStatic
+        //Collect classes inherited from SubApplication and call back its instance object
+        fun collect(sub: SubApplication) {
+            collects.add(sub)
+        }
+    
+        @AndroidAopCollectMethod
+        @JvmStatic
+        //Collect classes inherited from SubApplication and call back its class object
+        fun collect2(sub: Class<out SubApplication>) {
+            collectClazz.add(sub)
+        }
+    
+        @AndroidAopCollectMethod(regex = ".*?\\$\\\$Router")
+        @JvmStatic
+        //Collect classes that match the regex regular expression and call back their class objects. Can also be used in conjunction with inheritance
+        fun collectRouterClassRegex(sub: Class<out Any>) {
+            Log.e("InitCollect", "----collectRouterClassRegexClazz----$sub")
+        }
+    
+        @AndroidAopCollectMethod(regex = ".*?\\$\\\$Router")
+        @JvmStatic
+        //Collect classes that match the regex regular expression and call back their instance objects. Can also be used in combination with inheritance
+        fun collectRouterClassRegex(sub: Any) {
+            Log.e("InitCollect", "----collectRouterClassRegexObject----$sub")
+        }
+    
+        //Directly call this method (method name is not limited) The above functions will be called back
+        fun init(application: Application) {
+            for (collect in collects) {
+                collect.onCreate(application)
+            }
         }
     }
-}
-```
+    ```
 
-- Java
+=== "Java"
 
-```java
-public class InitCollect2 {
-    private static final List<SubApplication2> collects = new ArrayList<>();
-    private static final List<Class<? extends SubApplication2>> collectClazz = new ArrayList<>();
+    ```java
+    public class InitCollect {
+        private static final List<SubApplication> collects = new ArrayList<>();
+        private static final List<Class<? extends SubApplication>> collectClazz = new ArrayList<>();
+    
+        @AndroidAopCollectMethod
+        //Collect classes inherited from SubApplication and call back its instance object
+        public static void collect(SubApplication sub) {
+            collects.add(sub);
+        }
+    
+        @AndroidAopCollectMethod
+        //Collect classes inherited from SubApplication and call back its class object
+        public static void collect2(Class<? extends SubApplication> sub) {
+            collectClazz.add(sub);
+        }
 
-    @AndroidAopCollectMethod
-    public static void collect(SubApplication2 sub) {
-        collects.add(sub);
-    }
+        @AndroidAopCollectMethod(regex = ".*?\\$\\$Router")
+        //Collect classes that match the regex regular expression and call back their instance objects. Can also be used in combination with inheritance
+        public static void collectRouterClassRegex(Class<?> sub) {
+            Log.e("InitCollect2", "----collectRouterClassRegexClazz----" + sub);
+        }
 
-    @AndroidAopCollectMethod
-    public static void collect3(Class<? extends SubApplication2> sub) {
-        collectClazz.add(sub);
-    }
-
-    @AndroidAopCollectMethod(regex = ".*?\\$\\$Router")
-    public static void collectRouterClassRegex(Object sub) {
-        Log.e("InitCollect2", "----collectRouterClassRegexObject----" + sub);
-    }
-
-    @AndroidAopCollectMethod(regex = ".*?\\$\\$Router")
-    public static void collectRouterClassRegex(Class<?> sub) {
-        Log.e("InitCollect2", "----collectRouterClassRegexClazz----" + sub);
-    }
-
-    //Directly call this method (method name is not limited) The above functions will be called back in full
-    public static void init(Application application) {
-        Log.e("InitCollect2", "----init----");
-        for (SubApplication2 collect : collects) {
-            collect.onCreate(application);
+        @AndroidAopCollectMethod(regex = ".*?\\$\\$Router")
+        //Collect classes that match the regex regular expression and call back their class objects. Can also be used in conjunction with inheritance
+        public static void collectRouterClassRegex(Object sub) {
+            Log.e("InitCollect2", "----collectRouterClassRegexObject----" + sub);
+        }
+    
+    
+        //Directly call this method (method name is not limited) The above functions will be called back in full
+        public static void init(Application application) {
+            Log.e("InitCollect2", "----init----");
+            for (SubApplication2 collect : collects) {
+                collect.onCreate(application);
+            }
         }
     }
-}
-```
+    ```
 
 Use this collection class
 ```java

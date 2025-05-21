@@ -67,86 +67,90 @@ D --->|DIRECT_EXTENDS/ LEAF_EXTENDS / EXTENDS| A;
 
 使用起来极其简单，示例代码已经说明了
 
-- Kotlin
+=== "Kotlin"
 
-```kotlin
-object InitCollect {
-    private val collects = mutableListOf<SubApplication>()
-    private val collectClazz: MutableList<Class<out SubApplication>> = mutableListOf()
-
-    @AndroidAopCollectMethod
-    @JvmStatic
-    //收集继承自 SubApplication 的类，并回调他的实例对象
-    fun collect(sub: SubApplication){
-      collects.add(sub)
-    }
-
-    @AndroidAopCollectMethod
-    @JvmStatic
-    //收集继承自 SubApplication 的类，并回调他的 class 对象
-    fun collect2(sub:Class<out SubApplication>){
-      collectClazz.add(sub)
-    }
-
-    @AndroidAopCollectMethod(regex = ".*?\\$\\\$Router")
-    @JvmStatic
-    //收集符合 regex 正则表达式的类，并回调他的 class 对象。亦可结合继承使用
-    fun collectRouterClassRegex(sub:Class<out Any>){
-        Log.e("InitCollect", "----collectRouterClassRegexClazz----$sub")
-    }
-
-    @AndroidAopCollectMethod(regex = ".*?\\$\\\$Router")
-    @JvmStatic
-    //收集符合 regex 正则表达式的类，并回调他的实例对象。亦可结合继承使用
-    fun collectRouterClassRegex(sub:Any){
-        Log.e("InitCollect", "----collectRouterClassRegexObject----$sub")
-    }
-
-     //直接调这个方法（方法名不限）上边的函数会被悉数回调
-    fun init(application: Application){
-        for (collect in collects) {
-            collect.onCreate(application)
-        }
-    }
-}
-```
-
-- Java
-
-```java
-public class InitCollect2 {
-    private static final List<SubApplication2> collects = new ArrayList<>();
-    private static final List<Class<? extends SubApplication2>> collectClazz = new ArrayList<>();
-
-    @AndroidAopCollectMethod
-    public static void collect(SubApplication2 sub){
-        collects.add(sub);
-    }
-
-    @AndroidAopCollectMethod
-    public static void collect3(Class<? extends SubApplication2> sub){
-        collectClazz.add(sub);
-    }
-
-    @AndroidAopCollectMethod(regex = ".*?\\$\\$Router")
-    public static void collectRouterClassRegex(Object sub){
-        Log.e("InitCollect2","----collectRouterClassRegexObject----"+sub);
-    }
-
-    @AndroidAopCollectMethod(regex = ".*?\\$\\$Router")
-    public static void collectRouterClassRegex(Class<?> sub){
-        Log.e("InitCollect2","----collectRouterClassRegexClazz----"+sub);
-    }
+    ```kotlin
+    object InitCollect {
+        private val collects = mutableListOf<SubApplication>()
+        private val collectClazz: MutableList<Class<out SubApplication>> = mutableListOf()
     
-    //直接调这个方法（方法名不限）上边的函数会被悉数回调
-    public static void init(Application application){
-        Log.e("InitCollect2","----init----");
-        for (SubApplication2 collect : collects) {
-            collect.onCreate(application);
+        @AndroidAopCollectMethod
+        @JvmStatic
+        //收集继承自 SubApplication 的类，并回调他的实例对象
+        fun collect(sub: SubApplication){
+          collects.add(sub)
+        }
+    
+        @AndroidAopCollectMethod
+        @JvmStatic
+        //收集继承自 SubApplication 的类，并回调他的 class 对象
+        fun collect2(sub:Class<out SubApplication>){
+          collectClazz.add(sub)
+        }
+    
+        @AndroidAopCollectMethod(regex = ".*?\\$\\\$Router")
+        @JvmStatic
+        //收集符合 regex 正则表达式的类，并回调他的 class 对象。亦可结合继承使用
+        fun collectRouterClassRegex(sub:Class<out Any>){
+            Log.e("InitCollect", "----collectRouterClassRegexClazz----$sub")
+        }
+    
+        @AndroidAopCollectMethod(regex = ".*?\\$\\\$Router")
+        @JvmStatic
+        //收集符合 regex 正则表达式的类，并回调他的实例对象。亦可结合继承使用
+        fun collectRouterClassRegex(sub:Any){
+            Log.e("InitCollect", "----collectRouterClassRegexObject----$sub")
+        }
+    
+         //直接调这个方法（方法名不限）上边的函数会被悉数回调
+        fun init(application: Application){
+            for (collect in collects) {
+                collect.onCreate(application)
+            }
         }
     }
-}
-```
+    ```
+
+=== "Java"
+
+    ```java
+    public class InitCollect {
+        private static final List<SubApplication> collects = new ArrayList<>();
+        private static final List<Class<? extends SubApplication>> collectClazz = new ArrayList<>();
+    
+        @AndroidAopCollectMethod
+        //收集继承自 SubApplication 的类，并回调他的实例对象
+        public static void collect(SubApplication sub){
+            collects.add(sub);
+        }
+    
+        @AndroidAopCollectMethod
+        //收集继承自 SubApplication 的类，并回调他的 class 对象
+        public static void collect2(Class<? extends SubApplication> sub){
+            collectClazz.add(sub);
+        }
+    
+        @AndroidAopCollectMethod(regex = ".*?\\$\\$Router")
+        //收集符合 regex 正则表达式的类，并回调他的实例对象。亦可结合继承使用
+        public static void collectRouterClassRegex(Class<?> sub){
+            Log.e("InitCollect2","----collectRouterClassRegexClazz----"+sub);
+        }
+
+        @AndroidAopCollectMethod(regex = ".*?\\$\\$Router")
+        //收集符合 regex 正则表达式的类，并回调他的 class 对象。亦可结合继承使用
+        public static void collectRouterClassRegex(Object sub){
+            Log.e("InitCollect2","----collectRouterClassRegexObject----"+sub);
+        }
+        
+        //直接调这个方法（方法名不限）上边的函数会被悉数回调
+        public static void init(Application application){
+            Log.e("InitCollect2","----init----");
+            for (SubApplication2 collect : collects) {
+                collect.onCreate(application);
+            }
+        }
+    }
+    ```
 
 使用这个收集类
 ```java
