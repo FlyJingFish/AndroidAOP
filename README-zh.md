@@ -45,10 +45,14 @@
 </p>
 
 <p align="center">
-  告别样板代码，用 AOP 解放双手，一行注解，织就高效 Android 应用
+  <strong>
+    告别样板代码，用 AOP 解放双手，一行注解，织就高效 Android 应用
+  </strong>
 </p>
 <p align="center">
+ <strong>
   AndroidAOP，专为开发者而生！
+ </strong>
 </p>
 
 # README.md
