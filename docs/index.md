@@ -55,7 +55,12 @@
   /></a>
 </p>
 
-
+<p align="center">
+    Say goodbye to boilerplate code, free your hands with AOP, and create efficient Android applications with one line of annotations
+</p>
+<p align="center">
+    AndroidAOP, born for developers!
+</p>
 
 ## Brief Description
 

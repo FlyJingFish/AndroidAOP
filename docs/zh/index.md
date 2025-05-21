@@ -56,7 +56,12 @@
   /></a>
 </p>
 
-
+<p align="center">
+  告别样板代码，用 AOP 解放双手，一行注解，织就高效 Android 应用
+</p>
+<p align="center">
+  AndroidAOP，专为开发者而生！
+</p>
 
 ## 简述
 

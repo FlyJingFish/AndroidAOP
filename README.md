@@ -14,6 +14,13 @@
 </p>
 
 <p align="center">
+  Say goodbye to boilerplate code, free your hands with AOP, and create efficient Android applications with one line of annotations
+</p>
+<p align="center">
+  AndroidAOP, born for developers!
+</p>
+
+<p align="center">
   <a href="https://central.sonatype.com/search?q=io.github.FlyJingFish.AndroidAop"><img
     src="https://img.shields.io/maven-central/v/io.github.FlyJingFish.AndroidAop/android-aop-plugin"
     alt="Build"
