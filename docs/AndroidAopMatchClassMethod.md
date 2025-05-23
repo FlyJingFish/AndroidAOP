@@ -52,7 +52,7 @@ This aspect is used to match a class and its corresponding method. This aspect f
     In addition, not all classes can be hooked in
 
     - ```type``` Type is ```SELF``` When ```targetClassName``` is set, the class must be the code in the installation package.For example: if this class (such as Toast) is in **android.jar**, it will not work. If you have such a requirement, you should use [@AndroidAopReplaceClass](/AndroidAOP/AndroidAopReplaceClass)
-    - ```type``` When the type is not ```SELF```, this aspect needs to have a matching method to work. If the subclass does not override the matching method, the subclass will not be matched. Use overrideMethod to ignore this restriction
+    - ```type``` When the type is not ```SELF```, this aspect needs to have a matching method to work. If the subclass does not override the matching method, the subclass will not be matched. Use overrideMethod to ignore this restriction. But please note that the subclass must also be the code in the installation package
     - **When you modify the configuration of this aspect, in most cases you should clean the project and continue development**
 
 ## Create an aspect processing class
