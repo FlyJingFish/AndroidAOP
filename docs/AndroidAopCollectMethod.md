@@ -189,4 +189,6 @@ public class TestInstance {
     }
 } 
 ``` 
+- Custom SPI (Service Provider Interface) implementation
+
 - More application scenarios are waiting for you to explore

@@ -194,5 +194,7 @@ public class TestInstance {
 }
 ```
 
+- 自定义 SPI(Service Provider Interface) 的实现
+
 - 更多应用场景待你探索
 
