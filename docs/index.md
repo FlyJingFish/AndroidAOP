@@ -73,23 +73,23 @@
 
 ## Special feature
 
-1 . This library has built-in some aspect annotations commonly used in development for you to use.
+1 . This library has built-in some commonly used aspect annotations for your use
 
-2 . This library supports you to make aspects by yourself, and the syntax is simple and easy to use.
+2 . This library allows you to make your own aspects, and the syntax is simple and easy to use
 
-3 . This library supports Java and Kotlin code simultaneously
+3 .  This library supports Java projects and Kotlin projects at the same time
 
-4 . This library supports switching into third-party libraries
+4 . This library supports cutting into third-party libraries
 
-5 . This library supports the case where the pointcut method is a Lambda expression.
+5 . This library supports the case where the cutting method is a Lambda expression
 
-6 . This library supports coroutine functions whose pointcut methods are suspend.
+6 . This library supports the coroutine function modified by suspend for the cutting method
 
-7 . This library supports generating all cut-off information json and html files, which is convenient for viewing all cut-off locations [Configure here](#4-add-the-androidaopconfig-configuration-item-in-apps-buildgradle-this-step-is-an-optional-configuration-item)
+7 . This library supports the generation of all cutting information json and html files, which is convenient for viewing all cutting locations [Configure here](https://flyjingfish.github.io/AndroidAOP/getting_started/#4-add-the-androidaopconfig-configuration-item-in-apps-buildgradle-this-step-is-an-optional-configuration-item)
 
-**8 . This library supports debug rapid development mode, allowing you to package at almost the same speed**
+**8. This library supports multiple rapid development modes, which makes your packaging speed almost unchanged [Configure here](https://flyjingfish.github.io/AndroidAOP/getting_started/#5-you-can-set-the-packaging-method-during-development-this-step-is-an-optional-configuration-item-it-is-recommended-to-configure-this-item-to-speed-up-development)**
 
-**9 . This library supports component-based development mode**
+**9. This library supports Component-based development [configure here](https://flyjingfish.github.io/AndroidAOP/getting_started/#method-2-debugmode)**
 
 **10. This library is pure static weaving into AOP code**
 
