@@ -81,7 +81,7 @@ It is recommended to click **Docs** below to directly view the documentation wit
 
 6 . This library supports coroutine functions whose pointcut methods are suspend.
 
-7 . This library supports generating Json files of all pointcut information to facilitate an overview of all pointcut locations [Configure here](#4-add-the-androidaopconfig-configuration-item-in-apps-buildgradle-this-step-is-an-optional-configuration-item)
+7 . This library supports generating all cut-off information json and html files, which is convenient for viewing all cut-off locations [Configure here](#4-add-the-androidaopconfig-configuration-item-in-apps-buildgradle-this-step-is-an-optional-configuration-item)
 
 **8 . This library supports debug rapid development mode, allowing you to package at almost the same speed**
 
