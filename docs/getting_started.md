@@ -400,7 +400,7 @@ Add the following settings to `gradle.properties` in the **root directory** (opt
 
 
 ```properties
-androidAop.debugMode.buildConfig = true //If set to true, it means exporting a DebugModeBuildConfig.java file. If not set, the default value is false.
+androidAop.debugMode.buildConfig = true //If set to true, it means exporting a DebugModeBuildConfig.java file. If not set, the default value is true.
 ```
 
 !!! note
