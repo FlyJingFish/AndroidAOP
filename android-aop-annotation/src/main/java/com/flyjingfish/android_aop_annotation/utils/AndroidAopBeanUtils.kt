@@ -21,6 +21,7 @@ internal object AndroidAopBeanUtils {
 
     fun releaseReturnObject(o : Array<Any?>):Any?{
         val obj = o[0]
+        o[0] = null
         mReturnObjectPool.release(o)
         return obj
     }
