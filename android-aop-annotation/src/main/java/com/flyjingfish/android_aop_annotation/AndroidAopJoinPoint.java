@@ -139,48 +139,7 @@ public final class AndroidAopJoinPoint {
                 if (iterator.hasNext()) {
                     PointCutAnnotation nextCutAnnotation = iterator.next();
                     JoinPointBridge.setHasNext(proceedJoinPoint,iterator.hasNext());
-                    Object value;
-                    if (nextCutAnnotation.basePointCut != null) {
-                        if (isSuspend){
-                            if (nextCutAnnotation.basePointCut instanceof BasePointCutSuspend){
-                                value = ((BasePointCutSuspend<Annotation>) nextCutAnnotation.basePointCut).invokeSuspend((ProceedJoinPointSuspend) proceedJoinPoint, nextCutAnnotation.annotation,continuation);
-                            }else {
-                                try {
-                                    value = nextCutAnnotation.basePointCut.invoke(proceedJoinPoint, nextCutAnnotation.annotation);
-                                } catch (ClassCastException e) {
-                                    String message = e.getMessage();
-                                    if (message == null || !message.contains("kotlin.coroutines.intrinsics.CoroutineSingletons")){
-                                        throw e;
-                                    }else {
-                                        throw new AndroidAOPSuspendReturnException("协程函数的切面不可修改返回值，请使用 BasePointCutSuspend");
-//                                        value = proceedJoinPoint.getMethodReturnValue();
-                                    }
-                                }
-                            }
-                        }else {
-                            value = nextCutAnnotation.basePointCut.invoke(proceedJoinPoint, nextCutAnnotation.annotation);
-                        }
-                    } else {
-                        if (isSuspend){
-                            if (nextCutAnnotation.matchClassMethod instanceof MatchClassMethodSuspend){
-                                value = ((MatchClassMethodSuspend) nextCutAnnotation.matchClassMethod).invokeSuspend((ProceedJoinPointSuspend) proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName(),continuation);
-                            }else {
-                                try {
-                                    value = nextCutAnnotation.matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
-                                } catch (ClassCastException e) {
-                                    String message = e.getMessage();
-                                    if (message == null || !message.contains("kotlin.coroutines.intrinsics.CoroutineSingletons")){
-                                        throw e;
-                                    }else {
-                                        throw new AndroidAOPSuspendReturnException("协程函数的切面不可修改返回值，请使用 MatchClassMethodSuspend");
-//                                        value = proceedJoinPoint.getMethodReturnValue();
-                                    }
-                                }
-                            }
-                        }else {
-                            value = nextCutAnnotation.matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
-                        }
-                    }
+                    Object value = invoke(nextCutAnnotation,isSuspend,proceedJoinPoint,continuation);
                     returnValue[0] = value;
                     return value;
                 }else {
@@ -191,48 +150,54 @@ public final class AndroidAopJoinPoint {
 
 
         PointCutAnnotation cutAnnotation = iterator.next();
-        if (cutAnnotation.basePointCut != null) {
+        returnValue[0] = invoke(cutAnnotation,isSuspend,proceedJoinPoint,continuation);
+        return AndroidAopBeanUtils.INSTANCE.releaseReturnObject(returnValue);
+    }
+
+    private static Object invoke(PointCutAnnotation nextCutAnnotation,boolean isSuspend,ProceedJoinPoint proceedJoinPoint,Continuation continuation) throws Throwable{
+        Object value;
+        if (nextCutAnnotation.basePointCut != null) {
             if (isSuspend){
-                if (cutAnnotation.basePointCut instanceof BasePointCutSuspend){
-                    returnValue[0] = ((BasePointCutSuspend<Annotation>) cutAnnotation.basePointCut).invokeSuspend((ProceedJoinPointSuspend) proceedJoinPoint, cutAnnotation.annotation,continuation);
+                if (nextCutAnnotation.basePointCut instanceof BasePointCutSuspend){
+                    value = ((BasePointCutSuspend<Annotation>) nextCutAnnotation.basePointCut).invokeSuspend((ProceedJoinPointSuspend) proceedJoinPoint, nextCutAnnotation.annotation,continuation);
                 }else {
                     try {
-                        returnValue[0] = cutAnnotation.basePointCut.invoke(proceedJoinPoint, cutAnnotation.annotation);
+                        value = nextCutAnnotation.basePointCut.invoke(proceedJoinPoint, nextCutAnnotation.annotation);
                     } catch (ClassCastException e) {
                         String message = e.getMessage();
                         if (message == null || !message.contains("kotlin.coroutines.intrinsics.CoroutineSingletons")){
                             throw e;
                         }else {
                             throw new AndroidAOPSuspendReturnException("协程函数的切面不可修改返回值，请使用 BasePointCutSuspend");
-//                            returnValue[0] = proceedJoinPoint.getMethodReturnValue();
+//                                        value = proceedJoinPoint.getMethodReturnValue();
                         }
                     }
                 }
             }else {
-                returnValue[0] = cutAnnotation.basePointCut.invoke(proceedJoinPoint, cutAnnotation.annotation);
+                value = nextCutAnnotation.basePointCut.invoke(proceedJoinPoint, nextCutAnnotation.annotation);
             }
         } else {
             if (isSuspend){
-                if (cutAnnotation.matchClassMethod instanceof MatchClassMethodSuspend){
-                    returnValue[0] = ((MatchClassMethodSuspend) cutAnnotation.matchClassMethod).invokeSuspend((ProceedJoinPointSuspend) proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName(),continuation);
+                if (nextCutAnnotation.matchClassMethod instanceof MatchClassMethodSuspend){
+                    value = ((MatchClassMethodSuspend) nextCutAnnotation.matchClassMethod).invokeSuspend((ProceedJoinPointSuspend) proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName(),continuation);
                 }else {
                     try {
-                        returnValue[0] = cutAnnotation.matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
+                        value = nextCutAnnotation.matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
                     } catch (ClassCastException e) {
                         String message = e.getMessage();
                         if (message == null || !message.contains("kotlin.coroutines.intrinsics.CoroutineSingletons")){
                             throw e;
                         }else {
                             throw new AndroidAOPSuspendReturnException("协程函数的切面不可修改返回值，请使用 MatchClassMethodSuspend");
-//                            returnValue[0] = proceedJoinPoint.getMethodReturnValue();
+//                                        value = proceedJoinPoint.getMethodReturnValue();
                         }
                     }
                 }
             }else {
-                returnValue[0] = cutAnnotation.matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
+                value = nextCutAnnotation.matchClassMethod.invoke(proceedJoinPoint, proceedJoinPoint.getTargetMethod().getName());
             }
         }
-        return AndroidAopBeanUtils.INSTANCE.releaseReturnObject(returnValue);
+        return value;
     }
 
 
