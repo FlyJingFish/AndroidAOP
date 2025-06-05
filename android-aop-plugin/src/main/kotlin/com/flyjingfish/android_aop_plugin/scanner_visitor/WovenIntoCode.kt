@@ -36,6 +36,7 @@ import javassist.NotFoundException
 import javassist.bytecode.AnnotationsAttribute
 import javassist.bytecode.AttributeInfo
 import javassist.bytecode.ConstPool
+import javassist.bytecode.SignatureAttribute
 import javassist.bytecode.annotation.Annotation
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -463,7 +464,21 @@ object WovenIntoCode {
 
                 val paramsClassNamesBuffer = StringBuffer()
                 val paramsClassesBuffer = StringBuffer()
-                val returnType = ctMethod.returnType
+
+                val signature: SignatureAttribute? = ctMethod.methodInfo
+                    .getAttribute(SignatureAttribute.tag) as SignatureAttribute?
+                val returnTypeName = if (signature != null){
+                    val methodSig: SignatureAttribute.MethodSignature? =
+                        SignatureAttribute.toMethodSignature(signature.signature)
+                    val returnType2: SignatureAttribute.Type? = methodSig?.returnType
+                    if (returnType2 != null){
+                        extractRawTypeName(returnType2)
+                    }else{
+                        ctMethod.returnType.name
+                    }
+                }else{
+                    ctMethod.returnType.name
+                }
 
                 // 非静态的成员函数的第一个参数是this
                 val pos =  1
@@ -494,33 +509,33 @@ object WovenIntoCode {
 
 
                 val suspendMethod = if (ctClasses.isNotEmpty()){
-                    returnType.name == "java.lang.Object" && ctClasses[ctClasses.size-1].name == "kotlin.coroutines.Continuation"
+                    returnTypeName == "java.lang.Object" && ctClasses[ctClasses.size-1].name == "kotlin.coroutines.Continuation"
                 }else{
                     false
                 }
                 val returnTypeClassName = if (suspendMethod){
-                    returnTypeMap[oldMethodName+oldDescriptor] ?: (returnTypeMap[targetMethodName+oldDescriptor] ?: returnType.name)
+                    returnTypeMap[oldMethodName+oldDescriptor] ?: (returnTypeMap[targetMethodName+oldDescriptor] ?: returnTypeName)
                 }else{
-                    returnType.name
+                    returnTypeName
                 }
                 val argsStr =if (isHasArgs) "new Object[]{$argsBuffer}" else "null"
                 val returnStr = if (isSuspend){
                     String.format(
-                        ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointReturnExecute($argsStr,${if (returnClassName == null) null else KeywordChecker.getClass(returnClassName)})"
+                        ClassNameToConversions.getReturnXObject(returnTypeName), "pointCut.joinPointReturnExecute($argsStr,${if (returnClassName == null) null else KeywordChecker.getClass(returnClassName)})"
                     )
                 }else{
                     String.format(
-                        ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointExecute($argsStr,${if (suspendMethod) "(kotlin.coroutines.Continuation)\$$len" else "null" })"
+                        ClassNameToConversions.getReturnXObject(returnTypeName), "pointCut.joinPointExecute($argsStr,${if (suspendMethod) "(kotlin.coroutines.Continuation)\$$len" else "null" })"
                     )
                 }
 
-//                val returnStr2 = if (returnType.name == "void"){
+//                val returnStr2 = if (returnTypeName == "void"){
 //                    "$returnStr;\nreturn;"
 //                }else{
 //                    "$returnStr;\n"
 //                }
 
-                val invokeReturnStr:String? = ClassNameToConversions.getReturnInvokeXObject(returnType.name)
+                val invokeReturnStr:String? = ClassNameToConversions.getReturnInvokeXObject(returnTypeName)
                 val invokeStr =if (isStaticMethod){
                     "$targetClassName.$targetMethodName($invokeBuffer)"
                 }else{
@@ -620,6 +635,26 @@ object WovenIntoCode {
         val wovenBytes = ctClass.toBytecode()
 //        ctClass.detach()
         return wovenBytes
+    }
+
+    private fun extractRawTypeName(type: SignatureAttribute.Type): String {
+        return when (type) {
+            is SignatureAttribute.ArrayType -> {
+                // 对数组元素类型递归处理
+                val arrayType: SignatureAttribute.ArrayType = type
+                extractRawTypeName(arrayType.componentType) + "[]"
+            }
+
+            is SignatureAttribute.ClassType -> {
+                // 只返回类名，不含泛型参数
+                type.name
+            }
+
+            else -> {
+                // fallback: T, ? 等
+                type.toString()
+            }
+        }
     }
 
     fun deleteNews(classByte:ByteArray,deleteNews : MutableMap<String,List<ReplaceMethodInfo>>,wovenClassWriterFlags:Int,wovenParsingOptions:Int):ByteArray{

@@ -1,6 +1,7 @@
 package com.flyjingfish.androidaop
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Looper
@@ -296,4 +297,7 @@ class MainActivity: BaseVActivity<ActivityMainBinding>(),PermissionRejectListene
         return getDelayResult()
     }
 
+    fun <T : Context> getType(s:T):T{
+        return s
+    }
 }
