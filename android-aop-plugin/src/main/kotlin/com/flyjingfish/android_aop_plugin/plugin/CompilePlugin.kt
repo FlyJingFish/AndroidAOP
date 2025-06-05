@@ -38,6 +38,8 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
     }
 
     override fun apply(project: Project) {
+        if (project.extensions.findByName("CompilePluginApplied") != null) return
+        project.extensions.add("CompilePluginApplied", true)
         super.apply(project)
         val isApp = project.plugins.hasPlugin(AppPlugin::class.java)
 

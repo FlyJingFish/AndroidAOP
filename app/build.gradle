@@ -104,8 +104,8 @@ dependencies {
 //    implementation(fileTree("libs"))
 
     implementation project(path: ":test-lib")
-//    implementation project(path: ":sub-modules:sub1")
-//    implementation project(path: ":sub-modules:sub2")
+    implementation project(path: ":sub-modules:sub1")
+    implementation project(path: ":sub-modules:sub2")
     if (TestType == "0"){
         //本地
         ksp project(':android-aop-ksp')
