@@ -21,6 +21,7 @@ import com.flyjingfish.android_aop_plugin.utils.adapterOSPath
 import com.flyjingfish.android_aop_plugin.utils.addPublic
 import com.flyjingfish.android_aop_plugin.utils.checkExist
 import com.flyjingfish.android_aop_plugin.utils.computeMD5
+import com.flyjingfish.android_aop_plugin.utils.getReturnTypeName
 import com.flyjingfish.android_aop_plugin.utils.instanceof
 import com.flyjingfish.android_aop_plugin.utils.isHasMethodBody
 import com.flyjingfish.android_aop_plugin.utils.isStaticMethod
@@ -465,20 +466,7 @@ object WovenIntoCode {
                 val paramsClassNamesBuffer = StringBuffer()
                 val paramsClassesBuffer = StringBuffer()
 
-                val signature: SignatureAttribute? = ctMethod.methodInfo
-                    .getAttribute(SignatureAttribute.tag) as SignatureAttribute?
-                val returnTypeName = if (signature != null){
-                    val methodSig: SignatureAttribute.MethodSignature? =
-                        SignatureAttribute.toMethodSignature(signature.signature)
-                    val returnType2: SignatureAttribute.Type? = methodSig?.returnType
-                    if (returnType2 != null){
-                        extractRawTypeName(returnType2)
-                    }else{
-                        ctMethod.returnType.name
-                    }
-                }else{
-                    ctMethod.returnType.name
-                }
+                val returnTypeName = ctMethod.getReturnTypeName()
 
                 // 非静态的成员函数的第一个参数是this
                 val pos =  1
@@ -486,8 +474,7 @@ object WovenIntoCode {
                 val invokeBuffer = StringBuffer()
                 var argClassHasKeyword = false
                 for (i in ctClasses.indices) {
-                    val aClass = ctClasses[i]
-                    val name = aClass.name
+                    val name = Utils.extractRawTypeName(ctClasses[i].name)
 
                     paramsClassNamesBuffer.append("\"").append(name).append("\"")
                     paramsClassesBuffer.append(ClassNameToConversions.string2Class(name))
@@ -637,25 +624,7 @@ object WovenIntoCode {
         return wovenBytes
     }
 
-    private fun extractRawTypeName(type: SignatureAttribute.Type): String {
-        return when (type) {
-            is SignatureAttribute.ArrayType -> {
-                // 对数组元素类型递归处理
-                val arrayType: SignatureAttribute.ArrayType = type
-                extractRawTypeName(arrayType.componentType) + "[]"
-            }
 
-            is SignatureAttribute.ClassType -> {
-                // 只返回类名，不含泛型参数
-                type.name
-            }
-
-            else -> {
-                // fallback: T, ? 等
-                type.toString()
-            }
-        }
-    }
 
     fun deleteNews(classByte:ByteArray,deleteNews : MutableMap<String,List<ReplaceMethodInfo>>,wovenClassWriterFlags:Int,wovenParsingOptions:Int):ByteArray{
         return if (deleteNews.isNotEmpty()){
