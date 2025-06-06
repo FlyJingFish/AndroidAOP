@@ -367,6 +367,17 @@ object Utils {
         }
 
     }
+    fun extractRawTypeNames(typeName: String): Pair<Boolean,String> {
+        val name = stripAllGenerics(typeName)
+        val className = name.replace("[]","")
+        return try {
+            val ctclass = ClassPoolUtils.getNewClassPool().getCtClass(className)
+            Pair(true,name)
+        } catch (e: NotFoundException) {
+            Pair(false,name.replace(className,"java.lang.Object"))
+        }
+
+    }
     fun stripAllGenerics(typeDesc: String): String {
         val result = StringBuilder()
         var angleDepth = 0

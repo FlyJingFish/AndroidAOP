@@ -519,11 +519,11 @@ object WovenIntoCode {
                         if (suspendType == null){
                             returnTypeClassName
                         }else{
-                            val type = Utils.extractRawTypeName(suspendType)
-                            if (type == "java.lang.Object"){
-                                returnTypeClassName
+                            val type = Utils.extractRawTypeNames(suspendType)
+                            if (type.first){
+                                type.second
                             }else{
-                                type
+                                returnTypeClassName
                             }
                         }
                     }else{

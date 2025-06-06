@@ -282,7 +282,13 @@ class ThirdActivity : BaseActivity()  {
             num
         }
     }
-
+    @Permission(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    fun onPermission4(){
+    }
+    @MyAnno3
+    fun getNothing2(num:IntArray) :Nothing?{
+        return null
+    }
     @MyAnno3
     suspend fun getNothing(num:IntArray) :Nothing?{
         return withContext(Dispatchers.IO) {
