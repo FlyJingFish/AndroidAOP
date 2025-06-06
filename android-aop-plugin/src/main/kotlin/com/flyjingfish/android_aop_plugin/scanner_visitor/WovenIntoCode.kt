@@ -506,15 +506,31 @@ object WovenIntoCode {
                 }else{
                     false
                 }
-                val returnTypeClassName = if (suspendMethod){
-                    returnTypeMap[oldMethodName+oldDescriptor] ?: (returnTypeMap[targetMethodName+oldDescriptor] ?: returnTypeName)
+                val runtimeReturnTypeClassName = if (suspendMethod){
+                    val mapType = returnTypeMap[oldMethodName + oldDescriptor]
+                        ?: returnTypeMap[targetMethodName + oldDescriptor]
+                    val returnTypeClassName = if (mapType == null) {
+                        returnTypeName
+                    } else {
+                        Utils.extractRawTypeName(mapType)
+                    }
+                    if (metadata != null){
+                        val suspendType = parseSuspendFunctions(metadata,"$oldMethodName$oldDescriptor")
+                        if (suspendType == null){
+                            returnTypeClassName
+                        }else{
+                            val type = Utils.extractRawTypeName(suspendType)
+                            if (type == "java.lang.Object"){
+                                returnTypeClassName
+                            }else{
+                                type
+                            }
+                        }
+                    }else{
+                        returnTypeClassName
+                    }
                 }else{
                     returnTypeName
-                }
-                val runtimeReturnTypeClassName = if (suspendMethod && metadata != null){
-                    parseSuspendFunctions(metadata,"$oldMethodName$oldDescriptor") ?: returnTypeClassName
-                }else{
-                    returnTypeClassName
                 }
                 val argsStr =if (isHasArgs) "new Object[]{$argsBuffer}" else "null"
                 val returnStr = if (isSuspendClass){
@@ -708,10 +724,9 @@ object WovenIntoCode {
     }
 
     private fun KmType.toJavaType(): String? {
-        val classifier = this.classifier
-        val baseType = when (classifier) {
-            is KmClassifier.Class -> classifier.name.replace('/', '.')
-            is KmClassifier.TypeAlias -> classifier.name
+        val baseType = when (val classifier = this.classifier) {
+            is KmClassifier.Class -> classifier.name.replace('.', '$').replace('/', '.')
+            is KmClassifier.TypeAlias -> classifier.name.replace('.', '$').replace('/', '.')
             else -> null
         }
 
@@ -754,11 +769,7 @@ object WovenIntoCode {
             }
             else -> baseType // 可能是自定义类
         }
-        return if (mappedBase != null){
-            Utils.extractRawTypeName(mappedBase)
-        }else{
-            null
-        }
+        return mappedBase
     }
     fun deleteNews(classByte:ByteArray,deleteNews : MutableMap<String,List<ReplaceMethodInfo>>,wovenClassWriterFlags:Int,wovenParsingOptions:Int):ByteArray{
         return if (deleteNews.isNotEmpty()){

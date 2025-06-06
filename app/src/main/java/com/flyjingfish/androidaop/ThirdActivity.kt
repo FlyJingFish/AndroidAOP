@@ -324,4 +324,27 @@ class ThirdActivity : BaseActivity()  {
         Lala
     }
 
+    @MyAnno3
+    suspend fun getMyInt(num:IntArray) :MyInt?{
+        return withContext(Dispatchers.IO) {
+            1
+        }
+    }
+
+    @MyAnno3
+    suspend fun getMySome(num:IntArray) :MySome{
+        return withContext(Dispatchers.IO) {
+            Some.Lala
+        }
+    }
+
+    @MyAnno3
+    suspend fun getMy3(num:IntArray) :My3{
+        return withContext(Dispatchers.IO) {
+            this@ThirdActivity
+        }
+    }
 }
+typealias MyInt = Int
+typealias MySome = ThirdActivity.Some
+typealias My3 = ThirdActivity
