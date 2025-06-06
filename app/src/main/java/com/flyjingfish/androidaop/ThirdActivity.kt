@@ -164,6 +164,14 @@ class ThirdActivity : BaseActivity()  {
     }
 
     @MyAnno3
+    suspend fun getDataArray111(num:Int) :Array<Array<Int>>{
+        return withContext(Dispatchers.IO) {
+            Log.e("MyAnnoCut","=====getDataArray=====2")
+            arrayOf(arrayOf(num))
+        }
+    }
+
+    @MyAnno3
     @MyAnno4
     @MyAnno5
     suspend fun getData1(num:Int) :Int{
@@ -255,4 +263,16 @@ class ThirdActivity : BaseActivity()  {
         }
     }
 
+    @Permission(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    suspend fun onPermission2(){
+        return withContext(Dispatchers.Main) {
+            listOf(1,2)
+        }
+    }
+
+    suspend fun onPermission3():Array<List<Any>>{
+        return withContext(Dispatchers.Main) {
+            arrayOf(listOf(1,2))
+        }
+    }
 }

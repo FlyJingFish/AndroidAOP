@@ -37,13 +37,18 @@ import javassist.NotFoundException
 import javassist.bytecode.AnnotationsAttribute
 import javassist.bytecode.AttributeInfo
 import javassist.bytecode.ConstPool
-import javassist.bytecode.SignatureAttribute
 import javassist.bytecode.annotation.Annotation
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
+import kotlinx.metadata.KmClassifier
+import kotlinx.metadata.KmType
+import kotlinx.metadata.isSuspend
+import kotlinx.metadata.jvm.KotlinClassMetadata
+import kotlinx.metadata.jvm.Metadata
+import kotlinx.metadata.jvm.signature
 import org.gradle.api.Project
 import org.objectweb.asm.*
 import org.objectweb.asm.ClassWriter.COMPUTE_FRAMES
@@ -371,6 +376,7 @@ object WovenIntoCode {
         val byteArrayInputStream: InputStream =
             ByteArrayInputStream(newClassByte)
         val ctClass = cp.makeClass(byteArrayInputStream)
+        val metadata = extractMetadataFromByteArray(newClassByte)
         cp.importPackage(JOIN_POINT_CLASS)
         cp.importPackage(CONVERSIONS_CLASS)
         cp.importPackage(KEEP_CLASS)
@@ -505,6 +511,11 @@ object WovenIntoCode {
                 }else{
                     returnTypeName
                 }
+                val useReturnTypeClassName = if (suspendMethod && metadata != null){
+                    parseSuspendFunctions(metadata,"$oldMethodName$oldDescriptor") ?: returnTypeClassName
+                }else{
+                    returnTypeClassName
+                }
                 val argsStr =if (isHasArgs) "new Object[]{$argsBuffer}" else "null"
                 val returnStr = if (isSuspend){
                     String.format(
@@ -577,7 +588,7 @@ object WovenIntoCode {
                                 "pointCut.setArgClasses(classes);\n"+
                                 "String[] paramNames = new String[]{$paramsNamesBuffer};\n"+
                                 "pointCut.setParamNames(paramNames);\n"+
-                                "pointCut.setReturnClass(${KeywordChecker.getClass(returnTypeClassName)});\n"+
+                                "pointCut.setReturnClass(${KeywordChecker.getClass(useReturnTypeClassName)});\n"+
                                 "pointCut.setInvokeMethod($invokeMethodStr,$suspendMethod);\n"
 
                 newMethodBody = if (isStaticMethod){
@@ -625,7 +636,119 @@ object WovenIntoCode {
     }
 
 
+    // 提取 @Metadata 注解
+    private fun extractMetadataFromByteArray(byteArray: ByteArray): Metadata? {
+        val classReader = ClassReader(byteArray)
+        var metadata: Metadata? = null
 
+        classReader.accept(object : ClassVisitor(Opcodes.ASM9) {
+            override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
+                if (desc == "Lkotlin/Metadata;") {
+                    return object : AnnotationVisitor(Opcodes.ASM9) {
+                        var kind = 1
+                        var mv: IntArray? = null
+                        var d1: Array<String>? = null
+                        var d2: Array<String>? = null
+                        var xs: String? = null
+                        var pn: String? = null
+                        var xi = 0
+
+                        override fun visit(name: String, value: Any?) {
+                            when (name) {
+                                "k" -> kind = value as Int
+                                "xs" -> xs = value as String
+                                "pn" -> pn = value as String
+                                "xi" -> xi = value as Int
+                            }
+                        }
+
+                        override fun visitArray(name: String): AnnotationVisitor {
+                            return object : AnnotationVisitor(Opcodes.ASM9) {
+                                val list = mutableListOf<String>()
+                                override fun visit(name: String?, value: Any?) {
+                                    if (value is String) list.add(value)
+                                }
+
+                                override fun visitEnd() {
+                                    when (name) {
+                                        "d1" -> d1 = list.toTypedArray()
+                                        "d2" -> d2 = list.toTypedArray()
+                                    }
+                                }
+                            }
+                        }
+
+                        override fun visitEnd() {
+                            if (d1 != null && d2 != null && mv != null) {
+                                metadata = Metadata(kind, mv, d1!!, d2!!, xs, pn, xi)
+                            } else if (d1 != null && d2 != null) {
+                                metadata = Metadata(kind, intArrayOf(1, 8, 0), d1!!, d2!!, xs, pn, xi)
+                            }
+                        }
+                    }
+                }
+                return null
+            }
+        }, 0)
+
+        return metadata
+    }
+
+    // 使用 kotlinx-metadata 解析 suspend 方法及返回类型
+    private fun parseSuspendFunctions(metadata: Metadata,signature:String):String? {
+        val km = KotlinClassMetadata.readStrict(metadata)
+        val kmClass = (km as? KotlinClassMetadata.Class)?.kmClass ?: return null
+
+        for (func in kmClass.functions) {
+            if (func.isSuspend && signature == func.signature.toString()) {
+                return func.returnType.toJavaType()
+            }
+        }
+        return null
+    }
+
+    private fun KmType.toJavaType(): String? {
+        val classifier = this.classifier
+        val baseType = when (classifier) {
+            is KmClassifier.Class -> classifier.name.replace('/', '.')
+            is KmClassifier.TypeAlias -> classifier.name
+            else -> null
+        }
+
+        val mappedBase = when (baseType) {
+            "kotlin.Int" -> "int"
+            "kotlin.Long" -> "long"
+            "kotlin.Short" -> "short"
+            "kotlin.Byte" -> "byte"
+            "kotlin.Boolean" -> "boolean"
+            "kotlin.Char" -> "char"
+            "kotlin.Float" -> "float"
+            "kotlin.Double" -> "double"
+            "kotlin.Unit" -> "void"
+            "kotlin.String" -> "java.lang.String"
+            "kotlin.Any" -> "java.lang.Object"
+            "kotlin.Array" -> {
+                // 泛型数组
+                val elementType = arguments.firstOrNull()?.type?.toJavaType() ?: "java.lang.Object"
+                "$elementType[]"
+            }
+            "kotlin.collections.List", "kotlin.collections.MutableList" -> {
+                "java.util.List"
+            }
+            "kotlin.collections.Set", "kotlin.collections.MutableSet" -> {
+                "java.util.Set"
+            }
+            "kotlin.collections.Map", "kotlin.collections.MutableMap" -> {
+                "java.util.Map"
+            }
+            else -> baseType // 可能是自定义类
+        }
+        return if (mappedBase != null){
+            Utils.extractRawTypeName(mappedBase)
+        }else{
+            null
+        }
+    }
     fun deleteNews(classByte:ByteArray,deleteNews : MutableMap<String,List<ReplaceMethodInfo>>,wovenClassWriterFlags:Int,wovenParsingOptions:Int):ByteArray{
         return if (deleteNews.isNotEmpty()){
             try {

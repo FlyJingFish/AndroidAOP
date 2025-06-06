@@ -341,9 +341,12 @@ object Utils {
     private val classnamePattern1 = Pattern.compile("Lkotlin/coroutines/jvm/internal/SuspendLambda;Lkotlin/jvm/functions/Function2<Lkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation<-.*?")
 
     fun getSuspendClassType(type: String?): String? {
-        return getType(type,classnamePattern,classnamePattern1,">;Ljava/lang/Object;>;")
+        val typeName = getType(type, classnamePattern, classnamePattern1, ">;Ljava/lang/Object;>;")
+        if (typeName != null) {
+            return extractRawTypeName(typeName)
+        }
+        return null
     }
-
     private val signatureClassnamePattern = Pattern.compile("\\(.*?kotlin/coroutines/Continuation<-.*?>;\\)Ljava/lang/Object;")
     private val signatureClassnamePattern1 = Pattern.compile("\\(.*?kotlin/coroutines/Continuation<-.*?")
     fun getSuspendMethodType(type: String?): String? {
