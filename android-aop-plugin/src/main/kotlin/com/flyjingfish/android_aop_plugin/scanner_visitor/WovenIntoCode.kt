@@ -72,8 +72,8 @@ object WovenIntoCode {
         methodRecordHashMap: HashMap<String, MethodRecord>,
         hasReplace:Boolean,
         invokeStaticClass:String,
-        wovenClassWriterFlags:Int,wovenParsingOptions:Int,
-        isSuspend:Boolean
+        wovenClassWriterFlags:Int, wovenParsingOptions:Int,
+        isSuspendClass:Boolean
     ): ByteArray {
         val wovenRecord = mutableListOf<MethodRecord>()
         val overrideRecord = mutableListOf<MethodRecord>()
@@ -220,7 +220,7 @@ object WovenIntoCode {
                     interfaces: Array<out String>?
                 ) {
                     super.visit(version, access.addPublic(isModifyPublic), name, signature, superName, interfaces)
-                    if (isSuspend){
+                    if (isSuspendClass){
                         returnClassName = Utils.getSuspendClassType(signature)
 //                        printLog("wovenCode === $signature ==== $returnClassName")
                     }
@@ -414,12 +414,12 @@ object WovenIntoCode {
                 val targetMethod =
                     getCtMethod(ctClass, targetMethodName, oldDescriptor)
                 if (ctMethod == null){
-                    if (!isSuspend){
+                    if (!isSuspendClass){
                         printLog("------ctMethod ${targetClassName}${oldMethodName}${oldDescriptor} 方法找不到了-----")
                     }
                     return@forEach
                 }else if (targetMethod == null){
-                    if (!isSuspend){
+                    if (!isSuspendClass){
                         printLog("------targetMethod ${targetClassName}${targetMethodName}${oldDescriptor} 方法找不到了-----")
                     }
                     return@forEach
@@ -511,13 +511,13 @@ object WovenIntoCode {
                 }else{
                     returnTypeName
                 }
-                val useReturnTypeClassName = if (suspendMethod && metadata != null){
+                val runtimeReturnTypeClassName = if (suspendMethod && metadata != null){
                     parseSuspendFunctions(metadata,"$oldMethodName$oldDescriptor") ?: returnTypeClassName
                 }else{
                     returnTypeClassName
                 }
                 val argsStr =if (isHasArgs) "new Object[]{$argsBuffer}" else "null"
-                val returnStr = if (isSuspend){
+                val returnStr = if (isSuspendClass){
                     String.format(
                         ClassNameToConversions.getReturnXObject(returnTypeName), "pointCut.joinPointReturnExecute($argsStr,${if (returnClassName == null) null else KeywordChecker.getClass(returnClassName)})"
                     )
@@ -588,7 +588,7 @@ object WovenIntoCode {
                                 "pointCut.setArgClasses(classes);\n"+
                                 "String[] paramNames = new String[]{$paramsNamesBuffer};\n"+
                                 "pointCut.setParamNames(paramNames);\n"+
-                                "pointCut.setReturnClass(${KeywordChecker.getClass(useReturnTypeClassName)});\n"+
+                                "pointCut.setReturnClass(${KeywordChecker.getClass(runtimeReturnTypeClassName)});\n"+
                                 "pointCut.setInvokeMethod($invokeMethodStr,$suspendMethod);\n"
 
                 newMethodBody = if (isStaticMethod){
