@@ -716,6 +716,7 @@ object WovenIntoCode {
         }
 
         val mappedBase = when (baseType) {
+            // 基本类型
             "kotlin.Int" -> "int"
             "kotlin.Long" -> "long"
             "kotlin.Short" -> "short"
@@ -724,22 +725,32 @@ object WovenIntoCode {
             "kotlin.Char" -> "char"
             "kotlin.Float" -> "float"
             "kotlin.Double" -> "double"
+
+            // 常用对象类型
             "kotlin.Unit" -> "void"
             "kotlin.String" -> "java.lang.String"
             "kotlin.Any" -> "java.lang.Object"
+            "kotlin.Nothing" -> "java.lang.Void"
+            "kotlin.Throwable" -> "java.lang.Throwable"
+
+            // Java 集合
+            "kotlin.collections.List", "kotlin.collections.MutableList" -> "java.util.List"
+            "kotlin.collections.Set", "kotlin.collections.MutableSet" -> "java.util.Set"
+            "kotlin.collections.Map", "kotlin.collections.MutableMap" -> "java.util.Map"
+
+            // 原始数组类型（非泛型）
+            "kotlin.IntArray" -> "int[]"
+            "kotlin.LongArray" -> "long[]"
+            "kotlin.ShortArray" -> "short[]"
+            "kotlin.ByteArray" -> "byte[]"
+            "kotlin.BooleanArray" -> "boolean[]"
+            "kotlin.CharArray" -> "char[]"
+            "kotlin.FloatArray" -> "float[]"
+            "kotlin.DoubleArray" -> "double[]"
+            // 泛型数组，如 Array<String> → java.lang.String[]
             "kotlin.Array" -> {
-                // 泛型数组
                 val elementType = arguments.firstOrNull()?.type?.toJavaType() ?: "java.lang.Object"
                 "$elementType[]"
-            }
-            "kotlin.collections.List", "kotlin.collections.MutableList" -> {
-                "java.util.List"
-            }
-            "kotlin.collections.Set", "kotlin.collections.MutableSet" -> {
-                "java.util.Set"
-            }
-            "kotlin.collections.Map", "kotlin.collections.MutableMap" -> {
-                "java.util.Map"
             }
             else -> baseType // 可能是自定义类
         }

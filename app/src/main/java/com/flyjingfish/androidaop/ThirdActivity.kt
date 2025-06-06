@@ -275,4 +275,53 @@ class ThirdActivity : BaseActivity()  {
             arrayOf(listOf(1,2))
         }
     }
+
+    @MyAnno3
+    suspend fun getDataArray222(num:IntArray) :IntArray{
+        return withContext(Dispatchers.IO) {
+            num
+        }
+    }
+
+    @MyAnno3
+    suspend fun getNothing(num:IntArray) :Nothing?{
+        return withContext(Dispatchers.IO) {
+            null
+        }
+    }
+    @MyAnno3
+    suspend fun getUnit(num:IntArray) :Unit?{
+        return withContext(Dispatchers.IO) {
+            null
+        }
+    }
+    @MyAnno3
+    suspend fun getThrowable(num:IntArray) :Throwable?{
+        return withContext(Dispatchers.IO) {
+            null
+        }
+    }
+    @MyAnno3
+    suspend fun getException(num:IntArray) :Exception?{
+        return withContext(Dispatchers.IO) {
+            null
+        }
+    }
+    @MyAnno3
+    suspend fun getNullPointerException(num:IntArray) :NullPointerException?{
+        return withContext(Dispatchers.IO) {
+            null
+        }
+    }
+    @MyAnno3
+    suspend fun getSome(num:IntArray) :Some{
+        return withContext(Dispatchers.IO) {
+            Some.Lala
+        }
+    }
+
+    enum class Some{
+        Lala
+    }
+
 }
