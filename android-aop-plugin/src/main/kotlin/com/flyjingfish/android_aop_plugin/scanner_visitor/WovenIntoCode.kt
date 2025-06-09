@@ -791,7 +791,13 @@ object WovenIntoCode {
             }
 
             // 常用对象类型
-            "kotlin.Unit" -> "void"
+            "kotlin.Unit" -> {
+                if (isNullable || isArray){
+                    "kotlin.Unit"
+                }else{
+                    "void"
+                }
+            }
             "kotlin.String" -> "java.lang.String"
             "kotlin.Any" -> "java.lang.Object"
             "kotlin.Nothing" -> "java.lang.Void"

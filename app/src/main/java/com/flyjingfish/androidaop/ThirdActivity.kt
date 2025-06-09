@@ -328,10 +328,46 @@ class ThirdActivity : BaseActivity()  {
         }
     }
     @MyAnno3
-    suspend fun getUnit(num:IntArray) :Unit?{
+    fun getNothing22(num:Nothing) :Nothing{
+        return num
+    }
+    @MyAnno3
+    suspend fun getNothing222(num:Nothing) :Nothing{
         return withContext(Dispatchers.IO) {
-            null
+            num
         }
+    }
+    @MyAnno3
+    suspend fun getUnit(num:Unit) :Unit{
+        return withContext(Dispatchers.IO) {
+            num
+        }
+    }
+
+    @MyAnno3
+    fun getUnit2(num:Unit) :Unit{
+        return num
+    }
+
+    @MyAnno3
+    suspend fun getUnitArray(num:Array<Unit>) :Array<Unit>{
+        return withContext(Dispatchers.IO) {
+            num
+        }
+    }
+    @MyAnno3
+    fun getUnitArray2(num:Array<Unit>?) :Array<Unit>?{
+        return num
+    }
+    @MyAnno3
+    suspend fun getUnitArray1(num:Array<Unit?>) :Array<Unit?>{
+        return withContext(Dispatchers.IO) {
+            num
+        }
+    }
+    @MyAnno3
+    fun getUnitArray22(num:Array<Unit?>?) :Array<Unit?>?{
+        return num
     }
     @MyAnno3
     suspend fun getThrowable(num:IntArray) :Throwable?{
