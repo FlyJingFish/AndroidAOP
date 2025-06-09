@@ -378,7 +378,7 @@ object Utils {
         }
 
     }
-    fun stripAllGenerics(typeDesc: String): String {
+    private fun stripAllGenerics(typeDesc: String): String {
         val result = StringBuilder()
         var angleDepth = 0
         for (c in typeDesc) {
