@@ -822,7 +822,13 @@ object WovenIntoCode {
                 val elementType = arguments.firstOrNull()?.type?.toJavaType(true) ?: "java.lang.Object"
                 "$elementType[]"
             }
-            else -> baseType // 可能是自定义类
+            else -> {
+                if (baseType?.startsWith("kotlin.") == true){
+                    null
+                }else{
+                    baseType
+                }
+            } // 可能是自定义类
         }
         return mappedBase
     }
