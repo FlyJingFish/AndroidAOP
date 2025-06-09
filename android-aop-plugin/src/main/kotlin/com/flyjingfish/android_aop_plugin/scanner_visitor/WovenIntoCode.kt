@@ -21,6 +21,7 @@ import com.flyjingfish.android_aop_plugin.utils.adapterOSPath
 import com.flyjingfish.android_aop_plugin.utils.addPublic
 import com.flyjingfish.android_aop_plugin.utils.checkExist
 import com.flyjingfish.android_aop_plugin.utils.computeMD5
+import com.flyjingfish.android_aop_plugin.utils.getReturnTypeName
 import com.flyjingfish.android_aop_plugin.utils.instanceof
 import com.flyjingfish.android_aop_plugin.utils.isHasMethodBody
 import com.flyjingfish.android_aop_plugin.utils.isStaticMethod
@@ -42,6 +43,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
+import kotlinx.metadata.KmClassifier
+import kotlinx.metadata.KmType
+import kotlinx.metadata.isNullable
+import kotlinx.metadata.isSuspend
+import kotlinx.metadata.jvm.KotlinClassMetadata
+import kotlinx.metadata.jvm.Metadata
+import kotlinx.metadata.jvm.signature
 import org.gradle.api.Project
 import org.objectweb.asm.*
 import org.objectweb.asm.ClassWriter.COMPUTE_FRAMES
@@ -65,8 +73,8 @@ object WovenIntoCode {
         methodRecordHashMap: HashMap<String, MethodRecord>,
         hasReplace:Boolean,
         invokeStaticClass:String,
-        wovenClassWriterFlags:Int,wovenParsingOptions:Int,
-        isSuspend:Boolean
+        wovenClassWriterFlags:Int, wovenParsingOptions:Int,
+        isSuspendClass:Boolean
     ): ByteArray {
         val wovenRecord = mutableListOf<MethodRecord>()
         val overrideRecord = mutableListOf<MethodRecord>()
@@ -213,7 +221,7 @@ object WovenIntoCode {
                     interfaces: Array<out String>?
                 ) {
                     super.visit(version, access.addPublic(isModifyPublic), name, signature, superName, interfaces)
-                    if (isSuspend){
+                    if (isSuspendClass){
                         returnClassName = Utils.getSuspendClassType(signature)
 //                        printLog("wovenCode === $signature ==== $returnClassName")
                     }
@@ -369,6 +377,7 @@ object WovenIntoCode {
         val byteArrayInputStream: InputStream =
             ByteArrayInputStream(newClassByte)
         val ctClass = cp.makeClass(byteArrayInputStream)
+        val metadata = extractMetadataFromByteArray(newClassByte)
         cp.importPackage(JOIN_POINT_CLASS)
         cp.importPackage(CONVERSIONS_CLASS)
         cp.importPackage(KEEP_CLASS)
@@ -406,12 +415,12 @@ object WovenIntoCode {
                 val targetMethod =
                     getCtMethod(ctClass, targetMethodName, oldDescriptor)
                 if (ctMethod == null){
-                    if (!isSuspend){
+                    if (!isSuspendClass){
                         printLog("------ctMethod ${targetClassName}${oldMethodName}${oldDescriptor} 方法找不到了-----")
                     }
                     return@forEach
                 }else if (targetMethod == null){
-                    if (!isSuspend){
+                    if (!isSuspendClass){
                         printLog("------targetMethod ${targetClassName}${targetMethodName}${oldDescriptor} 方法找不到了-----")
                     }
                     return@forEach
@@ -463,7 +472,8 @@ object WovenIntoCode {
 
                 val paramsClassNamesBuffer = StringBuffer()
                 val paramsClassesBuffer = StringBuffer()
-                val returnType = ctMethod.returnType
+
+                val returnTypeName = ctMethod.getReturnTypeName()
 
                 // 非静态的成员函数的第一个参数是this
                 val pos =  1
@@ -471,8 +481,7 @@ object WovenIntoCode {
                 val invokeBuffer = StringBuffer()
                 var argClassHasKeyword = false
                 for (i in ctClasses.indices) {
-                    val aClass = ctClasses[i]
-                    val name = aClass.name
+                    val name = Utils.extractRawTypeName(ctClasses[i].name)
 
                     paramsClassNamesBuffer.append("\"").append(name).append("\"")
                     paramsClassesBuffer.append(ClassNameToConversions.string2Class(name))
@@ -494,33 +503,54 @@ object WovenIntoCode {
 
 
                 val suspendMethod = if (ctClasses.isNotEmpty()){
-                    returnType.name == "java.lang.Object" && ctClasses[ctClasses.size-1].name == "kotlin.coroutines.Continuation"
+                    returnTypeName == "java.lang.Object" && ctClasses[ctClasses.size-1].name == "kotlin.coroutines.Continuation"
                 }else{
                     false
                 }
-                val returnTypeClassName = if (suspendMethod){
-                    returnTypeMap[oldMethodName+oldDescriptor] ?: (returnTypeMap[targetMethodName+oldDescriptor] ?: returnType.name)
+                val runtimeReturnTypeClassName = if (suspendMethod){
+                    val mapType = returnTypeMap[oldMethodName + oldDescriptor]
+                        ?: returnTypeMap[targetMethodName + oldDescriptor]
+                    val returnTypeClassName = if (mapType == null) {
+                        returnTypeName
+                    } else {
+                        Utils.extractRawTypeName(mapType)
+                    }
+                    if (metadata != null){
+                        val suspendType = parseSuspendFunctions(metadata,"$oldMethodName$oldDescriptor")
+                        if (suspendType == null){
+                            returnTypeClassName
+                        }else{
+                            val type = Utils.extractRawTypeNames(suspendType)
+                            if (type.first){
+                                type.second
+                            }else{
+                                returnTypeClassName
+                            }
+                        }
+                    }else{
+                        returnTypeClassName
+                    }
                 }else{
-                    returnType.name
+                    returnTypeName
                 }
                 val argsStr =if (isHasArgs) "new Object[]{$argsBuffer}" else "null"
-                val returnStr = if (isSuspend){
+                val returnStr = if (isSuspendClass){
                     String.format(
-                        ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointReturnExecute($argsStr,${if (returnClassName == null) null else KeywordChecker.getClass(returnClassName)})"
+                        ClassNameToConversions.getReturnXObject(returnTypeName), "pointCut.joinPointReturnExecute($argsStr,${if (returnClassName == null) null else KeywordChecker.getClass(returnClassName)})"
                     )
                 }else{
                     String.format(
-                        ClassNameToConversions.getReturnXObject(returnType.name), "pointCut.joinPointExecute($argsStr,${if (suspendMethod) "(kotlin.coroutines.Continuation)\$$len" else "null" })"
+                        ClassNameToConversions.getReturnXObject(returnTypeName), "pointCut.joinPointExecute($argsStr,${if (suspendMethod) "(kotlin.coroutines.Continuation)\$$len" else "null" })"
                     )
                 }
 
-//                val returnStr2 = if (returnType.name == "void"){
+//                val returnStr2 = if (returnTypeName == "void"){
 //                    "$returnStr;\nreturn;"
 //                }else{
 //                    "$returnStr;\n"
 //                }
 
-                val invokeReturnStr:String? = ClassNameToConversions.getReturnInvokeXObject(returnType.name)
+                val invokeReturnStr:String? = ClassNameToConversions.getReturnInvokeXObject(returnTypeName)
                 val invokeStr =if (isStaticMethod){
                     "$targetClassName.$targetMethodName($invokeBuffer)"
                 }else{
@@ -575,7 +605,7 @@ object WovenIntoCode {
                                 "pointCut.setArgClasses(classes);\n"+
                                 "String[] paramNames = new String[]{$paramsNamesBuffer};\n"+
                                 "pointCut.setParamNames(paramNames);\n"+
-                                "pointCut.setReturnClass(${KeywordChecker.getClass(returnTypeClassName)});\n"+
+                                "pointCut.setReturnClass(${KeywordChecker.getClass(runtimeReturnTypeClassName)});\n"+
                                 "pointCut.setInvokeMethod($invokeMethodStr,$suspendMethod);\n"
 
                 newMethodBody = if (isStaticMethod){
@@ -622,6 +652,186 @@ object WovenIntoCode {
         return wovenBytes
     }
 
+
+    // 提取 @Metadata 注解
+    private fun extractMetadataFromByteArray(byteArray: ByteArray): Metadata? {
+        val classReader = ClassReader(byteArray)
+        var metadata: Metadata? = null
+
+        classReader.accept(object : ClassVisitor(Opcodes.ASM9) {
+            override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
+                if (desc == "Lkotlin/Metadata;") {
+                    return object : AnnotationVisitor(Opcodes.ASM9) {
+                        var kind = 1
+                        var mv: IntArray? = null
+                        var d1: Array<String>? = null
+                        var d2: Array<String>? = null
+                        var xs: String? = null
+                        var pn: String? = null
+                        var xi = 0
+
+                        override fun visit(name: String, value: Any?) {
+                            when (name) {
+                                "k" -> kind = value as Int
+                                "xs" -> xs = value as String
+                                "pn" -> pn = value as String
+                                "xi" -> xi = value as Int
+                            }
+                        }
+
+                        override fun visitArray(name: String): AnnotationVisitor {
+                            return object : AnnotationVisitor(Opcodes.ASM9) {
+                                val list = mutableListOf<String>()
+                                override fun visit(name: String?, value: Any?) {
+                                    if (value is String) list.add(value)
+                                }
+
+                                override fun visitEnd() {
+                                    when (name) {
+                                        "d1" -> d1 = list.toTypedArray()
+                                        "d2" -> d2 = list.toTypedArray()
+                                    }
+                                }
+                            }
+                        }
+
+                        override fun visitEnd() {
+                            if (d1 != null && d2 != null && mv != null) {
+                                metadata = Metadata(kind, mv, d1!!, d2!!, xs, pn, xi)
+                            } else if (d1 != null && d2 != null) {
+                                metadata = Metadata(kind, intArrayOf(1, 8, 0), d1!!, d2!!, xs, pn, xi)
+                            }
+                        }
+                    }
+                }
+                return null
+            }
+        }, 0)
+
+        return metadata
+    }
+
+    // 使用 kotlinx-metadata 解析 suspend 方法及返回类型
+    private fun parseSuspendFunctions(metadata: Metadata,signature:String):String? {
+        val km = KotlinClassMetadata.readStrict(metadata)
+        val kmClass = (km as? KotlinClassMetadata.Class)?.kmClass ?: return null
+
+        for (func in kmClass.functions) {
+            if (func.isSuspend && signature == func.signature.toString()) {
+                return func.returnType.toJavaType()
+            }
+        }
+        return null
+    }
+
+    private fun KmType.toJavaType(isArray:Boolean = false): String? {
+        val baseType = when (val classifier = this.classifier) {
+            is KmClassifier.Class -> classifier.name.replace('.', '$').replace('/', '.')
+            is KmClassifier.TypeAlias -> classifier.name.replace('.', '$').replace('/', '.')
+            else -> null
+        }
+
+        val mappedBase = when (baseType) {
+            // 基本类型
+            "kotlin.Int" -> {
+                if (isNullable || isArray){
+                    "java.lang.Integer"
+                }else{
+                    "int"
+                }
+            }
+            "kotlin.Long" -> {
+                if (isNullable || isArray){
+                    "java.lang.Long"
+                }else{
+                    "long"
+                }
+            }
+            "kotlin.Short" -> {
+                if (isNullable || isArray){
+                    "java.lang.Short"
+                }else{
+                    "short"
+                }
+            }
+            "kotlin.Byte" -> {
+                if (isNullable || isArray){
+                    "java.lang.Byte"
+                }else{
+                    "byte"
+                }
+            }
+            "kotlin.Boolean" -> {
+                if (isNullable || isArray){
+                    "java.lang.Boolean"
+                }else{
+                    "boolean"
+                }
+            }
+            "kotlin.Char" -> {
+                if (isNullable || isArray){
+                    "java.lang.Character"
+                }else{
+                    "char"
+                }
+            }
+            "kotlin.Float" -> {
+                if (isNullable || isArray){
+                    "java.lang.Float"
+                }else{
+                    "float"
+                }
+            }
+            "kotlin.Double" -> {
+                if (isNullable || isArray){
+                    "java.lang.Double"
+                }else{
+                    "double"
+                }
+            }
+
+            // 常用对象类型
+            "kotlin.Unit" -> {
+                if (isNullable || isArray){
+                    "kotlin.Unit"
+                }else{
+                    "void"
+                }
+            }
+            "kotlin.String" -> "java.lang.String"
+            "kotlin.Any" -> "java.lang.Object"
+            "kotlin.Nothing" -> "java.lang.Void"
+            "kotlin.Throwable" -> "java.lang.Throwable"
+
+            // Java 集合
+            "kotlin.collections.List", "kotlin.collections.MutableList" -> "java.util.List"
+            "kotlin.collections.Set", "kotlin.collections.MutableSet" -> "java.util.Set"
+            "kotlin.collections.Map", "kotlin.collections.MutableMap" -> "java.util.Map"
+
+            // 原始数组类型（非泛型）
+            "kotlin.IntArray" -> "int[]"
+            "kotlin.LongArray" -> "long[]"
+            "kotlin.ShortArray" -> "short[]"
+            "kotlin.ByteArray" -> "byte[]"
+            "kotlin.BooleanArray" -> "boolean[]"
+            "kotlin.CharArray" -> "char[]"
+            "kotlin.FloatArray" -> "float[]"
+            "kotlin.DoubleArray" -> "double[]"
+            // 泛型数组，如 Array<String> → java.lang.String[]
+            "kotlin.Array" -> {
+                val elementType = arguments.firstOrNull()?.type?.toJavaType(true) ?: "java.lang.Object"
+                "$elementType[]"
+            }
+            else -> {
+                if (baseType?.startsWith("kotlin.") == true){
+                    null
+                }else{
+                    baseType
+                }
+            } // 可能是自定义类
+        }
+        return mappedBase
+    }
     fun deleteNews(classByte:ByteArray,deleteNews : MutableMap<String,List<ReplaceMethodInfo>>,wovenClassWriterFlags:Int,wovenParsingOptions:Int):ByteArray{
         return if (deleteNews.isNotEmpty()){
             try {

@@ -164,6 +164,14 @@ class ThirdActivity : BaseActivity()  {
     }
 
     @MyAnno3
+    suspend fun getDataArray111(num:Int) :Array<Array<Int>>{
+        return withContext(Dispatchers.IO) {
+            Log.e("MyAnnoCut","=====getDataArray=====2")
+            arrayOf(arrayOf(num))
+        }
+    }
+
+    @MyAnno3
     @MyAnno4
     @MyAnno5
     suspend fun getData1(num:Int) :Int{
@@ -255,4 +263,162 @@ class ThirdActivity : BaseActivity()  {
         }
     }
 
+    @Permission(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    suspend fun onPermission2(){
+        return withContext(Dispatchers.Main) {
+            listOf(1,2)
+        }
+    }
+
+    suspend fun onPermission3():Array<List<Any>>{
+        return withContext(Dispatchers.Main) {
+            arrayOf(listOf(1,2))
+        }
+    }
+
+    @MyAnno3
+    suspend fun getDataArray222(num:IntArray) :IntArray{
+        return withContext(Dispatchers.IO) {
+            num
+        }
+    }
+    @OnLifecycle(Lifecycle.Event.ON_STOP)
+    suspend fun onLifecycle2():Int?{
+        return withContext(Dispatchers.IO) {
+            sleep(2000)
+            200
+        }
+    }
+
+    @OnLifecycle(Lifecycle.Event.ON_STOP)
+    fun onLifecycle3():Int?{
+        return 200
+    }
+
+    @MyAnno3
+    suspend fun getDataArra333(num:IntArray) :IntArray?{
+        return withContext(Dispatchers.IO) {
+            num
+        }
+    }
+    @MyAnno3
+    fun getDataArra334(num:IntArray) :IntArray?{
+        return num
+    }
+
+    @MyAnno3
+    suspend fun getDataArra335(num:IntArray) :Array<Int?>?{
+        return null
+    }
+    @MyAnno3
+    fun getDataArra336(num:IntArray) :Array<Int?>?{
+        return null
+    }
+    @Permission(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    fun onPermission4(){
+    }
+    @MyAnno3
+    fun getNothing2(num:IntArray) :Nothing?{
+        return null
+    }
+    @MyAnno3
+    suspend fun getNothing(num:IntArray) :Nothing?{
+        return withContext(Dispatchers.IO) {
+            null
+        }
+    }
+    @MyAnno3
+    fun getNothing22(num:Nothing) :Nothing{
+        return num
+    }
+    @MyAnno3
+    suspend fun getNothing222(num:Nothing) :Nothing{
+        return withContext(Dispatchers.IO) {
+            num
+        }
+    }
+    @MyAnno3
+    suspend fun getUnit(num:Unit) :Unit{
+        return withContext(Dispatchers.IO) {
+            num
+        }
+    }
+
+    @MyAnno3
+    fun getUnit2(num:Unit) :Unit{
+        return num
+    }
+
+    @MyAnno3
+    suspend fun getUnitArray(num:Array<Unit>) :Array<Unit>{
+        return withContext(Dispatchers.IO) {
+            num
+        }
+    }
+    @MyAnno3
+    fun getUnitArray2(num:Array<Unit>?) :Array<Unit>?{
+        return num
+    }
+    @MyAnno3
+    suspend fun getUnitArray1(num:Array<Unit?>) :Array<Unit?>{
+        return withContext(Dispatchers.IO) {
+            num
+        }
+    }
+    @MyAnno3
+    fun getUnitArray22(num:Array<Unit?>?) :Array<Unit?>?{
+        return num
+    }
+    @MyAnno3
+    suspend fun getThrowable(num:IntArray) :Throwable?{
+        return withContext(Dispatchers.IO) {
+            null
+        }
+    }
+    @MyAnno3
+    suspend fun getException(num:IntArray) :Exception?{
+        return withContext(Dispatchers.IO) {
+            null
+        }
+    }
+    @MyAnno3
+    suspend fun getNullPointerException(num:IntArray) :NullPointerException?{
+        return withContext(Dispatchers.IO) {
+            null
+        }
+    }
+    @MyAnno3
+    suspend fun getSome(num:IntArray) :Some{
+        return withContext(Dispatchers.IO) {
+            Some.Lala
+        }
+    }
+
+    enum class Some{
+        Lala
+    }
+
+    @MyAnno3
+    suspend fun getMyInt(num:IntArray) :MyInt?{
+        return withContext(Dispatchers.IO) {
+            1
+        }
+    }
+
+    @MyAnno3
+    suspend fun getMySome(num:IntArray) :MySome{
+        return withContext(Dispatchers.IO) {
+            Some.Lala
+        }
+    }
+
+    @MyAnno3
+    suspend fun getMy3(num:IntArray) :My3{
+        return withContext(Dispatchers.IO) {
+            this@ThirdActivity
+        }
+    }
 }
+typealias MyInt = Int
+typealias MySome = ThirdActivity.Some
+typealias My3 = ThirdActivity

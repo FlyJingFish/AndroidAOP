@@ -129,7 +129,8 @@ Below is a comparison table of Kotlin and Java with different types. If it is Ko
 | Boolean?              |  java.lang.Boolean  |  
 | String                |  java.lang.String   |  
 | Unit（Or do not write） |        void         |  
-| Unit?                 |   java.lang.Void    |  
+| Unit?                 |     kotlin.Unit     |  
+| Nothing               |   java.lang.Void    |  
 | Any                   |  java.lang.Object   |   
 
 Other data types not listed above are reference types, and are written as **package name.class name**

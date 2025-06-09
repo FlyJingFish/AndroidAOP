@@ -151,7 +151,8 @@ Below is a table showing different types of Kotlin vs. Java. If it is Kotlin cod
 | Boolean?              |  java.lang.Boolean  |  
 | String                |  java.lang.String   |  
 | Unit（Or do not write） |        void         |  
-| Unit?                 |   java.lang.Void    |  
+| Unit?                 |     kotlin.Unit     |  
+| Nothing               |   java.lang.Void    |  
 | Any                   |  java.lang.Object   |   
 
 

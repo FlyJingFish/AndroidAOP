@@ -23,6 +23,7 @@ dependencies {
     compileOnly libs.kotlin.gradle.plugin
     implementation libs.kotlinx.coroutines
     implementation libs.fastTransform
+    implementation libs.kotlinx.metadata.jvm
 }
 // 发布到gradlePluginPortal
 gradlePlugin {
