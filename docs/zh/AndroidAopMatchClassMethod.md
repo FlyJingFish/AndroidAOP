@@ -138,7 +138,8 @@ methodName 方法名写上返回类型、参数类型，这样就可以精准到
 | Boolean?  |  java.lang.Boolean  |  
 | String    |  java.lang.String   |  
 | Unit（或不写） |        void         |  
-| Unit?     |   java.lang.Void    |  
+| Unit?     |     kotlin.Unit     |  
+| Nothing   |   java.lang.Void    | 
 | Any       |  java.lang.Object   |   
 
 其他不在上表中的数据类型，都属于引用类型，写法就是 **包名.类名**
