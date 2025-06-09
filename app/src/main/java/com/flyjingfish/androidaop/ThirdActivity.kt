@@ -282,6 +282,38 @@ class ThirdActivity : BaseActivity()  {
             num
         }
     }
+    @OnLifecycle(Lifecycle.Event.ON_STOP)
+    suspend fun onLifecycle2():Int?{
+        return withContext(Dispatchers.IO) {
+            sleep(2000)
+            200
+        }
+    }
+
+    @OnLifecycle(Lifecycle.Event.ON_STOP)
+    fun onLifecycle3():Int?{
+        return 200
+    }
+
+    @MyAnno3
+    suspend fun getDataArra333(num:IntArray) :IntArray?{
+        return withContext(Dispatchers.IO) {
+            num
+        }
+    }
+    @MyAnno3
+    fun getDataArra334(num:IntArray) :IntArray?{
+        return num
+    }
+
+    @MyAnno3
+    suspend fun getDataArra335(num:IntArray) :Array<Int?>?{
+        return null
+    }
+    @MyAnno3
+    fun getDataArra336(num:IntArray) :Array<Int?>?{
+        return null
+    }
     @Permission(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
     fun onPermission4(){
     }

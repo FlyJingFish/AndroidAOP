@@ -45,6 +45,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import kotlinx.metadata.KmClassifier
 import kotlinx.metadata.KmType
+import kotlinx.metadata.isNullable
 import kotlinx.metadata.isSuspend
 import kotlinx.metadata.jvm.KotlinClassMetadata
 import kotlinx.metadata.jvm.Metadata
@@ -723,7 +724,7 @@ object WovenIntoCode {
         return null
     }
 
-    private fun KmType.toJavaType(): String? {
+    private fun KmType.toJavaType(isArray:Boolean = false): String? {
         val baseType = when (val classifier = this.classifier) {
             is KmClassifier.Class -> classifier.name.replace('.', '$').replace('/', '.')
             is KmClassifier.TypeAlias -> classifier.name.replace('.', '$').replace('/', '.')
@@ -732,14 +733,62 @@ object WovenIntoCode {
 
         val mappedBase = when (baseType) {
             // 基本类型
-            "kotlin.Int" -> "int"
-            "kotlin.Long" -> "long"
-            "kotlin.Short" -> "short"
-            "kotlin.Byte" -> "byte"
-            "kotlin.Boolean" -> "boolean"
-            "kotlin.Char" -> "char"
-            "kotlin.Float" -> "float"
-            "kotlin.Double" -> "double"
+            "kotlin.Int" -> {
+                if (isNullable || isArray){
+                    "java.lang.Integer"
+                }else{
+                    "int"
+                }
+            }
+            "kotlin.Long" -> {
+                if (isNullable || isArray){
+                    "java.lang.Long"
+                }else{
+                    "long"
+                }
+            }
+            "kotlin.Short" -> {
+                if (isNullable || isArray){
+                    "java.lang.Short"
+                }else{
+                    "short"
+                }
+            }
+            "kotlin.Byte" -> {
+                if (isNullable || isArray){
+                    "java.lang.Byte"
+                }else{
+                    "byte"
+                }
+            }
+            "kotlin.Boolean" -> {
+                if (isNullable || isArray){
+                    "java.lang.Boolean"
+                }else{
+                    "boolean"
+                }
+            }
+            "kotlin.Char" -> {
+                if (isNullable || isArray){
+                    "java.lang.Character"
+                }else{
+                    "char"
+                }
+            }
+            "kotlin.Float" -> {
+                if (isNullable || isArray){
+                    "java.lang.Float"
+                }else{
+                    "float"
+                }
+            }
+            "kotlin.Double" -> {
+                if (isNullable || isArray){
+                    "java.lang.Double"
+                }else{
+                    "double"
+                }
+            }
 
             // 常用对象类型
             "kotlin.Unit" -> "void"
@@ -764,7 +813,7 @@ object WovenIntoCode {
             "kotlin.DoubleArray" -> "double[]"
             // 泛型数组，如 Array<String> → java.lang.String[]
             "kotlin.Array" -> {
-                val elementType = arguments.firstOrNull()?.type?.toJavaType() ?: "java.lang.Object"
+                val elementType = arguments.firstOrNull()?.type?.toJavaType(true) ?: "java.lang.Object"
                 "$elementType[]"
             }
             else -> baseType // 可能是自定义类
