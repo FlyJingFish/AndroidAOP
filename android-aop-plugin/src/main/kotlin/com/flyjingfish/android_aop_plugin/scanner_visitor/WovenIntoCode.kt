@@ -21,7 +21,6 @@ import com.flyjingfish.android_aop_plugin.utils.adapterOSPath
 import com.flyjingfish.android_aop_plugin.utils.addPublic
 import com.flyjingfish.android_aop_plugin.utils.checkExist
 import com.flyjingfish.android_aop_plugin.utils.computeMD5
-import com.flyjingfish.android_aop_plugin.utils.getReturnTypeName
 import com.flyjingfish.android_aop_plugin.utils.instanceof
 import com.flyjingfish.android_aop_plugin.utils.isHasMethodBody
 import com.flyjingfish.android_aop_plugin.utils.isStaticMethod
@@ -44,6 +43,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import kotlinx.metadata.KmClassifier
+import kotlinx.metadata.KmFunction
 import kotlinx.metadata.KmType
 import kotlinx.metadata.isNullable
 import kotlinx.metadata.isSuspend
@@ -78,7 +78,7 @@ object WovenIntoCode {
     ): ByteArray {
         val wovenRecord = mutableListOf<MethodRecord>()
         val overrideRecord = mutableListOf<MethodRecord>()
-        var returnClassName :String ?= null
+        var suspendClassReturnClassName :String ?= null
 
         val cr = ClassReader(inputStreamBytes)
         val cw = FixBugClassWriter(cr, wovenClassWriterFlags)
@@ -222,7 +222,7 @@ object WovenIntoCode {
                 ) {
                     super.visit(version, access.addPublic(isModifyPublic), name, signature, superName, interfaces)
                     if (isSuspendClass){
-                        returnClassName = Utils.getSuspendClassType(signature)
+                        suspendClassReturnClassName = Utils.getSuspendClassType(signature)
 //                        printLog("wovenCode === $signature ==== $returnClassName")
                     }
 //Lkotlin/coroutines/jvm/internal/SuspendLambda;Lkotlin/jvm/functions/Function2<Lkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation<-Ljava/lang/Integer;>;Ljava/lang/Object;>;
@@ -378,6 +378,7 @@ object WovenIntoCode {
             ByteArrayInputStream(newClassByte)
         val ctClass = cp.makeClass(byteArrayInputStream)
         val metadata = extractMetadataFromByteArray(newClassByte)
+        val kmFuntions = parseSuspendFunctions(metadata)
         cp.importPackage(JOIN_POINT_CLASS)
         cp.importPackage(CONVERSIONS_CLASS)
         cp.importPackage(KEEP_CLASS)
@@ -473,7 +474,7 @@ object WovenIntoCode {
                 val paramsClassNamesBuffer = StringBuffer()
                 val paramsClassesBuffer = StringBuffer()
 
-                val returnTypeName = ctMethod.getReturnTypeName()
+                val returnTypeName = ctMethod.returnType.name
 
                 // 非静态的成员函数的第一个参数是this
                 val pos =  1
@@ -481,7 +482,7 @@ object WovenIntoCode {
                 val invokeBuffer = StringBuffer()
                 var argClassHasKeyword = false
                 for (i in ctClasses.indices) {
-                    val name = Utils.extractRawTypeName(ctClasses[i].name)
+                    val name = ctClasses[i].name
 
                     paramsClassNamesBuffer.append("\"").append(name).append("\"")
                     paramsClassesBuffer.append(ClassNameToConversions.string2Class(name))
@@ -507,36 +508,32 @@ object WovenIntoCode {
                 }else{
                     false
                 }
-                val runtimeReturnTypeClassName = if (suspendMethod){
-                    val mapType = returnTypeMap[oldMethodName + oldDescriptor]
+                val runtimeReturnTypeClassName = if (suspendMethod) {
+                    val returnTypeClassName = returnTypeMap[oldMethodName + oldDescriptor]
                         ?: returnTypeMap[targetMethodName + oldDescriptor]
-                    val returnTypeClassName = if (mapType == null) {
-                        returnTypeName
-                    } else {
-                        Utils.extractRawTypeName(mapType)
-                    }
-                    if (metadata != null){
-                        val suspendType = parseSuspendFunctions(metadata,"$oldMethodName$oldDescriptor")
-                        if (suspendType == null){
-                            returnTypeClassName
-                        }else{
-                            val type = Utils.extractRawTypeNames(suspendType)
-                            if (type.first){
+                    if (metadata != null) {
+                        val suspendType = getFunctions(kmFuntions, "$oldMethodName$oldDescriptor")
+                        if (suspendType == null) {
+                            ClassPoolUtils.extractRawTypeName(cp,returnTypeClassName)?: returnTypeName
+                        } else {
+                            val type = ClassPoolUtils.extractRawTypeNames(cp,suspendType)
+                            if (type != null && type.first) {
                                 type.second
-                            }else{
-                                returnTypeClassName
+                            } else {
+                                ClassPoolUtils.extractRawTypeName(cp,returnTypeClassName)?: returnTypeName
                             }
                         }
-                    }else{
-                        returnTypeClassName
+                    } else {
+                        ClassPoolUtils.extractRawTypeName(cp,returnTypeClassName)?: returnTypeName
                     }
                 }else{
                     returnTypeName
                 }
                 val argsStr =if (isHasArgs) "new Object[]{$argsBuffer}" else "null"
                 val returnStr = if (isSuspendClass){
+                    suspendClassReturnClassName = ClassPoolUtils.extractRawTypeName(cp,suspendClassReturnClassName)
                     String.format(
-                        ClassNameToConversions.getReturnXObject(returnTypeName), "pointCut.joinPointReturnExecute($argsStr,${if (returnClassName == null) null else KeywordChecker.getClass(returnClassName)})"
+                        ClassNameToConversions.getReturnXObject(returnTypeName), "pointCut.joinPointReturnExecute($argsStr,${if (suspendClassReturnClassName == null) null else KeywordChecker.getClass(suspendClassReturnClassName)})"
                     )
                 }else{
                     String.format(
@@ -712,16 +709,21 @@ object WovenIntoCode {
     }
 
     // 使用 kotlinx-metadata 解析 suspend 方法及返回类型
-    private fun parseSuspendFunctions(metadata: Metadata,signature:String):String? {
-        val km = KotlinClassMetadata.readStrict(metadata)
-        val kmClass = (km as? KotlinClassMetadata.Class)?.kmClass ?: return null
-
-        for (func in kmClass.functions) {
+    private fun getFunctions(functions:List<KmFunction>?,signature:String):String? {
+        if (functions == null) return null
+        for (func in functions) {
             if (func.isSuspend && signature == func.signature.toString()) {
                 return func.returnType.toJavaType()
             }
         }
         return null
+    }
+
+    private fun parseSuspendFunctions(metadata: Metadata?):MutableList<KmFunction>? {
+        if (metadata == null) return null
+        val km = KotlinClassMetadata.readStrict(metadata)
+        val kmClass = (km as? KotlinClassMetadata.Class)?.kmClass ?: return null
+        return kmClass.functions
     }
 
     private fun KmType.toJavaType(isArray:Boolean = false): String? {

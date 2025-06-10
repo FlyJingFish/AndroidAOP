@@ -68,6 +68,7 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
         Utils.logger = logger
         aopTaskUtils = AopTaskUtils(project,variant)
         ClassPoolUtils.release(project)
+        ClassPoolUtils.clear()
         ClassFileUtils.debugMode = false
         ClassFileUtils.reflectInvokeMethod = reflectInvokeMethod
         ClassFileUtils.reflectInvokeMethodStatic = reflectInvokeMethodStatic
