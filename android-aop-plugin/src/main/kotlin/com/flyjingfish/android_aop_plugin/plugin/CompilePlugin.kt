@@ -160,9 +160,6 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
         } catch (_: Throwable) {
         }
         variants.all { variant ->
-            if (syncConfig){
-                AndroidAopConfig.syncConfig(project)
-            }
             val javaCompile: AbstractCompile =
                 if (DefaultGroovyMethods.hasProperty(variant, "javaCompileProvider") != null) {
                     //gradle 4.10.1 +

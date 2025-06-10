@@ -79,7 +79,6 @@ open class AndroidAopConfig {
         AndroidAopConfig.excludes.add(Utils.extraPackage)
         AndroidAopConfig.verifyLeafExtends = verifyLeafExtends
         AndroidAopConfig.cutInfoJson = cutInfoJson
-        AndroidAopConfig.androidAopConfig = this
 //        AndroidAopConfig.increment = increment
     }
 
@@ -96,7 +95,6 @@ open class AndroidAopConfig {
         var verifyLeafExtends = true
         var cutInfoJson = false
         var increment = false
-        var androidAopConfig:AndroidAopConfig?=null
         internal fun syncConfig(project: Project){
             val androidAopConfig = project.extensions.getByType(AndroidAopConfig::class.java)
             androidAopConfig.initConfig()
