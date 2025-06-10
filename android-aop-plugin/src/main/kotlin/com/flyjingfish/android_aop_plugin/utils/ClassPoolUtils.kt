@@ -89,17 +89,45 @@ object ClassPoolUtils {
         val className = name.replace("[]","")
         val cache = hasClassCache[className]
         if (cache != null){
-            return cache
+            return Pair(cache.first,if (cache.first){
+                name
+            }else{
+                name.replace(className,"java.lang.Object")
+            })
         }
+        var cachePair : Pair<Boolean,String>
         val useClassNamePair = try {
-            val ctclass = cp.getCtClass(className)
+            val hasClass = hasClass(className)
+            if (!hasClass){
+                val ctclass = cp.getCtClass(className)
+            }
+            cachePair = Pair(true,className)
             Pair(true,name)
         } catch (e: NotFoundException) {
+            cachePair = Pair(false,"java.lang.Object")
             Pair(false,name.replace(className,"java.lang.Object"))
         }
-        hasClassCache[className] = useClassNamePair
+        hasClassCache[className] = cachePair
         return useClassNamePair
     }
+
+    private fun hasClass(className:String):Boolean{
+        return if (className == "int"
+            || className == "long"
+            || className == "short"
+            || className == "byte"
+            || className == "boolean"
+            || className == "char"
+            || className == "float"
+            || className == "double"
+            || className == "void"
+            || className.startsWith("java.lang.")){
+            true
+        }else{
+            WovenInfoUtils.getClassString(Utils.slashToDotClassName(className)) != null
+        }
+    }
+
     private fun stripAllGenerics(typeDesc: String): String {
         val result = StringBuilder()
         var angleDepth = 0
