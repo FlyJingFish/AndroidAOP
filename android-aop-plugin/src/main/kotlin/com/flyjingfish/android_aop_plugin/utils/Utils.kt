@@ -5,10 +5,7 @@ import com.flyjingfish.android_aop_plugin.beans.ExtendsWeavingRules
 import com.flyjingfish.android_aop_plugin.beans.MatchMethodInfo
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
-import javassist.CtMethod
 import javassist.Modifier
-import javassist.NotFoundException
-import javassist.bytecode.SignatureAttribute
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.objectweb.asm.Opcodes
@@ -341,54 +338,12 @@ object Utils {
     private val classnamePattern1 = Pattern.compile("Lkotlin/coroutines/jvm/internal/SuspendLambda;Lkotlin/jvm/functions/Function2<Lkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation<-.*?")
 
     fun getSuspendClassType(type: String?): String? {
-        val typeName = getType(type, classnamePattern, classnamePattern1, ">;Ljava/lang/Object;>;")
-        if (typeName != null) {
-            return extractRawTypeName(typeName)
-        }
-        return null
+        return getType(type, classnamePattern, classnamePattern1, ">;Ljava/lang/Object;>;")
     }
     private val signatureClassnamePattern = Pattern.compile("\\(.*?kotlin/coroutines/Continuation<-.*?>;\\)Ljava/lang/Object;")
     private val signatureClassnamePattern1 = Pattern.compile("\\(.*?kotlin/coroutines/Continuation<-.*?")
     fun getSuspendMethodType(type: String?): String? {
-        val typeName = getType(type,signatureClassnamePattern,signatureClassnamePattern1,">;\\)Ljava/lang/Object;")
-        if (typeName != null){
-            return extractRawTypeName(typeName)
-        }
-        return null
-    }
-    fun extractRawTypeName(typeName: String): String {
-        val name = stripAllGenerics(typeName)
-        val className = name.replace("[]","")
-        return try {
-            val ctclass = ClassPoolUtils.getNewClassPool().getCtClass(className)
-            name
-        } catch (e: NotFoundException) {
-            name.replace(className,"java.lang.Object")
-        }
-
-    }
-    fun extractRawTypeNames(typeName: String): Pair<Boolean,String> {
-        val name = stripAllGenerics(typeName)
-        val className = name.replace("[]","")
-        return try {
-            val ctclass = ClassPoolUtils.getNewClassPool().getCtClass(className)
-            Pair(true,name)
-        } catch (e: NotFoundException) {
-            Pair(false,name.replace(className,"java.lang.Object"))
-        }
-
-    }
-    private fun stripAllGenerics(typeDesc: String): String {
-        val result = StringBuilder()
-        var angleDepth = 0
-        for (c in typeDesc) {
-            when (c) {
-                '<' -> angleDepth++
-                '>' -> angleDepth--
-                else -> if (angleDepth == 0) result.append(c)
-            }
-        }
-        return result.toString()
+        return getType(type,signatureClassnamePattern,signatureClassnamePattern1,">;\\)Ljava/lang/Object;")
     }
     private fun getType(type: String?, classnamePattern:Pattern, classnamePattern1:Pattern, replaceText:String): String? {
         if (type == null){
@@ -641,7 +596,3 @@ fun Throwable.printDetail(){
     }
 }
 
-fun CtMethod.getReturnTypeName():String{
-    val returnTypeName = returnType.name
-    return Utils.extractRawTypeName(returnTypeName)
-}

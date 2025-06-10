@@ -429,6 +429,7 @@ class CompileAndroidAopTask(
             exportCutInfo()
             FileHashUtils.clearScanRecord()
             WovenInfoUtils.clear()
+            ClassPoolUtils.clear()
             SuspendReturnScanner.hasSuspendReturn = false
         }
     }

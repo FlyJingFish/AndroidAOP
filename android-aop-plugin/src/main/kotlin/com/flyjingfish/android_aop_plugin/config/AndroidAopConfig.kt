@@ -1,11 +1,7 @@
 package com.flyjingfish.android_aop_plugin.config
 
-import com.android.build.gradle.AppPlugin
-import com.flyjingfish.android_aop_plugin.plugin.CompilePlugin
-import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import org.gradle.api.Project
-import java.io.File
 
 open class AndroidAopConfig {
     /**
@@ -70,6 +66,7 @@ open class AndroidAopConfig {
 
 
     internal fun initConfig(){
+        AndroidAopConfig.enabled = enabled
         AndroidAopConfig.debug = debug
         AndroidAopConfig.includes.clear()
         AndroidAopConfig.excludes.clear()
@@ -82,6 +79,7 @@ open class AndroidAopConfig {
         AndroidAopConfig.excludes.add(Utils.extraPackage)
         AndroidAopConfig.verifyLeafExtends = verifyLeafExtends
         AndroidAopConfig.cutInfoJson = cutInfoJson
+        AndroidAopConfig.androidAopConfig = this
 //        AndroidAopConfig.increment = increment
     }
 
@@ -90,6 +88,7 @@ open class AndroidAopConfig {
     }
 
     companion object{
+        var enabled = true
         var debug = false
         val includes = mutableListOf<String>()
         val excludes = mutableListOf<String>()
@@ -97,27 +96,13 @@ open class AndroidAopConfig {
         var verifyLeafExtends = true
         var cutInfoJson = false
         var increment = false
-
+        var androidAopConfig:AndroidAopConfig?=null
         internal fun syncConfig(project: Project){
             val androidAopConfig = project.extensions.getByType(AndroidAopConfig::class.java)
             androidAopConfig.initConfig()
 
-            deepExportConfigJson(project,project.rootProject,androidAopConfig)
         }
 
-        private fun deepExportConfigJson(appProject: Project,project: Project,androidAopConfig:AndroidAopConfig){
-            val childProjects = project.childProjects
-            if (childProjects.isEmpty()){
-                return
-            }
-            for (childProject in childProjects) {
-                if (appProject != childProject.value){
-                    val configFile = File(Utils.configJsonFile(childProject.value))
-                    InitConfig.exportConfigJson(configFile,androidAopConfig)
-                    deepExportConfigJson(appProject,childProject.value,androidAopConfig)
-                }
-            }
-        }
     }
 
 

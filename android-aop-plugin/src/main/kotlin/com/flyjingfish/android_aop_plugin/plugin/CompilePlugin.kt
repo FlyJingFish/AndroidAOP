@@ -12,7 +12,6 @@ import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import com.flyjingfish.android_aop_plugin.tasks.CompileAndroidAopTask
 import com.flyjingfish.android_aop_plugin.tasks.DebugModeFileTask
-import com.flyjingfish.android_aop_plugin.tasks.SyncConfigTask
 import com.flyjingfish.android_aop_plugin.utils.AndroidConfig
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
@@ -141,10 +140,8 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
         val hasConfig = project.extensions.findByName("androidAopConfig") != null
         val syncConfig = !fromRootSet && hasConfig && isApp
         if (syncConfig){
-            val taskName = "${project.name}AndroidAopConfigSyncTask"
-            project.tasks.register(taskName, SyncConfigTask::class.java)
             project.afterEvaluate {
-                project.tasks.findByName(taskName)?.dependsOn("preBuild")
+                AndroidAopConfig.syncConfig(project)
             }
         }
 
@@ -330,20 +327,7 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
     private fun doAopTask(project: Project, isApp:Boolean, variantName: String, buildTypeName: String,
                           javaCompile:AbstractCompile, kotlinPath: File, isAndroidModule : Boolean = true){
         val logger = project.logger
-        val androidAopConfig : AndroidAopConfig = if (isApp){
-            val config = project.extensions.getByType(AndroidAopConfig::class.java)
-            config.initConfig()
-            config
-        }else{
-            var config = InitConfig.optFromJsonString(
-                InitConfig.readAsString(Utils.configJsonFile(project)),
-                AndroidAopConfig::class.java)
-            if (config == null){
-                config = AndroidAopConfig()
-            }
-            config
-        }
-        if (androidAopConfig.cutInfoJson){
+        if (AndroidAopConfig.cutInfoJson){
             InitConfig.initCutInfo(project,false)
         }
         val debugMode = if (isAndroidModule){
@@ -351,7 +335,7 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
         }else{
             isDebugMode()
         }
-        if (androidAopConfig.enabled && debugMode){
+        if (AndroidAopConfig.enabled && debugMode){
             ClassFileUtils.debugMode = true
             val hint = "AndroidAOP Tip: You are using debugMode mode"
             if (buildTypeName == "release"){
