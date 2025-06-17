@@ -41,11 +41,31 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
     companion object{
         const val ANDROID_EXTENSION_NAME = "android"
         private const val DEBUG_MODE_FILE_TASK_NAME = "debugModeFile"
+        private val kotlinCompileFilePathMap = mutableMapOf<String, File>()
     }
 
 
     override fun apply(project: Project) {
         super.apply(project)
+        if (!fromRootSet && project.rootProject == project){
+            project.rootProject.gradle.taskGraph.addTaskExecutionGraphListener(object :
+                TaskExecutionGraphListener {
+                override fun graphPopulated(it: TaskExecutionGraph) {
+                    try {
+                        for (task in it.allTasks) {
+                            if (task is KotlinCompileTool){
+                                val destinationDirectory = task.destinationDirectory.get().asFile
+                                val key = task.project.buildDir.absolutePath+"@"+task.name
+                                kotlinCompileFilePathMap[key] = destinationDirectory
+                            }
+                        }
+                    } catch (_: Throwable) {
+                    }
+                    project.rootProject.gradle.taskGraph.removeTaskExecutionGraphListener(this)
+                }
+
+            })
+        }
         val runtimeProject = RuntimeProject.get(project)
         val isApp = project.plugins.hasPlugin(AppPlugin::class.java)
 
@@ -133,6 +153,7 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
                 }
             }
             // java项目
+            val kotlinDefaultPath = File(project.buildDir.path + "/classes/kotlin/main".adapterOSPath())
             project.tasks.withType(JavaCompile::class.java).configureEach { compileTask ->
                 if (isDebugMode() && compileTask is AbstractCompile){
                     forceJavaRecompileOnKotlinChange(project, compileTask, "")
@@ -146,8 +167,7 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
                         return@doLast
                     }
                     val javaCompile: AbstractCompile = compileTask
-                    val kotlinPath = cacheDir ?: kotlinBuildPath
-                    doAopTask(runtimeProject, isApp, variantName, buildTypeName, javaCompile, kotlinPath,false)
+                    doAopTask(runtimeProject, isApp, variantName, buildTypeName, javaCompile, kotlinDefaultPath,false)
                 }
             }
             return
@@ -166,36 +186,11 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
         }
 
 
-        val kotlinCompileFilePathMap = mutableMapOf<String, File>()
-        val kotlinCompileTaskMap = mutableMapOf<String, Task>()
         val android = androidObject as BaseExtension
         val variants = if (isApp or isDynamicLibrary) {
             (android as AppExtension).applicationVariants
         } else {
             (android as LibraryExtension).libraryVariants
-        }
-        try {
-            project.tasks.withType(KotlinCompile::class.java).configureEach { task ->
-                kotlinCompileTaskMap[task.name] = task
-            }
-            project.rootProject.gradle.taskGraph.addTaskExecutionGraphListener(object :
-                TaskExecutionGraphListener {
-                override fun graphPopulated(it: TaskExecutionGraph) {
-                    for (task in it.allTasks) {
-                        val cacheTask = kotlinCompileTaskMap[task.name]
-                        if (cacheTask != null){
-                            val destinationDirectory = (task as KotlinCompileTool).destinationDirectory.get().asFile
-                            val oldDestinationDirectory = kotlinCompileFilePathMap[task.name]
-                            if (destinationDirectory.absolutePath != oldDestinationDirectory?.absolutePath){
-                                kotlinCompileFilePathMap[task.name] = destinationDirectory
-                            }
-                        }
-                    }
-                    project.rootProject.gradle.taskGraph.removeTaskExecutionGraphListener(this)
-                }
-
-            })
-        } catch (_: Throwable) {
         }
         variants.all { variant ->
             val javaCompile: AbstractCompile =
@@ -230,8 +225,7 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
                 } catch (_: Throwable) {
                     null
                 }
-                val kotlinPath = cacheDir ?: kotlinBuildPath
-                doAopTask(runtimeProject,isApp, variantName, buildTypeName, javaCompile, kotlinPath)
+                doAopTask(runtimeProject,isApp, variantName, buildTypeName, javaCompile, kotlinBuildPath)
             }
         }
         if (hasBuildConfig()){
@@ -349,7 +343,13 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
     }
 
     private fun doAopTask(project: RuntimeProject,isApp:Boolean, variantName: String, buildTypeName: String,
-                          javaCompile:AbstractCompile, kotlinPath: File, isAndroidModule : Boolean = true){
+                          javaCompile:AbstractCompile, kotlinDefaultPath: File, isAndroidModule : Boolean = true){
+        val cacheDir = if (isAndroidModule) {
+            kotlinCompileFilePathMap[project.buildDir.absolutePath+"@"+"compile${variantName.capitalized()}Kotlin"]
+        }else{
+            kotlinCompileFilePathMap[project.buildDir.absolutePath+"@"+"compileKotlin"]
+        }
+        val kotlinPath = cacheDir ?: kotlinDefaultPath
         val logger = javaCompile.logger
 
         val debugMode = if (isAndroidModule){
