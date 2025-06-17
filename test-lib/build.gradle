@@ -30,12 +30,9 @@ dependencies {
 //        api project(path: ':android-aop-annotation')
 //        annotationProcessor project(path: ':android-aop-processor')
 //        kapt project(path: ':android-aop-processor')
-//        ksp project(':android-aop-ksp')
-//        api project(path: ':android-aop-core')
-//        api project(path: ':android-aop-extra')
-        ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:'+TestVersion
-        api 'io.github.FlyJingFish.AndroidAop:android-aop-core:'+TestVersion
-        api 'io.github.FlyJingFish.AndroidAop:android-aop-extra:'+TestVersion
+        ksp project(':android-aop-ksp')
+        api project(path: ':android-aop-core')
+        api project(path: ':android-aop-extra')
     }else {
         //线上
 //        api 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:'+TestVersion

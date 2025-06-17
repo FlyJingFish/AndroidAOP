@@ -6,6 +6,6 @@ plugins {
 }
 dependencies {
     implementation project(path: ':android-aop-annotation')
-    ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:'+TestVersion
+    ksp project(':android-aop-ksp')
 }
 
