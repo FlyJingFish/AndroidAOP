@@ -220,11 +220,6 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
             }
             val kotlinBuildPath = File(project.buildDir.path + "/tmp/kotlin-classes/".adapterOSPath() + variantName)
             javaCompile.doLast{
-                val cacheDir = try {
-                    kotlinCompileFilePathMap["compile${variantName.capitalized()}Kotlin"]
-                } catch (_: Throwable) {
-                    null
-                }
                 doAopTask(runtimeProject,isApp, variantName, buildTypeName, javaCompile, kotlinBuildPath)
             }
         }
