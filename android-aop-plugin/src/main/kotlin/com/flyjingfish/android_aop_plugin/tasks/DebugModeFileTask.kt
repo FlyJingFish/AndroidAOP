@@ -1,10 +1,7 @@
 package com.flyjingfish.android_aop_plugin.tasks
 
-import com.android.build.gradle.AppPlugin
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
-import com.flyjingfish.android_aop_plugin.plugin.BasePlugin
 import com.flyjingfish.android_aop_plugin.plugin.PluginConfig
-import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.adapterOSPath
 import com.flyjingfish.android_aop_plugin.utils.checkExist
@@ -18,6 +15,9 @@ import java.io.IOException
 
 
 abstract class DebugModeFileTask : DefaultTask() {
+    @get:Input
+    abstract var pluginConfig : PluginConfig
+
     @get:Input
     abstract var debugModeDir : String
 
@@ -35,30 +35,10 @@ abstract class DebugModeFileTask : DefaultTask() {
 
     @TaskAction
     fun taskAction() {
-        val pluginConfig = PluginConfig(project)
         val exportFile :Boolean = if (isAndroidModule){
-            val isApp = project.plugins.hasPlugin(AppPlugin::class.java)
-            val androidAopConfig : AndroidAopConfig = if (isApp){
-                project.extensions.getByType(AndroidAopConfig::class.java)
-            }else{
-                var config = InitConfig.optFromJsonString(
-                    InitConfig.readAsString(Utils.configJsonFile(project)),
-                    AndroidAopConfig::class.java)
-                if (config == null){
-                    config = AndroidAopConfig()
-                }
-                config
-            }
-
-            androidAopConfig.enabled && pluginConfig.isDebugMode(buildTypeName,variantName)
+            AndroidAopConfig.enabled && pluginConfig.isDebugMode(buildTypeName,variantName)
         }else{
-            var config = InitConfig.optFromJsonString(
-                InitConfig.readAsString(Utils.configJsonFile(project)),
-                AndroidAopConfig::class.java)
-            if (config == null){
-                config = AndroidAopConfig()
-            }
-            config.enabled && pluginConfig.isDebugMode()
+            AndroidAopConfig.enabled && pluginConfig.isDebugMode()
         }
 
         if (!exportFile){

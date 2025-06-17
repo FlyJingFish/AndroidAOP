@@ -13,6 +13,7 @@ import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
 import com.flyjingfish.android_aop_plugin.utils.FileHashUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
+import com.flyjingfish.android_aop_plugin.utils.RuntimeProject
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils._CLASS
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
@@ -33,6 +34,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
+import org.gradle.api.tasks.compile.AbstractCompile
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ClassWriter
@@ -48,18 +50,18 @@ class CompileAndroidAopTask(
     private val allJars: List<File>,
     private val allDirectories: List<File>,
     private val output: File,
-    private val project: Project,
+    private val project: RuntimeProject,
     private val isApp:Boolean,
     private val tmpCompileDir:File,
     private val tmpJsonFile:File,
     private val variantName:String,
-    private val isAndroidModule:Boolean = true
+    private val compileTask: AbstractCompile,
+    private val isAndroidModule:Boolean = true,
+    private val logger :Logger = compileTask.logger
 ) {
     private val aopTaskUtils = AopTaskUtils(project,variantName,isAndroidModule)
 
-    private lateinit var logger: Logger
     fun taskAction() {
-        logger = project.logger
         Utils.logger = logger
         ClassPoolUtils.release(project)
         WovenInfoUtils.checkHasOverrideJson(project, variantName)

@@ -12,6 +12,7 @@ import com.flyjingfish.android_aop_plugin.utils.AopTaskUtils
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
+import com.flyjingfish.android_aop_plugin.utils.RuntimeProject
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils._CLASS
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
@@ -46,6 +47,8 @@ import kotlin.system.measureTimeMillis
 
 
 abstract class AssembleAndroidAopTask : DefaultTransformTask() {
+    @get:Input
+    abstract var runtimeProject :RuntimeProject
 
     @get:Input
     abstract var variant :String
@@ -66,20 +69,20 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
 
     override fun startTask() {
         Utils.logger = logger
-        aopTaskUtils = AopTaskUtils(project,variant)
-        ClassPoolUtils.release(project)
+        aopTaskUtils = AopTaskUtils(runtimeProject,variant)
+        ClassPoolUtils.release(runtimeProject)
         ClassPoolUtils.clear()
         ClassFileUtils.debugMode = false
         ClassFileUtils.reflectInvokeMethod = reflectInvokeMethod
         ClassFileUtils.reflectInvokeMethodStatic = reflectInvokeMethodStatic
         WovenInfoUtils.isCompile = false
-        WovenInfoUtils.checkHasInvokeJson(project, variant)
-        WovenInfoUtils.checkHasOverrideJson(project, variant)
+        WovenInfoUtils.checkHasInvokeJson(runtimeProject, variant)
+        WovenInfoUtils.checkHasOverrideJson(runtimeProject, variant)
         println("AndroidAOP woven info code start")
-        ClassFileUtils.get(project).outputDir = File(Utils.aopTransformTempDir(project,variant))
-        ClassFileUtils.get(project).clear()
+        ClassFileUtils.get(runtimeProject).outputDir = File(Utils.aopTransformTempDir(runtimeProject,variant))
+        ClassFileUtils.get(runtimeProject).clear()
 //        ClassFileUtils.outputDir.deleteRecursively()
-        ClassFileUtils.get(project).outputCacheDir = File(Utils.aopCompileTempInvokeDir(project, variant))
+        ClassFileUtils.get(runtimeProject).outputCacheDir = File(Utils.aopCompileTempInvokeDir(runtimeProject, variant))
         SuspendReturnScanner.hasSuspendReturn = false
         val scanTimeCost = measureTimeMillis {
             scanFile()
@@ -111,7 +114,7 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
 
     private fun loadJoinPointConfig() = runBlocking{
         WovenInfoUtils.clear()
-        WovenInfoUtils.addBaseClassInfo(project)
+        WovenInfoUtils.addBaseClassInfo(runtimeProject)
         ignoreJar.clear()
         ignoreJarClassPaths.clear()
         allJarFiles.forEach { file ->
@@ -136,7 +139,7 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
             jarFile.close()
         }
         if (ignoreJar.isNotEmpty()){
-            val temporaryDir = File(Utils.aopTransformIgnoreJarDir(project,variant))
+            val temporaryDir = File(Utils.aopTransformIgnoreJarDir(runtimeProject,variant))
             for (path in ignoreJar) {
                 val destDir = "${temporaryDir.absolutePath}${File.separatorChar}${File(path).name.computeMD5()}"
                 val destFile = File(destDir)
@@ -147,7 +150,7 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
         }
 
         if (!ClassFileUtils.reflectInvokeMethod){
-            WovenInfoUtils.addClassPath(ClassFileUtils.get(project).outputDir.absolutePath)
+            WovenInfoUtils.addClassPath(ClassFileUtils.get(runtimeProject).outputDir.absolutePath)
         }
         val searchJobs = mutableListOf<Deferred<Unit>>()
         fun processFile(file : File,directory:File,directoryPath:String){
@@ -192,7 +195,7 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
     }
 
     private fun searchJoinPointLocation() = runBlocking{
-        aopTaskUtils.searchJoinPointLocationStart(project)
+        aopTaskUtils.searchJoinPointLocationStart(runtimeProject)
 
         val addClassMethodRecords = ConcurrentHashMap<String,ClassMethodRecord>()
         val deleteClassMethodRecords = ConcurrentHashMap.newKeySet<String>()
@@ -262,7 +265,7 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
         jarFile.saveJarEntry(jarEntryName, inputStream)
     }
     private fun wovenIntoCode() = runBlocking{
-        val invokeStaticClassName = Utils.extraPackage+".Invoke"+project.name.computeMD5()
+        val invokeStaticClassName = Utils.extraPackage+".Invoke"+runtimeProject.name.computeMD5()
         WovenInfoUtils.initAllClassName()
         WovenInfoUtils.makeReplaceMethodInfoUse()
 //        logger.error("getClassMethodRecord="+WovenInfoUtils.classMethodRecords)
@@ -304,11 +307,11 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
                         FileInputStream(file).use { inputs ->
                             val oldBytes = inputs.readAllBytes()
                             val byteArray = try {
-                                WovenIntoCode.modifyClass(project,oldBytes,realMethodsRecord,hasReplace,invokeStaticClassName,WovenInfoUtils.getWovenClassWriterFlags(),WovenInfoUtils.getWovenParsingOptions(),isSuspend)
+                                WovenIntoCode.modifyClass(runtimeProject,oldBytes,realMethodsRecord,hasReplace,invokeStaticClassName,WovenInfoUtils.getWovenClassWriterFlags(),WovenInfoUtils.getWovenParsingOptions(),isSuspend)
                             } catch (e: Exception) {
                                 e.printDetail()
                                 try {
-                                    WovenIntoCode.modifyClass(project,oldBytes,realMethodsRecord,hasReplace,invokeStaticClassName,WovenInfoUtils.getWovenClassWriterFlags2(),WovenInfoUtils.getWovenParsingOptions2(),isSuspend)
+                                    WovenIntoCode.modifyClass(runtimeProject,oldBytes,realMethodsRecord,hasReplace,invokeStaticClassName,WovenInfoUtils.getWovenClassWriterFlags2(),WovenInfoUtils.getWovenParsingOptions2(),isSuspend)
                                 } catch (e2: Exception) {
                                     realCopy()
                                     if (isSuspend){
@@ -570,10 +573,10 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
                             jarFile.getInputStream(jarEntry).use { inputs ->
                                 val oldBytes = inputs.readAllBytes()
                                 val byteArray = try {
-                                    WovenIntoCode.modifyClass(project,oldBytes,realMethodsRecord,hasReplace,invokeStaticClassName,WovenInfoUtils.getWovenClassWriterFlags(),WovenInfoUtils.getWovenParsingOptions(),isSuspend)
+                                    WovenIntoCode.modifyClass(runtimeProject,oldBytes,realMethodsRecord,hasReplace,invokeStaticClassName,WovenInfoUtils.getWovenClassWriterFlags(),WovenInfoUtils.getWovenParsingOptions(),isSuspend)
                                 } catch (e: Exception) {
                                     try {
-                                        WovenIntoCode.modifyClass(project,oldBytes,realMethodsRecord,hasReplace,invokeStaticClassName,WovenInfoUtils.getWovenClassWriterFlags2(),WovenInfoUtils.getWovenParsingOptions2(),isSuspend)
+                                        WovenIntoCode.modifyClass(runtimeProject,oldBytes,realMethodsRecord,hasReplace,invokeStaticClassName,WovenInfoUtils.getWovenClassWriterFlags2(),WovenInfoUtils.getWovenParsingOptions2(),isSuspend)
                                     } catch (e: Exception) {
                                         realCopy()
                                         if (isSuspend){
@@ -789,17 +792,17 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
                 jarFile.close()
             }
         }
-        val oldJarFileName = project.layout.buildDirectory.asFile.get()
+        val oldJarFileName = runtimeProject.layoutBuildDirectory
         // 这块耗时比较多
         synchronized(newClasses){
-            ClassFileUtils.get(project).wovenInfoInvokeClass(newClasses)
+            ClassFileUtils.get(runtimeProject).wovenInfoInvokeClass(newClasses)
         }
         if (!ClassFileUtils.reflectInvokeMethod || ClassFileUtils.reflectInvokeMethodStatic){
             val outputDirJobs = mutableListOf<Deferred<Unit>>()
-            for (file in ClassFileUtils.get(project).outputDir.walk()) {
+            for (file in ClassFileUtils.get(runtimeProject).outputDir.walk()) {
                 if (file.isFile) {
                     val job = async(Dispatchers.IO) {
-                        val className = file.getFileClassname(ClassFileUtils.get(project).outputDir)
+                        val className = file.getFileClassname(ClassFileUtils.get(runtimeProject).outputDir)
                         val invokeClassName = Utils.slashToDot(className).replace(_CLASS,"")
                         if (!WovenInfoUtils.containsInvokeClass(invokeClassName)){
                             file.inputStream().use {
@@ -812,7 +815,7 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
             }
             outputDirJobs.awaitAll()
         }
-        val collectDir = File(Utils.aopTransformCollectTempDir(project,variant))
+        val collectDir = File(Utils.aopTransformCollectTempDir(runtimeProject,variant))
         WovenIntoCode.createCollectClass(collectDir)
         val collectDirJobs = mutableListOf<Deferred<Unit>>()
         for (file in collectDir.walk()) {

@@ -108,7 +108,8 @@ dependencies {
 //    implementation project(path: ":sub-modules:sub2")
     if (TestType == "0"){
         //本地
-        ksp project(':android-aop-ksp')
+//        ksp project(':android-aop-ksp')
+        ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:'+TestVersion
 //        kapt project(':android-aop-processor')
     }else {
 //        annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:'+TestVersion

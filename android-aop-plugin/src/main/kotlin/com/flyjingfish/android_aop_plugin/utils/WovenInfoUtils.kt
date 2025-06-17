@@ -387,8 +387,8 @@ object WovenInfoUtils {
         }
     }
 
-    fun addBaseClassInfo(project: Project) {
-        val androidConfig = AndroidConfig(project)
+    fun addBaseClassInfo(project: RuntimeProject) {
+        val androidConfig = project.androidConfig
         val list: List<File> = androidConfig.getBootClasspath()
 //        printLog("Scan to classPath [${list}]")
 //        printLog("Scan to classPath [${classPaths}]")
@@ -631,7 +631,7 @@ object WovenInfoUtils {
         return allClassName.contains(className)
     }
 
-    fun checkHasInvokeJson(project: Project,variant:String){
+    fun checkHasInvokeJson(project: RuntimeProject,variant:String){
         if (!ClassFileUtils.debugMode){
             val cacheJsonFile = File(Utils.invokeJsonFile(project,variant))
             if (cacheJsonFile.exists()){
@@ -640,7 +640,7 @@ object WovenInfoUtils {
         }
     }
 
-    fun checkHasOverrideJson(project: Project,variant:String){
+    fun checkHasOverrideJson(project: RuntimeProject,variant:String){
         val cacheJsonFile = File(Utils.overrideClassFile(project,variant))
         if (cacheJsonFile.exists()){
             val json = InitConfig.optFromJsonString(

@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.jar.JarFile
 
 class AopTaskUtils(
-    private val project: Project,
+    private val project: RuntimeProject,
     private val variantName: String,
     private val isAndroidModule: Boolean = true
 ) {
@@ -171,9 +171,9 @@ class AopTaskUtils(
         WovenInfoUtils.checkLeafConfig(isApp)
     }
 
-    fun searchJoinPointLocationStart(project: Project) {
+    fun searchJoinPointLocationStart(project: RuntimeProject) {
         if (WovenInfoUtils.isHasExtendsReplace() && isAndroidModule) {
-            val androidConfig = AndroidConfig(project)
+            val androidConfig = project.androidConfig
             val list: List<File> = androidConfig.getBootClasspath()
             for (file in list) {
                 try {

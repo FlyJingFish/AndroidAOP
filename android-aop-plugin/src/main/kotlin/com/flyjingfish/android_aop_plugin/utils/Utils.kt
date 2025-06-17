@@ -265,37 +265,37 @@ object Utils {
         }
     }
 
-    fun invokeJsonFile(project:Project, variantName:String):String{
+    fun invokeJsonFile(project:RuntimeProject, variantName:String):String{
         return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/cacheInfo.json".adapterOSPath()
     }
-    fun overrideClassFile(project:Project, variantName:String):String{
+    fun overrideClassFile(project:RuntimeProject, variantName:String):String{
         return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/overrideClass.json".adapterOSPath()
     }
-    fun aopCompileTempDir(project:Project, variantName:String):String{
+    fun aopCompileTempDir(project:RuntimeProject, variantName:String):String{
         return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileClass/".adapterOSPath()
     }
-    fun aopCompileTempOtherDir(project:Project, variantName:String):String{
+    fun aopCompileTempOtherDir(project:RuntimeProject, variantName:String):String{
         return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileOtherClass/".adapterOSPath()
     }
-    fun aopCompileTempInvokeDir(project:Project, variantName:String):String{
+    fun aopCompileTempInvokeDir(project:RuntimeProject, variantName:String):String{
         return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileInvokeClass/".adapterOSPath()
     }
-    fun aopCompileTempInvokeCacheDir(project:Project, variantName:String):String{
+    fun aopCompileTempInvokeCacheDir(project:RuntimeProject, variantName:String):String{
         return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileInvokeCacheClass/".adapterOSPath()
     }
-    fun aopCompileTempOtherJson(project:Project, variantName:String):String{
+    fun aopCompileTempOtherJson(project:RuntimeProject, variantName:String):String{
         return project.buildDir.absolutePath + "/tmp/android-aop/${variantName}/tempCompileOtherClassJson/needDelClassInfo.json".adapterOSPath()
     }
-    fun aopTransformTempDir(project:Project, variantName:String):String{
+    fun aopTransformTempDir(project:RuntimeProject, variantName:String):String{
         return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempInvokeClass/".adapterOSPath()
     }
-    fun aopTransformCollectTempDir(project:Project, variantName:String):String{
+    fun aopTransformCollectTempDir(project:RuntimeProject, variantName:String):String{
         return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempCollectClass/".adapterOSPath()
     }
 //    fun aopProjectJarTempDir(project:Project, variantName:String):String{
 //        return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempProjectJar/".adapterOSPath()
 //    }
-    fun aopTransformIgnoreJarDir(project:Project, variantName:String):String{
+    fun aopTransformIgnoreJarDir(project:RuntimeProject, variantName:String):String{
         return project.buildDir.absolutePath+"/tmp/android-aop/${variantName}/tempTransformIgnoreJar/".adapterOSPath()
     }
     fun aopDebugModeJavaDir(variantName:String):String{
@@ -310,7 +310,7 @@ object Utils {
     fun aopDebugModeJavaDir4JavaNoAdapter():String{
         return "/generated/sources/android_aop/"
     }
-    fun configJsonFile(project:Project):String{
+    fun configJsonFile(project:RuntimeProject):String{
         return project.buildDir.absolutePath+"/tmp/android-aop/config/androidAopConfig.json".adapterOSPath()
     }
 

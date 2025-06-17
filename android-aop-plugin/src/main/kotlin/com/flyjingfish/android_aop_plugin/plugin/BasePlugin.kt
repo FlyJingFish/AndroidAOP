@@ -4,7 +4,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 abstract class BasePlugin :Plugin<Project> {
-    private lateinit var pluginConfig: PluginConfig
+    lateinit var pluginConfig: PluginConfig
     private fun init(project: Project){
         pluginConfig = PluginConfig(project)
     }

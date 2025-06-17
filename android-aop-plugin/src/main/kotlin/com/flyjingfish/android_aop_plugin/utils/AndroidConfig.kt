@@ -1,22 +1,22 @@
 package com.flyjingfish.android_aop_plugin.utils
 
 
-import com.android.build.gradle.BaseExtension
-import org.gradle.api.Project
 import java.io.File
+import java.io.Serializable
 
 /**
  * Android相关配置
  */
-class AndroidConfig(project: Project) {
+data class AndroidConfig(private var bootClasspath: List<File> ?= null):Serializable {
 
-    private val android: BaseExtension = project.extensions.getByName("android") as BaseExtension
-
+    fun setBootClasspath(list :List<File>){
+        bootClasspath = list
+    }
     /**
      * Return boot classpath.
      * @return Collection of classes.
      */
     fun getBootClasspath(): List<File> {
-        return android.bootClasspath
+        return bootClasspath ?: emptyList()
     }
 }

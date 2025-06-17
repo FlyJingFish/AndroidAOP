@@ -38,8 +38,8 @@ class ClassFileUtils {
         private const val INVOKE_CLASSES = "com.flyjingfish.android_aop_annotation.utils.InvokeMethods"
         private val instanceMap = ConcurrentHashMap<String,ClassFileUtils>()
 
-        fun get(project: Project):ClassFileUtils{
-            val key = project.layout.buildDirectory.asFile.get().absolutePath
+        fun get(project: RuntimeProject):ClassFileUtils{
+            val key = project.layoutBuildDirectory.absolutePath
             return instanceMap.computeIfAbsent(key) { ClassFileUtils() }
         }
 

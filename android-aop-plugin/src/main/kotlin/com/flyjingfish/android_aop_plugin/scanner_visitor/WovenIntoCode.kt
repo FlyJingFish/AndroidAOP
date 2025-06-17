@@ -11,6 +11,7 @@ import com.flyjingfish.android_aop_plugin.utils.ClassNameToConversions
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.KeywordChecker
+import com.flyjingfish.android_aop_plugin.utils.RuntimeProject
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils.CONVERSIONS_CLASS
 import com.flyjingfish.android_aop_plugin.utils.Utils.JOIN_LOCK
@@ -68,7 +69,7 @@ import java.util.regex.Pattern
 object WovenIntoCode {
     @Throws(Exception::class)
     fun modifyClass(
-        project: Project,
+        project: RuntimeProject,
         inputStreamBytes: ByteArray?,
         methodRecordHashMap: HashMap<String, MethodRecord>,
         hasReplace:Boolean,
@@ -1288,7 +1289,7 @@ object WovenIntoCode {
         collectDirJobs.awaitAll()
     }
 
-    fun deleteOtherCompileClass(project:Project, variantName:String){
+    fun deleteOtherCompileClass(project:RuntimeProject, variantName:String){
         val json : CutFileJson? = InitConfig.optFromJsonString(
             InitConfig.readAsString(Utils.aopCompileTempOtherJson(project,variantName)),
             CutFileJson::class.java)

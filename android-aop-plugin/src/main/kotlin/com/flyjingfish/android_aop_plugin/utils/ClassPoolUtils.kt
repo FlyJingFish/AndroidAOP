@@ -70,8 +70,8 @@ object ClassPoolUtils {
         return classPool
     }
 
-    fun release(project: Project){
-        val projectPath = project.rootProject.buildDir.absolutePath.replace("/build".adapterOSPath(),"")
+    fun release(project: RuntimeProject){
+        val projectPath = project.rootProjectBuildDir.absolutePath.replace("/build".adapterOSPath(),"")
         JarUtils.INSTANCE.setRootProjectPath(projectPath)
         classPool = null
     }

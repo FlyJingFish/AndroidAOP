@@ -6,6 +6,7 @@ import com.android.build.gradle.internal.tasks.DexArchiveBuilderTask
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.tasks.AssembleAndroidAopTask
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
+import com.flyjingfish.android_aop_plugin.utils.RuntimeProject
 import io.github.flyjingfish.fast_transform.tasks.DefaultTransformTask
 import io.github.flyjingfish.fast_transform.toTransformAll
 import org.gradle.api.Project
@@ -60,6 +61,7 @@ object TransformPlugin : BasePlugin() {
             }
         }
         val androidComponents = project.extensions.getByType(AndroidComponentsExtension::class.java)
+        val runtimeProject = RuntimeProject.get(project)
         androidComponents.onVariants { variant ->
             val androidAopConfig = project.extensions.getByType(AndroidAopConfig::class.java)
             androidAopConfig.initConfig()
@@ -70,6 +72,7 @@ object TransformPlugin : BasePlugin() {
             if (androidAopConfig.enabled && !isDebugMode(buildTypeName,variant.name)){
                 val fastDex = isFastDex(buildTypeName,variant.name)
                 val task = project.tasks.register("${variant.name}AssembleAndroidAopTask", AssembleAndroidAopTask::class.java){
+                    it.runtimeProject = runtimeProject
                     it.reflectInvokeMethod = isReflectInvokeMethod(buildTypeName,variant.name)
                     it.reflectInvokeMethodStatic = isReflectInvokeMethodStatic()
                     it.variant = variant.name
