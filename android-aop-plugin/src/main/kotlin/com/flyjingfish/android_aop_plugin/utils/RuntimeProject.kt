@@ -13,7 +13,7 @@ data class RuntimeProject(
     var androidConfig: AndroidConfig
 ): Serializable {
     companion object {
-        fun get(project: Project): RuntimeProject {
+        fun getAfterEvaluate(project: Project): RuntimeProject {
             val runtimeProject = RuntimeProject(
                 buildDir = project.buildDir,
                 rootProjectBuildDir = project.rootProject.buildDir,
@@ -23,15 +23,34 @@ data class RuntimeProject(
             )
             if (project != project.rootProject){
                 project.afterEvaluate {
-                    try {
-                        val android = project.extensions.getByName("android") as BaseExtension
-                        runtimeProject.androidConfig.setBootClasspath(android.bootClasspath)
-                    } catch (_: Throwable) {
-                    }
+                    setBootClasspath(runtimeProject, project)
                 }
+                setBootClasspath(runtimeProject, project)
+            }
+            return runtimeProject
+        }
+        fun get(project: Project): RuntimeProject {
+            val runtimeProject = RuntimeProject(
+                buildDir = project.buildDir,
+                rootProjectBuildDir = project.rootProject.buildDir,
+                layoutBuildDirectory = project.layout.buildDirectory.asFile.get(),
+                androidConfig = AndroidConfig(),
+                name = project.name
+            )
+            if (project != project.rootProject){
+                setBootClasspath(runtimeProject, project)
             }
             return runtimeProject
         }
 
+        private fun setBootClasspath(runtimeProject: RuntimeProject,project: Project){
+            try {
+                val android = project.extensions.getByName("android") as BaseExtension?
+                if (android != null){
+                    runtimeProject.androidConfig.setBootClasspath(android.bootClasspath)
+                }
+            } catch (_: Throwable) {
+            }
+        }
     }
 }

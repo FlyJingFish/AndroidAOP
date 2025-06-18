@@ -8,24 +8,18 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.DynamicFeaturePlugin
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
-import com.android.build.gradle.internal.tasks.DexArchiveBuilderTask
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import com.flyjingfish.android_aop_plugin.tasks.CompileAndroidAopTask
 import com.flyjingfish.android_aop_plugin.tasks.DebugModeFileTask
-import com.flyjingfish.android_aop_plugin.utils.AndroidConfig
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.RuntimeProject
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.adapterOSPath
 import com.flyjingfish.android_aop_plugin.utils.getRelativePath
-import io.github.flyjingfish.fast_transform.tasks.DefaultTransformTask
-import io.github.flyjingfish.fast_transform.tasks.FastDexTask
-import io.github.flyjingfish.fast_transform.utils.printLog
 import org.codehaus.groovy.runtime.DefaultGroovyMethods
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.api.execution.TaskExecutionGraphListener
 import org.gradle.api.plugins.JavaPluginExtension
@@ -33,7 +27,6 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.configurationcache.extensions.capitalized
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 import java.io.File
 
@@ -69,7 +62,7 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
 
             })
         }
-        val runtimeProject = RuntimeProject.get(project)
+        val runtimeProject = RuntimeProject.getAfterEvaluate(project)
         val isApp = project.plugins.hasPlugin(AppPlugin::class.java)
 
 
