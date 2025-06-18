@@ -4,7 +4,7 @@ android.applicationVariants.configureEach {
     tasks.matching { it.name.endsWith("AssembleAndroidAopTask") && it.name.contains(variantName) }.configureEach {
         doFirst {
             println("Before AOP for variant $variantName")
-            backupOriginalFile()
+            restoreOriginalFile()
         }
         doLast {
             println("After AOP for variant $variantName")
@@ -36,7 +36,7 @@ def copyFile(File sourceFile,File targetFile){
 //    println "Copied ${sourceFile} to ${targetFile}"
 }
 
-def backupOriginalFile(){
+def restoreOriginalFile(){
     def rootDir = file(project.rootProject.buildDir.absolutePath+File.separator+"deleteCache")
     if (!rootDir.exists()){
         return
@@ -66,8 +66,8 @@ task aaTestDelete() {
     }
 }
 
-task aaTestBack() {
+task aaTestRestore() {
     doLast {
-        backupOriginalFile()
+        restoreOriginalFile()
     }
 }
