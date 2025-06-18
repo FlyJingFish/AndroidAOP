@@ -1,0 +1,73 @@
+
+android.applicationVariants.configureEach {
+    def variantName = name
+    tasks.matching { it.name.endsWith("AssembleAndroidAopTask") && it.name.contains(variantName) }.configureEach {
+        doFirst {
+            println("Before AOP for variant $variantName")
+            backupOriginalFile()
+        }
+        doLast {
+            println("After AOP for variant $variantName")
+            //在此写上占用
+            deleteOnSave("/Users/a111/AndroidStudioProjects/AndroidAOP/test-lib/build/intermediates/runtime_library_classes_jar/debug/classes.jar")
+            deleteOnSave("/Users/a111/AndroidStudioProjects/AndroidAOP/test-lib/build/intermediates/compile_library_classes_jar/debug/classes.jar")
+        }
+    }
+}
+
+def deleteOnSave(String deleteFilePath){
+    File targetFile = new File(project.rootProject.buildDir.absolutePath+File.separator+"deleteCache",deleteFilePath)
+    File deleteFile = new File(project.rootProject.buildDir.parentFile.absolutePath,deleteFilePath.replace(project.rootProject.buildDir.parentFile.absolutePath,""))
+    copyFile(deleteFile,targetFile)
+    deleteFile.delete()
+}
+
+def copyFile(File sourceFile,File targetFile){
+    if (!sourceFile.exists()){
+        return
+    }
+    targetFile.parentFile.mkdirs()
+    sourceFile.withInputStream { input ->
+        targetFile.withOutputStream { output ->
+            output << input
+        }
+    }
+
+//    println "Copied ${sourceFile} to ${targetFile}"
+}
+
+def backupOriginalFile(){
+    def rootDir = file(project.rootProject.buildDir.absolutePath+File.separator+"deleteCache")
+    if (!rootDir.exists()){
+        return
+    }
+
+    def allFiles = []
+    rootDir.eachFileRecurse { file ->
+        if (file.isFile()) {
+            allFiles << file
+        }
+    }
+
+    println "恢复 ${allFiles.size()} 个文件："
+
+    for (final File file in allFiles) {
+        File sourceFile = new File(project.rootProject.buildDir.parentFile.absolutePath,file.getAbsolutePath().replace(rootDir.getAbsolutePath(),""))
+        if (!sourceFile.exists()){
+            copyFile(file,sourceFile)
+        }
+        file.delete()
+    }
+}
+
+task aaTestDelete() {
+    doLast {
+        deleteOnSave("test-lib/build/intermediates/compile_symbol_list/debug/R.txt")
+    }
+}
+
+task aaTestBack() {
+    doLast {
+        backupOriginalFile()
+    }
+}
