@@ -54,7 +54,7 @@ class MainActivity: BaseVActivity<ActivityMainBinding>(),PermissionRejectListene
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        Log.e("MainActivity","onCreate----->>ss")
+        Log.e("MainActivity","onCreate----->>")
         val map = mapOf(1 to "num1",0 to "num")
         println(map)
         val sortedMap = map.entries.sortedBy { it.key }.associate { it.toPair() }

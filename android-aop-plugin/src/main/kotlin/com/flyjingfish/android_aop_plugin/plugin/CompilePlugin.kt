@@ -56,7 +56,10 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
                             if (task is KotlinCompileTool){
                                 val destinationDirectory = task.destinationDirectory.get().asFile
                                 val key = task.project.buildDir.absolutePath+"@"+task.name
-                                kotlinCompileFilePathMap[key] = destinationDirectory
+                                val oldDirectory = kotlinCompileFilePathMap[key]
+                                if (oldDirectory == null || oldDirectory.absolutePath != destinationDirectory.absolutePath){
+                                    kotlinCompileFilePathMap[key] = destinationDirectory
+                                }
                             }
                         }
                     } catch (_: Throwable) {
@@ -136,21 +139,6 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
             var androidObject1: Any? = null
             project.afterEvaluate {
                 androidObject1 = project.extensions.findByName(ANDROID_EXTENSION_NAME)
-            }
-            val kotlinBuildPath = File(project.buildDir.path + "/classes/kotlin/main".adapterOSPath())
-            var cacheDir : File ?=null
-            project.afterEvaluate {
-                cacheDir = try {
-                    val compileKotlinTask = project.tasks.named("compileKotlin", KotlinCompile::class.java)
-                    if (compileKotlinTask.get() !is KotlinCompile){
-                        null
-                    }else{
-                        val compileKotlin = compileKotlinTask.get()
-                        compileKotlin.destinationDirectory.get().asFile
-                    }
-                } catch (e: Throwable) {
-                    null
-                }
             }
             // java项目
             val kotlinDefaultPath = File(project.buildDir.path + "/classes/kotlin/main".adapterOSPath())
