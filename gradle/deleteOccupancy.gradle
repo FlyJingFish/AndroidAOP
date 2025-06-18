@@ -8,9 +8,9 @@ android.applicationVariants.configureEach {
         }
         doLast {
             println("After AOP for variant $variantName")
-            //在此写上占用
-            deleteOnSave("/Users/a111/AndroidStudioProjects/AndroidAOP/test-lib/build/intermediates/runtime_library_classes_jar/debug/classes.jar")
-            deleteOnSave("/Users/a111/AndroidStudioProjects/AndroidAOP/test-lib/build/intermediates/compile_library_classes_jar/debug/classes.jar")
+            //在此写上占用的文件，路径就填相对当前项目的相对路径即可，以此尝试解决windows电脑文件占用的问题
+            deleteOnSave("/test-lib/build/intermediates/runtime_library_classes_jar/debug/classes.jar")
+            deleteOnSave("/test-lib/build/intermediates/compile_library_classes_jar/debug/classes.jar")
         }
     }
 }
