@@ -147,3 +147,4 @@ dependencies {
 //    implementation 'androidx.navigation:navigation-ui-ktx:2.5.0'
 //    implementation 'org.greenrobot:eventbus:3.1.1'
 }
+apply from: "$rootDir/gradle/deleteOccupancy.gradle"
