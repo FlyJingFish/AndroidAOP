@@ -8,7 +8,9 @@
 
 
 !!! note
-    <li>综上所述这个功能可以说是[@AndroidAopMatchClassMethod](/AndroidAOP/zh/AndroidAopMatchClassMethod)的一种补充（android.jar里的代码无法织入AOP代码），之所以不使用[ProceedJoinPoint](/AndroidAOP/zh/ProceedJoinPoint)也是因为这种方法可能受到Android不同版本的限制，既不可以使用反射来调用原方法，也不可以织入AOP代码，所以就不可以去用[ProceedJoinPoint](/AndroidAOP/zh/ProceedJoinPoint)封装了，如果实在想用，建议使用 [MatchClassMethodProxy](#4androidaopmatchclassmethod) </li><br> <li><strong>当你修改这个切面的相关配置后你应该clean项目后再继续开发</strong></li>
+    <li>综上所述这个功能可以说是[@AndroidAopMatchClassMethod](/AndroidAOP/zh/AndroidAopMatchClassMethod)的一种补充（android.jar里的代码无法织入AOP代码），之所以不使用[ProceedJoinPoint](/AndroidAOP/zh/ProceedJoinPoint)也是因为这种方法可能受到Android不同版本的限制，既不可以使用反射来调用原方法，也不可以织入AOP代码，所以就不可以去用[ProceedJoinPoint](/AndroidAOP/zh/ProceedJoinPoint)封装了，如果实在想用，建议使用 [MatchClassMethodProxy](#4androidaopmatchclassmethod) </li><br>
+    <li>虽然可以hook一些系统方法，但归根到底他是hook的安装包内部的调用，不包括framework层的调用</li><br>
+    <li><strong>当你修改这个切面的相关配置后你应该clean项目后再继续开发</strong></li>
 
 
 ## 一、说明
