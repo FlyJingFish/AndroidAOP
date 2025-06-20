@@ -22,8 +22,8 @@ junit-junit = "4.13.2"
 androidx-test-ext-junit = "1.2.1"
 espresso-core = "3.6.1"
 test-rules = "1.5.0"
-flyjingfish_javassist_version = "1.0.1"
-fastTransform_version = "1.0.5"
+flyjingfish_javassist_version = "1.0.2"
+fasttransform_version = "1.0.6"
 kotlinx-metadata-jvm-version = "0.9.0"
 [libraries]
 kotlinpoet-ksp = { group = "com.squareup", name = "kotlinpoet-ksp", version.ref = "kotlinpoet_version" }
@@ -50,6 +50,6 @@ junit = { group = "junit", name = "junit", version.ref = "junit-junit" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 androidx-rules = { group = "androidx.test", name = "rules", version.ref = "test-rules" }
-flyjingfish-javassist = { group = "io.github.FlyJingFish.javassist", name = "javassist", version.ref = "flyjingfish_javassist_version" }
-fastTransform = { group = "io.github.FlyJingFish.FastTransform", name = "fast-transform", version.ref = "fastTransform_version" }
+flyjingfish-javassist = { group = "io.github.flyjingfish", name = "javassist", version.ref = "flyjingfish_javassist_version" }
+fastTransform = { group = "io.github.flyjingfish", name = "fasttransform", version.ref = "fasttransform_version" }
 kotlinx-metadata-jvm = { group = "org.jetbrains.kotlinx", name = "kotlinx-metadata-jvm", version.ref = "kotlinx-metadata-jvm-version" }
