@@ -241,11 +241,7 @@ try to change it to English and install it again
 
 - If it is a direct call, it will not cause recursion, and the framework has already handled it
 
-- If it is an indirect call, it will cause recursion, such as calling methods of other classes that
-  contain the original method. The framework does not handle this. If you need to do this, you can
-  combine exclude To
-  use [Homepage access, step 4 is introduced](https://flyjingfish.github.io/AndroidAOP/getting_started/#4-add-the-androidaopconfig-configuration-item-in-apps-buildgradle-this-step-is-an-optional-configuration-item),
-  use exclude to exclude the indirect call class
+- If it is an indirect call, it will cause recursion. For example, calling methods of other classes that contain the original method will not be processed by the framework. If you need to do this, you can combine excludeWeaving of @AndroidAopReplaceClass or use exclude in [the fourth step of homepage access](/AndroidAOP/getting_started/#4-add-the-androidaopconfig-configuration-item-in-apps-buildgradle-this-step-is-an-optional-configuration-item) to exclude the indirect call class.
 
 ### 13. What should I do if I don’t want to introduce the built-in annotation aspect?
 
