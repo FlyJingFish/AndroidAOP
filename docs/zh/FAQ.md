@@ -224,7 +224,7 @@ Kotlin 中的 `vararg str : String` 相当于 Java 中的 `String...`，这种�
 
 - 如果是直接调用就不会造成递归，框架已作处理
 
-- 如果属于间接调用就会造成递归，例如调用包含的原方法的其他类的方法，框架对此不做处理，如需这么做可以结合 exclude 来使用[首页接入第四步有介绍](/AndroidAOP/zh/getting_started/#app-buildgradle-androidaopconfig)，使用exclude排除掉间接调用类即可
+- 如果属于间接调用就会造成递归，例如调用包含的原方法的其他类的方法，框架对此不做处理，如需这么做可以结合 @AndroidAopReplaceClass 的 excludeWeaving 或者 使用[首页接入第四步有介绍](/AndroidAOP/zh/getting_started/#app-buildgradle-androidaopconfig)的 exclude排除掉间接调用类即可
 
 ### 13、不想引入内置的注解切面，怎么办？
 
