@@ -2,24 +2,25 @@
 
 apply plugin: "maven-publish"
 apply plugin: "signing"
+apply plugin: "com.vanniktech.maven.publish"
 group = rootProject.group
 version = rootProject.version
-task sourceJar(type: Jar) {
-    if (project.hasProperty("kotlin")) {
-        from android.sourceSets.main.java.getSrcDirs()
-    } else if (project.hasProperty("android")) {
-        from android.sourceSets.main.java.sourceFiles
-    } else {
-        from sourceSets.main.allSource
-    }
-    archiveClassifier = 'sources'
-}
-
+//task sourceJar(type: Jar) {
+//    if (project.hasProperty("kotlin")) {
+//        from android.sourceSets.main.java.getSrcDirs()
+//    } else if (project.hasProperty("android")) {
+//        from android.sourceSets.main.java.sourceFiles
+//    } else {
+//        from sourceSets.main.allSource
+//    }
+//    archiveClassifier = 'sources'
+//}
+def appVersionName = getAppVersionName()
 afterEvaluate {
     publishing {
         publications {
             mavenJava(MavenPublication) {
-                artifact sourceJar
+//                artifact sourceJar
                 artifactId = PROJ_NAME
                 from(components.release)
                 pom {
@@ -52,5 +53,36 @@ afterEvaluate {
     }
     signing {
         sign publishing.publications.mavenJava
+    }
+}
+
+
+mavenPublishing {
+    coordinates(PROJ_GROUP, PROJ_NAME, appVersionName)
+
+    pom {
+        name = PROJ_BASENAME
+        description = PROJ_DESCRIPTION
+        inceptionYear = "2022"
+        url = PROJ_WEBSITEURL
+        licenses {
+            license {
+                name = "The Apache License, Version 2.0"
+                url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                distribution = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            }
+        }
+        developers {
+            developer {
+                id = DEVELOPER_ID
+                name = DEVELOPER_NAME
+                email = DEVELOPER_EMAIL
+            }
+        }
+        scm {
+            connection = PROJ_VCSURL
+            developerConnection = PROJ_VCSURL
+            url = PROJ_WEBSITEURL
+        }
     }
 }

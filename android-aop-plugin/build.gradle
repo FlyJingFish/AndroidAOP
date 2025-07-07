@@ -32,7 +32,7 @@ gradlePlugin {
     plugins {
         androidAop {
             // 插件id
-            id = 'io.github.FlyJingFish.AndroidAop.android-aop'
+            id = PROJ_GROUP + '.androidaop'
             // 插件全路径
             implementationClass = "com.flyjingfish.android_aop_plugin.AndroidAopPlugin"
             // 插件名称

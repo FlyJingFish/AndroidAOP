@@ -7,12 +7,12 @@ buildscript {
     }
 }
 plugins {
-    id 'com.android.application' version '7.4.1' apply false
-    id 'com.android.library' version '7.4.1' apply false
-    id 'org.jetbrains.kotlin.android' version '1.8.0' apply false
-    id 'org.jetbrains.kotlin.jvm' version '1.8.0' apply false
-    id 'io.github.gradle-nexus.publish-plugin' version "2.0.0-rc-1"
-    id 'com.google.devtools.ksp' version '1.8.0-1.0.9' apply false
+    id 'com.android.application' version '8.1.1' apply false
+    id 'com.android.library' version '8.1.1' apply false
+    id 'org.jetbrains.kotlin.android' version '1.9.23' apply false
+    id 'org.jetbrains.kotlin.jvm' version '1.9.23' apply false
+    id "com.vanniktech.maven.publish" version "0.29.0" apply false
+    id 'com.google.devtools.ksp' version '1.9.23-1.0.20' apply false
 //    id "kotlinx-serialization" version "1.5.0"
 //    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.7.2" apply true
 }
@@ -131,14 +131,3 @@ def updateREADME(readme,oldVersionName,newVersionName) {
 def appVersionName = getAppVersionName()
 group = PROJ_GROUP
 version = appVersionName
-apply plugin: "io.github.gradle-nexus.publish-plugin"
-nexusPublishing {
-    repositories {
-        Nexus {
-            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-            username = ossrhUsername // defaults to project.properties["myNexusUsername"]
-            password = ossrhPassword // defaults to project.properties["myNexusPassword"]
-        }
-    }
-}
