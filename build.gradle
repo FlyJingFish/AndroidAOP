@@ -206,3 +206,7 @@ task runPublishScript(type: Exec) {
     workingDir = projectDir
     commandLine './publish.sh'
 }
+/**
+ chmod +x publish.sh
+ ./publish.sh
+ */
