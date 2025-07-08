@@ -113,6 +113,59 @@ task aaBumpVersion() {
     }
 }
 
+
+task aaBumpVersion1() {
+    doLast {
+        def versionName = getAppVersionCode() + 1
+        def str = versionName.toString()
+        def length = str.length()
+        def newVersionName = ""
+        for (int i = 0; i < length; i++) {
+            newVersionName += str.charAt(i)
+            if (i < 2) {
+                newVersionName += "."
+            }
+        }
+
+        def versionPropsFile = file('version.properties')
+        def versionProps = new Properties()
+        versionProps.load(new FileInputStream(versionPropsFile))
+        def oldVersionName = versionProps['PROJ_VERSION']
+        versionProps['PROJ_VERSION'] = newVersionName
+        versionProps.store(versionPropsFile.newWriter(), null)
+
+        updateREADME("README.md",oldVersionName,newVersionName)
+        updateREADME("README-zh.md",oldVersionName,newVersionName)
+        updateREADME("docs/getting_started.md",oldVersionName,newVersionName)
+        updateREADME("docs/android_aop_extra.md",oldVersionName,newVersionName)
+        updateREADME("docs/zh/getting_started.md",oldVersionName,newVersionName)
+        updateREADME("docs/zh/android_aop_extra.md",oldVersionName,newVersionName)
+
+
+
+    }
+}
+
+
+task aaBumpVersion2() {
+    doLast {
+        def versionPropsFile = file('gradle.properties')
+        def versionProps = new Properties()
+        versionProps.load(new FileInputStream(versionPropsFile))
+        def oldVersionName = versionProps['TestVersion']
+
+        def newVersionName = getAppVersionName()
+        File gradleFile = new File("gradle.properties")
+        String gradleText = gradleFile.text
+        String text2 = gradleText.replace("TestVersion = "+oldVersionName,"TestVersion = "+newVersionName)
+
+
+        gradleFile.write(text2)
+
+        println("升级版本号完成，versionName = "+newVersionName)
+    }
+}
+
 //subprojects { subproject ->
 //    subproject.afterEvaluate {
 //        def list = new ArrayList<String>()
@@ -145,3 +198,11 @@ def updateREADME(readme,oldVersionName,newVersionName) {
 def appVersionName = getAppVersionName()
 group = PROJ_GROUP
 version = appVersionName
+
+
+task runPublishScript(type: Exec) {
+    group = "publishing"
+    description = "Runs the publish.sh shell script"
+    workingDir = projectDir
+    commandLine './publish.sh'
+}
