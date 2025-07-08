@@ -89,6 +89,19 @@ task aaBumpVersion() {
         updateREADME("docs/zh/getting_started.md",oldVersionName,newVersionName)
         updateREADME("docs/zh/android_aop_extra.md",oldVersionName,newVersionName)
 
+
+
+//        version = newVersionName
+//        rootProject.subprojects { subproject ->
+//            subproject.version = newVersionName
+//        }
+
+
+        exec {
+            workingDir projectDir
+            commandLine './gradlew', 'publishMavenJavaPublicationToMavenLocal'
+        }
+
         File gradleFile = new File("gradle.properties")
         String gradleText = gradleFile.text
         String text2 = gradleText.replace("TestVersion = "+oldVersionName,"TestVersion = "+newVersionName)
@@ -96,25 +109,25 @@ task aaBumpVersion() {
 
         gradleFile.write(text2)
 
-        version = newVersionName
-        rootProject.subprojects { subproject ->
-            subproject.version = newVersionName
-        }
         println("升级版本号完成，versionName = "+newVersionName)
     }
 }
 
-subprojects { subproject ->
-    subproject.afterEvaluate {
-        def list = new ArrayList<String>()
-        subproject.tasks.forEach { task ->
-            if ("publishAllPublicationsToNexusRepository" == task.name){
-                list.add("${subproject.path}:publishMavenJavaPublicationToMavenLocal")
-            }
-        }
-        aaBumpVersion.finalizedBy(list.toArray())
-    }
-}
+//subprojects { subproject ->
+//    subproject.afterEvaluate {
+//        def list = new ArrayList<String>()
+//        subproject.tasks.forEach { task ->
+//            if (task.name.contains("publish")){
+//                println("task.name="+task.name)
+//            }
+//
+//            if ("publishAllPublicationsToMavenCentralRepository" == task.name){
+//                list.add("${subproject.path}:publishMavenJavaPublicationToMavenLocal")
+//            }
+//        }
+//        aaBumpVersion.finalizedBy(list.toArray())
+//    }
+//}
 def updateREADME(readme,oldVersionName,newVersionName) {
     File configFile = new File(readme)
     String exportText = configFile.text
