@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     dependencies {
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:'+TestVersion
+        classpath 'io.github.flyjingfish:androidaop-plugin:'+TestVersion
         classpath 'org.jetbrains.kotlin:kotlin-serialization:1.5.0'
         classpath 'io.github.FlyJingFish.EasyRegister:plugin:1.0.9'
     }
@@ -117,14 +117,14 @@ subprojects { subproject ->
 def updateREADME(readme,oldVersionName,newVersionName) {
     File configFile = new File(readme)
     String exportText = configFile.text
-    String text = exportText.replace("io.github.FlyJingFish.AndroidAop:android-aop-plugin:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-plugin:"+newVersionName)
-    text = text.replace("io.github.FlyJingFish.AndroidAop:android-aop-core:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-core:"+newVersionName)
-    text = text.replace("io.github.FlyJingFish.AndroidAop:android-aop-annotation:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-annotation:"+newVersionName)
-    text = text.replace("io.github.FlyJingFish.AndroidAop:android-aop-extra:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-extra:"+newVersionName)
-    text = text.replace("io.github.FlyJingFish.AndroidAop:android-aop-processor:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-processor:"+newVersionName)
-    text = text.replace("io.github.FlyJingFish.AndroidAop:android-aop-ksp:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-ksp:"+newVersionName)
-    text = text.replace("id \"io.github.FlyJingFish.AndroidAop.android-aop\" version \""+oldVersionName+"\"","id \"io.github.FlyJingFish.AndroidAop.android-aop\" version \""+newVersionName+"\"")
-    text = text.replace("id(\"io.github.FlyJingFish.AndroidAop.android-aop\") version \""+oldVersionName+"\"","id(\"io.github.FlyJingFish.AndroidAop.android-aop\") version \""+newVersionName+"\"")
+    String text = exportText.replace("io.github.flyjingfish:androidaop-plugin:"+oldVersionName,"io.github.flyjingfish:androidaop-plugin:"+newVersionName)
+    text = text.replace("io.github.flyjingfish:androidaop-core:"+oldVersionName,"io.github.flyjingfish:androidaop-core:"+newVersionName)
+    text = text.replace("io.github.flyjingfish:androidaop-annotation:"+oldVersionName,"io.github.flyjingfish:androidaop-annotation:"+newVersionName)
+    text = text.replace("io.github.flyjingfish:androidaop-extra:"+oldVersionName,"io.github.flyjingfish:androidaop-extra:"+newVersionName)
+    text = text.replace("io.github.flyjingfish:androidaop-processor:"+oldVersionName,"io.github.flyjingfish:androidaop-processor:"+newVersionName)
+    text = text.replace("io.github.flyjingfish:androidaop-ksp:"+oldVersionName,"io.github.flyjingfish:androidaop-ksp:"+newVersionName)
+    text = text.replace("id \"io.github.flyjingfish.androidaop\" version \""+oldVersionName+"\"","id \"io.github.flyjingfish.androidaop\" version \""+newVersionName+"\"")
+    text = text.replace("id(\"io.github.flyjingfish.androidaop\") version \""+oldVersionName+"\"","id(\"io.github.flyjingfish.androidaop\") version \""+newVersionName+"\"")
     configFile.write(text)
 }
 
