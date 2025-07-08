@@ -45,11 +45,3 @@ gradlePlugin {
     }
 }
 
-publishing {
-    publications {
-        pluginMaven(MavenPublication) {
-            // 和maven仓库artifactId保持一致
-            artifactId = PROJ_NAME
-        }
-    }
-}
