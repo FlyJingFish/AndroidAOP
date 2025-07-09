@@ -2,58 +2,7 @@ apply plugin: "maven-publish"
 apply plugin: "signing"
 apply plugin: "com.vanniktech.maven.publish"
 
-group = rootProject.group
-version = rootProject.version
-
-java {
-    withJavadocJar()
-    withSourcesJar()
-}
-javadoc {
-    if (JavaVersion.current().isJava9Compatible()) {
-        options.addBooleanOption('html5', true)
-    }
-}
 def appVersionName = getAppVersionName()
-afterEvaluate {
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                artifactId = PROJ_NAME
-                from(components.java)
-                pom {
-                    packaging = "jar"
-                    name = PROJ_BASENAME
-                    description = PROJ_DESCRIPTION
-                    url = PROJ_WEBSITEURL
-                    licenses {
-                        license {
-                            name =  'The Apache License, Version 2.0'
-                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                        }
-                    }
-                    developers {
-                        developer {
-                            id = DEVELOPER_ID
-                            name = DEVELOPER_NAME
-                            email = DEVELOPER_EMAIL
-                        }
-                    }
-
-                    scm {
-                        connection = PROJ_VCSURL
-                        developerConnection = PROJ_VCSURL
-                        url = PROJ_WEBSITEURL
-                    }
-                }
-            }
-        }
-    }
-    signing {
-        sign publishing.publications.mavenJava
-    }
-}
-
 
 mavenPublishing {
     coordinates(PROJ_GROUP, PROJ_NAME, appVersionName)

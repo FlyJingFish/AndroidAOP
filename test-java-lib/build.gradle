@@ -5,7 +5,12 @@ plugins {
     id 'android.aop'
 }
 dependencies {
-    implementation project(path: ':android-aop-annotation')
-    ksp project(':android-aop-ksp')
+    if (TestType == "-1"){
+        implementation project(path: ':android-aop-annotation')
+        ksp project(':android-aop-ksp')
+    }else{
+        implementation 'io.github.flyjingfish:androidaop-annotation:'+TestVersion
+        ksp 'io.github.flyjingfish:androidaop-ksp:'+TestVersion
+    }
 }
 

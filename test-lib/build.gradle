@@ -25,7 +25,7 @@ dependencies {
     api libs.appcompat
     api libs.material
     api project(path: ':test-java-lib')
-    if (TestType == "0"){
+    if (TestType == "-1"){
         //本地
 //        api project(path: ':android-aop-annotation')
 //        annotationProcessor project(path: ':android-aop-processor')

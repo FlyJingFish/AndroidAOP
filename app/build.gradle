@@ -106,7 +106,7 @@ dependencies {
     implementation project(path: ":test-lib")
 //    implementation project(path: ":sub-modules:sub1")
 //    implementation project(path: ":sub-modules:sub2")
-    if (TestType == "0"){
+    if (TestType == "-1"){
         //本地
         ksp project(':android-aop-ksp')
 //        kapt project(':android-aop-processor')

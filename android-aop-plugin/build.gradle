@@ -2,7 +2,6 @@ plugins {
     id 'groovy'
     id 'maven-publish'
     id 'org.jetbrains.kotlin.jvm'
-    id 'com.gradle.plugin-publish' version '1.2.1'
 }
 javadoc {
     title = "AndroidAop Plugin ${version} API"
@@ -26,21 +25,24 @@ dependencies {
     implementation libs.kotlinx.metadata.jvm
 }
 // 发布到gradlePluginPortal
-gradlePlugin {
-    website = PROJ_WEBSITEURL
-    vcsUrl = PROJ_VCSURL
-    plugins {
-        androidAop {
-            // 插件id
-            id = PROJ_GROUP + '.androidaop'
-            // 插件全路径
-            implementationClass = "com.flyjingfish.android_aop_plugin.AndroidAopPlugin"
-            // 插件名称
-            displayName = 'AndroidAOP Plugin'
-            //描述
-            description = PROJ_DESCRIPTION
-            //标签
-            tags.addAll('AndroidAop', 'FlyJingFish', 'android', 'aop')
+if (publishGradle == "1"){
+    apply plugin: "com.gradle.plugin-publish"
+    gradlePlugin {
+        website = PROJ_WEBSITEURL
+        vcsUrl = PROJ_VCSURL
+        plugins {
+            androidAop {
+                // 插件id
+                id = PROJ_GROUP + '.androidaop'
+                // 插件全路径
+                implementationClass = "com.flyjingfish.android_aop_plugin.AndroidAopPlugin"
+                // 插件名称
+                displayName = 'AndroidAOP Plugin'
+                //描述
+                description = PROJ_DESCRIPTION
+                //标签
+                tags.addAll('AndroidAop', 'FlyJingFish', 'android', 'aop')
+            }
         }
     }
 }
