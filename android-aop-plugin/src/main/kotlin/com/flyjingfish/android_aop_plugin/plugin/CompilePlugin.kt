@@ -101,7 +101,7 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
                             if (srcDir.exists() && packageName == null){
                                 //说明这个才是真正的源码所在路径
                                 val packageFile = getPackageNameFile(srcDir,0)
-                                val relativePath = packageFile.getRelativePath(srcDir).replace(File.separator,".")
+                                val relativePath = packageFile.getRelativePath(srcDir).replace(File.separator,".").replace("/",".")
                                 packageName = if (relativePath.endsWith(".")){
                                     relativePath.substring(0,relativePath.length-1)
                                 }else{
@@ -304,7 +304,7 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
                 if (srcDir.exists()){
                     //说明这个才是真正的源码所在路径
                     val packageFile = getPackageNameFile(srcDir,0)
-                    val relativePath = packageFile.getRelativePath(srcDir).replace("/",".")
+                    val relativePath = packageFile.getRelativePath(srcDir).replace(File.separator,".").replace("/",".")
                     return if (relativePath.endsWith(".")){
                         relativePath.substring(0,relativePath.length-1)
                     }else{
