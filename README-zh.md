@@ -243,11 +243,11 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.3.0' // 至少在1.3.0及以上
     
     //二选一 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
-    ksp 'io.github.flyjingfish:androidaop-ksp:2.6.7'
+    ksp 'io.github.flyjingfish:androidaop-apt:2.6.7'
     
     //二选一 👇，如果你想自定义切面需要用到，⚠️只适用于Java代码写的切面
-    annotationProcessor 'io.github.flyjingfish:androidaop-processor:2.6.7'
-    //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
+    annotationProcessor 'io.github.flyjingfish:androidaop-apt:2.6.7'
+    //⚠️上边的 ksp 和 annotationProcessor 二选一
     //如果只是使用 android-aop-extra 中的功能就不需要选择这两项
 }
 ```

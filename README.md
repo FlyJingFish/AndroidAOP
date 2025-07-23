@@ -237,10 +237,10 @@ dependencies {
      implementation 'androidx.appcompat:appcompat:1.3.0' // At least in 1.3.0 and above
      
      //Choose one 👇, if you want to customize aspects, you need to use them, ⚠️supports aspects written in Java and Kotlin code
-     ksp 'io.github.flyjingfish:androidaop-ksp:2.6.7'
+     ksp 'io.github.flyjingfish:androidaop-apt:2.6.7'
      //Choose one 👇, if you want to customize aspects, you need to use them, ⚠️only applies to aspects written in Java code
-     annotationProcessor 'io.github.flyjingfish:androidaop-processor:2.6.7'
-     //⚠️Choose one of the above android-aop-ksp and android-aop-processor
+     annotationProcessor 'io.github.flyjingfish:androidaop-apt:2.6.7'
+     //⚠️Choose one of the above ksp and annotationProcessor
      //If you only use the functions in android-aop-extra, you don't need to select these two options
 }
 ```

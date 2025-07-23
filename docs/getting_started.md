@@ -197,17 +197,17 @@ Add in `build.gradle` of **app**
          implementation "androidx.appcompat:appcompat:1.3.0" // At least in 1.3.0 and above
          
          //👇Choose one (2)👈Click + to view detailed description, ⚠️supports aspects written in Java and Kotlin code
-         ksp "io.github.flyjingfish:androidaop-ksp:2.6.7"
+         ksp "io.github.flyjingfish:androidaop-apt:2.6.7"
          //👇Choose one (3)👈Click + to view detailed description, ⚠️only applies to aspects written in Java code
-         annotationProcessor "io.github.flyjingfish:androidaop-processor:2.6.7"
-         //⚠️Choose one of the above android-aop-ksp and android-aop-processor
+         annotationProcessor "io.github.flyjingfish:androidaop-apt:2.6.7"
+         //⚠️Choose one of the above ksp and annotationProcessor
          //If you only use the functions in android-aop-extra, you don't need to select these two options
     }
     ```
 
     1. :man_raising_hand: This library has built-in annotations for some functions defined using [@AndroidAopPointCut](/AndroidAOP/AndroidAopPointCut/)
-    2. :man_raising_hand: When you use the five custom aspect annotations [introduced here](#custom-aspects), it means that you must choose one from `android-aop-ksp` and `android-aop-processor` as a required option
-    3. :man_raising_hand: When you use the five custom aspect annotations [introduced here](#custom-aspects), it means that you must choose one from `android-aop-ksp` and `android-aop-processor` as a required option
+    2. :man_raising_hand: When you use the five custom aspect annotations [described here](#custom-aspects), it means you must use `android-aop-apt`
+    3. :man_raising_hand: When you use the five custom aspect annotations [described here](#custom-aspects), it means you must use `android-aop-apt`
 
 === "Kotlin"
     
@@ -227,17 +227,17 @@ Add in `build.gradle` of **app**
          implementation("androidx.appcompat:appcompat:1.3.0") // At least in 1.3.0 and above
          
          //👇Choose one (2)👈Click + to view detailed description, ⚠️supports aspects written in Java and Kotlin code
-         ksp("io.github.flyjingfish:androidaop-ksp:2.6.7")
+         ksp("io.github.flyjingfish:androidaop-apt:2.6.7")
          //👇Choose one (3)👈Click + to view detailed description, ⚠️only applies to aspects written in Java code
-         annotationProcessor("io.github.flyjingfish:androidaop-processor:2.6.7")
-         //⚠️Choose one of the above android-aop-ksp and android-aop-processor
+         annotationProcessor("io.github.flyjingfish:androidaop-apt:2.6.7")
+         //⚠️Choose one of the above ksp and annotationProcessor
          //If you only use the functions in android-aop-extra, you don't need to select these two options
     }
     ```
 
     1. :man_raising_hand: This library has built-in annotations for some functions defined using [@AndroidAopPointCut](/AndroidAOP/AndroidAopPointCut/)
-    2. :man_raising_hand: When you use the five custom aspect annotations [introduced here](#custom-aspects), it means that you must choose one from `android-aop-ksp` and `android-aop-processor` as a required option
-    3. :man_raising_hand: When you use the five custom aspect annotations [introduced here](#custom-aspects), it means that you must choose one from `android-aop-ksp` and `android-aop-processor` as a required option
+    2. :man_raising_hand: When you use the five custom aspect annotations [described here](#custom-aspects), it means you must use `android-aop-apt`
+    3. :man_raising_hand: When you use the five custom aspect annotations [described here](#custom-aspects), it means you must use `android-aop-apt`
 
 !!! note
     Tip: ksp or annotationProcessor can only scan the current module. Custom aspect codes are added to the module where they are located. **But custom aspect codes are globally effective**; required dependencies can be added only to public modules through the API.

@@ -193,19 +193,19 @@
         implementation "androidx.appcompat:appcompat:1.3.0" // 至少在1.3.0及以上
         
         //👇二选一 (2)👈点击+查看详细说明，⚠️支持Java和Kotlin代码写的切面
-        ksp "io.github.flyjingfish:androidaop-ksp:2.6.7"
+        ksp "io.github.flyjingfish:androidaop-apt:2.6.7"
         
         //👇二选一 (3)👈点击+查看详细说明，⚠️只适用于Java代码写的切面
-        annotationProcessor "io.github.flyjingfish:androidaop-processor:2.6.7"
-        //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
+        annotationProcessor "io.github.flyjingfish:androidaop-apt:2.6.7"
+        //⚠️上边的 ksp 和 annotationProcessor 二选一
         //如果只是使用 android-aop-extra 中的功能就不需要选择这两项
     }
     
     ```
 
     1.  :man_raising_hand: 此库内置了使用 [@AndroidAopPointCut](/AndroidAOP/zh/AndroidAopPointCut/) 定义的一些功能注解
-    2.  :man_raising_hand: 当你使用[此处介绍](#_8)的五个自定义切面注解时，就意味着你必须从 `android-aop-ksp` 和 `android-aop-processor` 选择一项作为必选项
-    3.  :man_raising_hand: 当你使用[此处介绍](#_8)的五个自定义切面注解时，就意味着你必须从 `android-aop-ksp` 和 `android-aop-processor` 选择一项作为必选项
+    2.  :man_raising_hand: 当你使用[此处介绍](#_8)的五个自定义切面注解时，就意味着你必须使用 `android-aop-apt`
+    3.  :man_raising_hand: 当你使用[此处介绍](#_8)的五个自定义切面注解时，就意味着你必须使用 `android-aop-apt`
 === "Kotlin"
 
     ```kotlin
@@ -224,18 +224,18 @@
         implementation("androidx.appcompat:appcompat:1.3.0") // 至少在1.3.0及以上
         
         //👇二选一 (2)👈点击+查看详细说明，⚠️支持Java和Kotlin代码写的切面
-        ksp("io.github.flyjingfish:androidaop-ksp:2.6.7")
+        ksp("io.github.flyjingfish:androidaop-apt:2.6.7")
         
         //👇二选一 (3)👈点击+查看详细说明，⚠️只适用于Java代码写的切面
-        annotationProcessor("io.github.flyjingfish:androidaop-processor:2.6.7")
-        //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
+        annotationProcessor("io.github.flyjingfish:androidaop-apt:2.6.7")
+        //⚠️上边的 ksp 和 annotationProcessor 二选一
         //如果只是使用 android-aop-extra 中的功能就不需要选择这两项
     }
     ```
 
     1.  :man_raising_hand: 此库内置了使用 [@AndroidAopPointCut](/AndroidAOP/zh/AndroidAopPointCut/) 定义的一些功能注解
-    2.  :man_raising_hand: 当你使用[此处介绍](#_8)的五个自定义切面注解时，就意味着你必须从 `android-aop-ksp` 和 `android-aop-processor` 选择一项作为必选项
-    3.  :man_raising_hand: 当你使用[此处介绍](#_8)的五个自定义切面注解时，就意味着你必须从 `android-aop-ksp` 和 `android-aop-processor` 选择一项作为必选项
+    2.  :man_raising_hand: 当你使用[此处介绍](#_8)的五个自定义切面注解时，就意味着你必须使用 `android-aop-apt`
+    3.  :man_raising_hand: 当你使用[此处介绍](#_8)的五个自定义切面注解时，就意味着你必须使用 `android-aop-apt`
 
 !!! note
     提示：ksp 或 annotationProcessor只能扫描当前 module ，在哪个 module 中有自定义切面代码就加在哪个 module，**但是自定义的切面代码是全局生效的**；必须依赖项可以通过 api 方式只加到公共 module 上

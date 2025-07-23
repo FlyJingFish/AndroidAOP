@@ -7,10 +7,10 @@ plugins {
 dependencies {
     if (TestType == "-1"){
         implementation project(path: ':android-aop-annotation')
-        ksp project(':android-aop-ksp')
+        ksp project(':android-aop-apt')
     }else{
         implementation 'io.github.flyjingfish:androidaop-annotation:'+TestVersion
-        ksp 'io.github.flyjingfish:androidaop-ksp:'+TestVersion
+        ksp 'io.github.flyjingfish:androidaop-apt:'+TestVersion
     }
 }
 
