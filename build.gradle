@@ -100,7 +100,7 @@ task aaBumpVersion() {
 
         exec {
             workingDir projectDir
-            commandLine './gradlew', 'publishMavenJavaPublicationToMavenLocal'
+            commandLine './gradlew', 'publishMavenPublicationToMavenLocal'
         }
 
         File gradleFile = new File("gradle.properties")
@@ -176,7 +176,7 @@ task aaBumpVersion2() {
 //            }
 //
 //            if ("publishAllPublicationsToMavenCentralRepository" == task.name){
-//                list.add("${subproject.path}:publishMavenJavaPublicationToMavenLocal")
+//                list.add("${subproject.path}:publishMavenPublicationToMavenLocal")
 //            }
 //        }
 //        aaBumpVersion.finalizedBy(list.toArray())
