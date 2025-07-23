@@ -206,8 +206,8 @@ Add in `build.gradle` of **app**
     ```
 
     1. :man_raising_hand: This library has built-in annotations for some functions defined using [@AndroidAopPointCut](/AndroidAOP/AndroidAopPointCut/)
-    2. :man_raising_hand: When you use the five custom aspect annotations [described here](#custom-aspects), it means you must use `android-aop-apt`
-    3. :man_raising_hand: When you use the five custom aspect annotations [described here](#custom-aspects), it means you must use `android-aop-apt`
+    2. :man_raising_hand: When you use the five custom aspect annotations [described here](#custom-aspects), it means you must use `androidaop-apt`
+    3. :man_raising_hand: When you use the five custom aspect annotations [described here](#custom-aspects), it means you must use `androidaop-apt`
 
 === "Kotlin"
     
@@ -236,8 +236,8 @@ Add in `build.gradle` of **app**
     ```
 
     1. :man_raising_hand: This library has built-in annotations for some functions defined using [@AndroidAopPointCut](/AndroidAOP/AndroidAopPointCut/)
-    2. :man_raising_hand: When you use the five custom aspect annotations [described here](#custom-aspects), it means you must use `android-aop-apt`
-    3. :man_raising_hand: When you use the five custom aspect annotations [described here](#custom-aspects), it means you must use `android-aop-apt`
+    2. :man_raising_hand: When you use the five custom aspect annotations [described here](#custom-aspects), it means you must use `androidaop-apt`
+    3. :man_raising_hand: When you use the five custom aspect annotations [described here](#custom-aspects), it means you must use `androidaop-apt`
 
 !!! note
     Tip: ksp or annotationProcessor can only scan the current module. Custom aspect codes are added to the module where they are located. **But custom aspect codes are globally effective**; required dependencies can be added only to public modules through the API.
