@@ -1,18 +1,20 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     dependencies {
-        classpath 'io.github.FlyJingFish.AndroidAop:android-aop-plugin:'+TestVersion
+        classpath 'io.github.flyjingfish:androidaop-plugin:'+TestVersion
         classpath 'org.jetbrains.kotlin:kotlin-serialization:1.5.0'
-        classpath 'io.github.FlyJingFish.EasyRegister:plugin:1.0.9'
+//        classpath 'io.github.flyjingfish:easyregister:1.1.0'
     }
 }
 plugins {
-    id 'com.android.application' version '7.4.1' apply false
-    id 'com.android.library' version '7.4.1' apply false
-    id 'org.jetbrains.kotlin.android' version '1.8.0' apply false
-    id 'org.jetbrains.kotlin.jvm' version '1.8.0' apply false
-    id 'io.github.gradle-nexus.publish-plugin' version "2.0.0-rc-1"
-    id 'com.google.devtools.ksp' version '1.8.0-1.0.9' apply false
+    id 'com.android.application' version '8.2.2' apply false
+    id 'com.android.library' version '8.2.2' apply false
+    id 'org.jetbrains.kotlin.android' version '1.9.23' apply false
+    id 'org.jetbrains.kotlin.jvm' version '1.9.23' apply false
+    id "com.vanniktech.maven.publish" version "0.33.0" apply false
+    id 'com.google.devtools.ksp' version '1.9.23-1.0.20' apply false
+    id 'io.github.flyjingfish.easyregister' version '1.1.0' apply false
+    id 'com.gradle.plugin-publish' version '1.2.1' apply false
 //    id "kotlinx-serialization" version "1.5.0"
 //    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.7.2" apply true
 }
@@ -88,6 +90,19 @@ task aaBumpVersion() {
         updateREADME("docs/zh/getting_started.md",oldVersionName,newVersionName)
         updateREADME("docs/zh/android_aop_extra.md",oldVersionName,newVersionName)
 
+
+
+//        version = newVersionName
+//        rootProject.subprojects { subproject ->
+//            subproject.version = newVersionName
+//        }
+
+
+        exec {
+            workingDir projectDir
+            commandLine './gradlew', 'publishMavenPublicationToMavenLocal'
+        }
+
         File gradleFile = new File("gradle.properties")
         String gradleText = gradleFile.text
         String text2 = gradleText.replace("TestVersion = "+oldVersionName,"TestVersion = "+newVersionName)
@@ -95,50 +110,103 @@ task aaBumpVersion() {
 
         gradleFile.write(text2)
 
-        version = newVersionName
-        rootProject.subprojects { subproject ->
-            subproject.version = newVersionName
-        }
         println("升级版本号完成，versionName = "+newVersionName)
     }
 }
 
-subprojects { subproject ->
-    subproject.afterEvaluate {
-        def list = new ArrayList<String>()
-        subproject.tasks.forEach { task ->
-            if ("publishAllPublicationsToNexusRepository" == task.name){
-                list.add("${subproject.path}:publishMavenJavaPublicationToMavenLocal")
+
+task aaBumpVersion1() {
+    doLast {
+        def versionName = getAppVersionCode() + 1
+        def str = versionName.toString()
+        def length = str.length()
+        def newVersionName = ""
+        for (int i = 0; i < length; i++) {
+            newVersionName += str.charAt(i)
+            if (i < 2) {
+                newVersionName += "."
             }
         }
-        aaBumpVersion.finalizedBy(list.toArray())
+
+        def versionPropsFile = file('version.properties')
+        def versionProps = new Properties()
+        versionProps.load(new FileInputStream(versionPropsFile))
+        def oldVersionName = versionProps['PROJ_VERSION']
+        versionProps['PROJ_VERSION'] = newVersionName
+        versionProps.store(versionPropsFile.newWriter(), null)
+
+        updateREADME("README.md",oldVersionName,newVersionName)
+        updateREADME("README-zh.md",oldVersionName,newVersionName)
+        updateREADME("docs/getting_started.md",oldVersionName,newVersionName)
+        updateREADME("docs/android_aop_extra.md",oldVersionName,newVersionName)
+        updateREADME("docs/zh/getting_started.md",oldVersionName,newVersionName)
+        updateREADME("docs/zh/android_aop_extra.md",oldVersionName,newVersionName)
+
+
+
     }
 }
+
+
+task aaBumpVersion2() {
+    doLast {
+        def versionPropsFile = file('gradle.properties')
+        def versionProps = new Properties()
+        versionProps.load(new FileInputStream(versionPropsFile))
+        def oldVersionName = versionProps['TestVersion']
+
+        def newVersionName = getAppVersionName()
+        File gradleFile = new File("gradle.properties")
+        String gradleText = gradleFile.text
+        String text2 = gradleText.replace("TestVersion = "+oldVersionName,"TestVersion = "+newVersionName)
+
+
+        gradleFile.write(text2)
+
+        println("升级版本号完成，versionName = "+newVersionName)
+    }
+}
+
+//subprojects { subproject ->
+//    subproject.afterEvaluate {
+//        def list = new ArrayList<String>()
+//        subproject.tasks.forEach { task ->
+//            if (task.name.contains("publish")){
+//                println("task.name="+task.name)
+//            }
+//
+//            if ("publishAllPublicationsToMavenCentralRepository" == task.name){
+//                list.add("${subproject.path}:publishMavenPublicationToMavenLocal")
+//            }
+//        }
+//        aaBumpVersion.finalizedBy(list.toArray())
+//    }
+//}
 def updateREADME(readme,oldVersionName,newVersionName) {
     File configFile = new File(readme)
     String exportText = configFile.text
-    String text = exportText.replace("io.github.FlyJingFish.AndroidAop:android-aop-plugin:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-plugin:"+newVersionName)
-    text = text.replace("io.github.FlyJingFish.AndroidAop:android-aop-core:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-core:"+newVersionName)
-    text = text.replace("io.github.FlyJingFish.AndroidAop:android-aop-annotation:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-annotation:"+newVersionName)
-    text = text.replace("io.github.FlyJingFish.AndroidAop:android-aop-extra:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-extra:"+newVersionName)
-    text = text.replace("io.github.FlyJingFish.AndroidAop:android-aop-processor:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-processor:"+newVersionName)
-    text = text.replace("io.github.FlyJingFish.AndroidAop:android-aop-ksp:"+oldVersionName,"io.github.FlyJingFish.AndroidAop:android-aop-ksp:"+newVersionName)
-    text = text.replace("id \"io.github.FlyJingFish.AndroidAop.android-aop\" version \""+oldVersionName+"\"","id \"io.github.FlyJingFish.AndroidAop.android-aop\" version \""+newVersionName+"\"")
-    text = text.replace("id(\"io.github.FlyJingFish.AndroidAop.android-aop\") version \""+oldVersionName+"\"","id(\"io.github.FlyJingFish.AndroidAop.android-aop\") version \""+newVersionName+"\"")
+    String text = exportText.replace("io.github.flyjingfish:androidaop-plugin:"+oldVersionName,"io.github.flyjingfish:androidaop-plugin:"+newVersionName)
+    text = text.replace("io.github.flyjingfish:androidaop-core:"+oldVersionName,"io.github.flyjingfish:androidaop-core:"+newVersionName)
+    text = text.replace("io.github.flyjingfish:androidaop-annotation:"+oldVersionName,"io.github.flyjingfish:androidaop-annotation:"+newVersionName)
+    text = text.replace("io.github.flyjingfish:androidaop-extra:"+oldVersionName,"io.github.flyjingfish:androidaop-extra:"+newVersionName)
+    text = text.replace("io.github.flyjingfish:androidaop-apt:"+oldVersionName,"io.github.flyjingfish:androidaop-apt:"+newVersionName)
+    text = text.replace("id \"io.github.flyjingfish.androidaop\" version \""+oldVersionName+"\"","id \"io.github.flyjingfish.androidaop\" version \""+newVersionName+"\"")
+    text = text.replace("id(\"io.github.flyjingfish.androidaop\") version \""+oldVersionName+"\"","id(\"io.github.flyjingfish.androidaop\") version \""+newVersionName+"\"")
     configFile.write(text)
 }
 
 def appVersionName = getAppVersionName()
 group = PROJ_GROUP
 version = appVersionName
-apply plugin: "io.github.gradle-nexus.publish-plugin"
-nexusPublishing {
-    repositories {
-        Nexus {
-            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-            username = ossrhUsername // defaults to project.properties["myNexusUsername"]
-            password = ossrhPassword // defaults to project.properties["myNexusPassword"]
-        }
-    }
+
+
+task runPublishScript(type: Exec) {
+    group = "publishing"
+    description = "Runs the publish.sh shell script"
+    workingDir = projectDir
+    commandLine './publish.sh'
 }
+/**
+ chmod +x publish.sh
+ ./publish.sh
+ */

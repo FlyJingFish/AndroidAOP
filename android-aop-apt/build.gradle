@@ -1,11 +1,10 @@
 plugins {
     id 'java-library'
     id 'org.jetbrains.kotlin.jvm'
-    id 'com.google.devtools.ksp'
 }
 
 javadoc {
-    title = "AndroidAop Ksp ${version} API"
+    title = "AndroidAop Apt ${version} API"
     options.bottom = 'AndroidAop'
 }
 
@@ -16,6 +15,5 @@ dependencies {
     implementation libs.kotlinpoet
     implementation libs.ksp.api
     implementation libs.gson
-//    compileOnly libs.autoservice.annotations
-//    ksp libs.ksp.autoservice
+    implementation libs.javapoet
 }

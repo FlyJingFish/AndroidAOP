@@ -30,7 +30,7 @@
         
         plugins {
             //👇必须项 (1)👈 apply 设置为 true 自动为所有module“预”配置 debugMode，false则按下边步骤五配置 debugMode 的手动模式
-            id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.6.7" apply true
+            id "io.github.flyjingfish.androidaop" version "2.6.8" apply true
         }
         ```
         
@@ -41,7 +41,7 @@
         buildscript {
           dependencies {
               //👇必须项 (1)👈
-              classpath "io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.6.7"
+              classpath "io.github.flyjingfish:androidaop-plugin:2.6.8"
           }
         }
         // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五配置 debugMode 的手动模式
@@ -57,7 +57,7 @@
         ```kotlin
         plugins {
             //👇必须项 (1)👈 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五配置 debugMode 的手动模式
-            id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.6.7" apply true
+            id("io.github.flyjingfish.androidaop") version "2.6.8" apply true
         }
         ```
         
@@ -68,7 +68,7 @@
         buildscript {
           dependencies {
               //👇必须项 (1)👈
-              classpath("io.github.FlyJingFish.AndroidAop:android-aop-plugin:2.6.7")
+              classpath("io.github.flyjingfish:androidaop-plugin:2.6.8")
           }
         }
         // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五配置 debugMode 的手动模式
@@ -137,7 +137,7 @@
     //必须项 👇
     plugins {
         ...
-        id "io.github.FlyJingFish.AndroidAop.android-aop" version "2.6.7"//最好放在最后一行
+        id "io.github.flyjingfish.androidaop" version "2.6.8"//最好放在最后一行
     }
     ```
 
@@ -147,7 +147,7 @@
     //必须项 👇
     plugins {
         ...
-        id("io.github.FlyJingFish.AndroidAop.android-aop") version "2.6.7"//最好放在最后一行
+        id("io.github.flyjingfish.androidaop") version "2.6.8"//最好放在最后一行
     }
     ```
 
@@ -185,27 +185,27 @@
     
     dependencies {
         //👇必须项 
-        implementation "io.github.FlyJingFish.AndroidAop:android-aop-core:2.6.7"
+        implementation "io.github.flyjingfish:androidaop-core:2.6.8"
         //👇非必须项 (1)👈 这个包提供了一些常见的注解切面
-        implementation "io.github.FlyJingFish.AndroidAop:android-aop-extra:2.6.7" 
+        implementation "io.github.flyjingfish:androidaop-extra:2.6.8" 
         
         //👇必须项 如果您项目内已经有了这项不用加也可以
         implementation "androidx.appcompat:appcompat:1.3.0" // 至少在1.3.0及以上
         
         //👇二选一 (2)👈点击+查看详细说明，⚠️支持Java和Kotlin代码写的切面
-        ksp "io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.6.7"
+        ksp "io.github.flyjingfish:androidaop-apt:2.6.8"
         
         //👇二选一 (3)👈点击+查看详细说明，⚠️只适用于Java代码写的切面
-        annotationProcessor "io.github.FlyJingFish.AndroidAop:android-aop-processor:2.6.7"
-        //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
+        annotationProcessor "io.github.flyjingfish:androidaop-apt:2.6.8"
+        //⚠️上边的 ksp 和 annotationProcessor 二选一
         //如果只是使用 android-aop-extra 中的功能就不需要选择这两项
     }
     
     ```
 
     1.  :man_raising_hand: 此库内置了使用 [@AndroidAopPointCut](/AndroidAOP/zh/AndroidAopPointCut/) 定义的一些功能注解
-    2.  :man_raising_hand: 当你使用[此处介绍](#_8)的五个自定义切面注解时，就意味着你必须从 `android-aop-ksp` 和 `android-aop-processor` 选择一项作为必选项
-    3.  :man_raising_hand: 当你使用[此处介绍](#_8)的五个自定义切面注解时，就意味着你必须从 `android-aop-ksp` 和 `android-aop-processor` 选择一项作为必选项
+    2.  :man_raising_hand: 当你使用[此处介绍](#_8)的五个自定义切面注解时，就意味着你必须使用 `android-aop-apt`
+    3.  :man_raising_hand: 当你使用[此处介绍](#_8)的五个自定义切面注解时，就意味着你必须使用 `android-aop-apt`
 === "Kotlin"
 
     ```kotlin
@@ -216,26 +216,26 @@
     
     dependencies {
         //👇必须项 
-        implementation("io.github.FlyJingFish.AndroidAop:android-aop-core:2.6.7")
+        implementation("io.github.flyjingfish:androidaop-core:2.6.8")
         //👇非必须项 (1)👈 这个包提供了一些常见的注解切面
-        implementation("io.github.FlyJingFish.AndroidAop:android-aop-extra:2.6.7")
+        implementation("io.github.flyjingfish:androidaop-extra:2.6.8")
         
         //👇必须项 如果您项目内已经有了这项不用加也可以
         implementation("androidx.appcompat:appcompat:1.3.0") // 至少在1.3.0及以上
         
         //👇二选一 (2)👈点击+查看详细说明，⚠️支持Java和Kotlin代码写的切面
-        ksp("io.github.FlyJingFish.AndroidAop:android-aop-ksp:2.6.7")
+        ksp("io.github.flyjingfish:androidaop-apt:2.6.8")
         
         //👇二选一 (3)👈点击+查看详细说明，⚠️只适用于Java代码写的切面
-        annotationProcessor("io.github.FlyJingFish.AndroidAop:android-aop-processor:2.6.7")
-        //⚠️上边的 android-aop-ksp 和 android-aop-processor 二选一
+        annotationProcessor("io.github.flyjingfish:androidaop-apt:2.6.8")
+        //⚠️上边的 ksp 和 annotationProcessor 二选一
         //如果只是使用 android-aop-extra 中的功能就不需要选择这两项
     }
     ```
 
     1.  :man_raising_hand: 此库内置了使用 [@AndroidAopPointCut](/AndroidAOP/zh/AndroidAopPointCut/) 定义的一些功能注解
-    2.  :man_raising_hand: 当你使用[此处介绍](#_8)的五个自定义切面注解时，就意味着你必须从 `android-aop-ksp` 和 `android-aop-processor` 选择一项作为必选项
-    3.  :man_raising_hand: 当你使用[此处介绍](#_8)的五个自定义切面注解时，就意味着你必须从 `android-aop-ksp` 和 `android-aop-processor` 选择一项作为必选项
+    2.  :man_raising_hand: 当你使用[此处介绍](#_8)的五个自定义切面注解时，就意味着你必须使用 `android-aop-apt`
+    3.  :man_raising_hand: 当你使用[此处介绍](#_8)的五个自定义切面注解时，就意味着你必须使用 `android-aop-apt`
 
 !!! note
     提示：ksp 或 annotationProcessor只能扫描当前 module ，在哪个 module 中有自定义切面代码就加在哪个 module，**但是自定义的切面代码是全局生效的**；必须依赖项可以通过 api 方式只加到公共 module 上

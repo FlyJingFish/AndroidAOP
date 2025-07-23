@@ -1,9 +1,9 @@
 pluginManagement {
     repositories {
-        if (TestType == "0"){
+        if (TestType == "-1"||TestType == "0"){
             mavenLocal()
         }else if (TestType == "1"){
-            maven { url "https://s01.oss.sonatype.org/content/repositories/iogithubflyjingfish-"+SonatypeTestCode }
+            maven { url "https://central.sonatype.com/repository/maven-snapshots/" }
         }
         google()
         mavenCentral()
@@ -13,10 +13,10 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        if (TestType == "0"){
+        if (TestType == "-1"||TestType == "0"){
             mavenLocal()
         }else if (TestType == "1"){
-            maven { url "https://s01.oss.sonatype.org/content/repositories/iogithubflyjingfish-"+SonatypeTestCode }
+            maven { url "https://central.sonatype.com/repository/maven-snapshots/" }
         }
         google()
         mavenCentral()
@@ -28,10 +28,9 @@ rootProject.name = "AndroidAOP"
 include ':app'
 include ':test-lib'
 include ':android-aop-annotation'
-include ':android-aop-processor'
 include ':android-aop-plugin'
 include ':android-aop-core'
-include ':android-aop-ksp'
+include ':android-aop-apt'
 include ':android-aop-extra'
 //include ':test-app'
 include ':test-java-lib'

@@ -93,11 +93,11 @@ dependencies {
     implementation project(path: ":test-lib")
     if (TestType == "0"){
         //本地
-        ksp project(':android-aop-ksp')
-//        kapt project(':android-aop-processor')
+        ksp project(':android-aop-apt')
+//        kapt project(':android-aop-apt')
     }else {
-//        annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:'+TestVersion
-        ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:'+TestVersion
+//        annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-apt:'+TestVersion
+        ksp 'io.github.FlyJingFish.AndroidAop:android-aop-apt:'+TestVersion
     }
     debugImplementation libs.leakcanary
     implementation libs.bcprov.jdk15on

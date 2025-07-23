@@ -3,3 +3,7 @@ java {
         languageVersion.set(JavaLanguageVersion.of(JavaVersion.VERSION_11.toString()))
     }
 }
+
+def appVersionName = getAppVersionName()
+group = PROJ_GROUP
+version = appVersionName

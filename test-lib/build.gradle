@@ -25,21 +25,21 @@ dependencies {
     api libs.appcompat
     api libs.material
     api project(path: ':test-java-lib')
-    if (TestType == "0"){
+    if (TestType == "-1"){
         //本地
 //        api project(path: ':android-aop-annotation')
-//        annotationProcessor project(path: ':android-aop-processor')
-//        kapt project(path: ':android-aop-processor')
-        ksp project(':android-aop-ksp')
+//        annotationProcessor project(path: ':android-aop-apt')
+//        kapt project(path: ':android-aop-apt')
+        ksp project(':android-aop-apt')
         api project(path: ':android-aop-core')
         api project(path: ':android-aop-extra')
     }else {
         //线上
-//        api 'io.github.FlyJingFish.AndroidAop:android-aop-annotation:'+TestVersion
-//        annotationProcessor 'io.github.FlyJingFish.AndroidAop:android-aop-processor:'+TestVersion
-        ksp 'io.github.FlyJingFish.AndroidAop:android-aop-ksp:'+TestVersion
-        api 'io.github.FlyJingFish.AndroidAop:android-aop-core:'+TestVersion
-        api 'io.github.FlyJingFish.AndroidAop:android-aop-extra:'+TestVersion
+//        api 'io.github.flyjingfish:androidaop-annotation:'+TestVersion
+//        annotationProcessor 'io.github.flyjingfish:androidaop-apt:'+TestVersion
+        ksp 'io.github.flyjingfish:androidaop-apt:'+TestVersion
+        api 'io.github.flyjingfish:androidaop-core:'+TestVersion
+        api 'io.github.flyjingfish:androidaop-extra:'+TestVersion
     }
     api libs.rxpermissions
     api libs.rxjava
