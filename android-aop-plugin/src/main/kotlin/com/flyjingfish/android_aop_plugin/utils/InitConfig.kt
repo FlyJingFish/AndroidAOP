@@ -93,7 +93,7 @@ object InitConfig {
     }
 
 
-    fun initCutInfo(project: Project,clear:Boolean = true): Boolean {
+    fun initCutInfo(project: RuntimeProject,clear:Boolean = true): Boolean {
         temporaryDir = File(project.buildDir.absolutePath + "/tmp".adapterOSPath())
         cutInfoFile = File(temporaryDir, "cutInfo.json")
         cutInfoHtmlFile = File(temporaryDir, "cutInfo.html")

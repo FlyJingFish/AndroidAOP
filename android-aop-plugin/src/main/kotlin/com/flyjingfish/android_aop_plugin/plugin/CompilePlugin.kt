@@ -17,6 +17,7 @@ import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.RuntimeProject
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.adapterOSPath
+import com.flyjingfish.android_aop_plugin.utils.getBuildDirectory
 import com.flyjingfish.android_aop_plugin.utils.getRelativePath
 import org.codehaus.groovy.runtime.DefaultGroovyMethods
 import org.gradle.api.Project
@@ -48,7 +49,7 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
                         for (task in it.allTasks) {
                             if (task is KotlinCompileTool){
                                 val destinationDirectory = task.destinationDirectory.get().asFile
-                                val key = task.project.buildDir.absolutePath+"@"+task.name
+                                val key = task.project.getBuildDirectory().absolutePath+"@"+task.name
                                 val oldDirectory = kotlinCompileFilePathMap[key]
                                 if (oldDirectory == null || oldDirectory.absolutePath != destinationDirectory.absolutePath){
                                     kotlinCompileFilePathMap[key] = destinationDirectory
@@ -94,7 +95,7 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
                 try {
                     val javaPluginExtension = project.extensions.getByType(JavaPluginExtension::class.java)
                     val path = Utils.aopDebugModeJavaDir4Java()
-                    val debugModeDir = File("${project.buildDir.absolutePath}$path")
+                    val debugModeDir = File("${project.getBuildDirectory().absolutePath}$path")
                     var packageName :String ?=null
                     for (srcDir in javaPluginExtension.sourceSets.getByName("main").java.srcDirs) {
                         if (srcDir.absolutePath != debugModeDir.absolutePath){
@@ -134,7 +135,7 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
                 androidObject1 = project.extensions.findByName(ANDROID_EXTENSION_NAME)
             }
             // java项目
-            val kotlinDefaultPath = File(project.buildDir.path + "/classes/kotlin/main".adapterOSPath())
+            val kotlinDefaultPath = File(project.getBuildDirectory().path + "/classes/kotlin/main".adapterOSPath())
             project.tasks.withType(JavaCompile::class.java).configureEach { compileTask ->
                 if (isDebugMode() && compileTask is AbstractCompile){
                     forceJavaRecompileOnKotlinChange(project, compileTask, "")
@@ -161,7 +162,7 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
             project.afterEvaluate {
                 AndroidAopConfig.syncConfig(project)
                 if (AndroidAopConfig.cutInfoJson){
-                    InitConfig.initCutInfo(project,false)
+                    InitConfig.initCutInfo(runtimeProject,false)
                 }
             }
         }
@@ -199,7 +200,7 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
             if (isDebugMode(buildTypeName,variantName)){
                 forceJavaRecompileOnKotlinChange(project, javaCompile, variantName)
             }
-            val kotlinBuildPath = File(project.buildDir.path + "/tmp/kotlin-classes/".adapterOSPath() + variantName)
+            val kotlinBuildPath = File(project.getBuildDirectory().path + "/tmp/kotlin-classes/".adapterOSPath() + variantName)
             javaCompile.doLast{
                 doAopTask(runtimeProject,isApp, variantName, buildTypeName, javaCompile, kotlinBuildPath)
             }
@@ -211,7 +212,7 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
                 variantList.add(variant)
                 val variantName = variant.name
                 val path = Utils.aopDebugModeJavaDir(variantName)
-                val debugModeDir = File("${project.buildDir.absolutePath}$path")
+                val debugModeDir = File("${project.getBuildDirectory().absolutePath}$path")
                 val variantNameCapitalized = variantName.capitalized()
                 var packageName = if (android.namespace == null || android.namespace == "null"){
                     android.defaultConfig.applicationId.toString()

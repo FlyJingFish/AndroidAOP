@@ -64,12 +64,12 @@ object TransformPlugin : BasePlugin() {
         androidComponents.onVariants { variant ->
             val androidAopConfig = project.extensions.getByType(AndroidAopConfig::class.java)
             androidAopConfig.initConfig()
+            val runtimeProject = RuntimeProject.get(project)
             if (androidAopConfig.cutInfoJson){
-                InitConfig.initCutInfo(project)
+                InitConfig.initCutInfo(runtimeProject)
             }
             val buildTypeName = variant.buildType
             if (androidAopConfig.enabled && !isDebugMode(buildTypeName,variant.name)){
-                val runtimeProject = RuntimeProject.get(project)
                 val fastDex = isFastDex(buildTypeName,variant.name)
                 val task = project.tasks.register("${variant.name}AssembleAndroidAopTask", AssembleAndroidAopTask::class.java){
                     it.runtimeProject = runtimeProject

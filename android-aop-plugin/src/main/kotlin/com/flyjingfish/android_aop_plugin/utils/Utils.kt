@@ -596,3 +596,8 @@ fun Throwable.printDetail(){
     }
 }
 
+fun Project.getBuildDirectory():File{
+//    return buildDir
+    return project.layout.buildDirectory.get().asFile
+}
+

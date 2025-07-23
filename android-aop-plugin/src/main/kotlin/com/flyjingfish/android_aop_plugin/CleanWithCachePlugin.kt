@@ -1,6 +1,7 @@
 package com.flyjingfish.android_aop_plugin
 
 import com.flyjingfish.android_aop_plugin.utils.computeMD5
+import com.flyjingfish.android_aop_plugin.utils.getBuildDirectory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.io.File
@@ -30,7 +31,7 @@ class CleanWithCachePlugin : Plugin<Project> {
     private fun setTask(project: Project){
         project.subprojects.forEach { subproject ->
             val cacheDir = subproject.layout.buildDirectory.file("tmp/android-aop/").get().asFile
-            val targetDir = File(project.buildDir.absolutePath,cacheDir.absolutePath.computeMD5())
+            val targetDir = File(project.getBuildDirectory().absolutePath,cacheDir.absolutePath.computeMD5())
             subproject.tasks.matching { cl -> cl.name == "clean" }.configureEach {cl ->
 
                 cl.doFirst {

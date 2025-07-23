@@ -15,8 +15,8 @@ data class RuntimeProject(
     companion object {
         fun getAfterEvaluate(project: Project): RuntimeProject {
             val runtimeProject = RuntimeProject(
-                buildDir = project.buildDir,
-                rootProjectBuildDir = project.rootProject.buildDir,
+                buildDir = project.getBuildDirectory(),
+                rootProjectBuildDir = project.rootProject.getBuildDirectory(),
                 layoutBuildDirectory = project.layout.buildDirectory.asFile.get(),
                 androidConfig = AndroidConfig(),
                 name = project.name
@@ -31,8 +31,8 @@ data class RuntimeProject(
         }
         fun get(project: Project): RuntimeProject {
             val runtimeProject = RuntimeProject(
-                buildDir = project.buildDir,
-                rootProjectBuildDir = project.rootProject.buildDir,
+                buildDir = project.getBuildDirectory(),
+                rootProjectBuildDir = project.rootProject.getBuildDirectory(),
                 layoutBuildDirectory = project.layout.buildDirectory.asFile.get(),
                 androidConfig = AndroidConfig(),
                 name = project.name
