@@ -14,8 +14,8 @@
 </p>
 
 <p align="center">
-  <a href="https://img.shields.io/maven-central/v/io.github.flyjingfish/androidaop-plugin"><img
-    src="https://central.sonatype.com/artifact/io.github.flyjingfish/androidaop-plugin"
+  <a href="https://central.sonatype.com/artifact/io.github.flyjingfish/androidaop-plugin"><img
+    src="https://img.shields.io/maven-central/v/io.github.flyjingfish/androidaop-plugin"
     alt="Build"
   /></a>
   <a href="https://github.com/FlyJingFish/AndroidAop/stargazers"><img
