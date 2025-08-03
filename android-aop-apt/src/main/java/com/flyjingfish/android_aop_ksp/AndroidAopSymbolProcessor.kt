@@ -137,7 +137,13 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
                 throw IllegalArgumentException("注意：请给 $symbol 设置 @Target 为 METHOD ")
               }
             } else if (symbol.origin == Origin.KOTLIN) {
-              if ("kotlin.annotation.AnnotationTarget.FUNCTION" != s.toString() && "kotlin.annotation.AnnotationTarget.PROPERTY_GETTER" != s.toString() && "kotlin.annotation.AnnotationTarget.PROPERTY_SETTER" != s.toString()) {
+              val targetType = s.toString()
+//              if ("kotlin.annotation.AnnotationTarget.FUNCTION" != s.toString()
+//                && "kotlin.annotation.AnnotationTarget.PROPERTY_GETTER" != s.toString()
+//                && "kotlin.annotation.AnnotationTarget.PROPERTY_SETTER" != s.toString()) {
+              if (!targetType.contains("AnnotationTarget.FUNCTION")
+                  && !targetType.contains("AnnotationTarget.PROPERTY_GETTER")
+                  && !targetType.contains("AnnotationTarget.PROPERTY_SETTER")) {
                 throw IllegalArgumentException("注意：$symbol 只可设置 @Target 为 FUNCTION、PROPERTY_SETTER 或 PROPERTY_GETTER")
               }
             }
@@ -154,7 +160,8 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       val retentionMap: MutableMap<String, Any?>? = annotationMap["@Retention"]
       if (retentionMap != null) {
         val retention = retentionMap["value"]?.toString()
-        if ((symbol.origin == Origin.JAVA && "RUNTIME" != retention) || (symbol.origin == Origin.KOTLIN && "kotlin.annotation.AnnotationRetention.RUNTIME" != retention)) {
+        if ((symbol.origin == Origin.JAVA && "RUNTIME" != retention)
+          || (symbol.origin == Origin.KOTLIN && retention?.contains("AnnotationRetention.RUNTIME") != true)) {
           throw IllegalArgumentException("注意：请给 $symbol 设置 @Retention 为 RUNTIME ")
         }
       } else {
@@ -428,7 +435,9 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
 
       }else if (symbol.origin == Origin.JAVA){
         if (symbol is KSFunctionDeclaration){
-          if (symbol.functionKind != FunctionKind.STATIC){
+          val modifiers = symbol.modifiers
+          val isStatic = Modifier.JAVA_STATIC in modifiers
+          if (!isStatic){
             var className = "${symbol.packageName.asString()}."
             var parent = symbol.parent
             while (parent !is KSFile){
@@ -563,7 +572,9 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         }
 
       }else if (symbol.origin == Origin.JAVA){
-        if (symbol.functionKind != FunctionKind.STATIC){
+        val modifiers = symbol.modifiers
+        val isStatic = Modifier.JAVA_STATIC in modifiers
+        if (!isStatic){
           throw IllegalArgumentException("$exceptionJavaHintPreText 必须是静态方法")
         }
         val isPublic = symbol.modifiers.contains(Modifier.PUBLIC)
@@ -582,8 +593,8 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       val isClazz = collectOutClassName == "java.lang.Class"
       var collectClassName = if (isClazz){
         if (symbol.origin == Origin.KOTLIN){
-//          logger.error("$exceptionHintPreText---${parameter.type.resolve()}")
           val checkType = "${parameter.type.resolve()}"
+          logger.error("=====$checkType")
           if (regexIsEmpty){
             if (!checkKotlinType(checkType)){
               throw IllegalArgumentException("$exceptionHintPreText 的 参数的泛型设置的不对")
@@ -596,6 +607,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         }else if (symbol.origin == Origin.JAVA){
 //          logger.error("$exceptionHintPreText---${parameter.type}")
           val checkType = "${parameter.type}"
+          logger.error("=====$checkType")
           if (regexIsEmpty){
             if (!checkJavaType(checkType)){
               throw IllegalArgumentException("$exceptionJavaHintPreText 的 参数的泛型设置的不对")
