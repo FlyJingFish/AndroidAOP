@@ -607,7 +607,27 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         }else if (symbol.origin == Origin.JAVA){
 //          logger.error("$exceptionHintPreText---${parameter.type}")
           val checkType = "${parameter.type}"
-          logger.error("=====$checkType")
+          logger.error("=====$checkType ==${parameter.type.resolve()}")
+          val paramName = parameter.name?.asString() ?: "<anonymous>"
+          val typeRef = parameter.type
+          val resolvedType = typeRef.resolve()
+
+          // 打印参数名和类型全名
+          logger.error("Parameter: $paramName, type: ${resolvedType.declaration.qualifiedName?.asString()}")
+
+          // 获取泛型参数列表
+          val typeArgs = resolvedType.arguments
+          if (typeArgs.isEmpty()) {
+            logger.error("  No generic parameters")
+          } else {
+            logger.error("  Generic parameters:")
+            for ((index, arg) in typeArgs.withIndex()) {
+              // arg 是 KSTypeArgument
+              val argType = arg.type?.resolve()
+              val argStr = argType?.declaration?.qualifiedName?.asString() ?: "StarProjection or Unknown"
+              logger.error("    [$index]: $argStr")
+            }
+          }
           if (regexIsEmpty){
             if (!checkJavaType(checkType)){
               throw IllegalArgumentException("$exceptionJavaHintPreText 的 参数的泛型设置的不对")
