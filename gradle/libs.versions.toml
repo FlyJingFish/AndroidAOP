@@ -22,7 +22,7 @@ junit-junit = "4.13.2"
 androidx-test-ext-junit = "1.2.1"
 espresso-core = "3.6.1"
 test-rules = "1.5.0"
-flyjingfish_javassist_version = "1.0.2"
+flyjingfish_javassist_version = "1.0.3"
 fasttransform_version = "1.0.6"
 kotlinx-metadata-jvm-version = "0.9.0"
 [libraries]

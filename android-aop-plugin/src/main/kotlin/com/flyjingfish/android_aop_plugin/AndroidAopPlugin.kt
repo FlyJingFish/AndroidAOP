@@ -4,6 +4,8 @@ import com.android.build.gradle.AppPlugin
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.plugin.CompilePlugin
 import com.flyjingfish.android_aop_plugin.plugin.TransformPlugin
+import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
+import com.flyjingfish.android_aop_plugin.utils.RuntimeProject
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -13,6 +15,7 @@ class AndroidAopPlugin : Plugin<Project> {
         if (project.rootProject == project){
             deepSetDebugMode(project.rootProject)
         }
+        ClassPoolUtils.setRootProjectPath(RuntimeProject.get(project))
         CleanWithCachePlugin().apply(project)
         CompilePlugin(false).apply(project)
         TransformPlugin.apply(project)
