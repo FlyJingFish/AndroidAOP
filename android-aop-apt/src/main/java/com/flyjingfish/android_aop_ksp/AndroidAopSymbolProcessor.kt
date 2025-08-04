@@ -32,6 +32,7 @@ import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.Modifier
 import com.google.devtools.ksp.symbol.Origin
+import com.google.devtools.ksp.symbol.Variance
 import com.google.devtools.ksp.validate
 import com.google.gson.Gson
 import com.squareup.kotlinpoet.AnnotationSpec
@@ -594,7 +595,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       var collectClassName = if (isClazz){
         if (symbol.origin == Origin.KOTLIN){
           val checkType = "${parameter.type.resolve()}"
-          logger.error("=====$checkType")
+//          logger.error("=====$checkType")
           if (regexIsEmpty){
             if (!checkKotlinType(checkType)){
               throw IllegalArgumentException("$exceptionHintPreText 的 参数的泛型设置的不对")
@@ -606,37 +607,50 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
           }
         }else if (symbol.origin == Origin.JAVA){
 //          logger.error("$exceptionHintPreText---${parameter.type}")
-          val checkType = "${parameter.type}"
-          logger.error("=====$checkType ==${parameter.type.resolve()}")
-          val paramName = parameter.name?.asString() ?: "<anonymous>"
+//          val checkType = "${parameter.type}"
           val typeRef = parameter.type
           val resolvedType = typeRef.resolve()
 
-          // 打印参数名和类型全名
-          logger.error("Parameter: $paramName, type: ${resolvedType.declaration.qualifiedName?.asString()}")
+//          logger.error("Parameter: $paramName, type: ${resolvedType.declaration.qualifiedName?.asString()}")
+          if(resolvedType.arguments.size == 1){
+            val arg = resolvedType.arguments[0]
+            val variance = arg.variance
+//            val type = arg.type?.resolve()
 
-          // 获取泛型参数列表
-          val typeArgs = resolvedType.arguments
-          if (typeArgs.isEmpty()) {
-            logger.error("  No generic parameters")
-          } else {
-            logger.error("  Generic parameters:")
-            for ((index, arg) in typeArgs.withIndex()) {
-              // arg 是 KSTypeArgument
-              val argType = arg.type?.resolve()
-              val argStr = argType?.declaration?.qualifiedName?.asString() ?: "StarProjection or Unknown"
-              logger.error("    [$index]: $argStr")
+//            val typeName = type?.declaration?.qualifiedName?.asString() ?: ""
+//
+//            val varianceStr = when (variance) {
+//              Variance.INVARIANT -> "invariant (T)"
+//              Variance.COVARIANT -> "covariant (out T) -> ? extends"
+//              Variance.CONTRAVARIANT -> "contravariant (in T) -> ? super"
+//              else -> "unknown"
+//            }
+//            logger.error("$typeName, variance: $varianceStr")
+
+            if (regexIsEmpty){
+              if (variance != Variance.COVARIANT){
+                throw IllegalArgumentException("$exceptionJavaHintPreText 的 参数的泛型设置的不对")
+              }
+            }else{
+              if (variance == Variance.CONTRAVARIANT){
+                throw IllegalArgumentException("$exceptionJavaHintPreText 的 参数的泛型设置的不对")
+              }
             }
-          }
-          if (regexIsEmpty){
-            if (!checkJavaType(checkType)){
-              throw IllegalArgumentException("$exceptionJavaHintPreText 的 参数的泛型设置的不对")
-            }
+
+
           }else{
-            if (checkJavaType1(checkType)){
-              throw IllegalArgumentException("$exceptionJavaHintPreText 的 参数的泛型设置的不对")
-            }
+            throw IllegalArgumentException("$exceptionJavaHintPreText 的 参数的泛型设置的不对，必须设置1个泛型")
           }
+
+//          if (regexIsEmpty){
+//            if (!checkJavaType(checkType)){
+//              throw IllegalArgumentException("$exceptionJavaHintPreText 的 参数的泛型设置的不对")
+//            }
+//          }else{
+//            if (checkJavaType1(checkType)){
+//              throw IllegalArgumentException("$exceptionJavaHintPreText 的 参数的泛型设置的不对")
+//            }
+//          }
         }
         val element = parameter.type.element
         if (element != null){
