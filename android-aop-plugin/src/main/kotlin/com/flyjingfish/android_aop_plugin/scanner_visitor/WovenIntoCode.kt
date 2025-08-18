@@ -38,6 +38,7 @@ import javassist.bytecode.AnnotationsAttribute
 import javassist.bytecode.AttributeInfo
 import javassist.bytecode.ConstPool
 import javassist.bytecode.annotation.Annotation
+import javassist.bytecode.annotation.StringMemberValue
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -954,6 +955,14 @@ object WovenIntoCode {
         val ctMethodNoneHasKeep = annotationsAttribute.getAnnotation(KEEP_CLASS) == null
         if (ctMethodNoneHasKeep){
             val annotation = Annotation(KEEP_CLASS, constPool)
+
+            // 给注解添加参数 keepName = 方法名
+            val methodName = this.name
+            annotation.addMemberValue(
+                "keepName",
+                StringMemberValue(methodName, constPool)
+            )
+
             annotationsAttribute.addAnnotation(annotation)
             if (visibleTagAttribute == null){
                 methodInfo.addAttribute(annotationsAttribute)

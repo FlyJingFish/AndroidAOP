@@ -2,6 +2,7 @@ package com.flyjingfish.android_aop_annotation.utils
 
 import com.flyjingfish.android_aop_annotation.AndroidAopJoinPoint
 import com.flyjingfish.android_aop_annotation.ProceedReturn
+import com.flyjingfish.android_aop_annotation.aop_anno.AopKeep
 import com.flyjingfish.android_aop_annotation.base.OnBaseSuspendReturnListener
 import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener
 import com.flyjingfish.android_aop_annotation.base.OnSuspendReturnListener2
@@ -154,4 +155,22 @@ internal object Utils {
         val matcher: Matcher = InvokeStaticClassPattern.matcher(className)
         return matcher.find()
     }
+
+    fun findMethodWithKeepName(
+        clazz: Class<*>,
+        keepName: String,
+        parameterTypes: Array<Class<*>>
+    ): Method? {
+        return clazz.declaredMethods.firstOrNull { method ->
+            // 1. 参数列表必须完全匹配
+            if (!method.parameterTypes.contentEquals(parameterTypes)) {
+                return@firstOrNull false
+            }
+            // 2. 注解必须存在并且 keepName 一致
+            val annotation = method.getAnnotation(AopKeep::class.java)
+            annotation?.keepName == keepName
+        }
+    }
+
+
 }

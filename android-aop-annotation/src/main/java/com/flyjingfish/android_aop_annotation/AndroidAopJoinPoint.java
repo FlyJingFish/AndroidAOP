@@ -300,11 +300,17 @@ public final class AndroidAopJoinPoint {
             try {
                 originalMethod = tClass.getDeclaredMethod(originalMethodName, classes);
             } catch (NoSuchMethodException exc) {
-                String realMethodName = getRealMethodName(originalMethodName);
-                if (realMethodName == null){
+//                String realMethodName = getRealMethodName(originalMethodName);
+//                if (realMethodName == null){
+//                    throw new RuntimeException(exc);
+//                }
+//                originalMethod = tClass.getDeclaredMethod(realMethodName, classes);
+                System.out.println("=======>"+originalMethodName);
+                originalMethod = Utils.INSTANCE.findMethodWithKeepName(tClass,originalMethodName,classes);
+                if (originalMethod == null){
                     throw new RuntimeException(exc);
                 }
-                originalMethod = tClass.getDeclaredMethod(realMethodName, classes);
+                System.out.println("=======>"+originalMethodName+"<==Success="+originalMethod.getName());
             }
             targetMethod.setAccessible(true);
             originalMethod.setAccessible(true);
