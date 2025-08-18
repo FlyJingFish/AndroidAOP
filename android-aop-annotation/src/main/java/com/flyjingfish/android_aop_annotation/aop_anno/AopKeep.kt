@@ -1,7 +1,7 @@
 package com.flyjingfish.android_aop_annotation.aop_anno
 
 
-@Retention(AnnotationRetention.BINARY)
+@Retention(AnnotationRetention.RUNTIME)
 @Target(
     AnnotationTarget.TYPE,
     AnnotationTarget.ANNOTATION_CLASS,
@@ -11,4 +11,4 @@ package com.flyjingfish.android_aop_annotation.aop_anno
     AnnotationTarget.PROPERTY_GETTER,
     AnnotationTarget.FIELD
 )
-annotation class AopKeep
+annotation class AopKeep(val keepName: String = "")
