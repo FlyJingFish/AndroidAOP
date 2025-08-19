@@ -6,7 +6,7 @@
     ```groovy
     dependencies {
         //非必须项 👇这个包提供了一些常见的注解切面
-        implementation "io.github.flyjingfish:androidaop-extra:2.6.9"
+        implementation "io.github.flyjingfish:androidaop-extra:2.7.0"
     }
     ```
 
@@ -15,7 +15,7 @@
     ```kotlin
     dependencies {
         //非必须项 👇这个包提供了一些常见的注解切面
-        implementation("io.github.flyjingfish:androidaop-extra:2.6.9")
+        implementation("io.github.flyjingfish:androidaop-extra:2.7.0")
     }
     ```
 
