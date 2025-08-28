@@ -28,7 +28,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
         
         plugins {
           //👇Required item (1)👈 apply is set to true to automatically apply debugMode to all modules, If false, follow step 5 below to configure debugMode in manual mode.
-          id "io.github.flyjingfish.androidaop" version "2.7.0" apply true
+          id "io.github.flyjingfish.androidaop" version "2.7.1" apply true
         }
         ```
 
@@ -40,7 +40,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
         buildscript {
              dependencies {
                  //👇equired items (1)👈
-                 classpath "io.github.flyjingfish:androidaop-plugin:2.7.0"
+                 classpath "io.github.flyjingfish:androidaop-plugin:2.7.1"
              }
         }
         //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below to configure debugMode in manual mode.
@@ -56,7 +56,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
         
         plugins {
           //👇Required item (1)👈 apply is set to true to automatically apply debugMode to all modules, If false, follow step 5 below to configure debugMode in manual mode.
-          id("io.github.flyjingfish.androidaop") version "2.7.0" apply true
+          id("io.github.flyjingfish.androidaop") version "2.7.1" apply true
         }
         ```
 
@@ -68,7 +68,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
         buildscript {
              dependencies {
                  //👇Required items (1)👈
-                 classpath("io.github.flyjingfish:androidaop-plugin:2.7.0")
+                 classpath("io.github.flyjingfish:androidaop-plugin:2.7.1")
              }
         }
         //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below to configure debugMode in manual mode.
@@ -82,7 +82,7 @@ Depend on the plug-in in `build.gradle` in the **project root directory**
 
 <img src="/AndroidAOP/svg/two.svg#only-light" align = "center" />
 <img src="/AndroidAOP/svg/two_dark.svg#only-dark" align = "center" />
-Add in `build.gradle` of **app**
+Add in `build.gradle` of **com.android.application（com.android.dynamic-feature）**
 
 === "Groovy"
 
@@ -123,7 +123,7 @@ Add in `build.gradle` of **app**
         ```
 
 !!! warning
-    **:warning::warning::warning:`id 'android.aop'` should be placed at the last line, especially after `id 'com.android.application'` or `id 'com.android.library'`**
+    **:warning::warning::warning:`id 'android.aop'` should be placed on the last line, especially after `id 'com.android.application'`, `id 'com.android.library'` or `id 'com.android.dynamic-feature'`.**
 
 
 #### ~~Method 2: ```plugins``` method~~
@@ -136,7 +136,7 @@ Add in `build.gradle` of **app**
     //Required items 👇
     plugins {
        ...
-       id "io.github.flyjingfish.androidaop" version "2.7.0"
+       id "io.github.flyjingfish.androidaop" version "2.7.1"
     }
     ```
 
@@ -146,7 +146,7 @@ Add in `build.gradle` of **app**
     //Required items 👇
     plugins {
        ...
-       id("io.github.flyjingfish.androidaop") version "2.7.0"
+       id("io.github.flyjingfish.androidaop") version "2.7.1"
     }
     ```
 
@@ -189,17 +189,17 @@ Add in `build.gradle` of **app**
     
     dependencies {
          //👇Required items 
-         implementation "io.github.flyjingfish:androidaop-core:2.7.0"
+         implementation "io.github.flyjingfish:androidaop-core:2.7.1"
          //👇Optional (1)👈 This package provides some common annotation aspects
-         implementation "io.github.flyjingfish:androidaop-extra:2.7.0"
+         implementation "io.github.flyjingfish:androidaop-extra:2.7.1"
         
          //👇Required item  If you already have this item in your project, you don’t need to add it.
          implementation "androidx.appcompat:appcompat:1.3.0" // At least in 1.3.0 and above
          
          //👇Choose one (2)👈Click + to view detailed description, ⚠️supports aspects written in Java and Kotlin code
-         ksp "io.github.flyjingfish:androidaop-apt:2.7.0"
+         ksp "io.github.flyjingfish:androidaop-apt:2.7.1"
          //👇Choose one (3)👈Click + to view detailed description, ⚠️only applies to aspects written in Java code
-         annotationProcessor "io.github.flyjingfish:androidaop-apt:2.7.0"
+         annotationProcessor "io.github.flyjingfish:androidaop-apt:2.7.1"
          //⚠️Choose one of the above ksp and annotationProcessor
          //If you only use the functions in android-aop-extra, you don't need to select these two options
     }
@@ -219,17 +219,17 @@ Add in `build.gradle` of **app**
     
     dependencies {
          //👇Required items 
-         implementation("io.github.flyjingfish:androidaop-core:2.7.0")
+         implementation("io.github.flyjingfish:androidaop-core:2.7.1")
          //👇Optional (1)👈 This package provides some common annotation aspects
-         implementation("io.github.flyjingfish:androidaop-extra:2.7.0")
+         implementation("io.github.flyjingfish:androidaop-extra:2.7.1")
         
          //👇Required item  If you already have this item in your project, you don’t need to add it.
          implementation("androidx.appcompat:appcompat:1.3.0") // At least in 1.3.0 and above
          
          //👇Choose one (2)👈Click + to view detailed description, ⚠️supports aspects written in Java and Kotlin code
-         ksp("io.github.flyjingfish:androidaop-apt:2.7.0")
+         ksp("io.github.flyjingfish:androidaop-apt:2.7.1")
          //👇Choose one (3)👈Click + to view detailed description, ⚠️only applies to aspects written in Java code
-         annotationProcessor("io.github.flyjingfish:androidaop-apt:2.7.0")
+         annotationProcessor("io.github.flyjingfish:androidaop-apt:2.7.1")
          //⚠️Choose one of the above ksp and annotationProcessor
          //If you only use the functions in android-aop-extra, you don't need to select these two options
     }
@@ -340,7 +340,7 @@ For **all sub-modules** also rely on plug-ins, please follow the above [step 1 m
 
 - **Method 1 (recommended):**
   
-    Follow the above [Step 1 Method 1 Configuration Project](#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required) and you are done. **This method automatically applies debugMode to all Android modules**
+    Follow the above [Step 1 Method 1 Configuration Project](#1-introduce-the-plug-in-choose-one-of-the-two-methods-below-required) and you are done. **This method automatically applies debugMode to all Android modules (excluding `com.android.dynamic-feature` modules)**
 
 - **Method 2:**
   
@@ -366,7 +366,7 @@ For **all sub-modules** also rely on plug-ins, please follow the above [step 1 m
 
 !!! note
     1. This method can only apply debugMode to the modules you have added, and the related aspects in the modules that have not been added will not take effect <br>
-    2. If your module is a Java or Kotlin library, this method can only enable all Android libraries. You need to use method 2 to configure your module separately for it to take effect.
+    2. If your module is a Java or Kotlin library, the automatic mode can only enable all Android libraries. You need to use manual mode to configure your module separately for it to take effect. `com.android.dynamic-feature` needs to be manually added to this plugin.
 
 <img src="/AndroidAOP/svg/two.svg#only-light" align = "center" />
 <img src="/AndroidAOP/svg/two_dark.svg#only-dark" align = "center" />

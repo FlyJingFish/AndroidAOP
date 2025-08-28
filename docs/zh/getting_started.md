@@ -30,7 +30,7 @@
         
         plugins {
             //👇必须项 (1)👈 apply 设置为 true 自动为所有module“预”配置 debugMode，false则按下边步骤五配置 debugMode 的手动模式
-            id "io.github.flyjingfish.androidaop" version "2.7.0" apply true
+            id "io.github.flyjingfish.androidaop" version "2.7.1" apply true
         }
         ```
         
@@ -41,7 +41,7 @@
         buildscript {
           dependencies {
               //👇必须项 (1)👈
-              classpath "io.github.flyjingfish:androidaop-plugin:2.7.0"
+              classpath "io.github.flyjingfish:androidaop-plugin:2.7.1"
           }
         }
         // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五配置 debugMode 的手动模式
@@ -57,7 +57,7 @@
         ```kotlin
         plugins {
             //👇必须项 (1)👈 apply 设置为 true 自动为所有module“预”配置debugMode，false则按下边步骤五配置 debugMode 的手动模式
-            id("io.github.flyjingfish.androidaop") version "2.7.0" apply true
+            id("io.github.flyjingfish.androidaop") version "2.7.1" apply true
         }
         ```
         
@@ -68,7 +68,7 @@
         buildscript {
           dependencies {
               //👇必须项 (1)👈
-              classpath("io.github.flyjingfish:androidaop-plugin:2.7.0")
+              classpath("io.github.flyjingfish:androidaop-plugin:2.7.1")
           }
         }
         // 👇加上这句自动为所有module“预”配置debugMode，不加则按下边步骤五配置 debugMode 的手动模式
@@ -83,7 +83,7 @@
 
 <img src="../../svg/two.svg#only-light" align = "center" />
 <img src="../../svg/two_dark.svg#only-dark" align = "center" />
-在 **app** 的 `build.gradle` 添加
+在 **com.android.application（以及com.android.dynamic-feature）** 的 `build.gradle` 添加
 
 === "Groovy"
 
@@ -124,7 +124,7 @@
         ```
 
 !!! warning
-    **:warning::warning::warning:`id 'android.aop'` 这句尽量放在最后一行，尤其是必须在 `id 'com.android.application'` 或 `id 'com.android.library'` 的后边**
+    **:warning::warning::warning:`id 'android.aop'` 这句尽量放在最后一行，尤其是必须在 `id 'com.android.application'` 、 `id 'com.android.library'` 或 `id 'com.android.dynamic-feature'` 的后边**
 
 
 #### ~~方式二：```plugins``` 方式（不推荐）~~
@@ -137,7 +137,7 @@
     //必须项 👇
     plugins {
         ...
-        id "io.github.flyjingfish.androidaop" version "2.7.0"//最好放在最后一行
+        id "io.github.flyjingfish.androidaop" version "2.7.1"//最好放在最后一行
     }
     ```
 
@@ -147,7 +147,7 @@
     //必须项 👇
     plugins {
         ...
-        id("io.github.flyjingfish.androidaop") version "2.7.0"//最好放在最后一行
+        id("io.github.flyjingfish.androidaop") version "2.7.1"//最好放在最后一行
     }
     ```
 
@@ -185,18 +185,18 @@
     
     dependencies {
         //👇必须项 
-        implementation "io.github.flyjingfish:androidaop-core:2.7.0"
+        implementation "io.github.flyjingfish:androidaop-core:2.7.1"
         //👇非必须项 (1)👈 这个包提供了一些常见的注解切面
-        implementation "io.github.flyjingfish:androidaop-extra:2.7.0" 
+        implementation "io.github.flyjingfish:androidaop-extra:2.7.1" 
         
         //👇必须项 如果您项目内已经有了这项不用加也可以
         implementation "androidx.appcompat:appcompat:1.3.0" // 至少在1.3.0及以上
         
         //👇二选一 (2)👈点击+查看详细说明，⚠️支持Java和Kotlin代码写的切面
-        ksp "io.github.flyjingfish:androidaop-apt:2.7.0"
+        ksp "io.github.flyjingfish:androidaop-apt:2.7.1"
         
         //👇二选一 (3)👈点击+查看详细说明，⚠️只适用于Java代码写的切面
-        annotationProcessor "io.github.flyjingfish:androidaop-apt:2.7.0"
+        annotationProcessor "io.github.flyjingfish:androidaop-apt:2.7.1"
         //⚠️上边的 ksp 和 annotationProcessor 二选一
         //如果只是使用 android-aop-extra 中的功能就不需要选择这两项
     }
@@ -216,18 +216,18 @@
     
     dependencies {
         //👇必须项 
-        implementation("io.github.flyjingfish:androidaop-core:2.7.0")
+        implementation("io.github.flyjingfish:androidaop-core:2.7.1")
         //👇非必须项 (1)👈 这个包提供了一些常见的注解切面
-        implementation("io.github.flyjingfish:androidaop-extra:2.7.0")
+        implementation("io.github.flyjingfish:androidaop-extra:2.7.1")
         
         //👇必须项 如果您项目内已经有了这项不用加也可以
         implementation("androidx.appcompat:appcompat:1.3.0") // 至少在1.3.0及以上
         
         //👇二选一 (2)👈点击+查看详细说明，⚠️支持Java和Kotlin代码写的切面
-        ksp("io.github.flyjingfish:androidaop-apt:2.7.0")
+        ksp("io.github.flyjingfish:androidaop-apt:2.7.1")
         
         //👇二选一 (3)👈点击+查看详细说明，⚠️只适用于Java代码写的切面
-        annotationProcessor("io.github.flyjingfish:androidaop-apt:2.7.0")
+        annotationProcessor("io.github.flyjingfish:androidaop-apt:2.7.1")
         //⚠️上边的 ksp 和 annotationProcessor 二选一
         //如果只是使用 android-aop-extra 中的功能就不需要选择这两项
     }
@@ -340,7 +340,7 @@ androidAop.fastDex.variantOnlyDebug = false //只在 debug 起作用（默认fal
 
 - **自动模式：（推荐）**
 
-    按照上述[步骤一的方式一配置项目](#apply)，就可以了。**这个方式自动为所有 Android 的 module 应用 debugMode**
+    按照上述[步骤一的方式一配置项目](#apply)，就可以了。**这个方式自动为所有 Android 的 module（不包括 `com.android.dynamic-feature` 的module） 应用 debugMode**
 
 
 - ~~**手动模式：（不推荐）**~~
@@ -366,7 +366,7 @@ androidAop.fastDex.variantOnlyDebug = false //只在 debug 起作用（默认fal
 
 !!! note
     **1、这个方式可以只为你加过的 module 应用 debugMode，没加的 module 里边的相关切面不会生效**<br>
-    **2、如果你的 module 是 Java或Kotlin 的 Library，方式一只能让所有的 Android 的 Library，需要采用方式二单独为你的 module 配置才会生效**
+    **2、如果你的 module 是 Java或Kotlin 的 Library，自动模式只能让所有的 Android 的 Library，需要采用手动模式单独为你的 module 配置才会生效，`com.android.dynamic-feature` 需要手动加上此插件**
 
 
 <img src="../../svg/two.svg#only-light" align = "center" />
