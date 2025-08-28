@@ -129,7 +129,7 @@
 
 #### ~~方式二：```plugins``` 方式（不推荐）~~
 
-- 直接在 **app** 的 ```build.gradle``` 添加
+- 直接在 **com.android.application（以及com.android.dynamic-feature）** 的 ```build.gradle``` 添加
 
 === "Groovy"
 

@@ -128,7 +128,7 @@ Add in `build.gradle` of **com.android.application（com.android.dynamic-feature
 
 #### ~~Method 2: ```plugins``` method~~
 
-- Add directly to ```build.gradle``` of **app**
+- Add directly to ```build.gradle``` of **com.android.application（com.android.dynamic-feature）**
 
 === "Groovy"
 
