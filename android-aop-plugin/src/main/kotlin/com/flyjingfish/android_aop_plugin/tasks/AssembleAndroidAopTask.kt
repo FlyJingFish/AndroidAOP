@@ -12,6 +12,7 @@ import com.flyjingfish.android_aop_plugin.utils.AopTaskUtils
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
+import com.flyjingfish.android_aop_plugin.utils.AppClasses
 import com.flyjingfish.android_aop_plugin.utils.RuntimeProject
 import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils._CLASS
@@ -54,6 +55,12 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
     abstract var variant :String
 
     @get:Input
+    abstract var isDynamic : Boolean
+
+    @get:Input
+    abstract var isApp : Boolean
+
+    @get:Input
     abstract var reflectInvokeMethod :Boolean
 
     @get:Input
@@ -66,8 +73,13 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
     private val allJarFiles = mutableListOf<File>()
 
     private val allDirectoryFiles = mutableListOf<File>()
+    private val runtimeJars = mutableListOf<File>()
+    private val runtimeDirectoryFiles = mutableListOf<File>()
 
     override fun startTask() {
+        if (isApp && AndroidAopConfig.cutInfoJson){
+            InitConfig.initCutInfo(runtimeProject,true)
+        }
         Utils.logger = logger
         aopTaskUtils = AopTaskUtils(runtimeProject,variant)
         ClassPoolUtils.release(runtimeProject)
@@ -98,6 +110,11 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
     private fun scanFile() {
         allJarFiles.addAll(allJars())
         allDirectoryFiles.addAll(allDirectories())
+        if (isApp){
+            AppClasses.addClasses(allJarFiles,allDirectoryFiles)
+        }else if (isDynamic){
+            AppClasses.putAllClasses(runtimeJars,runtimeDirectoryFiles)
+        }
         val scanTimeCost1 = measureTimeMillis {
             loadJoinPointConfig()
         }
@@ -183,6 +200,21 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
             val jarFile = aopTaskUtils.processJarForConfig(file,this@runBlocking,searchJobs)
             jarFiles.add(jarFile)
         }
+        runtimeJars.forEach { file ->
+            if (file.absolutePath in ignoreJar){
+                return@forEach
+            }
+            val jarFile = aopTaskUtils.processJarForConfig(file,this@runBlocking,searchJobs)
+            jarFiles.add(jarFile)
+        }
+        runtimeDirectoryFiles.forEach { directory ->
+//            printLog("directory.asFile.absolutePath = ${directory.asFile.absolutePath}")
+            val directoryPath = directory.absolutePath
+            WovenInfoUtils.addClassPath(directory.absolutePath)
+            directory.walk().forEach { file ->
+                processFile(file, directory, directoryPath)
+            }
+        }
         if (searchJobs.isNotEmpty()){
             searchJobs.awaitAll()
         }
@@ -253,6 +285,22 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
             }
 
             jarFiles.add(aopTaskUtils.processJarForSearchSuspend(file,this@runBlocking,searchJobs2))
+        }
+        runtimeJars.forEach { file ->
+            if (file.absolutePath in ignoreJar){
+                return@forEach
+            }
+
+            jarFiles.add(aopTaskUtils.processJarForSearchSuspend(file,this@runBlocking,searchJobs2))
+        }
+        runtimeDirectoryFiles.forEach { directory ->
+            val directoryPath = directory.absolutePath
+            directory.walk().forEach { file ->
+                val job = async(Dispatchers.IO) {
+                    aopTaskUtils.processFileForSearchSuspend(file,directory,directoryPath)
+                }
+                searchJobs2.add(job)
+            }
         }
         searchJobs2.awaitAll()
         for (jarFile in jarFiles) {
@@ -815,24 +863,26 @@ abstract class AssembleAndroidAopTask : DefaultTransformTask() {
             }
             outputDirJobs.awaitAll()
         }
-        val collectDir = File(Utils.aopTransformCollectTempDir(runtimeProject,variant))
-        WovenIntoCode.createCollectClass(collectDir)
-        val collectDirJobs = mutableListOf<Deferred<Unit>>()
-        for (file in collectDir.walk()) {
-            if (file.isFile) {
-                val job = async(Dispatchers.IO) {
-                    val className = file.getFileClassname(collectDir)
-                    val invokeClassName = Utils.slashToDot(className).replace(_CLASS,"")
-                    if (!WovenInfoUtils.containsInvokeClass(invokeClassName)){
-                        file.inputStream().use {
-                            saveEntryCache(oldJarFileName,className,it)
+        if (isApp || isDynamic){
+            val collectDir = File(Utils.aopTransformCollectTempDir(runtimeProject,variant))
+            WovenIntoCode.createCollectClass(collectDir,project.name)
+            val collectDirJobs = mutableListOf<Deferred<Unit>>()
+            for (file in collectDir.walk()) {
+                if (file.isFile) {
+                    val job = async(Dispatchers.IO) {
+                        val className = file.getFileClassname(collectDir)
+                        val invokeClassName = Utils.slashToDot(className).replace(_CLASS,"")
+                        if (!WovenInfoUtils.containsInvokeClass(invokeClassName)){
+                            file.inputStream().use {
+                                saveEntryCache(oldJarFileName,className,it)
+                            }
                         }
                     }
+                    collectDirJobs.add(job)
                 }
-                collectDirJobs.add(job)
             }
+            collectDirJobs.awaitAll()
         }
-        collectDirJobs.awaitAll()
 //        if (!AndroidAopConfig.debug){
 //            ClassFileUtils.outputDir.deleteRecursively()
 //            collectDir.deleteRecursively()

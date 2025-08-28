@@ -1,0 +1,43 @@
+plugins {
+    alias(libs.plugins.android.dynamic.feature)
+    alias(libs.plugins.kotlin.android)
+    id 'android.aop'
+}
+apply from: "$rootDir/gradle/android_base.gradle"
+androidAopConfig {
+    enabled true
+    // debug 为true打开日志方便调试
+    debug true
+    // 测试
+    //默认关闭，开启后将会生成切点信息json文件在 /build/tmp/cutInfo.json
+    cutInfoJson true
+    increment false
+    // 移除kotlin相关，编译错误和提升速度
+    exclude 'kotlin.jvm', 'kotlin.internal','kotlinx.coroutines.internal', 'kotlinx.coroutines.android'
+    excludePackaging 'META-INF/DEPENDENCIES', 'META-INF/NOTICE' , 'META-INF/LICENSE' , 'META-INF/LICENSE.txt' , 'META-INF/NOTICE.txt' , 'license/README.dom.txt' , 'license/LICENSE.dom-documentation.txt' , 'license/NOTICE' , 'license/LICENSE.dom-software.txt' , 'license/LICENSE'
+}
+android {
+    namespace 'com.flyjingfish.dynamicfeature'
+    compileSdk 33
+
+    defaultConfig {
+        minSdk 24
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    flavorDimensions.add("env")
+    productFlavors {
+        informal {
+            dimension "env"
+        }
+        product {
+            dimension "env"
+        }
+    }
+
+}
+
+dependencies {
+    implementation project(":app")
+    implementation project(":test-lib")
+}

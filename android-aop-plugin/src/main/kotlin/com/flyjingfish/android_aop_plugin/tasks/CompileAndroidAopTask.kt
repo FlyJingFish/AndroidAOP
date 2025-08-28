@@ -32,7 +32,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.objectweb.asm.ClassReader
@@ -57,6 +56,7 @@ class CompileAndroidAopTask(
     private val variantName:String,
     private val compileTask: AbstractCompile,
     private val isAndroidModule:Boolean = true,
+    private val isDynamic:Boolean = true,
     private val logger :Logger = compileTask.logger
 ) {
     private val aopTaskUtils = AopTaskUtils(project,variantName,isAndroidModule)
@@ -378,11 +378,13 @@ class CompileAndroidAopTask(
             }
         }
         wovenCodeJobs.awaitAll()
-        if (isApp){
+        if (isApp || isDynamic){
             val cacheDeleteFiles = mutableListOf<String>()
             val tmpOtherDir = File(Utils.aopCompileTempOtherDir(project,variantName))
-            WovenIntoCode.createInitClass(tmpOtherDir)
-            WovenIntoCode.createCollectClass(tmpOtherDir)
+            if (isApp){
+                WovenIntoCode.createInitClass(tmpOtherDir)
+            }
+            WovenIntoCode.createCollectClass(tmpOtherDir,project.name)
             val tmpOtherJobs = mutableListOf<Deferred<Unit>>()
             for (file in tmpOtherDir.walk()) {
                 if (file.isFile) {
@@ -404,7 +406,9 @@ class CompileAndroidAopTask(
                 }
             }
             tmpOtherJobs.awaitAll()
-            InitConfig.exportCacheCutFile(File(Utils.aopCompileTempOtherJson(project,variantName)),cacheDeleteFiles)
+            if (isApp){
+                InitConfig.exportCacheCutFile(File(Utils.aopCompileTempOtherJson(project,variantName)),cacheDeleteFiles)
+            }
             if (!AndroidAopConfig.debug){
                 tmpOtherDir.deleteRecursively()
             }
@@ -427,19 +431,17 @@ class CompileAndroidAopTask(
             val cacheFiles = ClassFileUtils.get(project).wovenInfoInvokeClass(newClasses)
             InitConfig.exportCacheCutFile(tmpJsonFile,cacheFiles)
         }
-        if (isApp){
-            exportCutInfo()
-            FileHashUtils.clearScanRecord()
-            WovenInfoUtils.clear()
-            ClassPoolUtils.clear()
-            SuspendReturnScanner.hasSuspendReturn = false
-        }
+        endAllTask()
+    }
+    private fun endAllTask(){
+        exportCutInfo()
     }
     private fun exportCutInfo(){
         if (!AndroidAopConfig.cutInfoJson){
             return
         }
-        InitConfig.exportCutInfo(isApp)
+        if (isApp || isDynamic){
+            InitConfig.exportCutInfo()
+        }
     }
-
 }

@@ -1,7 +1,9 @@
 package com.flyjingfish.android_aop_plugin.scanner_visitor
 
+import com.flyjingfish.android_aop_plugin.utils.AppClasses
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
+import com.flyjingfish.android_aop_plugin.utils.Utils
 import com.flyjingfish.android_aop_plugin.utils.Utils.dotToSlash
 import com.flyjingfish.android_aop_plugin.utils.Utils.slashToDot
 import com.flyjingfish.android_aop_plugin.utils.Utils.slashToDotClassName
@@ -10,8 +12,10 @@ import com.flyjingfish.android_aop_plugin.utils.computeMD5
 import com.flyjingfish.android_aop_plugin.utils.inRules
 import com.flyjingfish.android_aop_plugin.utils.printError
 import org.objectweb.asm.ClassVisitor
+import org.objectweb.asm.Label
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
+import org.objectweb.asm.Type
 import org.objectweb.asm.commons.AdviceAdapter
 import org.objectweb.asm.signature.SignatureReader
 import org.objectweb.asm.signature.SignatureVisitor
@@ -187,11 +191,45 @@ open class ReplaceBaseClassVisitor(
         override fun visitInsn(opcode: Int) {
             if (opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN) {
                 modifyed = true
-                val className = "$thisClassName\$Inner${thisClassName.computeMD5()}"
-                mv.visitTypeInsn(NEW, dotToSlash(className));
-                mv.visitInsn(DUP);//压入栈
-                //弹出一个对象所在的地址，进行初始化操作，构造函数默认为空，此时栈大小为1（到目前只有一个局部变量）
-                mv.visitMethodInsn(INVOKESPECIAL, dotToSlash(className),"<init>","()V",false);
+                for (moduleName in AppClasses.getAllModuleNames()) {
+                    val tryStart = Label()
+                    val tryEnd = Label()
+                    val labelCatch = Label()
+                    val tryCatchBlockEnd = Label()
+
+                    mv.visitTryCatchBlock(
+                        tryStart,
+                        tryEnd,
+                        labelCatch,
+                        "java/lang/NoClassDefFoundError"
+                    )
+                    mv.visitLabel(tryStart)
+
+                    val className = "$thisClassName\$Inner${thisClassName.computeMD5()}_${moduleName.computeMD5()}"
+                    mv.visitTypeInsn(NEW, dotToSlash(className));
+                    mv.visitInsn(DUP);//压入栈
+                    //弹出一个对象所在的地址，进行初始化操作，构造函数默认为空，此时栈大小为1（到目前只有一个局部变量）
+                    mv.visitMethodInsn(INVOKESPECIAL, dotToSlash(className),"<init>","()V",false)
+                    mv.visitInsn(POP) // 保证 try 分支栈深为 0
+
+                    mv.visitLabel(tryEnd)
+                    mv.visitJumpInsn(Opcodes.GOTO, tryCatchBlockEnd)
+
+                    mv.visitLabel(labelCatch)
+                    mv.visitVarInsn(Opcodes.ASTORE, 0)
+
+                    mv.visitVarInsn(Opcodes.ALOAD, 0)
+                    mv.visitMethodInsn(
+                        Opcodes.INVOKEVIRTUAL,
+                        "java/lang/NoClassDefFoundError",
+                        "printStackTrace",
+                        "()V",
+                        false
+                    )
+
+                    mv.visitLabel(tryCatchBlockEnd)
+
+                }
 
             }
             super.visitInsn(opcode)

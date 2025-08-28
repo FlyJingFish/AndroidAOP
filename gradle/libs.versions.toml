@@ -25,6 +25,8 @@ test-rules = "1.5.0"
 flyjingfish_javassist_version = "1.0.3"
 fasttransform_version = "1.0.7"
 kotlinx-metadata-jvm-version = "0.9.0"
+agp = "8.2.2"
+kotlinVersion = "1.9.23"
 [libraries]
 kotlinpoet-ksp = { group = "com.squareup", name = "kotlinpoet-ksp", version.ref = "kotlinpoet_version" }
 kotlinpoet = { group = "com.squareup", name = "kotlinpoet", version.ref = "kotlinpoet_version" }
@@ -53,3 +55,6 @@ androidx-rules = { group = "androidx.test", name = "rules", version.ref = "test-
 flyjingfish-javassist = { group = "io.github.flyjingfish", name = "javassist", version.ref = "flyjingfish_javassist_version" }
 fastTransform = { group = "io.github.flyjingfish", name = "fasttransform", version.ref = "fasttransform_version" }
 kotlinx-metadata-jvm = { group = "org.jetbrains.kotlinx", name = "kotlinx-metadata-jvm", version.ref = "kotlinx-metadata-jvm-version" }
+[plugins]
+android-dynamic-feature = { id = "com.android.dynamic-feature", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinVersion" }

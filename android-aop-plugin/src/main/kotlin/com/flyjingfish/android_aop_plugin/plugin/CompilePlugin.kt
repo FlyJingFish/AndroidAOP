@@ -9,20 +9,28 @@ import com.android.build.gradle.DynamicFeaturePlugin
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
+import com.flyjingfish.android_aop_plugin.scanner_visitor.SuspendReturnScanner
 import com.flyjingfish.android_aop_plugin.scanner_visitor.WovenIntoCode
 import com.flyjingfish.android_aop_plugin.tasks.CompileAndroidAopTask
 import com.flyjingfish.android_aop_plugin.tasks.DebugModeFileTask
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
+import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
+import com.flyjingfish.android_aop_plugin.utils.FileHashUtils
 import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.RuntimeProject
 import com.flyjingfish.android_aop_plugin.utils.Utils
+import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.adapterOSPath
 import com.flyjingfish.android_aop_plugin.utils.getBuildDirectory
 import com.flyjingfish.android_aop_plugin.utils.getRelativePath
 import org.codehaus.groovy.runtime.DefaultGroovyMethods
+import org.gradle.BuildListener
+import org.gradle.BuildResult
 import org.gradle.api.Project
 import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.api.execution.TaskExecutionGraphListener
+import org.gradle.api.initialization.Settings
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -159,12 +167,36 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
         val hasConfig = project.extensions.findByName("androidAopConfig") != null
         val syncConfig = !fromRootSet && hasConfig && isApp
         if (syncConfig){
-            project.afterEvaluate {
-                AndroidAopConfig.syncConfig(project)
-                if (AndroidAopConfig.cutInfoJson){
-                    InitConfig.initCutInfo(runtimeProject,false)
+            var startTask = false
+            project.rootProject.gradle.taskGraph.addTaskExecutionGraphListener(object :
+                TaskExecutionGraphListener {
+                override fun graphPopulated(it: TaskExecutionGraph) {
+                    startTask = true
+                    AndroidAopConfig.syncConfig(project)
+                    if (AndroidAopConfig.cutInfoJson){
+                        InitConfig.initCutInfo(runtimeProject,true)
+                    }
+                    project.rootProject.gradle.taskGraph.removeTaskExecutionGraphListener(this)
                 }
-            }
+
+            })
+            project.rootProject.gradle.addBuildListener(object : BuildListener{
+                override fun settingsEvaluated(settings: Settings) {
+                }
+
+                override fun projectsLoaded(gradle: Gradle) {
+                }
+
+                override fun projectsEvaluated(gradle: Gradle) {
+                }
+
+                override fun buildFinished(result: BuildResult) {
+                    if (startTask){
+                        endAllTask()
+                    }
+                }
+
+            })
         }
 
 
@@ -202,7 +234,7 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
             }
             val kotlinBuildPath = File(project.getBuildDirectory().path + "/tmp/kotlin-classes/".adapterOSPath() + variantName)
             javaCompile.doLast{
-                doAopTask(runtimeProject,isApp, variantName, buildTypeName, javaCompile, kotlinBuildPath)
+                doAopTask(runtimeProject,isApp, variantName, buildTypeName, javaCompile, kotlinBuildPath,true,isDynamicLibrary)
             }
         }
         if (hasBuildConfig()){
@@ -320,7 +352,7 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
     }
 
     private fun doAopTask(project: RuntimeProject,isApp:Boolean, variantName: String, buildTypeName: String,
-                          javaCompile:AbstractCompile, kotlinDefaultPath: File, isAndroidModule : Boolean = true){
+                          javaCompile:AbstractCompile, kotlinDefaultPath: File, isAndroidModule : Boolean = true, isDynamic : Boolean = false){
         val cacheDir = if (isAndroidModule) {
             kotlinCompileFilePathMap[project.buildDir.absolutePath+"@"+"compile${variantName.capitalized()}Kotlin"]
         }else{
@@ -385,7 +417,7 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
                 val task = CompileAndroidAopTask(jarInputFiles,localInputFiles,output,project,isApp,
                     File(Utils.aopCompileTempDir(project,variantName)),
                     File(Utils.invokeJsonFile(project,variantName)),
-                    variantName,javaCompile,isAndroidModule
+                    variantName,javaCompile,isAndroidModule,isDynamic
                 )
                 task.taskAction()
             }
@@ -415,5 +447,12 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
         }else{
             return file
         }
+    }
+
+    private fun endAllTask(){
+        FileHashUtils.clearScanRecord()
+        WovenInfoUtils.clear()
+        ClassPoolUtils.clear()
+        SuspendReturnScanner.hasSuspendReturn = false
     }
 }

@@ -15,6 +15,7 @@ plugins {
     id 'com.google.devtools.ksp' version '1.9.23-1.0.20' apply false
     id 'io.github.flyjingfish.easyregister' version '1.1.0' apply false
     id 'com.gradle.plugin-publish' version '1.2.1' apply false
+    alias(libs.plugins.android.dynamic.feature) apply false
 //    id "kotlinx-serialization" version "1.5.0"
 //    id "io.github.FlyJingFish.AndroidAop.android-aop" version "1.7.2" apply true
 }

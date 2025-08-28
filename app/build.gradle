@@ -39,12 +39,6 @@ android {
     buildFeatures {
         viewBinding true
     }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
 
     signingConfigs {
         release {
@@ -97,13 +91,14 @@ android {
         exclude 'license/LICENSE.dom-software.txt'
         exclude 'license/LICENSE'
     }
+    dynamicFeatures = [':dynamicfeature']
 
 }
 
 dependencies {
 //    implementation(fileTree("libs"))
 
-    implementation project(path: ":test-lib")
+    api project(path: ":test-lib")
 //    implementation project(path: ":sub-modules:sub1")
 //    implementation project(path: ":sub-modules:sub2")
     if (TestType == "-1"){

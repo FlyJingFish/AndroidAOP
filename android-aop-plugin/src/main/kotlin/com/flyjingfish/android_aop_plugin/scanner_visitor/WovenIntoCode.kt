@@ -6,6 +6,7 @@ import com.flyjingfish.android_aop_plugin.beans.AopCollectCut
 import com.flyjingfish.android_aop_plugin.beans.CutFileJson
 import com.flyjingfish.android_aop_plugin.beans.MethodRecord
 import com.flyjingfish.android_aop_plugin.beans.ReplaceMethodInfo
+import com.flyjingfish.android_aop_plugin.utils.AppClasses
 import com.flyjingfish.android_aop_plugin.utils.ClassFileUtils
 import com.flyjingfish.android_aop_plugin.utils.ClassNameToConversions
 import com.flyjingfish.android_aop_plugin.utils.ClassPoolUtils
@@ -17,6 +18,7 @@ import com.flyjingfish.android_aop_plugin.utils.Utils.CONVERSIONS_CLASS
 import com.flyjingfish.android_aop_plugin.utils.Utils.JOIN_LOCK
 import com.flyjingfish.android_aop_plugin.utils.Utils.JOIN_POINT_CLASS
 import com.flyjingfish.android_aop_plugin.utils.Utils.KEEP_CLASS
+import com.flyjingfish.android_aop_plugin.utils.Utils.dotToSlash
 import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.adapterOSPath
 import com.flyjingfish.android_aop_plugin.utils.addPublic
@@ -976,10 +978,46 @@ object WovenIntoCode {
 
     fun wovenStaticCode(cw:ClassWriter,thisClassName:String){
         val mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, "<clinit>", "()V", null, null)
-        val className1 = "$thisClassName\$Inner${thisClassName.computeMD5()}"
-        mv.visitTypeInsn(AdviceAdapter.NEW,Utils.dotToSlash(className1))
-        mv.visitInsn(AdviceAdapter.DUP)
-        mv.visitMethodInsn(AdviceAdapter.INVOKESPECIAL,Utils.dotToSlash(className1),"<init>","()V",false)
+        for (moduleName in AppClasses.getAllModuleNames()) {
+            val tryStart = Label()
+            val tryEnd = Label()
+            val labelCatch = Label()
+            val tryCatchBlockEnd = Label()
+
+            mv.visitTryCatchBlock(
+                tryStart,
+                tryEnd,
+                labelCatch,
+                "java/lang/NoClassDefFoundError"
+            )
+            mv.visitLabel(tryStart)
+
+            val className1 = "$thisClassName\$Inner${thisClassName.computeMD5()}_${moduleName.computeMD5()}"
+            mv.visitTypeInsn(AdviceAdapter.NEW,Utils.dotToSlash(className1))
+            mv.visitInsn(AdviceAdapter.DUP)
+            mv.visitMethodInsn(AdviceAdapter.INVOKESPECIAL,Utils.dotToSlash(className1),"<init>","()V",false)
+            mv.visitInsn(POP) // 保证 try 分支栈深为 0
+
+            mv.visitLabel(tryEnd)
+            mv.visitJumpInsn(Opcodes.GOTO, tryCatchBlockEnd)
+
+            mv.visitLabel(labelCatch)
+            mv.visitVarInsn(Opcodes.ASTORE, 0)
+
+            mv.visitVarInsn(Opcodes.ALOAD, 0)
+            mv.visitMethodInsn(
+                Opcodes.INVOKEVIRTUAL,
+                "java/lang/NoClassDefFoundError",
+                "printStackTrace",
+                "()V",
+                false
+            )
+
+            mv.visitLabel(tryCatchBlockEnd)
+
+
+        }
+
         mv.visitInsn(RETURN)
         mv.visitMaxs(0, 0)
         mv.visitEnd()
@@ -1105,7 +1143,7 @@ object WovenIntoCode {
         return outFile
     }
 
-    fun createCollectClass(output:File) = runBlocking{
+    fun createCollectClass(output:File,moduleName: String) = runBlocking{
         val collectDirJobs = mutableListOf<Deferred<Unit>>()
         val classPool = ClassPoolUtils.getNewClassPool()
         WovenInfoUtils.getAopCollectClassMap().forEach {(key,value) ->
@@ -1113,7 +1151,7 @@ object WovenIntoCode {
                 return@forEach
             }
             val job = async(Dispatchers.IO) {
-                val className = "$key\$Inner${key.computeMD5()}"
+                val className = "$key\$Inner${key.computeMD5()}_${moduleName.computeMD5()}"
                 val cw = ClassWriter(COMPUTE_FRAMES or COMPUTE_MAXS)
                 cw.visit(V1_8, ACC_PUBLIC+ACC_STATIC, Utils.dotToSlash(className), null, "java/lang/Object", null)
 

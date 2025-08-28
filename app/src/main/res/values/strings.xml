@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AndroidAOP</string>
+    <string name="title_dynamicfeature">Demo</string>
 </resources>
