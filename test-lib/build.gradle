@@ -9,10 +9,13 @@ apply from: "$rootDir/gradle/android_base.gradle"
 android {
     namespace 'com.flyjingfish.test_lib'
     compileSdk 33
-    defaultConfig {
+    lint {
         targetSdk 33
     }
-//    kotlin {
+    testOptions {
+        targetSdk 33
+    }
+    //    kotlin {
 //        sourceSets {
 //            // 让IDE识别KSP生成的代码
 //            main.kotlin.srcDirs += 'build/generated/ksp'

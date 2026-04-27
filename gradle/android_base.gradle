@@ -3,7 +3,6 @@ android {
 
     defaultConfig {
         minSdk rootProject.ext.minSdkVersion
-        targetSdk rootProject.ext.sdkVersion
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11

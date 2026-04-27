@@ -25,8 +25,8 @@ test-rules = "1.5.0"
 flyjingfish_javassist_version = "1.0.3"
 fasttransform_version = "1.0.8"
 kotlinx-metadata-jvm-version = "0.9.0"
-agp = "8.2.2"
-kotlinVersion = "1.9.23"
+agp = "9.1.1"
+kotlinVersion = "2.2.10"
 [libraries]
 kotlinpoet-ksp = { group = "com.squareup", name = "kotlinpoet-ksp", version.ref = "kotlinpoet_version" }
 kotlinpoet = { group = "com.squareup", name = "kotlinpoet", version.ref = "kotlinpoet_version" }
