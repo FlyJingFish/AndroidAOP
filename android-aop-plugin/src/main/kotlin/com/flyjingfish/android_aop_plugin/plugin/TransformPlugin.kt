@@ -7,9 +7,7 @@ import com.android.build.gradle.internal.tasks.DexArchiveBuilderTask
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.tasks.AssembleAndroidAopTask
 import com.flyjingfish.android_aop_plugin.utils.AppClasses
-import com.flyjingfish.android_aop_plugin.utils.InitConfig
 import com.flyjingfish.android_aop_plugin.utils.RuntimeProject
-import io.github.flyjingfish.fast_transform.tasks.DefaultTransformTask
 import io.github.flyjingfish.fast_transform.toTransformAll
 import org.gradle.api.Project
 import org.gradle.api.Task

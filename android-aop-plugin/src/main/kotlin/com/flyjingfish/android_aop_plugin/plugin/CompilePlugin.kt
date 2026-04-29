@@ -2,11 +2,9 @@ package com.flyjingfish.android_aop_plugin.plugin
 
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.api.variant.Variant
-import com.android.build.gradle.AppExtension
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.DynamicFeaturePlugin
-import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 import com.flyjingfish.android_aop_plugin.config.AndroidAopConfig
 import com.flyjingfish.android_aop_plugin.scanner_visitor.SuspendReturnScanner
@@ -23,7 +21,6 @@ import com.flyjingfish.android_aop_plugin.utils.WovenInfoUtils
 import com.flyjingfish.android_aop_plugin.utils.adapterOSPath
 import com.flyjingfish.android_aop_plugin.utils.getBuildDirectory
 import com.flyjingfish.android_aop_plugin.utils.getRelativePath
-import org.codehaus.groovy.runtime.DefaultGroovyMethods
 import org.gradle.api.Project
 import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.api.execution.TaskExecutionGraphListener
@@ -31,7 +28,7 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.configurationcache.extensions.capitalized
+import org.gradle.internal.extensions.stdlib.capitalized
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 import java.io.File
 
@@ -192,25 +189,15 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
         }
 
 
-        val android = androidObject as BaseExtension
-        val variants = if (isApp or isDynamicLibrary) {
-            (android as AppExtension).applicationVariants
-        } else {
-            (android as LibraryExtension).libraryVariants
-        }
-        variants.all { variant ->
-            val javaCompile: AbstractCompile =
-                if (DefaultGroovyMethods.hasProperty(variant, "javaCompileProvider") != null) {
-                    //gradle 4.10.1 +
-                    variant.javaCompileProvider.get()
-                } else if (DefaultGroovyMethods.hasProperty(variant, "javaCompiler") != null) {
-                    variant.javaCompiler as AbstractCompile
-                } else {
-                    variant.javaCompile as AbstractCompile
-                }
-            val variantName = variant.name
-            val buildTypeName = variant.buildType.name
-            if (!isIncremental() && javaCompile is JavaCompile && isDebugMode(buildTypeName,variantName)){
+        project.tasks.withType(JavaCompile::class.java).configureEach { javaCompile ->
+            val taskName = javaCompile.name
+
+            val variantName = taskName
+                .removePrefix("compile")
+                .removeSuffix("JavaWithJavac")
+                .replaceFirstChar { it.lowercase() }
+            val buildTypeName = null
+            if (!isIncremental() && isDebugMode(buildTypeName,variantName)){
                 javaCompile.options.isIncremental = false
             }
             if (isApp && isIncremental()){
@@ -232,54 +219,27 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
         if (hasBuildConfig()){
             val androidComponents = project.extensions.getByType(AndroidComponentsExtension::class.java)
             val variantList: ArrayList<Variant> = ArrayList()
+            val android = project.extensions.getByName("android")
             androidComponents.onVariants { variant ->
                 variantList.add(variant)
                 val variantName = variant.name
                 val path = Utils.aopDebugModeJavaDir(variantName)
                 val debugModeDir = File("${project.getBuildDirectory().absolutePath}$path")
                 val variantNameCapitalized = variantName.capitalized()
-                var packageName = if (android.namespace == null || android.namespace == "null"){
-                    android.defaultConfig.applicationId.toString()
-                }else{
-                    android.namespace.toString()
+                var packageName = when (android) {
+                    is com.android.build.api.dsl.ApplicationExtension -> {
+                        (android.namespace ?: android.defaultConfig.applicationId)?:""
+                    }
+                    is com.android.build.api.dsl.LibraryExtension -> {
+                        android.namespace ?:""
+                    }
+                    is BaseExtension -> {
+                        (android.namespace ?: android.defaultConfig.applicationId)?:""
+                    }
+                    else -> ""
                 }
 
-                if (packageName == "null"){
-                    for (sourceSet in android.sourceSets) {
-                        if (sourceSet.name == "main"){
-                            val pkName = getPackageName(sourceSet.java.srcDirs,debugModeDir)
-                            if (pkName != null){
-                                packageName = pkName
-                                break
-                            }
-                        }
-                    }
-                }
-
-                if (packageName == "null"){
-                    for (sourceSet in android.sourceSets) {
-                        if (sourceSet.name == "release"){
-                            val pkName = getPackageName(sourceSet.java.srcDirs,debugModeDir)
-                            if (pkName != null){
-                                packageName = pkName
-                                break
-                            }
-                        }
-                    }
-                }
-
-                if (packageName == "null"){
-                    for (sourceSet in android.sourceSets) {
-                        if (sourceSet.name == "debug"){
-                            val pkName = getPackageName(sourceSet.java.srcDirs,debugModeDir)
-                            if (pkName != null){
-                                packageName = pkName
-                                break
-                            }
-                        }
-                    }
-                }
-                if (packageName.isEmpty()){
+                if (packageName.isEmpty() || packageName == "null"){
                     packageName = project.name.replace("-","_")
                 }
                 val buildTypeName: String? = variant.buildType
@@ -343,7 +303,7 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
         return null
     }
 
-    private fun doAopTask(project: RuntimeProject,isApp:Boolean, variantName: String, buildTypeName: String,
+    private fun doAopTask(project: RuntimeProject,isApp:Boolean, variantName: String, buildTypeName: String?,
                           javaCompile:AbstractCompile, kotlinDefaultPath: File, isAndroidModule : Boolean = true, isDynamic : Boolean = false){
         val cacheDir = if (isAndroidModule) {
             kotlinCompileFilePathMap[project.buildDir.absolutePath+"@"+"compile${variantName.capitalized()}Kotlin"]
@@ -361,7 +321,7 @@ class CompilePlugin(private val fromRootSet:Boolean): BasePlugin() {
         if (AndroidAopConfig.enabled && debugMode){
             ClassFileUtils.debugMode = true
             val hint = "AndroidAOP Tip: You are using debugMode mode"
-            if (buildTypeName == "release"){
+            if (!buildTypeName.isNullOrEmpty() && buildTypeName.contains("release")){
                 logger.error(hint)
             }else{
                 logger.warn(hint)

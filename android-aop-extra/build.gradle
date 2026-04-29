@@ -1,6 +1,5 @@
 plugins {
     id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
     id 'com.google.devtools.ksp'
 }
 apply from: "$rootDir/gradle/android_base.gradle"
@@ -10,6 +9,7 @@ android {
 }
 
 dependencies {
+    compileOnly libs.androidx.lifecycle.common.jvm
     implementation project(path: ':android-aop-annotation')
     implementation project(path: ':android-aop-core')
     ksp project(':android-aop-apt')

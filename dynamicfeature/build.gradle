@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.android.dynamic.feature)
-    alias(libs.plugins.kotlin.android)
     id 'android.aop'
 }
 apply from: "$rootDir/gradle/android_base.gradle"
@@ -40,4 +39,5 @@ android {
 dependencies {
     implementation project(":app")
     implementation project(":test-lib")
+    implementation libs.androidx.core.ktx
 }

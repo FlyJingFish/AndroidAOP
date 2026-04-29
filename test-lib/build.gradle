@@ -1,7 +1,8 @@
 plugins {
     id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
+//    id 'org.jetbrains.kotlin.android'
     id 'com.google.devtools.ksp'
+//    alias(libs.plugins.kotlin.android)
 //    id 'kotlin-kapt'
 }
 
@@ -15,6 +16,9 @@ android {
     testOptions {
         targetSdk 33
     }
+//    kotlinOptions {
+//        jvmTarget = '11'
+//    }
     //    kotlin {
 //        sourceSets {
 //            // 让IDE识别KSP生成的代码
@@ -24,7 +28,7 @@ android {
 }
 
 dependencies {
-    api libs.core.ktx
+//    api libs.core.ktx
     api libs.appcompat
     api libs.material
     api project(path: ':test-java-lib')
@@ -51,7 +55,7 @@ dependencies {
     api libs.gson
     api 'xml-apis:xml-apis:1.4.01'
     api 'xml-apis:xml-apis-ext:1.3.04'
-
+    api libs.androidx.core.ktx
 
 
 }

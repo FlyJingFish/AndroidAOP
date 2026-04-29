@@ -1,14 +1,11 @@
 package com.flyjingfish.android_aop_core.cut
 
 import android.os.Looper
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.flyjingfish.android_aop_annotation.ProceedJoinPoint
 import com.flyjingfish.android_aop_annotation.ProceedJoinPointSuspend
-import com.flyjingfish.android_aop_annotation.ProceedReturn
-import com.flyjingfish.android_aop_annotation.base.BasePointCut
 import com.flyjingfish.android_aop_annotation.base.BasePointCutSuspend
 import com.flyjingfish.android_aop_core.annotations.OnLifecycle
 import com.flyjingfish.android_aop_core.utils.AppExecutors

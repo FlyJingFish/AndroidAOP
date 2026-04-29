@@ -1,3 +1,13 @@
+def newDsl = (project.findProperty("android.newDsl")?:"true")
+def isNewDsl = newDsl == "true"
+
+if (isNewDsl) {
+    println "newDsl 开启"
+} else {
+    println "newDsl 关闭"
+    apply plugin: "org.jetbrains.kotlin.android"
+}
+
 android {
     compileSdk rootProject.ext.sdkVersion
 

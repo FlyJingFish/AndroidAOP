@@ -115,7 +115,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
         } else if (targetValue is ArrayList<*>) {
           for (s in targetValue) {
             if (symbol.origin == Origin.JAVA) {
-              if ("METHOD" != s.toString()) {
+              if (!s.toString().contains("METHOD")) {
                 if (targetValue.size > 1) {
                   throw IllegalArgumentException("注意： $symbol 只可以设置 @Target 为 METHOD 这一种")
                 } else {
@@ -161,7 +161,7 @@ class AndroidAopSymbolProcessor(private val codeGenerator: CodeGenerator,
       val retentionMap: MutableMap<String, Any?>? = annotationMap["@Retention"]
       if (retentionMap != null) {
         val retention = retentionMap["value"]?.toString()
-        if ((symbol.origin == Origin.JAVA && "RUNTIME" != retention)
+        if ((symbol.origin == Origin.JAVA && retention?.contains("RUNTIME") != true)
           || (symbol.origin == Origin.KOTLIN && retention?.contains("AnnotationRetention.RUNTIME") != true)) {
           throw IllegalArgumentException("注意：请给 $symbol 设置 @Retention 为 RUNTIME ")
         }

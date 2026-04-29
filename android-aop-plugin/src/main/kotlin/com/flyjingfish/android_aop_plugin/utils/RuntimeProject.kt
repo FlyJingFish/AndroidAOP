@@ -1,7 +1,9 @@
 package com.flyjingfish.android_aop_plugin.utils
 
+import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.gradle.BaseExtension
 import org.gradle.api.Project
+import org.gradle.api.file.RegularFile
 import java.io.File
 import java.io.Serializable
 
@@ -49,7 +51,19 @@ data class RuntimeProject(
                 if (android != null){
                     runtimeProject.androidConfig.setBootClasspath(android.bootClasspath)
                 }
-            } catch (_: Throwable) {
+            } catch (e: Throwable) {
+                try {
+                    val androidComponents = project.extensions.getByType(AndroidComponentsExtension::class.java)
+                    val sdkComponents = androidComponents::sdkComponents.get()
+//                    println("sdkDirectory: $sdkDirectory")
+//                    val sdkDirectory: Directory? = sdkComponents.sdkDirectory.get()
+                    val bootClasspath: List<RegularFile> = sdkComponents.bootClasspath.get()
+
+//                    bootClasspath.forEach { println("bootClasspath: ${it.asFile.absolutePath}") }
+                    runtimeProject.androidConfig.setBootClasspath(bootClasspath.map { it.asFile })
+                } catch (e: Exception) {
+//                    e.printStackTrace()
+                }
             }
         }
     }
