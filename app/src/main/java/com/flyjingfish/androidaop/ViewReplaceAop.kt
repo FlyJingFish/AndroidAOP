@@ -8,6 +8,10 @@ import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceClass
 import com.flyjingfish.android_aop_annotation.anno.AndroidAopReplaceMethod
 import com.flyjingfish.android_aop_annotation.enums.MatchType
 
+/**
+ * 注意配合混淆规则，防止构造方法被删掉
+ */
+
 @AndroidAopReplaceClass("android.view.View", type = MatchType.EXTENDS)
 object ViewReplaceAop {
 

@@ -87,3 +87,7 @@
 # AndroidAop必备混淆规则 -----end-----
 
 #-printmapping proguard-map.txt
+
+-keep class * extends android.view.View {
+    <init>(...);
+}

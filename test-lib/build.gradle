@@ -9,13 +9,13 @@ plugins {
 apply from: "$rootDir/gradle/android_base.gradle"
 android {
     namespace 'com.flyjingfish.test_lib'
-    compileSdk 33
-    lint {
-        targetSdk 33
-    }
-    testOptions {
-        targetSdk 33
-    }
+//    compileSdk 33
+//    lint {
+//        targetSdk 33
+//    }
+//    testOptions {
+//        targetSdk 33
+//    }
 //    kotlinOptions {
 //        jvmTarget = '11'
 //    }
