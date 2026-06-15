@@ -475,7 +475,7 @@ object WovenIntoCode {
                         ctClass.addField(extraField, CtField.Initializer.byExpr("new $JOIN_LOCK()"));
                     }else{
                         val extraField = CtField(cp.get(JOIN_POINT_CLASS), targetFieldName, ctClass)
-                        extraField.modifiers = Modifier.PRIVATE or Modifier.VOLATILE
+                        extraField.modifiers = Modifier.PRIVATE or Modifier.VOLATILE or Modifier.TRANSIENT
                         ctClass.addField(extraField)
                     }
 
