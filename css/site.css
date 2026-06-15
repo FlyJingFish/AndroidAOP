@@ -1,0 +1,16 @@
+.md-typeset h1, .md-typeset h2, .md-typeset h3, .md-typeset h4 {
+    font-weight: bold;
+    word-wrap: break-word;
+}
+.md-grid {
+  max-width: 70rem;
+}
+
+.star-center {
+    position: absolute;
+    top: 86%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* 使用 transform 来偏移 50% */
+    font-weight: bold;
+    font-size: .5rem
+}
