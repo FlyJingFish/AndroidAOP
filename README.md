@@ -141,7 +141,7 @@ Depend on the plug-in in <code>build.gradle</code> in the <strong>project root d
   
   plugins {
       //Required item 👇 apply is set to true to automatically apply debugMode to all modules, if false, manual configuration is required.
-      id "io.github.flyjingfish.androidaop" version "2.7.5" apply true
+      id "io.github.flyjingfish.androidaop" version "2.7.6" apply true
   }
   ```
   <details>
@@ -151,7 +151,7 @@ Depend on the plug-in in <code>build.gradle</code> in the <strong>project root d
   buildscript {
        dependencies {
            //Required items 👇
-           classpath 'io.github.flyjingfish:androidaop-plugin:2.7.5'
+           classpath 'io.github.flyjingfish:androidaop-plugin:2.7.6'
        }
   }
   //👇Add this sentence to automatically apply debugMode to all modules. If not, follow step 5 below.
@@ -199,7 +199,7 @@ Depend on the plug-in in <code>build.gradle</code> in the <strong>project root d
   //Required items 👇
   plugins {
        ...
-       id "io.github.flyjingfish.androidaop" version "2.7.5"
+       id "io.github.flyjingfish.androidaop" version "2.7.6"
   }
   ```
 
@@ -229,17 +229,17 @@ plugins {
 
 dependencies {
      //Required items 👇
-     implementation 'io.github.flyjingfish:androidaop-core:2.7.5'
+     implementation 'io.github.flyjingfish:androidaop-core:2.7.6'
      //Optional 👇This package provides some common annotation aspects
-     implementation 'io.github.flyjingfish:androidaop-extra:2.7.5'
+     implementation 'io.github.flyjingfish:androidaop-extra:2.7.6'
     
      //Required item 👇If you already have this item in your project, you don’t need to add it.
      implementation 'androidx.appcompat:appcompat:1.3.0' // At least in 1.3.0 and above
      
      //Choose one 👇, if you want to customize aspects, you need to use them, ⚠️supports aspects written in Java and Kotlin code
-     ksp 'io.github.flyjingfish:androidaop-apt:2.7.5'
+     ksp 'io.github.flyjingfish:androidaop-apt:2.7.6'
      //Choose one 👇, if you want to customize aspects, you need to use them, ⚠️only applies to aspects written in Java code
-     annotationProcessor 'io.github.flyjingfish:androidaop-apt:2.7.5'
+     annotationProcessor 'io.github.flyjingfish:androidaop-apt:2.7.6'
      //⚠️Choose one of the above ksp and annotationProcessor
      //If you only use the functions in android-aop-extra, you don't need to select these two options
 }
